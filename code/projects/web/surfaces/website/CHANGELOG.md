@@ -19,6 +19,10 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Custom HTML scripts run.** The `[locale]` layout hands the request nonce to client
+  components (`NonceProvider`), so a Custom HTML block's scripts run under the strict CSP — on first load and after client navigation.
+- **The api rate-limits per visitor.** `/api/consent-log`, `/api/data-request`,
+  `/api/session-log` and `/api/csp-report` send the visitor IP (`x-client-ip`) with their api call.
 - **`API_URL` is a per-env var; the manual secret sync is the deploy's own.** `API_URL` moved to
   `wrangler.toml` (dev, staging; prod commented): a synced secret carried the local
   `localhost` value. `secrets:sync:website:<env>` now runs the shared `data/secrets.mjs`; the

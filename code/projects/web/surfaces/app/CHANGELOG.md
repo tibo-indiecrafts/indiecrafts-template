@@ -14,6 +14,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The api rate-limits sign-in logs per visitor.** `/api/session-log` sends the visitor IP
+  (`x-client-ip`), so the api keys its limit on the visitor, not the app server.
 - **Sign-ins are logged again on the app (and the mobile shell, which loads it).** `/api/session-log` calls Clerk's `auth()`, but the
   proxy matcher skipped every `/api` path, so Clerk's middleware never ran and each log was a 500. The
   matcher now lists `/api/session-log` and the proxy passes `/api` straight through (no sign-in

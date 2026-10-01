@@ -14,6 +14,20 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **security — `CSP_MODE=report-only` no longer floods the CSP board.** Next takes its script
+  nonce from the enforced header; the permissive rollback policy had none, so Next nonced 4 of 39
+  scripts and the Report-Only policy reported every framework chunk. The new `buildRollbackCsp`
+  names the nonce on `script-src` and keeps `'unsafe-inline'` on `script-src-elem` /
+  `script-src-attr`, so nothing new is blocked in CSP3 browsers.
+- **ui-components — Custom HTML scripts run under the strict CSP.** `<script>` tags in a
+  `module.custom-html` block are lifted out (`splitScripts`) and inserted by `EmbedScripts`, in
+  order, with the request nonce, on every mount (`NonceProvider` / `useNonce`). Before, they were blocked on
+  first load and never ran after a client navigation.
+- **compliance · auth · security-reports — server calls name the visitor.** `logConsent`,
+  `logSession`, `submitDataRequest` and `forwardCspReports` take the visitor IP and send it as
+  `x-client-ip`, so the api rate-limits per visitor.
+- **security — the AES-GCM tamper test always tampers.** It replaced the last two hex digits with
+  `00`, a no-op 1 time in 256.
 - **security — the in-app rate limiter limits again.** `rateLimit` found `RATE_LIMIT_KV` through a
   variable-specifier `import("@opennextjs/cloudflare")`. That import cannot resolve inside a Next
   bundle, so the limiter always failed open: no 429 from `withGuard` forms, comment moderation, or

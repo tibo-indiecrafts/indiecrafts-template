@@ -103,7 +103,10 @@ The five rules every route meets (api brief, "Production-ready contract"; QA car
   | `internal`           | 500    | Unexpected — retry once, report the `requestId`                           |
 
 - **Rate limits say when to retry.** Every bearer route and every public write route is limited to
-  **20 requests per 60 s per client IP** (the native `RATELIMIT` binding). A `429 rate_limited` carries
+  **20 requests per 60 s per client IP** (the native `RATELIMIT` binding). A first-party server
+  call (valid bearer) names the visitor it acts for in `x-client-ip`, and the key is that IP — the
+  website server is one IP for every visitor, so per-connection keying made the limit site-wide.
+  Without the bearer, or with a value that is not an IP, the header is ignored. A `429 rate_limited` carries
   `Retry-After: 60` and `RateLimit-Policy: 20;w=60`. Cloudflare's limiter reports allowed/denied only,
   so there is no "remaining" header.
 - **Duplicates are safe.** `POST /v1/events` accepts an `Idempotency-Key` (1–255 printable

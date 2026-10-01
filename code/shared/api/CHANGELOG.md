@@ -7,6 +7,15 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The rate limit is per visitor, not per calling server.** Every bearer route keyed its
+  20/min limit on `cf-connecting-ip` — for the website server that is one IP for every visitor, so
+  a busy page dropped CSP reports and could starve consent writes. A caller with a valid bearer now
+  names the visitor in `x-client-ip` (`rateLimitKey`); without the bearer, or with a non-IP value,
+  the header is ignored.
+- **Tests no longer call Resend or Sanity for real.** The test pool loads `.dev.vars`; a real
+  `RESEND_API_KEY` there made erasure and unsubscribe tests call the network and time out. The
+  test config pins `RESEND_API_KEY` and `SANITY_API_WRITE_TOKEN` empty, as it already did for
+  `CLERK_WEBHOOK_SECRET`.
 - **The secret sync pushes only real secrets, for every app.** `secrets.mjs` now (1) reads both
   key registries, `.dev.vars.example` and `.env.example`, so a CI deploy of the website, admin or
   app syncs their declared secrets (it read only `.dev.vars.example`, which the Next apps lack or

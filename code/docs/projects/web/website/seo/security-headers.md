@@ -173,17 +173,25 @@ always answers `204` (or `429` when the IP is over the limit).
 with `cspHeadersForMode(env, csp, reporting, nonce, CSP_MODE)` — the enforced/Report-Only pair for
 the mode set by the `CSP_MODE` env var:
 
-| `CSP_MODE`          | Enforced `Content-Security-Policy`                         | `Content-Security-Policy-Report-Only`                                 |
-| ------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
-| `enforce` (default) | the strict nonce policy                                    | none                                                                  |
-| `report-only`       | the permissive policy (unchanged — the site keeps working) | the strict nonce policy — violations are observed, nothing is blocked |
+| `CSP_MODE`          | Enforced `Content-Security-Policy`                                                    | `Content-Security-Policy-Report-Only`                                 |
+| ------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `enforce` (default) | the strict nonce policy                                                               | none                                                                  |
+| `report-only`       | the permissive policy, naming the nonce (`buildRollbackCsp`) — the site keeps working | the strict nonce policy — violations are observed, nothing is blocked |
 
 The nonce reaches every inline script that needs it via the `x-nonce` request header, set on the
 request before it's handed to next-intl/the route so a server component can read it with
 `(await headers()).get("x-nonce")`: the root layout passes it to `AppClerkProvider`, and (website
 only) the `[locale]` layout passes it to the Google Analytics `<Script>` tags. Next.js also
-auto-nonces its own inline bootstrap scripts once it sees a nonce in the CSP header — no extra
-wiring needed for those.
+auto-nonces its own scripts once it sees a nonce in the enforced CSP header — no extra wiring
+needed for those. Next reads only the enforced header's `script-src`, so in `report-only` mode the
+permissive policy names the nonce there too and moves its inline allowance to `script-src-elem` /
+`script-src-attr` (no nonce, so `'unsafe-inline'` still holds). Without that, Next nonced none of its
+scripts and the Report-Only policy reported every framework chunk.
+
+**Editor scripts (Custom HTML).** A `module.custom-html` block's `<script>` tags are lifted out and
+inserted in order with the nonce (`EmbedScripts`) — the `[locale]` layout hands it down with
+`NonceProvider`. They run on first load and on client navigation; `'strict-dynamic'` trusts what they
+load in turn, so a widget's own hosts need no allowlisting.
 
 **`/studio` and `/maintenance` stay permissive.** The proxy matcher excludes both. The embedded
 Sanity Studio can't take a per-request nonce (it needs `'unsafe-inline'`, always); `/maintenance` is
