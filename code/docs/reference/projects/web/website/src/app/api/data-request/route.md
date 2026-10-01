@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Accepts a public GDPR data-subject request. `withGuard` hardens the boundary (same-site origin, body cap, rate limit, optional Turnstile) and parses the body once; `submitDataRequest` validates, stores a `dataRequest` record, and alerts the controller. A honeypot-flagged submission returns `201` too. The route `404`s when `features.legal.dataRequest` is off. A `201` means the request was received.
+Accepts a public GDPR data-subject request. `withGuard` hardens the boundary (same-site origin, body cap, rate limit, optional Turnstile) and parses the body once; `submitDataRequest` validates, stores the request via the api (`data_requests`, D1), and alerts the controller. A honeypot-flagged submission returns `201` too. The route `404`s when `features.legal.dataRequest` is off. A `201` means the request was received.
 
 ## Exports
 

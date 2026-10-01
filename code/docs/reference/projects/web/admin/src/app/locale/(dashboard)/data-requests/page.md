@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-This is the `/data-requests` segment of the admin dashboard. It fetches recent data-subject requests from the shared api server-side (the api holds the token), then renders them through `DataRequestsTable`. The view is read-only; status changes are done by hand with `wrangler d1 execute` until write-back lands.
+This is the `/data-requests` segment of the admin dashboard. It fetches the newest 100 data-subject requests server-side with `fetchDataRequests` (`@/lib/monitoring`; the token stays on the server), then renders them through `DataRequestsTable`. A failed read shows an error alert, never "no requests". The view is read-only; status changes are done by hand with `wrangler d1 execute` until write-back lands.
 
 ## Exports
 

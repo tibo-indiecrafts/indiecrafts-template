@@ -101,6 +101,8 @@ workers_dev = true
 [env.dev.vars]
 # Non-production → robots.txt serves Disallow (see @indiecrafts/packages-shared-config env logic).
 NEXT_PUBLIC_ENVIRONMENT = "development"
+# Admin origin — the GDPR request owner alert links `${ADMIN_URL}/data-requests`.
+ADMIN_URL = "https://indiecrafts-dev-web-surfaces-admin.thibault-montaufray.workers.dev"
 # First-party asset CDN for this env (→ Next `assetPrefix`; empty = serve from origin).
 # It's baked at BUILD, so set it in the deploy env too (GitHub Environment var). Sanity
 # content is NOT served here — it keeps `cdn.sanity.io`. Docs: config/images.md.
@@ -126,6 +128,7 @@ workers_dev = true
 
 [env.staging.vars]
 NEXT_PUBLIC_ENVIRONMENT = "staging"
+ADMIN_URL = "https://indiecrafts-staging-web-surfaces-admin.thibault-montaufray.workers.dev"
 # First-party asset CDN for this env (→ Next `assetPrefix`). Set it in the deploy env too.
 # NEXT_PUBLIC_CDN_URL = "https://cdn-staging.your-domain.com"
 
@@ -153,6 +156,8 @@ NEXT_PUBLIC_ENVIRONMENT = "production"
 # `isSiteConfigured` flips true (until then robots.txt serves a full Disallow —
 # a safe default for an unconfigured prod).
 # NEXT_PUBLIC_SITE_URL = "https://your-domain.com"
+# Admin origin for the GDPR request owner alert link (unset → the alert names the screen).
+# ADMIN_URL = "https://admin.your-domain.com"
 # First-party asset CDN for prod (→ Next `assetPrefix`). Set it in the deploy env too.
 # NEXT_PUBLIC_CDN_URL = "https://cdn.your-domain.com"
 

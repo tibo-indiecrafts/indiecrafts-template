@@ -15,5 +15,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
     : routing.defaultLocale;
 
   const messages = (await import(`../../messages/${locale}.json`)).default;
-  return { locale, messages };
+  // Explicit UTC: the Worker runs in UTC, and operators compare these times with api logs.
+  return { locale, messages, timeZone: "UTC" };
 });

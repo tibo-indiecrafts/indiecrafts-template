@@ -5,7 +5,6 @@ describe("renderDataRequestNotificationEmail", () => {
   const base = {
     requestTypeLabel: "Effacement",
     email: "user@example.com",
-    studioUrl: "https://x.com/studio",
   };
 
   it("fills {{type}} / {{email}} in a custom subject", () => {
@@ -35,5 +34,21 @@ describe("renderDataRequestNotificationEmail", () => {
   it("omits the message block when none is given", () => {
     const { html } = renderDataRequestNotificationEmail(base);
     expect(html).not.toContain("Message");
+  });
+
+  it("links the admin review screen when a reviewUrl is given", () => {
+    const { html, text } = renderDataRequestNotificationEmail({
+      ...base,
+      reviewUrl: "https://admin.example.com/data-requests",
+    });
+    expect(html).toContain('href="https://admin.example.com/data-requests"');
+    expect(text).toContain("https://admin.example.com/data-requests");
+  });
+
+  it("names the admin screen (no button, no Studio) when no reviewUrl is set", () => {
+    const { html, text } = renderDataRequestNotificationEmail(base);
+    expect(html).not.toContain("Voir la demande</a>");
+    expect(html + text).not.toContain("Studio");
+    expect(text).toContain("Data requests");
   });
 });

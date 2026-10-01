@@ -26,8 +26,9 @@ export type DataRequestNotificationInput = {
   message?: string;
   /** Page the request came from. */
   source?: string;
-  /** Studio link where the `dataRequest` record can be actioned. */
-  studioUrl: string;
+  /** Admin "Data requests" screen where the request is actioned. Unset → the email
+   *  names the screen instead of linking it. */
+  reviewUrl?: string;
   /** Optional subject with `{{type}}` / `{{email}}` placeholders. */
   subjectTemplate?: string;
   /** Editor overrides (resolved strings) — empty falls back to the defaults below. */
@@ -64,7 +65,9 @@ export function renderDataRequestNotificationEmail(
     ...(input.message ? ["", "Message :", input.message] : []),
     "",
     "À traiter sous un mois (délai légal RGPD).",
-    `Voir la demande dans le Studio : ${input.studioUrl}`,
+    input.reviewUrl
+      ? `Voir la demande : ${input.reviewUrl}`
+      : "Voir la demande dans l'admin, écran « Data requests ».",
     ...(outro ? ["", outro] : []),
   ].join("\n");
 
@@ -83,7 +86,9 @@ export function renderDataRequestNotificationEmail(
       ? `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">Source</p><p style="margin:0 0 20px;font-size:15px">${escapeHtml(input.source)}</p>`
       : "",
     messageHtml,
-    `<a href="${escapeHtml(input.studioUrl)}" style="display:inline-block;padding:11px 20px;background:${C.heading};color:${C.card};border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Voir la demande</a>`,
+    input.reviewUrl
+      ? `<a href="${escapeHtml(input.reviewUrl)}" style="display:inline-block;padding:11px 20px;background:${C.heading};color:${C.card};border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Voir la demande</a>`
+      : `<p style="margin:0;font-size:14px;color:${C.muted}">Voir la demande dans l'admin, écran « Data requests ».</p>`,
     outro
       ? `<p style="margin:24px 0 0;font-size:13px;line-height:1.6;color:${C.muted}">${escapeHtml(outro).replaceAll("\n", "<br>")}</p>`
       : "",

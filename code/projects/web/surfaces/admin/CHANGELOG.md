@@ -14,6 +14,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **Data requests screen is exact.** A failed api read now shows an error alert instead of "No data
+  requests recorded yet". The right and the status read as words (en/fr), not raw keys. The email is
+  a `mailto:` reply link. A long message opens to its full text (before, only 80 characters showed).
+  Dates format in the admin locale, in UTC (`timeZone: "UTC"` in `i18n/request.ts`). The fetch moved to
+  `fetchDataRequests` in `lib/monitoring.ts`, which reuses `getApi` (timeout + retry).
+
 - **Sign-ins are logged again on the admin.** `/api/session-log` calls Clerk's `auth()`, but the
   proxy matcher skipped every `/api` path, so Clerk's middleware never ran and each log was a 500. The
   matcher now lists `/api/session-log` and the proxy passes `/api` straight through (no sign-in

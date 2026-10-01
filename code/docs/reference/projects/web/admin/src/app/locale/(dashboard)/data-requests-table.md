@@ -1,6 +1,6 @@
 ---
 title: "Data requests table"
-description: "Read-only server component that renders GDPR data-subject-request rows as a shadcn table."
+description: "Read-only component that renders GDPR data-subject-request rows as a shadcn table."
 status: stable
 ---
 
@@ -10,20 +10,20 @@ status: stable
 
 ## Purpose
 
-An async server component used by the admin data-requests page. It renders the request rows in a shadcn `Table`, with a status `Badge` and an 80-character excerpt of each free-text `message` (never rendered raw). The row shape mirrors the api's `data_requests` schema.
+A component used by the admin data-requests page (next-intl `useTranslations` + `useFormatter`, so it renders on the server). It renders the request rows in a shadcn `Table`: the date in UTC, the right and the status as localized words (an unknown key shows raw), the email as a `mailto:` reply link, and the message as an 80-character excerpt that opens (`<details>`) to the full text. The row type `DataRequestRow` lives in `@/lib/monitoring`.
 
 ## Exports
 
-- `DataRequestRow` — the row type: `id`, `request_type`, `email`, `message`, `status`, `submitted_at`, `source`, `locale`.
-- `DataRequestsTable` — async server component; takes `rows: DataRequestRow[]` and renders the table.
+- `DataRequestsTable` — takes `rows: DataRequestRow[]` and renders the table.
 
 ## Usage
 
 ```tsx
-import { DataRequestsTable, type DataRequestRow } from "../data-requests-table";
+import { fetchDataRequests } from "@/lib/monitoring";
+import { DataRequestsTable } from "../data-requests-table";
 
-const rows: DataRequestRow[] = await fetchDataRequests();
-return <DataRequestsTable rows={rows} />;
+const rows = await fetchDataRequests(); // null = could not load
+return rows?.length ? <DataRequestsTable rows={rows} /> : null;
 ```
 
 ## Source

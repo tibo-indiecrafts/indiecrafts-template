@@ -1,7 +1,7 @@
 The **GDPR data-subject request form** — a visitor picks a right (access, rectification, erasure,
 restriction, portability, objection, withdraw consent), gives their email and an optional message,
-and submits. Posts to **`/api/data-request`**, which stores a `dataRequest` record in Sanity and
-alerts the controller by email. Satisfies Art. 15–21 (+ Art. 7 consent withdrawal) for a site with
+and submits. Posts to **`/api/data-request`**, which stores the request in the api's `data_requests` table
+(D1) and alerts the controller by email. Satisfies Art. 15–21 (+ Art. 7 consent withdrawal) for a site with
 no user accounts — a routed request, not a self-service export.
 
 Mirrors `NewsletterForm`: a hidden **honeypot** + a render-time timestamp block bots, and
@@ -20,7 +20,7 @@ imports no app messages.
 | `messageLabel` · `messagePlaceholder`             | `string`             | Optional message field.                                               |
 | `consentText`                                     | `string`             | Consent-to-process checkbox (unticked; submit blocked until checked). |
 | `submitLabel` · `successMessage` · `errorMessage` | `string`             | Button + result states.                                               |
-| `heading` · `body`                                | `string?`            | Optional intro.                                                       |
+| `heading` · `body`                                | `string?`            | Optional intro. `heading` renders as the page `<h1>`.                 |
 | `locale`                                          | `string?`            | Active locale — stamped on the stored record.                         |
 
 ## Where it's used

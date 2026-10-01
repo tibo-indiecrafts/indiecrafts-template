@@ -25,6 +25,7 @@ import { renderContactConfirmEmail } from "@indiecrafts/modules-web-contact/emai
 import { renderContactNotificationEmail } from "@indiecrafts/modules-web-contact/emails/contact-notification";
 import { renderLeadMagnetEmail } from "@indiecrafts/modules-web-newsletter/emails/lead-magnet";
 import { renderDataRequestNotificationEmail } from "@indiecrafts/packages-web-compliance/emails/data-request-notification";
+import { adminReviewUrl } from "@indiecrafts/packages-web-compliance/requests/submit";
 
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
@@ -281,7 +282,7 @@ async function buildSamples(to: string): Promise<Sample[]> {
         email: to,
         message: "Ceci est un e-mail de test.",
         source: "test",
-        studioUrl,
+        reviewUrl: adminReviewUrl(),
         subjectTemplate: drOwner.subject ?? undefined,
         heading: pick(drOwner.heading, locale) || undefined,
         intro: pick(drOwner.intro, locale) || undefined,

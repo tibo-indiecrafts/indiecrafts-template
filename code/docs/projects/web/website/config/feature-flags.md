@@ -112,7 +112,8 @@ legal: { notice: true, privacy: true, cookies: true, terms: true, sales: false, 
   only needed when selling online).
 - `dataRequest` — the **GDPR data-subject request form** at `/data-request` + the
   `/api/data-request` route. A visitor exercises a right (access, erasure, portability…);
-  the request is stored as a `dataRequest` record and the controller is alerted by email.
+  the request is stored in the api's `data_requests` table (D1), listed in the admin **Data
+  requests** screen, and the controller is alerted by email.
 - `erasure` — the **anonymous branded erasure flow**: `/erasure` (email → `POST
 /v1/erasure/request` on the shared api worker) and `/erasure/confirm` (the emailed link →
   `POST /v1/erasure/confirm`), both signed-out. Both routes share this one flag — `/erasure/confirm`

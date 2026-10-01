@@ -18,8 +18,9 @@ Three domains under one Sanity barrel:
 - **`src/reacceptance/`** — the **legal re-acceptance** banner: `LegalNotice.tsx` + the first-party
   `legal-store.ts` cookie ("policies updated, please Accept" for privacy/terms/CGV).
 - **`src/requests/`** — the **data-subject request** flow (GDPR Art. 15–21 form): `submitDataRequest`
-  (validate → store `dataRequest` → alert), `validate.ts`, `request-types.ts` (the 7 rights). The
-  form UI (`DataRequestForm`) is in `@indiecrafts/packages-web-ui-components`; the record + desk are in `src/sanity/`.
+  (validate → store via the api's `/v1/data-request` (D1) → alert linking `${ADMIN_URL}/data-requests`),
+  `validate.ts`, `request-types.ts` (the 7 rights). The form UI (`DataRequestForm`) is in
+  `@indiecrafts/packages-web-ui-components`; operators read requests in the admin "Data requests" screen.
 - **`src/emails/`** — the compliance email templates (`data-request-notification`), rendering via
   `@indiecrafts/packages-web-email`'s `renderEmailLayout`. This brick owns its email end-to-end (group in
   `src/sanity/email.ts`, template here, send in `src/requests/submit.ts`).

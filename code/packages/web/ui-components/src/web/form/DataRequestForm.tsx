@@ -44,10 +44,12 @@ type Status = "idle" | "submitting" | "success" | "error";
 
 /**
  * GDPR data-subject request form — a visitor picks a right, gives their email and
- * an optional message, and submits. Posts to `/api/data-request`, which stores a
- * `dataRequest` record and alerts the controller. Mirrors `NewsletterForm`: a
- * hidden honeypot + a render timestamp block bots; Turnstile gates submit when a
- * site key is set. All copy is passed in — the component imports no app messages.
+ * an optional message, and submits. Posts to `/api/data-request`, which stores the
+ * request in the api's `data_requests` table (D1) and alerts the controller. The
+ * heading is the page's `<h1>`: this form is the whole `/data-request` page.
+ * Mirrors `NewsletterForm`: a hidden honeypot + a render timestamp block bots;
+ * Turnstile gates submit when a site key is set. All copy is passed in — the
+ * component imports no app messages.
  */
 export function DataRequestForm({
   heading,
@@ -125,9 +127,9 @@ export function DataRequestForm({
     <section className="not-prose my-8 md:my-12">
       <div className="bg-card mx-auto max-w-xl rounded-2xl border p-8 md:p-10">
         {heading ? (
-          <h2 className="text-foreground font-sans text-xl font-semibold text-balance md:text-2xl">
+          <h1 className="text-foreground font-sans text-xl font-semibold text-balance md:text-2xl">
             {heading}
-          </h2>
+          </h1>
         ) : null}
         {body ? (
           <p className="text-muted-foreground mt-2 text-pretty">{body}</p>

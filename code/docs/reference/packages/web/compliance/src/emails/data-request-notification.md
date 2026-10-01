@@ -6,7 +6,7 @@ status: stable
 
 # Data-request owner alert email
 
-> Tells the team a new rights request arrived and links to the record.
+> Tells the team a new rights request arrived and links to the admin screen.
 
 ## Purpose
 
@@ -14,7 +14,7 @@ Renders the owner alert email sent when a visitor submits a GDPR data-subject re
 
 ## Exports
 
-- `DataRequestNotificationInput` — the input shape: resolved request-type label, visitor email, optional message and source, Studio link, and editor overrides.
+- `DataRequestNotificationInput` — the input shape: resolved request-type label, visitor email, optional message and source, optional `reviewUrl` (the admin "Data requests" screen — unset → the email names the screen, no button), and editor overrides.
 - `renderDataRequestNotificationEmail(input)` — returns a `RenderedEmail` with `subject`, `text`, and `html`.
 
 ## Usage
@@ -25,7 +25,7 @@ import { renderDataRequestNotificationEmail } from "@indiecrafts/packages-web-co
 const email = renderDataRequestNotificationEmail({
   requestTypeLabel: "Accès",
   email: "visitor@example.com",
-  studioUrl: "https://example.com/studio",
+  reviewUrl: "https://admin.example.com/data-requests",
 });
 ```
 

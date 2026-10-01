@@ -10,11 +10,12 @@ status: stable
 
 ## Purpose
 
-The single runtime write path for the public data-request form. It validates the input, then POSTs a bearer-authed request to the api worker's `POST /v1/data-request` (D1) — the legal record the team actions. On a stored request, one best-effort owner alert may fire; a mail failure never turns a saved request into a 500. A honeypot field is treated as spam and dropped while still returning success, so bots learn nothing. It is `server-only`.
+The single runtime write path for the public data-request form. It validates the input, then POSTs a bearer-authed request to the api worker's `POST /v1/data-request` (D1) — the legal record the team actions. On a stored request, one best-effort owner alert may fire, linking `${ADMIN_URL}/data-requests` when `ADMIN_URL` is set; a mail failure never turns a saved request into a 500. A honeypot field is treated as spam and dropped while still returning success, so bots learn nothing. `API_URL` or `APP_API_TOKEN` unset → it logs `data request write skipped` and returns `server`. It is `server-only`.
 
 ## Exports
 
 - `submitDataRequest(input, submittedAt, policyVersion?)` — validates, stores, and alerts; returns a `DataRequestResult`.
+- `adminReviewUrl()` — `${ADMIN_URL}/data-requests`, or `undefined` when `ADMIN_URL` is unset (the alert and the email preview share it).
 - `validateDataRequest` — re-exported from `validate.ts`.
 - `DataRequestInput`, `DataRequestResult` — re-exported types.
 

@@ -86,6 +86,25 @@ async function getApi<T>(path: string): Promise<T | null> {
 }
 
 export const fetchCronStatus = () => getApi<CronStatus>("/v1/cron/status");
+
+/** One GDPR data-subject request, as `GET /v1/data-requests` returns it (decrypted). */
+export type DataRequestRow = {
+  id: number;
+  request_type: string;
+  email: string;
+  message: string | null;
+  /** `new | in-progress | done` (the api's `data_requests` schema). */
+  status: string;
+  submitted_at: string;
+  source: string | null;
+  locale: string | null;
+};
+
+/** The newest 100 requests. `null` = could not load — never shown as "no requests". */
+export async function fetchDataRequests(): Promise<DataRequestRow[] | null> {
+  const body = await getApi<{ data?: DataRequestRow[] }>("/v1/data-requests?limit=100");
+  return body ? (body.data ?? []) : null;
+}
 export const fetchErasureRequests = () =>
   getApi<ErasureRequests>("/v1/erasure-requests");
 

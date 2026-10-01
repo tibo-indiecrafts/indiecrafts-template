@@ -134,12 +134,27 @@
       "title": "Data requests",
       "subtitle": "GDPR data-subject requests submitted through the site (last 100).",
       "empty": "No data requests recorded yet.",
-      "when": "When",
+      "when": "When (UTC)",
       "type": "Type",
       "email": "Email",
       "status": "Status",
       "message": "Message",
-      "localeSource": "Locale / source"
+      "localeSource": "Locale / source",
+      "loadError": "Could not load data requests — the api is unreachable.",
+      "types": {
+        "access": "Access",
+        "rectification": "Rectification",
+        "erasure": "Erasure",
+        "restriction": "Restriction",
+        "portability": "Portability",
+        "objection": "Objection",
+        "withdraw-consent": "Withdraw consent"
+      },
+      "statuses": {
+        "new": "New",
+        "in-progress": "In progress",
+        "done": "Done"
+      }
     },
     "system": {
       "title": "System status",

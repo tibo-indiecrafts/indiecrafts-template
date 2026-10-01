@@ -12,8 +12,8 @@ import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sa
 /**
  * Public GDPR data-subject request. `withGuard` hardens the boundary (same-site
  * origin, body cap, rate limit, optional Turnstile) and parses the body once;
- * `submitDataRequest` validates, stores a `dataRequest` record, and alerts the
- * controller. A honeypot-flagged submission returns `201` too, so bots can't tell
+ * `submitDataRequest` validates, stores the request via the api (`data_requests`,
+ * D1), and alerts the controller. A honeypot-flagged submission returns `201` too, so bots can't tell
  * it was dropped. `201` = received.
  */
 const handle = withGuard(async (_req, data) => {

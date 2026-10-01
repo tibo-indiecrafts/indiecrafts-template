@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   cronHealth,
   fetchCronStatus,
+  fetchDataRequests,
   type CronStatus,
   apiHealthView,
 } from "./monitoring";
@@ -113,5 +114,36 @@ describe("apiHealthView", () => {
       dbs: [],
       bindings: [],
     });
+  });
+});
+
+describe("fetchDataRequests", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
+
+  it("returns null (not an empty list) when the api cannot be read", async () => {
+    vi.stubEnv("API_URL", "");
+    expect(await fetchDataRequests()).toBeNull();
+    vi.stubEnv("API_URL", "http://api.test");
+    vi.stubEnv("APP_API_TOKEN", "t");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("", { status: 502 })));
+    expect(await fetchDataRequests()).toBeNull();
+  });
+
+  it("returns the newest 100 rows from the bearer-gated list", async () => {
+    vi.stubEnv("API_URL", "http://api.test");
+    vi.stubEnv("APP_API_TOKEN", "t");
+    const row = { id: 1, request_type: "access", email: "a@b.co", message: null, status: "new", submitted_at: "2026-10-01T08:00:00Z", source: null, locale: "en" };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ data: [row] }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    expect(await fetchDataRequests()).toEqual([row]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://api.test/v1/data-requests?limit=100",
+      expect.objectContaining({ headers: { authorization: "Bearer t" } }),
+    );
   });
 });

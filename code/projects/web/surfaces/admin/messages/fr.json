@@ -134,12 +134,27 @@
       "title": "Demandes de données",
       "subtitle": "Demandes RGPD des personnes concernées soumises sur le site (100 dernières).",
       "empty": "Aucune demande de données enregistrée pour l'instant.",
-      "when": "Quand",
+      "when": "Quand (UTC)",
       "type": "Type",
       "email": "E-mail",
       "status": "État",
       "message": "Message",
-      "localeSource": "Langue / source"
+      "localeSource": "Langue / source",
+      "loadError": "Impossible de charger les demandes — l'api est injoignable.",
+      "types": {
+        "access": "Accès",
+        "rectification": "Rectification",
+        "erasure": "Effacement",
+        "restriction": "Limitation du traitement",
+        "portability": "Portabilité",
+        "objection": "Opposition",
+        "withdraw-consent": "Retrait du consentement"
+      },
+      "statuses": {
+        "new": "Nouvelle",
+        "in-progress": "En cours",
+        "done": "Traitée"
+      }
     },
     "system": {
       "title": "État du système",

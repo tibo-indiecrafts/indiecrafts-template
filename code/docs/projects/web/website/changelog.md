@@ -19,6 +19,10 @@ the repo-wide roll-up → root `CHANGELOG.md`.
 
 ### Fixed
 
+- **`ADMIN_URL` for the GDPR request alert.** Set per env in `wrangler.toml` (dev, staging; prod
+  commented) and listed in `.env.example`, so the owner alert links the admin "Data requests"
+  screen. `.env.example` also says that `APP_API_TOKEN` is needed for `/data-request` to store requests.
+
 - **Pages without Sanity SEO had no `<title>` at all.** `buildMetadata` returned `title: undefined`,
   and Next treats a present key as an override — so `/contact`, `/erasure` and `/data-request`
   (en + fr) shipped with no title and no description, for browsers and crawlers alike. The keys are

@@ -14,6 +14,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **compliance — the GDPR request alert links the admin, not Studio.** Requests live in the api's
+  `data_requests` table since the D1 move, so the "Voir la demande" Studio link led nowhere. The
+  alert now links `${ADMIN_URL}/data-requests` (`reviewUrl`); unset → it names the screen. A missing
+  `API_URL` / `APP_API_TOKEN` now logs `data request write skipped` instead of failing silently.
+- **ui-components — `DataRequestForm` heading is the page `<h1>`.** The `/data-request` page had
+  no `<h1>`; the form is that page's only content, so its heading now carries the level.
+
 - **compliance + auth — "Download my data" passes the step-up instead of failing.** The api asks
   for a recent verification on export (403 with Clerk's reverification hint), but the export client
   turned that 403 into "Something went wrong" — only the account deletion went through

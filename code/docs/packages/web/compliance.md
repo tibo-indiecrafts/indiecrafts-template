@@ -24,8 +24,8 @@ legal + data-protection surface, editor-managed in Sanity. Four domains, one bri
   the `cookieConsent` schema.
 - **`src/reacceptance/`** — the **legal re-acceptance** banner for the contract documents.
 - **`src/requests/`** — the **data-subject request** flow (GDPR Art. 15–21 + consent withdrawal):
-  `submitDataRequest` (validate → store → alert), the `dataRequest` record schema, and the
-  `dataRequestOwner` email group. The form UI (`DataRequestForm`) lives in
+  `submitDataRequest` (validate → store in the api's `data_requests` D1 table → alert), and the
+  `dataRequestOwner` email group. The old `dataRequest` Sanity type stays read-only (deprecated). The form UI (`DataRequestForm`) lives in
   `@indiecrafts/packages-web-ui-components`.
 
 Everything is a one-line `composeStudio` contribution (`complianceSanity` in `sharedModules`).
@@ -268,19 +268,25 @@ The flow mirrors the newsletter form:
    bots. POSTs `/api/data-request`.
 2. **The route** (`src/app/api/data-request/route.ts`) — `withGuard` (origin, rate limit, body
    cap, Turnstile) → `submitDataRequest`. Gated by `features.legal.dataRequest` (404 when off).
-3. **`submitDataRequest`** (`@indiecrafts/packages-web-compliance/requests/submit`) — validates, **stores a
-   `dataRequest` record** in Sanity (the source of truth; never deduped), then sends a best-effort
-   alert to the controller. A mail failure never fails a stored request.
+3. **`submitDataRequest`** (`@indiecrafts/packages-web-compliance/requests/submit`) — validates, then
+   **stores the request** via the shared api (`POST /v1/data-request` → the `data_requests` table in
+   the main D1; the source of truth; never deduped), then sends a best-effort alert to the
+   controller. A mail failure never fails a stored request. `API_URL` / `APP_API_TOKEN` unset → the
+   route answers 500 and logs `data request write skipped`.
 
 The seven rights are the one `DATA_REQUEST_TYPES` set
 (`@indiecrafts/packages-web-compliance/requests/request-types`) — read by the form options, the validator, and
-the `dataRequest` schema, so they never drift.
+the api's allowed set (mirrored in `code/shared/api/src/data-request/route.ts`), so they never drift.
 
-**Studio.** Requests land in **Demandes RGPD** (newest first). Each carries the email, request
-type, message, and a `status` (`Nouvelle` / `En cours` / `Traitée`) — the only editable field; the
-rest is a read-only record. Act within **one month** (the legal window). The alert recipient (DPO /
-controller inbox) is set on the **E-mails** singleton → **RGPD — nouvelle demande** (`dataRequestOwner`);
-leave it off and the request is still recorded, just not emailed. `RESEND_API_KEY` powers the send.
+**Admin.** Requests land in the admin **Data requests** screen (`/data-requests`, newest first,
+last 100). Each row shows the date (UTC), the right, the email (a `mailto:` reply link), the status
+(`New` / `In progress` / `Done`), the message (an excerpt that opens to the full text), and the
+locale + source page. The screen is read-only: flip a status with `wrangler d1 execute` (command in
+the page source). Act within **one month** (the legal window). The alert recipient (DPO /
+controller inbox) is set on the **E-mails** singleton → **RGPD — nouvelle demande**
+(`dataRequestOwner`); leave it off and the request is still recorded, just not emailed.
+`RESEND_API_KEY` powers the send. The alert links `${ADMIN_URL}/data-requests` when the website's
+`ADMIN_URL` is set; without it, the alert names the screen.
 
 The privacy policy's "Your rights" section links `/data-request`; the page appears in the footer
 **Legal** column. `pnpm seed` ships demo SEO + the footer link + the linked prose.

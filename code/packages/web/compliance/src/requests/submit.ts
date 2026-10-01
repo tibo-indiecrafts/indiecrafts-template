@@ -7,7 +7,7 @@
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";
-import { site, defaultLocale } from "@indiecrafts/packages-shared-config";
+import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import { sendEmail } from "@indiecrafts/packages-web-email";
 import {
   getEmailStrings,
@@ -29,10 +29,11 @@ export { validateDataRequest } from "./validate";
  * Data-subject request — the single runtime write path for the public
  * `/data-request` form. Validates the input, then POSTs a bearer-authed request
  * to the api worker's `POST /v1/data-request` (D1) — the legal record the team
- * actions; never deduped.
+ * actions in the admin "Data requests" screen; never deduped.
  *
  * On a stored request, one best-effort owner alert may fire (configured on the
- * shared `emailStrings` entity, Studio → E-mails → "RGPD — nouvelle demande").
+ * shared `emailStrings` entity, Studio → E-mails → "RGPD — nouvelle demande"). It
+ * links the admin screen when `ADMIN_URL` is set.
  * A mail failure never turns a saved request into a 500 — the record is the
  * source of truth.
  *
@@ -55,7 +56,10 @@ export async function submitDataRequest(
 
   const url = process.env.API_URL;
   const token = process.env.APP_API_TOKEN;
-  if (!url || !token) return { ok: false, error: "server" };
+  if (!url || !token) {
+    logger.error("data request write skipped: API_URL or APP_API_TOKEN unset");
+    return { ok: false, error: "server" };
+  }
 
   try {
     const res = await fetch(`${url}/v1/data-request`, {
@@ -94,6 +98,12 @@ export async function submitDataRequest(
   }
 }
 
+/** The admin "Data requests" screen — `ADMIN_URL` is the admin surface origin. */
+export const adminReviewUrl = () => {
+  const base = process.env.ADMIN_URL?.trim().replace(/\/+$/, "");
+  return base ? `${base}/data-requests` : undefined;
+};
+
 const clean = (list?: string[] | null) =>
   (list ?? []).map((s) => s.trim()).filter(Boolean);
 
@@ -123,7 +133,7 @@ async function notifyOwner(
       email,
       message,
       source,
-      studioUrl: `${site.url}/studio`,
+      reviewUrl: adminReviewUrl(),
       subjectTemplate: cfg.subject ?? undefined,
       heading: pick(cfg.heading, defaultLocale) || undefined,
       intro: pick(cfg.intro, defaultLocale) || undefined,

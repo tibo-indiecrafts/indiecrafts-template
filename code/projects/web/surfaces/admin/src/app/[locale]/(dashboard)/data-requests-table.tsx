@@ -3,7 +3,7 @@
  *
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/data-requests-table.md
  */
-import { getTranslations } from "next-intl/server";
+import { useFormatter, useTranslations } from "next-intl";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {
   Table,
@@ -13,41 +13,47 @@ import {
   TableBody,
   TableCell,
 } from "@indiecrafts/packages-web-ui/web/table";
-
-export type DataRequestRow = {
-  id: number;
-  request_type: string;
-  email: string;
-  message: string | null;
-  status: string;
-  submitted_at: string;
-  source: string | null;
-  locale: string | null;
-};
+import type { DataRequestRow } from "@/lib/monitoring";
 
 // Table-cell excerpt, not a data-retention cap — the row's `message` can be up to
-// 4000 chars (see the api's `data_requests` schema); never render it raw here.
+// 4000 chars (see the api's `data_requests` schema). A longer one opens in place.
 const MESSAGE_EXCERPT = 80;
 
-function excerpt(message: string | null): string {
-  if (!message) return "—";
-  return message.length > MESSAGE_EXCERPT
-    ? `${message.slice(0, MESSAGE_EXCERPT)}…`
-    : message;
-}
+const TYPES = new Set([
+  "access",
+  "rectification",
+  "erasure",
+  "restriction",
+  "portability",
+  "objection",
+  "withdraw-consent",
+]);
+const STATUSES = new Set(["new", "in-progress", "done"]);
 
-// `status` is one of `new | in-progress | done` (see the api's `data_requests`
-// schema) — done is settled (outline), in-progress is active (secondary), new
-// defaults to the attention-grabbing variant.
+// done is settled (outline), in-progress is active (secondary), new defaults to the
+// attention-grabbing variant. Each badge also carries its word — never color alone.
 function statusVariant(status: string): "default" | "secondary" | "outline" {
   if (status === "done") return "outline";
   if (status === "in-progress") return "secondary";
   return "default";
 }
 
-/** Read-only GDPR data-subject-request feed (from the EU D1, via the shared api). */
-export async function DataRequestsTable({ rows }: { rows: DataRequestRow[] }) {
-  const t = await getTranslations("admin.dataRequests");
+function Message({ message }: { message: string | null }) {
+  if (!message) return <>—</>;
+  if (message.length <= MESSAGE_EXCERPT) return <>{message}</>;
+  return (
+    <details>
+      <summary className="cursor-pointer">{`${message.slice(0, MESSAGE_EXCERPT)}…`}</summary>
+      <p className="text-foreground mt-2 max-w-prose whitespace-pre-wrap">{message}</p>
+    </details>
+  );
+}
+
+/** Read-only GDPR data-subject-request feed (from the EU D1, via the shared api). An
+ *  unknown type or status (a newer api) shows its raw key rather than breaking. */
+export function DataRequestsTable({ rows }: { rows: DataRequestRow[] }) {
+  const t = useTranslations("admin.dataRequests");
+  const format = useFormatter();
   return (
     <div className="mt-6">
       <Table>
@@ -63,17 +69,28 @@ export async function DataRequestsTable({ rows }: { rows: DataRequestRow[] }) {
         </TableHeader>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.id}>
+            <TableRow key={row.id} className="align-top">
               <TableCell className="tabular-nums">
-                {new Date(row.submitted_at).toLocaleString()}
+                {format.dateTime(new Date(row.submitted_at), {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}
               </TableCell>
-              <TableCell>{row.request_type}</TableCell>
-              <TableCell>{row.email}</TableCell>
               <TableCell>
-                <Badge variant={statusVariant(row.status)}>{row.status}</Badge>
+                {TYPES.has(row.request_type) ? t(`types.${row.request_type}`) : row.request_type}
               </TableCell>
-              <TableCell className="text-muted-foreground">
-                {excerpt(row.message)}
+              <TableCell>
+                <a href={`mailto:${row.email}`} className="underline underline-offset-2">
+                  {row.email}
+                </a>
+              </TableCell>
+              <TableCell>
+                <Badge variant={statusVariant(row.status)}>
+                  {STATUSES.has(row.status) ? t(`statuses.${row.status}`) : row.status}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-muted-foreground whitespace-normal">
+                <Message message={row.message} />
               </TableCell>
               <TableCell>
                 {[row.locale, row.source].filter(Boolean).join(" · ") || "—"}

@@ -4,6 +4,9 @@ vi.mock("@indiecrafts/packages-web-email", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   sendEmail: vi.fn(),
 }));
+vi.mock("@indiecrafts/packages-shared-logger", () => ({
+  logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn() },
+}));
 vi.mock("@indiecrafts/packages-web-email/strings", () => ({
   getEmailStrings: vi.fn(async () => null),
   pick: () => undefined,
@@ -82,6 +85,35 @@ describe("submitDataRequest", () => {
     delete process.env.RESEND_API_KEY;
   });
 
+  it("links the alert to the admin data-requests screen from ADMIN_URL", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(new Response(null, { status: 201 })),
+    );
+    const { sendEmail } = await import("@indiecrafts/packages-web-email");
+    const { getEmailStrings } =
+      await import("@indiecrafts/packages-web-email/strings");
+    vi.mocked(getEmailStrings).mockResolvedValue({
+      dataRequestOwner: {
+        enabled: true,
+        to: ["dpo@example.com"],
+        from: "noreply@example.com",
+      },
+    } as never);
+    process.env.RESEND_API_KEY = "key";
+    process.env.ADMIN_URL = "https://admin.example.com/";
+    const { submitDataRequest } = await import("./submit");
+
+    await submitDataRequest(ok, "2026-08-24T00:00:00.000Z");
+
+    const sent = vi.mocked(sendEmail).mock.calls[0]![0] as { html: string };
+    expect(sent.html).toContain(
+      'href="https://admin.example.com/data-requests"',
+    );
+    delete process.env.RESEND_API_KEY;
+    delete process.env.ADMIN_URL;
+  });
+
   it('returns {ok:false, error:"server"} on a 500 without calling notifyOwner', async () => {
     vi.stubGlobal(
       "fetch",
@@ -121,6 +153,11 @@ describe("submitDataRequest", () => {
 
     expect(result).toEqual({ ok: false, error: "server" });
     expect(fetchMock).not.toHaveBeenCalled();
+    // Never silent: the operator must see why every request fails.
+    const { logger } = await import("@indiecrafts/packages-shared-logger");
+    expect(logger.error).toHaveBeenCalledWith(
+      "data request write skipped: API_URL or APP_API_TOKEN unset",
+    );
   });
 
   it("still runs validation before any network call (invalid email)", async () => {
