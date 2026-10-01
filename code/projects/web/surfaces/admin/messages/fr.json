@@ -45,7 +45,8 @@
       "revoke": "Révoquer admin",
       "granted": "Rôle accordé.",
       "revoked": "Rôle révoqué et sessions terminées.",
-      "error": "Échec de l'action."
+      "error": "Échec de l'action.",
+      "errorSelf": "Vous ne pouvez pas révoquer votre propre rôle admin. Demandez à un autre admin."
     },
     "sessions": {
       "title": "Sessions",

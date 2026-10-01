@@ -12,6 +12,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **An admin cannot revoke their own role.** `revokeAdmin` returns `self` and the form says why
+  (en/fr). The caller always stays admin, so the dashboard can never remove the last admin.
+
 ### Fixed
 
 - **A demotion is always audited.** `revokeAdmin` cleared the role, then revoked sessions, then

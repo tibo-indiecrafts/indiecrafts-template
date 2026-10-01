@@ -45,7 +45,8 @@
       "revoke": "Revoke admin",
       "granted": "Role granted.",
       "revoked": "Role revoked and sessions ended.",
-      "error": "Action failed."
+      "error": "Action failed.",
+      "errorSelf": "You can't revoke your own admin role. Ask another admin."
     },
     "sessions": {
       "title": "Sessions",

@@ -111,6 +111,14 @@ describe("revokeAdmin", () => {
     expect(clerkClientMock).not.toHaveBeenCalled();
   });
 
+  it("refuses to let an admin revoke their own role — no mutation, no audit", async () => {
+    // The caller stays admin, so revoking another admin can never leave zero admins.
+    authMock.mockResolvedValueOnce(admin);
+    expect(await revokeAdmin(ADMIN_ID)).toEqual({ ok: false, error: "self" });
+    expect(clerkClientMock).not.toHaveBeenCalled();
+    expect(auditMock).not.toHaveBeenCalled();
+  });
+
   it("clears the role, revokes live sessions, and audits", async () => {
     authMock.mockResolvedValueOnce(admin);
     getSessionList.mockResolvedValueOnce({ data: [{ id: "sess_1" }, { id: "sess_2" }] });

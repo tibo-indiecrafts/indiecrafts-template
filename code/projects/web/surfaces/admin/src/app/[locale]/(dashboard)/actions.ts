@@ -19,7 +19,7 @@ import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
  */
 type Result =
   | { ok: true }
-  | { ok: false; error: "forbidden" | "invalid_user" | "invalid_session" | "failed" };
+  | { ok: false; error: "forbidden" | "invalid_user" | "invalid_session" | "self" | "failed" };
 
 const USER_ID = /^user_[A-Za-z0-9]+$/;
 
@@ -82,6 +82,8 @@ export async function revokeAdmin(targetUserId: string): Promise<Result> {
     return { ok: false, error: "forbidden" };
   }
   if (!USER_ID.test(targetUserId)) return { ok: false, error: "invalid_user" };
+  // No self-demotion: the caller stays admin, so this action can never leave zero admins.
+  if (targetUserId === actor) return { ok: false, error: "self" };
   let client: Clerk;
   try {
     client = await clerkClient();

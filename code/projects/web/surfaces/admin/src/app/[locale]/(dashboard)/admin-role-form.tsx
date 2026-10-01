@@ -22,13 +22,13 @@ export function AdminRoleForm() {
   const [pending, start] = useTransition();
 
   const run = (
-    action: (id: string) => Promise<{ ok: boolean }>,
+    action: (id: string) => Promise<{ ok: true } | { ok: false; error: string }>,
     okKey: "granted" | "revoked",
   ) =>
     start(async () => {
       const result = await action(userId.trim());
       if (result.ok) toast.success(t(okKey));
-      else toast.error(t("error"));
+      else toast.error(t(result.error === "self" ? "errorSelf" : "error"));
     });
 
   const disabled = pending || userId.trim().length === 0;

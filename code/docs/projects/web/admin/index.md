@@ -103,7 +103,8 @@ both.
 The role grant is the crown jewel. Sign-up is open and passwordless, so `grantAdmin` is the
 only thing between a stranger and admin. It is admin-gated on the server, validates the
 target id, writes an audit row, and — on revoke — kills the target's live Clerk sessions so
-a demotion is immediate, not "eventually, when the token expires". Privileged actions log to
+a demotion is immediate, not "eventually, when the token expires". An admin cannot revoke their own
+role, so the dashboard can never demote its last admin. Privileged actions log to
 the shared audit sink (`src/lib/audit.ts`), which stores the actor id and edge country but
 no IP (GDPR data minimization), with a durable console fallback so an audit is never lost.
 
