@@ -7,6 +7,7 @@ import {
   prune,
   buildBackupRunInsert,
   recordBackupRun,
+  d1DatabaseName,
 } from "./backup-common.mjs";
 
 test("prune keeps the newest N and drops the oldest", () => {
@@ -78,4 +79,33 @@ test("recordBackupRun never throws, even when the spawn has nothing to run again
       finishedAt: "2026-08-25T00:00:01Z",
     }),
   );
+});
+
+// The backup must export the D1 the registry row names — for THIS env and THIS binding. It took
+// the first `database_name` in the file, so every "main" backup (and every staging/prod backup)
+// exported the dev audit D1 instead.
+test("d1DatabaseName picks the block for this env AND binding", () => {
+  const toml = `
+# [[d1_databases]]
+# binding = "AUDIT_DB"
+# database_name = "commented-out"
+[[env.dev.d1_databases]]
+binding = "AUDIT_DB"
+database_name = "x-dev-db-audit"
+database_id = "1"
+[[env.dev.d1_databases]]
+binding = "MAIN_DB"
+database_name = "x-dev-db-main"
+database_id = "2"
+[[env.prod.d1_databases]]
+binding = "AUDIT_DB"
+database_name = "x-prod-db-audit"
+[[env.prod.d1_databases]]
+binding = "MAIN_DB"
+database_name = "x-prod-db-main"
+`;
+  assert.equal(d1DatabaseName(toml, "dev", "MAIN_DB"), "x-dev-db-main");
+  assert.equal(d1DatabaseName(toml, "dev", "AUDIT_DB"), "x-dev-db-audit");
+  assert.equal(d1DatabaseName(toml, "prod", "MAIN_DB"), "x-prod-db-main");
+  assert.equal(d1DatabaseName(toml, "staging", "MAIN_DB"), null);
 });

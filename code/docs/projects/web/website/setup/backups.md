@@ -49,6 +49,14 @@ Sanity backup is read-only and needs `SANITY_API_READ_TOKEN`; a `d1` db needs th
 `CLOUDFLARE_API_TOKEN`. Each keeps the **last 10** local dumps per source and prunes the rest. To add a
 db (e.g. a D1), add a row to `code/shared/scripts/lib/databases.mjs` — `db:backup:all` + `db:migrate` pick it up.
 
+> **Fixed 2026-10-01 — older "main" D1 dumps are audit copies.** Until then a D1 backup exported
+> the first `database_name` in the owner's `wrangler.toml` (the dev **audit** D1), whatever the
+> registry row or env. So every `main/…` dump (manual, pre-migration and nightly) and every
+> staging/prod D1 dump before this date holds the dev audit tables, not the named database. The
+> backup now picks the `[[env.<env>.d1_databases]]` block whose `binding` matches the registry row.
+> Point-in-time recovery (`db:restore`, D1 Time Travel, 30 days) was never affected — it goes by
+> binding.
+
 ## Pre-migration snapshots
 
 `db:migrate` takes a **pre-migration R2 snapshot before every remote schema change** — a bad

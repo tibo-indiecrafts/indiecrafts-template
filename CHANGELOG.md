@@ -18,6 +18,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 
 ## [Unreleased]
 
+- **D1 backups export the right database.** `data/backup.mjs` took the first `database_name` in the
+  owner's `wrangler.toml` (the dev audit D1), so every "main" dump — manual, pre-migration and the
+  nightly run — and every staging/prod D1 dump was a copy of the dev audit D1. It now resolves the
+  `[[env.<env>.d1_databases]]` block of the registry row's binding (`d1DatabaseName`, tested). Time
+  Travel restores were unaffected (by binding). Details →
+  [Backups](./code/docs/projects/web/website/setup/backups.md).
 - **`pnpm dev` runs the Workers locally.** The api, cron and workers share one local state
   (`.wrangler/state`), so testing never writes to the shared dev D1; `pnpm db:migrate:local` sets it up
   (also run by `dev:setup`). `pnpm dev:remote` keeps the old remote mode. Plus the api's production

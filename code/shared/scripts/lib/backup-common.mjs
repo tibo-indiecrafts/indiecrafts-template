@@ -201,3 +201,21 @@ export function recordBackupRun(env, run) {
     if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
   }
 }
+
+/** The `database_name` of the `[[env.<env>.d1_databases]]` block whose `binding` matches — the
+ *  exact D1 a registry row names. Commented-out blocks are ignored. null when the env has none. */
+export function d1DatabaseName(toml, env, binding) {
+  const active = toml
+    .split("\n")
+    .filter((l) => !l.trim().startsWith("#"))
+    .join("\n");
+  for (const block of active.split(/^\s*\[\[/m).slice(1)) {
+    if (!block.startsWith(`env.${env}.d1_databases]]`)) continue;
+    const b = block.match(/^\s*binding\s*=\s*["']([^"']+)["']/m)?.[1];
+    if (b === binding)
+      return (
+        block.match(/^\s*database_name\s*=\s*["']([^"']+)["']/m)?.[1] ?? null
+      );
+  }
+  return null;
+}

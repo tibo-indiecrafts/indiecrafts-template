@@ -25,6 +25,7 @@ import {
   uploadToR2,
   prune,
   recordBackupRun,
+  d1DatabaseName,
 } from "../lib/backup-common.mjs";
 
 // Resolve everything from the repo root (this file is <root>/scripts/backup-db.mjs),
@@ -97,7 +98,8 @@ for (const db of targets) {
   try {
     let result;
     if (db.kind === "sanity") result = backupSanity(env, remote, db.name);
-    else if (db.kind === "d1") result = backupD1(env, remote, db.name);
+    else if (db.kind === "d1")
+      result = backupD1(env, remote, db.name, db.binding);
     else {
       console.log(`  – "${db.kind}" backup not wired yet (reserved). Skipped.`);
       continue;
@@ -134,17 +136,16 @@ process.exit(failed ? 1 : 0);
 // ── recipes (cwd = owner dir) ─────────────────────────────────────────────────
 // Local dumps + the R2 key are laid out per registry db `name` (`<name>/<env>/…`), so
 // backups stay one-folder-per-db as more databases are added.
-function backupD1(env, remote, name) {
-  const active = readFileSync(path.resolve("wrangler.toml"), "utf8")
-    .split("\n")
-    .filter((l) => !l.trim().startsWith("#"))
-    .join("\n");
-  const dbName = /\[\[(?:env\.[a-z]+\.)?d1_databases\]\]/.test(active)
-    ? active.match(/database_name\s*=\s*["']([^"']+)["']/)?.[1]
-    : null;
+function backupD1(env, remote, name, binding) {
+  // The D1 of THIS env and THIS binding — never just the first database_name in the file.
+  const dbName = d1DatabaseName(
+    readFileSync(path.resolve("wrangler.toml"), "utf8"),
+    env,
+    binding,
+  );
   if (!dbName) {
     console.log(
-      "  D1 not configured (no active [[d1_databases]]). Nothing to back up.",
+      `  D1 not configured (no [[env.${env}.d1_databases]] with binding ${binding}). Nothing to back up.`,
     );
     return { r2Key: null, bytes: null };
   }
