@@ -141,6 +141,15 @@ describe("scheduled() — retention purge (data_requests + erasure_requests)", (
     )
       .bind(recentDataRequestAt)
       .run();
+    // Its operator history must go with it (data_request_events, ON DELETE CASCADE).
+    const old = await env.MAIN_DB.prepare(
+      "SELECT id FROM data_requests WHERE email = 'old-dsar@example.com'",
+    ).first<{ id: number }>();
+    await env.MAIN_DB.prepare(
+      "INSERT INTO data_request_events (request_id, status, actor, at) VALUES (?, 'done', 'user_a', ?)",
+    )
+      .bind(old!.id, oldDataRequestAt)
+      .run();
 
     await runTick();
 
@@ -148,6 +157,13 @@ describe("scheduled() — retention purge (data_requests + erasure_requests)", (
       await env.MAIN_DB.prepare(
         "SELECT id FROM data_requests WHERE email = 'old-dsar@example.com'",
       ).first(),
+    ).toBeNull();
+    expect(
+      await env.MAIN_DB.prepare(
+        "SELECT id FROM data_request_events WHERE request_id = ?",
+      )
+        .bind(old!.id)
+        .first(),
     ).toBeNull();
     expect(
       await env.MAIN_DB.prepare(
