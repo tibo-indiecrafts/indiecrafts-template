@@ -3,7 +3,7 @@
  *
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/csp/page.md
  */
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {
@@ -58,6 +58,7 @@ export default async function CspPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("admin.csp");
+  const format = await getFormatter();
   const rows = await fetchCspReports();
 
   return (
@@ -101,7 +102,12 @@ export default async function CspPage({
                       {row.blocked_source}
                     </TableCell>
                     <TableCell>{row.surface}</TableCell>
-                    <TableCell className="tabular-nums">{row.last_seen}</TableCell>
+                    <TableCell className="tabular-nums">
+                      {format.dateTime(new Date(row.last_seen), {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      })}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

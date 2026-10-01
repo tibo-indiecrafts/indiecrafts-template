@@ -14,6 +14,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **CSP reports show "last seen" in the operator's locale.** The column printed the raw ISO
+  timestamp; it now uses the locale date and time format (UTC), like the data-request pages.
 - **Per-env origins are `wrangler.toml` vars.** `API_URL`, `WEBSITE_URL` and `APP_URL` are set
   for dev and staging (prod commented). The deploy's secret sync had pushed their local
   `localhost` values as secrets; it now skips keys set as vars.
