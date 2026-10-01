@@ -16,7 +16,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 - **A demotion is always audited.** `revokeAdmin` cleared the role, then revoked sessions, then
   wrote the audit row — a failed revoke skipped the audit. It now audits as soon as the role is
-  cleared. "Sign out everywhere" tries every session and audits a partial run. A malformed session
+  cleared. "Sign out everywhere" tries every session, audits a partial run, and writes no row
+  when nothing was revoked. Both read up to 500 sessions — Clerk's default page of 10 left an 11th
+  device signed in while the action reported success. A malformed session
   id now returns `invalid_session`, not `invalid_user`.
 - **Times and sizes follow the admin locale.** The sessions, security, users, backups, erasure and
   cron screens printed raw ISO strings or `toLocaleString` output (the server's locale and the

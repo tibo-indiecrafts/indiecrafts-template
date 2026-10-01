@@ -118,7 +118,8 @@ describe("revokeAdmin", () => {
     expect(updateUserMetadata).toHaveBeenCalledWith(TARGET_ID, {
       publicMetadata: { role: null },
     });
-    expect(getSessionList).toHaveBeenCalledWith({ userId: TARGET_ID, status: "active" });
+    // Clerk pages at 10 by default — ask for the max so no session is left signed in.
+    expect(getSessionList).toHaveBeenCalledWith({ userId: TARGET_ID, status: "active", limit: 500 });
     expect(revokeSessionApi).toHaveBeenCalledWith("sess_1");
     expect(revokeSessionApi).toHaveBeenCalledWith("sess_2");
     expect(auditMock).toHaveBeenCalledWith("admin.revoke", {
@@ -190,7 +191,8 @@ describe("revokeUserSessions", () => {
     authMock.mockResolvedValueOnce(admin);
     getSessionList.mockResolvedValueOnce({ data: [{ id: "sess_1" }, { id: "sess_2" }] });
     expect(await revokeUserSessions(TARGET_ID)).toEqual({ ok: true });
-    expect(getSessionList).toHaveBeenCalledWith({ userId: TARGET_ID, status: "active" });
+    // Clerk pages at 10 by default — ask for the max so no session is left signed in.
+    expect(getSessionList).toHaveBeenCalledWith({ userId: TARGET_ID, status: "active", limit: 500 });
     expect(revokeSessionApi).toHaveBeenCalledWith("sess_1");
     expect(revokeSessionApi).toHaveBeenCalledWith("sess_2");
     expect(auditMock).toHaveBeenCalledWith("admin.revoke_user_sessions", {
@@ -209,6 +211,22 @@ describe("revokeUserSessions", () => {
       actor: ADMIN_ID,
       target: TARGET_ID,
     });
+  });
+});
+
+describe("revokeUserSessions — nothing revoked", () => {
+  it("does not audit when every revoke fails", async () => {
+    authMock.mockResolvedValueOnce(admin);
+    getSessionList.mockResolvedValueOnce({ data: [{ id: "sess_1" }] });
+    revokeSessionApi.mockRejectedValueOnce(new Error("clerk 500"));
+    expect(await revokeUserSessions(TARGET_ID)).toEqual({ ok: false, error: "failed" });
+    expect(auditMock).not.toHaveBeenCalled();
+  });
+
+  it("does not audit when the user has no live session", async () => {
+    authMock.mockResolvedValueOnce(admin);
+    expect(await revokeUserSessions(TARGET_ID)).toEqual({ ok: true });
+    expect(auditMock).not.toHaveBeenCalled();
   });
 });
 

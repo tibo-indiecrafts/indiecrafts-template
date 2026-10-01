@@ -25,14 +25,26 @@ const USER_ID = /^user_[A-Za-z0-9]+$/;
 
 type Clerk = Awaited<ReturnType<typeof clerkClient>>;
 
+// Clerk pages session lists at 10 by default; 500 is its max.
+// ponytail: one page — a user with > 500 live sessions keeps the rest; page with `offset` if that ever happens.
+const SESSION_LIMIT = 500;
+
 /** Revoke every active session of a user. Tries them all, even when one fails, and
- *  reports whether all succeeded — the caller audits either way. */
-async function revokeActiveSessions(client: Clerk, userId: string): Promise<boolean> {
-  const { data } = await client.sessions.getSessionList({ userId, status: "active" });
+ *  counts the revoked ones, so the caller audits only a real change. */
+async function revokeActiveSessions(
+  client: Clerk,
+  userId: string,
+): Promise<{ revoked: number; total: number }> {
+  const { data } = await client.sessions.getSessionList({
+    userId,
+    status: "active",
+    limit: SESSION_LIMIT,
+  });
   const results = await Promise.allSettled(
     data.map((s) => client.sessions.revokeSession(s.id)),
   );
-  return results.every((r) => r.status === "fulfilled");
+  const revoked = results.filter((r) => r.status === "fulfilled").length;
+  return { revoked, total: data.length };
 }
 
 /** The caller must be a signed-in admin (checked on the server, never trusted from the client). */
@@ -84,9 +96,8 @@ export async function revokeAdmin(targetUserId: string): Promise<Result> {
   await audit("admin.revoke", { actor, target: targetUserId });
   // Revoke live sessions so the demotion takes effect now, not on next refresh.
   try {
-    return (await revokeActiveSessions(client, targetUserId))
-      ? { ok: true }
-      : { ok: false, error: "failed" };
+    const { revoked, total } = await revokeActiveSessions(client, targetUserId);
+    return revoked === total ? { ok: true } : { ok: false, error: "failed" };
   } catch {
     return { ok: false, error: "failed" };
   }
@@ -118,6 +129,7 @@ export async function listUserSessions(userId: string): Promise<LiveSession[]> {
     const { data } = await client.sessions.getSessionList({
       userId,
       status: "active",
+      limit: SESSION_LIMIT,
     });
     return data.map((s) => ({
       id: s.id,
@@ -162,16 +174,17 @@ export async function revokeUserSessions(userId: string): Promise<Result> {
     return { ok: false, error: "forbidden" };
   }
   if (!USER_ID.test(userId)) return { ok: false, error: "invalid_user" };
-  let allRevoked: boolean;
+  let run: { revoked: number; total: number };
   try {
-    allRevoked = await revokeActiveSessions(await clerkClient(), userId);
+    run = await revokeActiveSessions(await clerkClient(), userId);
   } catch {
     // The session list failed — nothing was revoked, so there is nothing to audit.
     return { ok: false, error: "failed" };
   }
-  // Audit even a partial run: some sessions may already be gone.
-  await audit("admin.revoke_user_sessions", { actor, target: userId });
-  return allRevoked ? { ok: true } : { ok: false, error: "failed" };
+  // Audit any real sign-out, even a partial run; nothing revoked → no audit row.
+  if (run.revoked > 0)
+    await audit("admin.revoke_user_sessions", { actor, target: userId });
+  return run.revoked === run.total ? { ok: true } : { ok: false, error: "failed" };
 }
 
 /** Write one operational setting (`GET/PUT /v1/settings`). The api itself validates
