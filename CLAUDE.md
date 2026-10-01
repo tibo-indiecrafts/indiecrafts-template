@@ -34,6 +34,7 @@ Run scripts from the repo root. `pnpm build/tsc/lint/…` fan out via turbo; `pn
 ## Working principles
 
 Guardrails against common LLM coding mistakes — bias to caution over speed (use judgment on trivial tasks).
+Source: Andrej Karpathy's LLM-coding guidelines (the `andrej-karpathy-skills` CLAUDE.md). They work when diffs hold fewer unneeded changes, fewer rewrites come from overcomplication, and questions come before the code, not after the mistake.
 
 **1. Think before coding.** State assumptions; if uncertain, ask. Multiple interpretations → present them, don't pick silently. Simpler approach exists → say so, push back when warranted. Unclear → stop, name it, ask.
 
