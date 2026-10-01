@@ -19,6 +19,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **`API_URL` is a per-env var; the manual secret sync is the deploy's own.** `API_URL` moved to
+  `wrangler.toml` (dev, staging; prod commented): a synced secret carried the local
+  `localhost` value. `secrets:sync:website:<env>` now runs the shared `data/secrets.mjs`; the
+  legacy `scripts/sync-secrets.mjs` (which read the dev file for staging/prod) is deleted.
+
 - **`ADMIN_URL` for the GDPR request alert.** Set per env in `wrangler.toml` (dev, staging; prod
   commented) and listed in `.env.example`, so the owner alert links the admin "Data requests"
   screen. `.env.example` also says that `APP_API_TOKEN` is needed for `/data-request` to store requests.

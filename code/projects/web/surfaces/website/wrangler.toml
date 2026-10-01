@@ -101,6 +101,8 @@ workers_dev = true
 [env.dev.vars]
 # Non-production → robots.txt serves Disallow (see @indiecrafts/packages-shared-config env logic).
 NEXT_PUBLIC_ENVIRONMENT = "development"
+# Per-env origins (config, not secrets — the secret sync skips keys set here).
+API_URL = "https://indiecrafts-dev-shared-api.thibault-montaufray.workers.dev"
 # Admin origin — the GDPR request owner alert links `${ADMIN_URL}/data-requests`.
 ADMIN_URL = "https://indiecrafts-dev-web-surfaces-admin.thibault-montaufray.workers.dev"
 # First-party asset CDN for this env (→ Next `assetPrefix`; empty = serve from origin).
@@ -128,6 +130,7 @@ workers_dev = true
 
 [env.staging.vars]
 NEXT_PUBLIC_ENVIRONMENT = "staging"
+API_URL = "https://indiecrafts-staging-shared-api.thibault-montaufray.workers.dev"
 ADMIN_URL = "https://indiecrafts-staging-web-surfaces-admin.thibault-montaufray.workers.dev"
 # First-party asset CDN for this env (→ Next `assetPrefix`). Set it in the deploy env too.
 # NEXT_PUBLIC_CDN_URL = "https://cdn-staging.your-domain.com"
@@ -157,6 +160,7 @@ NEXT_PUBLIC_ENVIRONMENT = "production"
 # a safe default for an unconfigured prod).
 # NEXT_PUBLIC_SITE_URL = "https://your-domain.com"
 # Admin origin for the GDPR request owner alert link (unset → the alert names the screen).
+# API_URL = "https://api.your-domain.com"
 # ADMIN_URL = "https://admin.your-domain.com"
 # First-party asset CDN for prod (→ Next `assetPrefix`). Set it in the deploy env too.
 # NEXT_PUBLIC_CDN_URL = "https://cdn.your-domain.com"

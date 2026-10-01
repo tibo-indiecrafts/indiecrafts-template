@@ -61,16 +61,16 @@ Full model → the [`code/shared/db` brief](/.claude/CLAUDE).
    `/api/*` (Terraform) is a separate edge layer; the KV limiter is the app's own guarantee, independent
    of Terraform.
 4. **Worker secrets** — per env (runtime server tokens; never in `wrangler.toml`). Fill
-   `code/projects/web/surfaces/website/.dev.vars` (from `.dev.vars.example`), then **bulk-push** them:
+   `code/projects/web/surfaces/website/.env.local` (dev; from `.env.example`), then **bulk-push** them:
    ```bash
-   pnpm secrets:sync:web:website:dev        # reads .dev.vars → `wrangler secret bulk` on the dev Worker
+   pnpm secrets:sync:web:website:dev        # reads .env.local → `wrangler secret bulk` on the dev Worker
    pnpm secrets:sync:web:website:staging
    pnpm secrets:sync:web:website:prod
    ```
    It skips `NEXT_PUBLIC_*` + unfilled placeholders. **The deploy auto-syncs secrets** — after
-   `wrangler deploy`, `secrets.mjs` bulk-pushes every secret the app's `.dev.vars.example`
-   declares, sourced from the local `.dev.vars` OR, in CI, the matching **GitHub Environment
-   Secrets** — so `pnpm deploy:<app>:<env>` and a CI deploy both set them, no manual step.
+   `wrangler deploy`, `secrets.mjs` bulk-pushes every secret in the local file (`.dev.vars`, else
+   `.env.local`) — or, in CI, every key the app's `.dev.vars.example` / `.env.example` declares,
+   from the matching **GitHub Environment Secrets** — so `pnpm deploy:<app>:<env>` and a CI deploy both set them, no manual step.
    Locally, `.dev.vars` feeds **dev only**; a hand-run staging/prod deploy reads `.dev.vars.staging`
    / `.dev.vars.prod` (gitignored) and never falls back to the dev file. In CI each Environment
    holds its own value. Either way a per-env secret like `GDPR_FINGERPRINT_SALT` stays DISTINCT per

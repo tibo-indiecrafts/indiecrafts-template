@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Manage GDPR_FINGERPRINT_SALT on the api worker. Mirrors the per-app
-// wrangler-secret pattern (sync-secrets.mjs). Cloudflare never returns secret
+// wrangler-secret pattern (data/secrets.mjs). Cloudflare never returns secret
 // values, so status/verify confirm PRESENCE only.
 //
 // Usage:

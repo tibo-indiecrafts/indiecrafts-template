@@ -19,8 +19,27 @@ invocation_logs = true
 [env.dev]
 name = "indiecrafts-dev-web-surfaces-admin"
 
+[env.dev.vars]
+# Per-env origins (config, not secrets — the secret sync skips keys set here). The System
+# page probes WEBSITE_URL / APP_URL.
+API_URL = "https://indiecrafts-dev-shared-api.thibault-montaufray.workers.dev"
+WEBSITE_URL = "https://indiecrafts-dev-web-surfaces-website.thibault-montaufray.workers.dev"
+APP_URL = "https://indiecrafts-dev-web-surfaces-app.thibault-montaufray.workers.dev"
+
 [env.staging]
 name = "indiecrafts-staging-web-surfaces-admin"
 
+[env.staging.vars]
+# Per-env origins (config, not secrets — the secret sync skips keys set here). The System
+# page probes WEBSITE_URL / APP_URL.
+API_URL = "https://indiecrafts-staging-shared-api.thibault-montaufray.workers.dev"
+WEBSITE_URL = "https://indiecrafts-staging-web-surfaces-website.thibault-montaufray.workers.dev"
+APP_URL = "https://indiecrafts-staging-web-surfaces-app.thibault-montaufray.workers.dev"
+
 [env.prod]
 name = "indiecrafts-prod-web-surfaces-admin"
+
+# [env.prod.vars]
+# API_URL = "https://api.your-domain.com"
+# WEBSITE_URL = "https://your-domain.com"
+# APP_URL = "https://app.your-domain.com"

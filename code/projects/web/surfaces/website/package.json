@@ -39,9 +39,9 @@
     "deploy:website:dev": "node ../../../../shared/scripts/deploy/next.mjs website dev",
     "deploy:website:staging": "node ../../../../shared/scripts/deploy/next.mjs website staging",
     "deploy:website:prod": "node ../../../../shared/scripts/deploy/next.mjs website prod",
-    "secrets:sync:website:dev": "node scripts/sync-secrets.mjs dev",
-    "secrets:sync:website:staging": "node scripts/sync-secrets.mjs staging",
-    "secrets:sync:website:prod": "node scripts/sync-secrets.mjs prod",
+    "secrets:sync:website:dev": "node ../../../../shared/scripts/data/secrets.mjs website dev",
+    "secrets:sync:website:staging": "node ../../../../shared/scripts/data/secrets.mjs website staging",
+    "secrets:sync:website:prod": "node ../../../../shared/scripts/data/secrets.mjs website prod",
     "prepare": "",
     "size": "node scripts/check-bundle-size.mjs"
   },

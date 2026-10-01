@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { declaredKeys, collectSecrets, secretsFileFor } from "./secrets.mjs";
+import {
+  declaredKeys,
+  collectSecrets,
+  secretsFileFor,
+  registryFiles,
+  wranglerVarKeys,
+} from "./secrets.mjs";
 
 test("declaredKeys reads keys incl. commented; skips NEXT_PUBLIC_", () => {
   const example = [
@@ -38,9 +44,12 @@ test("collectSecrets: the file wins, then the env fills declared keys", () => {
 });
 
 test("collectSecrets skips empty, placeholder, and NEXT_PUBLIC_ values", () => {
-  const example = ['# IP_HASH_SALT=""', '# PII_ENCRYPTION_KEY=""'].join("\n");
+  const example = [
+    '# IP_HASH_SALT=""',
+    '# PII_ENCRYPTION_KEY=""',
+    '# GDPR_FINGERPRINT_SALT=""',
+  ].join("\n");
   const env = { IP_HASH_SALT: "", PII_ENCRYPTION_KEY: "your_key_here" };
-  // A file key not in the example still syncs (backward compatible); a public var never does.
   const devVars =
     "NEXT_PUBLIC_API_URL=https://x\nGDPR_FINGERPRINT_SALT=real-salt";
   const s = collectSecrets(devVars, example, env);
@@ -48,6 +57,15 @@ test("collectSecrets skips empty, placeholder, and NEXT_PUBLIC_ values", () => {
   assert.equal(s.PII_ENCRYPTION_KEY, undefined); // placeholder
   assert.equal(s.NEXT_PUBLIC_API_URL, undefined); // public build var
   assert.equal(s.GDPR_FINGERPRINT_SALT, "real-salt");
+});
+
+test("collectSecrets never syncs an undeclared local key (a tool key, a local-only URL)", () => {
+  const example = '# APP_API_TOKEN=""';
+  const devVars =
+    "APP_API_TOKEN=t\nTAILARK_API_KEY=tool\nAGENT_URL=http://localhost:9";
+  assert.deepEqual(collectSecrets(devVars, example, {}), {
+    APP_API_TOKEN: "t",
+  });
 });
 
 test("collectSecrets works from the env alone (no local file — the CI case)", () => {
@@ -78,4 +96,40 @@ test("secretsFileFor: dev reads .dev.vars; staging/prod never fall back to the d
     secretsFileFor("staging", has(".dev.vars.staging")),
     ".dev.vars.staging",
   );
+});
+
+test("registryFiles: a Next app's .env.example declares its secrets too (CI path)", () => {
+  const has =
+    (...files) =>
+    (f) =>
+      files.includes(f);
+  assert.deepEqual(registryFiles(has(".dev.vars.example")), [
+    ".dev.vars.example",
+  ]);
+  assert.deepEqual(registryFiles(has(".env.example")), [".env.example"]);
+  assert.deepEqual(registryFiles(has(".dev.vars.example", ".env.example")), [
+    ".dev.vars.example",
+    ".env.example",
+  ]);
+  assert.deepEqual(registryFiles(has()), []);
+});
+
+test("wranglerVarKeys: the keys a wrangler env sets as plain vars (never synced as secrets)", () => {
+  const toml = [
+    "[vars]",
+    'TOP = "x"',
+    "[env.dev]",
+    'name = "w"',
+    "[env.dev.vars]",
+    "# a comment",
+    'API_URL = "https://api.dev"',
+    'ADMIN_URL = "https://admin.dev"',
+    "[[env.dev.r2_buckets]]",
+    'binding = "B"',
+    "[env.staging.vars]",
+    'API_URL = "https://api.staging"',
+  ].join("\n");
+  assert.deepEqual([...wranglerVarKeys(toml, "dev")], ["API_URL", "ADMIN_URL"]);
+  assert.deepEqual([...wranglerVarKeys(toml, "staging")], ["API_URL"]);
+  assert.deepEqual([...wranglerVarKeys(toml, "prod")], []);
 });

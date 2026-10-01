@@ -14,6 +14,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **Per-env origins are `wrangler.toml` vars.** `API_URL`, `WEBSITE_URL` and `APP_URL` are set
+  for dev and staging (prod commented). The deploy's secret sync had pushed their local
+  `localhost` values as secrets; it now skips keys set as vars.
+
 - **Data requests screen is exact.** A failed api read now shows an error alert instead of "No data
   requests recorded yet". The right and the status read as words (en/fr), not raw keys. The email is
   a `mailto:` reply link. A long message opens to its full text (before, only 80 characters showed).

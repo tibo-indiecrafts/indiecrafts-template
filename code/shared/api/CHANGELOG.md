@@ -7,6 +7,13 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The secret sync pushes only real secrets, for every app.** `secrets.mjs` now (1) reads both
+  key registries, `.dev.vars.example` and `.env.example`, so a CI deploy of the website, admin or
+  app syncs their declared secrets (it read only `.dev.vars.example`, which the Next apps lack or
+  keep partial); (2) syncs a local key only when a registry declares it, so a dev tool key or a
+  local-only URL never reaches a Worker; (3) skips any key `wrangler.toml` sets as a var for the
+  target env, so a local `API_URL=http://localhost:8787` never overwrites the per-env origin.
+
 - **A hand-run staging/prod deploy no longer pushes the dev secrets.** `secrets.mjs` read the
   local `.dev.vars` for every env, so `pnpm deploy:shared:api:prod` would have synced the dev
   Clerk key and the dev `GDPR_FINGERPRINT_SALT` to prod. Staging/prod now read only

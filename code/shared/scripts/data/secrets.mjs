@@ -1,6 +1,6 @@
 // Sync a Worker's secrets to a Cloudflare env via `wrangler secret bulk`. Registry-driven:
-// the KEYS are the app's `.dev.vars.example`; the VALUES come from the gitignored `.dev.vars`
-// (dev) or `.dev.vars.<staging|prod>` (a hand-run staging/prod deploy) OR `process.env` (CI — the deploy workflow injects them from the matching
+// the KEYS are the app's `.dev.vars.example` + `.env.example` (a Next app declares there);
+// the VALUES come from the gitignored `.dev.vars` (dev) or `.dev.vars.<staging|prod>` (a hand-run staging/prod deploy) OR `process.env` (CI — the deploy workflow injects them from the matching
 // GitHub Environment's Secrets). So `pnpm deploy:<app>:<env>` auto-syncs secrets in BOTH
 // places. Run from the app dir via its `secrets:sync:<app>:<env>` script, so `.dev.vars` +
 // `wrangler` resolve against that Worker.
@@ -34,11 +34,12 @@ export function declaredKeys(exampleText) {
   return keys;
 }
 
-/** The real secret values to sync: every `KEY=value` in the local file, PLUS any DECLARED
- *  (`.dev.vars.example`) key present in `env` (the CI path). The file wins over the env.
- *  Skips `NEXT_PUBLIC_*`, empty values, and `your_*` / `*_here` placeholders. An undeclared
- *  env var is never synced. Pure — unit-testable. */
+/** The real secret values to sync: each DECLARED key (the registry files) with a value in the
+ *  local file or, failing that, in `env` (the CI path). The file wins over the env. Skips
+ *  `NEXT_PUBLIC_*`, empty values, and `your_*` / `*_here` placeholders. An undeclared key —
+ *  a dev tool key, a local-only URL — is never synced, from either source. Pure. */
 export function collectSecrets(devVarsText, exampleText, env = {}) {
+  const declared = declaredKeys(exampleText);
   const secrets = {};
   const take = (key, raw) => {
     if (key.startsWith("NEXT_PUBLIC_")) return;
@@ -48,13 +49,13 @@ export function collectSecrets(devVarsText, exampleText, env = {}) {
     if (!val || PLACEHOLDER.test(val)) return;
     secrets[key] = val;
   };
-  // 1. Local file (.dev.vars / .env.local) — the dev source (unchanged behaviour).
+  // 1. Local file (.dev.vars / .env.local) — the dev source, declared keys only.
   for (const line of (devVarsText ?? "").split("\n")) {
     const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
-    if (m) take(m[1], m[2]);
+    if (m && declared.has(m[1])) take(m[1], m[2]);
   }
   // 2. process.env — declared secret keys not already sourced from the file (the CI path).
-  for (const key of declaredKeys(exampleText)) {
+  for (const key of declared) {
     if (!(key in secrets)) take(key, env[key]);
   }
   return secrets;
@@ -68,6 +69,30 @@ export function secretsFileFor(env, exists) {
     return exists(`.dev.vars.${env}`) ? `.dev.vars.${env}` : null;
   if (exists(".dev.vars")) return ".dev.vars";
   return exists(".env.local") ? ".env.local" : null;
+}
+
+/** The committed key registries an app has: a Worker declares secrets in `.dev.vars.example`,
+ *  a Next app in `.env.example` (some have both). Their union is what CI may sync. Pure. */
+export function registryFiles(exists) {
+  return [".dev.vars.example", ".env.example"].filter((f) => exists(f));
+}
+
+/** The keys `wrangler.toml` sets as plain vars under `[env.<env>.vars]`. Those are per-env
+ *  config (API_URL, ADMIN_URL…), not secrets: a local value (e.g. `localhost`) must never be
+ *  pushed over them, and a secret of the same name would clash with the var. Pure. */
+export function wranglerVarKeys(tomlText, env) {
+  const keys = new Set();
+  let inVars = false;
+  for (const line of (tomlText ?? "").split("\n")) {
+    const header = line.match(/^\s*\[+([^\]]+)\]+/);
+    if (header) {
+      inVars = header[1].trim() === `env.${env}.vars`;
+      continue;
+    }
+    const m = inVars && line.match(/^\s*([A-Z0-9_]+)\s*=/);
+    if (m) keys.add(m[1]);
+  }
+  return keys;
 }
 
 async function main() {
@@ -90,10 +115,14 @@ async function main() {
 
   const fileSrc = secretsFileFor(env, existsSync);
   const devVarsText = fileSrc ? readFileSync(fileSrc, "utf8") : "";
-  const exampleText = existsSync(".dev.vars.example")
-    ? readFileSync(".dev.vars.example", "utf8")
-    : "";
+  const exampleText = registryFiles(existsSync)
+    .map((f) => readFileSync(f, "utf8"))
+    .join("\n");
   const secrets = collectSecrets(devVarsText, exampleText, process.env);
+  const vars = existsSync("wrangler.toml")
+    ? wranglerVarKeys(readFileSync("wrangler.toml", "utf8"), env)
+    : new Set();
+  for (const key of vars) delete secrets[key];
 
   const keys = Object.keys(secrets);
   if (keys.length === 0) {
