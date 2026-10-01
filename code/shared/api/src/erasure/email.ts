@@ -53,7 +53,7 @@ type ErasureEmailStrings = {
 };
 
 /** Escape untrusted text before interpolating it into an HTML body. */
-function escapeHtml(value: string): string {
+export function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -113,14 +113,14 @@ export async function readProfileLocale(
   }
 }
 
-/** Mirrors `fetchAnnouncementDocs` (`index.ts`) — raw GROQ-over-HTTP, same
- *  `apicdn`/`api` host branch, same already-declared Env vars, no new deps.
- *  MUST NOT throw: an unset/unreachable Sanity must never block a mandatory
- *  erasure email, so every failure resolves to `null` and callers fall back
- *  to hard-coded English. */
-async function fetchErasureEmailStrings(
+/** One `emailStrings` projection over raw GROQ-HTTP — mirrors `fetchAnnouncementDocs`
+ *  (`index.ts`): same `apicdn`/`api` host branch, same Env vars, no new deps. MUST NOT
+ *  throw: an unset/unreachable Sanity must never block an email, so every failure resolves
+ *  to `null` and callers fall back to their built-in copy. */
+export async function fetchEmailStrings<T>(
   env: MailEnv,
-): Promise<ErasureEmailStrings | null> {
+  projection: string,
+): Promise<T | null> {
   if (!env.SANITY_PROJECT_ID || !env.SANITY_DATASET) return null;
   try {
     const version = env.SANITY_API_VERSION || "2025-01-01";
@@ -128,19 +128,28 @@ async function fetchErasureEmailStrings(
     const host = token
       ? `${env.SANITY_PROJECT_ID}.api.sanity.io`
       : `${env.SANITY_PROJECT_ID}.apicdn.sanity.io`;
-    const query =
-      '*[_type=="emailStrings"][0]{ erasureToken{enabled,subject,heading,intro,buttonLabel,outro}, erasureComplete{enabled,subject,heading,intro,outro}, supportEmail, bccAll }';
+    const query = `*[_type=="emailStrings"][0]${projection}`;
     const endpoint = `https://${host}/v${version}/data/query/${env.SANITY_DATASET}?query=${encodeURIComponent(query)}`;
     const res = await fetchWithTimeout(
       endpoint,
       token ? { headers: { authorization: `Bearer ${token}` } } : undefined,
     );
     if (!res.ok) return null;
-    const body = (await res.json()) as { result?: ErasureEmailStrings };
+    const body = (await res.json()) as { result?: T };
     return body.result ?? null;
   } catch {
     return null;
   }
+}
+
+/** The erasure flow's copy: both groups + the global support / bcc addresses. */
+function fetchErasureEmailStrings(
+  env: MailEnv,
+): Promise<ErasureEmailStrings | null> {
+  return fetchEmailStrings<ErasureEmailStrings>(
+    env,
+    "{ erasureToken{enabled,subject,heading,intro,buttonLabel,outro}, erasureComplete{enabled,subject,heading,intro,outro}, supportEmail, bccAll }",
+  );
 }
 
 export async function resend(
