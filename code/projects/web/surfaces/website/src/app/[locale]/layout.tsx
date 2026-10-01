@@ -45,6 +45,7 @@ import { LEGAL_ACK_COOKIE } from "@indiecrafts/packages-web-compliance/reaccepta
 import { SanityLive } from "@indiecrafts/packages-web-sanity/live";
 import { UpdatePrompt } from "@indiecrafts/packages-web-version/update-prompt";
 import { buildInfo } from "@/lib/build-info";
+import { NonceProvider } from "@indiecrafts/packages-web-ui-components/web/content/nonce";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -215,95 +216,97 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
           ) : null}
         </head>
         <body className="bg-background text-foreground flex min-h-screen flex-col">
-          <ThemeProvider
-            nonce={nonce}
-            {...themeProviderProps(resolveThemeConfig(settings.themeModes))}
-          >
-            <NextIntlClientProvider messages={messages} locale={locale}>
-              <LocaleSwitchBoundary>
-                {children}
-                {/* Inside the intl provider — CookieBanner is a client component that
+          <NonceProvider nonce={nonce}>
+            <ThemeProvider
+              nonce={nonce}
+              {...themeProviderProps(resolveThemeConfig(settings.themeModes))}
+            >
+              <NextIntlClientProvider messages={messages} locale={locale}>
+                <LocaleSwitchBoundary>
+                  {children}
+                  {/* Inside the intl provider — CookieBanner is a client component that
                 calls `useTranslations`, so it needs the context here. */}
-                {settings.analytics.requireCookieConsent ? (
-                  <CookieBanner
-                    categories={cookieConsent.categories}
-                    version={cookieConsent.version}
-                    title={cookieConsent.banner.title}
-                    body={cookieConsent.banner.body}
-                    mode={consentMode}
-                    gpcSignal={gpcSignal}
-                  />
-                ) : (
-                  // `requireCookieConsent` is off, so `CookieBanner` (which also mounts
-                  // the preferences dialog) isn't rendered. A visitor still needs a
-                  // *working* manage-preferences entry point regardless of consent mode
-                  // (the footer "Do Not Sell" link for opt-out, or `ManagePreferencesButton`
-                  // on `/account` for any mode) — mount just the dialog + its
-                  // `openPreferences()` listener, with no blocking banner.
-                  <CookiePreferencesHost
-                    categories={cookieConsent.categories}
-                    version={cookieConsent.version}
-                  />
-                )}
-                {/* "Policies updated — please Accept" banner. Copy edited per language
-                in Sanity (`legalConsent`); version = the tracked legal pages'
-                lastUpdated. Server-gated on the deposited cookie; no fallback. */}
-                {legal.version &&
-                legal.message &&
-                legal.acceptLabel &&
-                legalAck !== legal.version ? (
-                  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
-                    // Signed-in visitors sync acceptance across surfaces (app · mobile)
-                    // via the api Worker; signed-out falls back to the cookie deposit.
-                    <SignedInLegalNotice
-                      version={legal.version}
-                      message={legal.message}
-                      hrefs={legalHrefs}
-                      acceptLabel={legal.acceptLabel}
-                      apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
+                  {settings.analytics.requireCookieConsent ? (
+                    <CookieBanner
+                      categories={cookieConsent.categories}
+                      version={cookieConsent.version}
+                      title={cookieConsent.banner.title}
+                      body={cookieConsent.banner.body}
+                      mode={consentMode}
+                      gpcSignal={gpcSignal}
                     />
                   ) : (
-                    <LegalNotice
-                      version={legal.version}
-                      message={legal.message}
-                      hrefs={legalHrefs}
-                      acceptLabel={legal.acceptLabel}
+                    // `requireCookieConsent` is off, so `CookieBanner` (which also mounts
+                    // the preferences dialog) isn't rendered. A visitor still needs a
+                    // *working* manage-preferences entry point regardless of consent mode
+                    // (the footer "Do Not Sell" link for opt-out, or `ManagePreferencesButton`
+                    // on `/account` for any mode) — mount just the dialog + its
+                    // `openPreferences()` listener, with no blocking banner.
+                    <CookiePreferencesHost
+                      categories={cookieConsent.categories}
+                      version={cookieConsent.version}
                     />
-                  )
-                ) : null}
-                {/* "New version available" banner — copy is edited per language in
+                  )}
+                  {/* "Policies updated — please Accept" banner. Copy edited per language
+                in Sanity (`legalConsent`); version = the tracked legal pages'
+                lastUpdated. Server-gated on the deposited cookie; no fallback. */}
+                  {legal.version &&
+                  legal.message &&
+                  legal.acceptLabel &&
+                  legalAck !== legal.version ? (
+                    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+                      // Signed-in visitors sync acceptance across surfaces (app · mobile)
+                      // via the api Worker; signed-out falls back to the cookie deposit.
+                      <SignedInLegalNotice
+                        version={legal.version}
+                        message={legal.message}
+                        hrefs={legalHrefs}
+                        acceptLabel={legal.acceptLabel}
+                        apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
+                      />
+                    ) : (
+                      <LegalNotice
+                        version={legal.version}
+                        message={legal.message}
+                        hrefs={legalHrefs}
+                        acceptLabel={legal.acceptLabel}
+                      />
+                    )
+                  ) : null}
+                  {/* "New version available" banner — copy is edited per language in
                 Sanity (`siteMeta.<locale>.versionPrompt`), no fallback. Mounted
                 only when fully configured; an unset banner is simply off. */}
-                {versionPrompt.message &&
-                versionPrompt.reload &&
-                versionPrompt.dismiss ? (
-                  <UpdatePrompt
-                    current={buildInfo.commit}
-                    message={versionPrompt.message}
-                    reloadLabel={versionPrompt.reload}
-                    dismissLabel={versionPrompt.dismiss}
-                  />
+                  {versionPrompt.message &&
+                  versionPrompt.reload &&
+                  versionPrompt.dismiss ? (
+                    <UpdatePrompt
+                      current={buildInfo.commit}
+                      message={versionPrompt.message}
+                      reloadLabel={versionPrompt.reload}
+                      dismissLabel={versionPrompt.dismiss}
+                    />
+                  ) : null}
+                </LocaleSwitchBoundary>
+                {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+                  <>
+                    <SessionLogger surface={surface} />
+                    <MarketingNudgeMount
+                      apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
+                      surface="website"
+                      snoozeKey={`${site.prefix}.mkt-nudge-snooze`}
+                      copy={{
+                        title: nudge("title"),
+                        yes: nudge("yes"),
+                        no: nudge("no"),
+                        dismiss: nudge("dismiss"),
+                      }}
+                    />
+                  </>
                 ) : null}
-              </LocaleSwitchBoundary>
-              {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
-                <>
-                  <SessionLogger surface={surface} />
-                  <MarketingNudgeMount
-                    apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
-                    surface="website"
-                    snoozeKey={`${site.prefix}.mkt-nudge-snooze`}
-                    copy={{
-                      title: nudge("title"),
-                      yes: nudge("yes"),
-                      no: nudge("no"),
-                      dismiss: nudge("dismiss"),
-                    }}
-                  />
-                </>
-              ) : null}
-              <Toaster position="top-center" />
-            </NextIntlClientProvider>
-          </ThemeProvider>
+                <Toaster position="top-center" />
+              </NextIntlClientProvider>
+            </ThemeProvider>
+          </NonceProvider>
           {features.structuredData && settings.showStructuredData !== false ? (
             <JsonLdScript
               data={buildSiteSchemas(
