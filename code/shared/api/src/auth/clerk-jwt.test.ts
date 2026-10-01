@@ -39,7 +39,9 @@ async function mint(claims: Record<string, unknown>) {
   return { token: `${body}.${b64url(sig)}`, jwtKey: pem };
 }
 
-describe("verifyClerkClaims", () => {
+// Each `mint` generates an RSA-2048 key; three of them overrun the 5 s default under the
+// parallel suite.
+describe("verifyClerkClaims", { timeout: 20_000 }, () => {
   it("returns the claims of a valid session token", async () => {
     const { token, jwtKey } = await mint({ sub: "user_123", fva: [3, -1] });
     const claims = await verifyClerkClaims(token, { jwtKey });
