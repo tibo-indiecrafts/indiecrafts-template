@@ -7,6 +7,7 @@ import { randomUUID } from "node:crypto";
 import { cookies, headers } from "next/headers";
 import { auth } from "@clerk/nextjs/server";
 import { logConsent } from "@indiecrafts/packages-web-compliance/consent-log";
+import { clientIp } from "@indiecrafts/packages-shared-security/guard";
 import { features, surface } from "@/config";
 
 type Body = {
@@ -64,6 +65,7 @@ export async function POST(request: Request) {
     surface,
     country: (await headers()).get("cf-ipcountry"),
     decisionId: body.decisionId,
+    clientIp: clientIp(request),
   });
   return new Response(null, { status: 204 });
 }

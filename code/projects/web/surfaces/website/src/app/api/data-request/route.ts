@@ -5,7 +5,7 @@
  */
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
-import { withGuard } from "@indiecrafts/packages-shared-security/guard";
+import { clientIp, withGuard } from "@indiecrafts/packages-shared-security/guard";
 import { submitDataRequest } from "@indiecrafts/packages-web-compliance/requests/submit";
 import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sanity/policy-version";
 
@@ -16,7 +16,7 @@ import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sa
  * D1), and alerts the controller. A honeypot-flagged submission returns `201` too, so bots can't tell
  * it was dropped. `201` = received.
  */
-const handle = withGuard(async (_req, data) => {
+const handle = withGuard(async (req, data) => {
   const body = (data ?? {}) as Record<string, unknown>;
   const result = await submitDataRequest(
     {
@@ -31,6 +31,7 @@ const handle = withGuard(async (_req, data) => {
     },
     new Date().toISOString(),
     await getConsentPolicyVersion(),
+    clientIp(req),
   );
   if (result.ok) return NextResponse.json({ ok: true }, { status: 201 });
   if (result.error === "spam") return NextResponse.json({ ok: true }, { status: 201 });

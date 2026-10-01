@@ -19,6 +19,8 @@ export async function logConsent(input: {
   surface: string;
   country?: string | null;
   decisionId: string;
+  /** The visitor's IP — the api rate-limits per visitor, not per server. */
+  clientIp?: string;
 }): Promise<void> {
   const url = process.env.API_URL;
   const token = process.env.APP_API_TOKEN;
@@ -30,6 +32,7 @@ export async function logConsent(input: {
       headers: {
         authorization: `Bearer ${token}`,
         "content-type": "application/json",
+        ...(input.clientIp ? { "x-client-ip": input.clientIp } : {}),
       },
       body: JSON.stringify({
         kind: "consent",

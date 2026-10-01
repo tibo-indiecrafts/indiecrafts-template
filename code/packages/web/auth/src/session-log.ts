@@ -17,6 +17,8 @@ export async function logSession(input: {
   userId: string;
   sessionId?: string | null;
   country?: string | null;
+  /** The visitor's IP — the api rate-limits per visitor, not per server. */
+  clientIp?: string;
 }): Promise<void> {
   const url = process.env.API_URL;
   const token = process.env.APP_API_TOKEN;
@@ -28,6 +30,7 @@ export async function logSession(input: {
       headers: {
         authorization: `Bearer ${token}`,
         "content-type": "application/json",
+        ...(input.clientIp ? { "x-client-ip": input.clientIp } : {}),
       },
       body: JSON.stringify({
         kind: "session",

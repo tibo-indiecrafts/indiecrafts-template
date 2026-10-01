@@ -5,6 +5,7 @@
  */
 import { addTransport, logger } from "@indiecrafts/packages-shared-logger";
 import { cloudflareTransport } from "@indiecrafts/packages-shared-logger/cloudflare";
+import { sanitizeIpAddress } from "@indiecrafts/packages-shared-security/ip";
 import {
   getCurrentEnvironment,
   defaultLocale,
@@ -231,6 +232,22 @@ function requireAdminBearer(
   return null;
 }
 
+/** The rate-limit key. A first-party server (valid bearer) calls on a visitor's behalf
+ *  from its own IP, shared by every visitor — so it names the visitor in `x-client-ip`,
+ *  and the key is that IP. Without the bearer, or with a malformed value, the header is
+ *  ignored: a browser can't choose its own key.
+ *  ponytail: a leaked token can rotate `x-client-ip` past the limit — it already grants
+ *  full write access, so rotate the token; a per-server ceiling needs a 2nd binding. */
+export function rateLimitKey(request: Request, env: Env): string {
+  const bearer = bearerToken(request);
+  const trusted =
+    env.APP_API_TOKEN && bearer && safeEqual(bearer, env.APP_API_TOKEN);
+  const visitor = trusted
+    ? sanitizeIpAddress(request.headers.get("x-client-ip"))
+    : null;
+  return visitor ? `client:${visitor}` : clientIp(request);
+}
+
 /** 429 when the native rate-limit binding rejects this client; null when allowed or the
  *  binding is unbound. Applied on every bearer route so an extracted token can't hammer. */
 async function rateLimit(
@@ -240,7 +257,7 @@ async function rateLimit(
 ): Promise<Response | null> {
   if (!env.RATELIMIT) return null;
   const { success } = await env.RATELIMIT.limit({
-    key: clientIp(request),
+    key: rateLimitKey(request, env),
   });
   return success ? null : json({ error: "rate_limited" }, 429, cors);
 }

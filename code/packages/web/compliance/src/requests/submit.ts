@@ -48,6 +48,8 @@ export async function submitDataRequest(
    * the request), stamped on the record. Empty when none is resolvable.
    */
   policyVersion?: string,
+  /** The visitor's IP — the api rate-limits per visitor, not per server. */
+  clientIp?: string,
 ): Promise<DataRequestResult> {
   const valid = validateDataRequest(input);
   if (!valid.ok) return valid;
@@ -67,6 +69,7 @@ export async function submitDataRequest(
       headers: {
         "content-type": "application/json",
         authorization: `Bearer ${token}`,
+        ...(clientIp ? { "x-client-ip": clientIp } : {}),
       },
       body: JSON.stringify({
         requestType,

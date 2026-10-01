@@ -45,15 +45,20 @@ describe("handleCspReport", () => {
       new Request("https://x.dev/api/csp-report", {
         method: "POST",
         body,
-        headers: { "content-type": "application/reports+json" },
+        headers: {
+          "content-type": "application/reports+json",
+          "cf-connecting-ip": "203.0.113.7",
+        },
       }),
       { surface: "website" },
     );
     expect(res.status).toBe(204);
     expect(forwardCspReports).toHaveBeenCalledOnce();
-    const forwarded = vi.mocked(forwardCspReports).mock.calls[0][0];
+    const [forwarded, visitor] = vi.mocked(forwardCspReports).mock.calls[0];
     expect(forwarded[0].blockedSource).toBe("https://evil.example");
     expect(forwarded[0].surface).toBe("website");
+    // The visitor's IP rides along, so the api rate-limits per visitor, not per server.
+    expect(visitor).toBe("203.0.113.7");
   });
 
   it("rate-limits a spamming IP with 429 and never reads the body", async () => {

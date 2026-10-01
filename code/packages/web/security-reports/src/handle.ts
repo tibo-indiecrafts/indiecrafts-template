@@ -40,8 +40,9 @@ export async function handleCspReport(
     return new Response(null, { status: 413 });
 
   // Backpressure before we read the body — a spammer can't inflate the table.
+  const ip = clientIp(request);
   const { ok } = await rateLimit(
-    `csp:${opts.surface}:${clientIp(request)}`,
+    `csp:${opts.surface}:${ip}`,
     RATE_LIMIT.limit,
     RATE_LIMIT.windowSec,
   );
@@ -63,6 +64,6 @@ export async function handleCspReport(
     .map((r) => sanitizeCspReport(r, opts.surface))
     .filter((r): r is SanitizedCspReport => r !== null);
 
-  if (sanitized.length > 0) await forwardCspReports(sanitized);
+  if (sanitized.length > 0) await forwardCspReports(sanitized, ip);
   return noContent();
 }

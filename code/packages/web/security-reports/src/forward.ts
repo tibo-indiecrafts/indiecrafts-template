@@ -16,6 +16,8 @@ import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
  */
 export async function forwardCspReports(
   reports: SanitizedCspReport[],
+  /** The reporting visitor's IP — the api rate-limits per visitor, not per server. */
+  clientIp?: string,
 ): Promise<void> {
   const url = process.env.API_URL;
   const token = process.env.APP_API_TOKEN;
@@ -29,6 +31,7 @@ export async function forwardCspReports(
         headers: {
           authorization: `Bearer ${token}`,
           "content-type": "application/json",
+          ...(clientIp ? { "x-client-ip": clientIp } : {}),
         },
         body: JSON.stringify({ kind: "csp-report", reports: batch }),
       });

@@ -45,6 +45,29 @@ describe("logConsent forwarder", () => {
     });
   });
 
+  it("names the visitor in x-client-ip, so the api rate-limits per visitor", async () => {
+    process.env.API_URL = "https://api.test";
+    process.env.APP_API_TOKEN = "tok";
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 201 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const { logConsent } = await import("./consent-log");
+    await logConsent({
+      userId: null,
+      consentId: "anon",
+      events: [{ type: "cookie_analytics", granted: true }],
+      version: "v",
+      surface: "website",
+      decisionId: "d",
+      clientIp: "203.0.113.7",
+    });
+    const [, init] = fetchMock.mock.calls[0];
+    expect((init.headers as Record<string, string>)["x-client-ip"]).toBe(
+      "203.0.113.7",
+    );
+  });
+
   it("no-ops when API_URL/APP_API_TOKEN are unset", async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);

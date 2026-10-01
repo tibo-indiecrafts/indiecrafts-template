@@ -5,6 +5,7 @@
  */
 import { auth } from "@clerk/nextjs/server";
 import { logSession } from "@indiecrafts/packages-web-auth/session-log";
+import { clientIp } from "@indiecrafts/packages-shared-security/guard";
 import { surface as appSurface } from "@/config";
 
 /**
@@ -22,6 +23,7 @@ export async function POST(request: Request) {
     userId,
     sessionId,
     country: request.headers.get("cf-ipcountry"),
+    clientIp: clientIp(request),
   });
   return new Response(null, { status: 204 });
 }

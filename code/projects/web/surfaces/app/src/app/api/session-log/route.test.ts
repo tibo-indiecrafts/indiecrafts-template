@@ -39,13 +39,17 @@ describe("POST /api/session-log", () => {
       userId: "user_1",
       sessionId: "sess_1",
       country: null,
+      clientIp: "unknown",
     });
   });
 
-  it("forwards a caller-supplied surface and the cf-ipcountry header", async () => {
+  it("forwards a caller-supplied surface, the cf-ipcountry header and the visitor IP", async () => {
     auth.mockResolvedValue({ userId: "user_2", sessionId: "sess_2" });
     const res = await POST(
-      request({ body: { surface: "app" }, headers: { "cf-ipcountry": "FR" } }),
+      request({
+        body: { surface: "app" },
+        headers: { "cf-ipcountry": "FR", "cf-connecting-ip": "203.0.113.9" },
+      }),
     );
     expect(res.status).toBe(204);
     expect(logSession).toHaveBeenCalledWith({
@@ -53,6 +57,7 @@ describe("POST /api/session-log", () => {
       userId: "user_2",
       sessionId: "sess_2",
       country: "FR",
+      clientIp: "203.0.113.9",
     });
   });
 });

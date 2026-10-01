@@ -61,6 +61,24 @@ describe("submitDataRequest", () => {
     });
   });
 
+  it("names the visitor in x-client-ip, so the api rate-limits per visitor", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 201 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const { submitDataRequest } = await import("./submit");
+    await submitDataRequest(
+      ok,
+      "2026-08-24T00:00:00.000Z",
+      "v1",
+      "203.0.113.7",
+    );
+    const [, init] = fetchMock.mock.calls[0]!;
+    expect((init.headers as Record<string, string>)["x-client-ip"]).toBe(
+      "203.0.113.7",
+    );
+  });
+
   it("calls notifyOwner (the email brick) on a successful write", async () => {
     vi.stubGlobal(
       "fetch",
