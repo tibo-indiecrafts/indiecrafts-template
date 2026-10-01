@@ -12,6 +12,15 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **compliance + auth — "Download my data" passes the step-up instead of failing.** The api asks
+  for a recent verification on export (403 with Clerk's reverification hint), but the export client
+  turned that 403 into "Something went wrong" — only the account deletion went through
+  `useReverification`. `rawExportFetch` / `mapExportResponse` now mirror the erasure pair, the
+  `AccountAuth` port gains `submitExport`, `useClerkAuthPort` wraps it in `useReverification`, and
+  `ExportSection` uses it — website, app and the mobile shell.
+
 ### Added
 
 - **utils — `apiFetch` (`@indiecrafts/packages-shared-utils/api-fetch`).** fetch for calls into the api:

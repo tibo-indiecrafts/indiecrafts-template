@@ -76,7 +76,13 @@ export {
   type ChurnSurveyInput,
 } from "./erasure-self";
 
-export { requestExport, type ExportResult } from "./export-self";
+export {
+  mapExportResponse,
+  rawExportFetch,
+  requestExport,
+  type ExportFetchOutcome,
+  type ExportResult,
+} from "./export-self";
 
 export {
   buildDeleteAccountCopy,

@@ -25,6 +25,11 @@ export {
   type ErasureFetchOutcome,
   type ChurnSurveyInput,
 } from "../shared/erasure-self";
+export {
+  rawExportFetch,
+  mapExportResponse,
+  type ExportFetchOutcome,
+} from "../shared/export-self";
 export { ExportSection } from "./ExportSection";
 export type { ExportSectionProps } from "./ExportSection";
 export {

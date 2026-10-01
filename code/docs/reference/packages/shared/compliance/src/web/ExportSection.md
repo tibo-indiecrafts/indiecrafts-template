@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-The shared "Download my data" section (web, shadcn), Clerk- and Next-free. It takes `getToken` and `apiUrl` as props and drives `requestExport`; copy is injected. On success it opens the returned download URL in a new tab.
+The shared "Download my data" section (web, shadcn), Clerk- and Next-free. It takes `getToken` and `apiUrl` as props and drives the surface's `submitExport` (its step-up wrapper) when given, else `requestExport`; copy is injected. A cancelled step-up shows the error copy. On success it opens the returned download URL in a new tab.
 
 ## Exports
 
-- `ExportSectionProps` (interface) — the props (`copy`, `apiUrl`, `getToken`, optional `onExported`).
+- `ExportSectionProps` (interface) — the props (`copy`, `apiUrl`, `getToken`, optional `onExported` and `submitExport`).
 - `ExportSection` — the export button plus status component.
 
 ## Usage

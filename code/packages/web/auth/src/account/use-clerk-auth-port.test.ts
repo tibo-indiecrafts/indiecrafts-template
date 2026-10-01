@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { callErasureSelf } from "./use-clerk-auth-port";
+import { callErasureSelf, callExportSelf } from "./use-clerk-auth-port";
 
 // `callErasureSelf` is the exact call `useReverification` wraps in `useClerkAuthPort` —
 // the step-up path both live surfaces actually use (not the default `submitAccountErasure`
@@ -43,6 +43,26 @@ describe("callErasureSelf", () => {
       apiUrl: "https://api.example.test",
       getToken,
       email: "you@example.com",
+    });
+  });
+});
+
+// The export runs behind the same step-up: `callExportSelf` is what `useReverification`
+// wraps for "Download my data".
+describe("callExportSelf", () => {
+  it("passes the api url and the token getter to rawExportFetch", async () => {
+    const doRawExportFetch = vi
+      .fn()
+      .mockResolvedValue({ status: 200, downloadUrl: "u" });
+    const getToken = async () => "tkn";
+    await callExportSelf(
+      "https://api.example.test",
+      getToken,
+      doRawExportFetch,
+    );
+    expect(doRawExportFetch).toHaveBeenCalledWith({
+      apiUrl: "https://api.example.test",
+      getToken,
     });
   });
 });

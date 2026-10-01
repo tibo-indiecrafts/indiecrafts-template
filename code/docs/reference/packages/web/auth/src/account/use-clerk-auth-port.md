@@ -10,12 +10,13 @@ status: stable
 
 ## Purpose
 
-Builds the Clerk-free `AccountAuth` seam from `@clerk/nextjs` for the account tabs. The self-erasure POST (with an optional churn survey) is wrapped in `useReverification` for a client step-up modal and auto-retry; the retry mints a fresh token carrying the updated factor-verification age. After a done or partial erasure, the seam signs the user out and returns home.
+Builds the Clerk-free `AccountAuth` seam from `@clerk/nextjs` for the account tabs. The self-erasure POST (with an optional churn survey) and the data export are each wrapped in `useReverification` for a client step-up modal and auto-retry; the retry mints a fresh token carrying the updated factor-verification age. After a done or partial erasure, the seam signs the user out and returns home.
 
 ## Exports
 
 - `callErasureSelf(apiUrl, getToken, email, survey, doRawErasureFetch?)` — the raw call `useReverification` wraps; the fetch is injectable so it is testable without mocking React or Clerk.
-- `useClerkAuthPort(apiUrl)` — the hook that returns the `AccountAuth` seam (`getToken`, `submitErasure`, `onDeleted`).
+- `callExportSelf(apiUrl, getToken, doRawExportFetch?)` — the export call `useReverification` wraps.
+- `useClerkAuthPort(apiUrl)` — the hook that returns the `AccountAuth` seam (`getToken`, `submitErasure`, `submitExport`, `onDeleted`).
 
 ## Usage
 

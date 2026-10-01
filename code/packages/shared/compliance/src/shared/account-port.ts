@@ -5,6 +5,7 @@
  */
 
 import type { ChurnSurveyInput, ErasureSelfResult } from "./erasure-self";
+import type { ExportResult } from "./export-self";
 
 /**
  * The per-surface Clerk seam for the account "Your data" tab. Each surface builds
@@ -24,4 +25,7 @@ export interface AccountAuth {
     survey?: ChurnSurveyInput,
   ) => Promise<ErasureSelfResult>;
   onDeleted: () => void | Promise<void>;
+  /** The export POST wrapped in the SDK's `useReverification` (step-up + auto-retry).
+   *  Optional: without it the export runs without a step-up and fails a stale session. */
+  submitExport?: () => Promise<ExportResult>;
 }

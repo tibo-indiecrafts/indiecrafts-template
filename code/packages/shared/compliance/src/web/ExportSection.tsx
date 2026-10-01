@@ -10,13 +10,16 @@ import { useState } from "react";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import type { ExportCopy } from "../shared/account-copy";
-import { requestExport } from "../shared/export-self";
+import { requestExport, type ExportResult } from "../shared/export-self";
 
 export interface ExportSectionProps {
   copy: ExportCopy;
   apiUrl: string;
   getToken: () => Promise<string | null>;
   onExported?: (url: string) => void;
+  /** The surface's step-up wrapper (Clerk `useReverification` around `rawExportFetch`).
+   *  Without it the section calls `requestExport`, which cannot pass a reverification check. */
+  submitExport?: () => Promise<ExportResult>;
 }
 
 type Status = "idle" | "pending" | "success" | "error";
@@ -31,13 +34,21 @@ export function ExportSection({
   apiUrl,
   getToken,
   onExported,
+  submitExport,
 }: ExportSectionProps) {
   const [status, setStatus] = useState<Status>("idle");
 
   async function onClick() {
     if (status === "pending") return;
     setStatus("pending");
-    const result = await requestExport({ apiUrl, getToken });
+    let result: ExportResult;
+    try {
+      result = submitExport
+        ? await submitExport()
+        : await requestExport({ apiUrl, getToken });
+    } catch {
+      result = { ok: false }; // the step-up prompt was cancelled, or the call threw
+    }
     if (result.ok) {
       window.open(result.url, "_blank", "noopener");
       onExported?.(result.url);

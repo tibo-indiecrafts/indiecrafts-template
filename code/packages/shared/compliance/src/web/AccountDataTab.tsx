@@ -40,6 +40,7 @@ export function AccountDataTab({
           copy={exportCopy}
           apiUrl={apiUrl}
           getToken={auth.getToken}
+          submitExport={auth.submitExport}
         />
       ) : null}
       <DeleteAccountSection
