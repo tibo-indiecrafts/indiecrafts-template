@@ -143,7 +143,9 @@ threaten identity data.
 `IP_HASH_SALT` · `GDPR_FINGERPRINT_SALT` · `CLERK_WEBHOOK_SECRET` ·
 `CLERK_SECRET_KEY` · `SANITY_API_READ_TOKEN` · `SANITY_API_WRITE_TOKEN` · `RESEND_API_KEY` ·
 `EMAIL_PREF_SECRET` · `TURNSTILE_SECRET` · `PII_ENCRYPTION_KEY` (optional). Copy
-`.dev.vars.example` → `.dev.vars` for local `wrangler dev`.
+`.dev.vars.example` → `.dev.vars` for local `wrangler dev`. Every secret the code reads must be declared
+there (commented is fine) and passed by the CI deploy job (`deploy-app.yml` `env:`) — `secrets.mjs` syncs
+only declared keys; `worker-secrets.test.mjs` fails on a gap.
 
 `GDPR_FINGERPRINT_SALT` is DISTINCT per env and STABLE within an env. Never rotate a live one — it
 orphans every email-keyed lookup.

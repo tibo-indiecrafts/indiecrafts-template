@@ -7,6 +7,14 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The deploy syncs every secret the api reads.** `CLERK_SECRET_KEY`, `SANITY_API_WRITE_TOKEN` and
+  `TURNSTILE_SECRET` were missing from `.dev.vars.example` and from the CI deploy job's `env:`, so
+  `secrets.mjs` never pushed them — a deployed export or self-erasure answered 503. Declared + passed
+  now; `worker-secrets.test.mjs` fails if a Worker reads a secret it does not declare or CI does not
+  pass.
+
+### Fixed
+
 - **"Download my data" and "Delete my account" work from the browser again.** `/v1/export` and
   `/v1/erasure/self` answered their CORS preflight with `PUBLIC_CORS_POST`, which does not allow the
   `authorization` header that carries the Clerk token — so the browser (website, app, and the app in

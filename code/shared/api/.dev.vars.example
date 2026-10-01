@@ -10,6 +10,17 @@
 # [vars] (public); the read token is a secret, needed only if the dataset is not public-read:
 # SANITY_API_READ_TOKEN=""   # server-side Sanity read token (never shipped to clients)
 
+# Clerk backend secret — verifies the session JWT on the user routes (export, self-erasure,
+# consent) and deletes the Clerk user on erasure. Unset → those routes answer 503.
+# CLERK_SECRET_KEY=""
+
+# Sanity write token — the erasure + export adapters find and pseudonymise the subject's Sanity
+# documents. Unset → export and every erasure path answer 503 (never a half-erasure).
+# SANITY_API_WRITE_TOKEN=""
+
+# Cloudflare Turnstile secret — verifies the anonymous erasure-request form. Unset → no check.
+# TURNSTILE_SECRET=""
+
 # Clerk webhook (Svix) — verifies POST /v1/clerk-webhook (user.created/updated/deleted → user_profiles sync).
 # From Clerk Dashboard → Webhooks → your endpoint → Signing Secret.
 CLERK_WEBHOOK_SECRET=""
