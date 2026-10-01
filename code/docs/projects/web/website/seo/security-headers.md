@@ -189,8 +189,9 @@ permissive policy names the nonce there too and moves its inline allowance to `s
 scripts and the Report-Only policy reported every framework chunk.
 
 **Editor scripts (Custom HTML).** A `module.custom-html` block's `<script>` tags are lifted out and
-inserted in order with the nonce (`EmbedScripts`) — the `[locale]` layout hands it down with
-`NonceProvider`. They run on first load and on client navigation; `'strict-dynamic'` trusts what they
+inserted in order with the nonce (`EmbedScripts`), read from the page's own scripts — never a
+fresh per-request value, which an RSC refresh would mint and the page would reject. They run on
+first load and on client navigation; `'strict-dynamic'` trusts what they
 load in turn, so a widget's own hosts need no allowlisting.
 
 **`/studio` and `/maintenance` stay permissive.** The proxy matcher excludes both. The embedded

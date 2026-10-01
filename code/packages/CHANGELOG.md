@@ -21,8 +21,8 @@ Changed · Deprecated · Removed · Fixed**.
   `script-src-attr`, so nothing new is blocked in CSP3 browsers.
 - **ui-components — Custom HTML scripts run under the strict CSP.** `<script>` tags in a
   `module.custom-html` block are lifted out (`splitScripts`) and inserted by `EmbedScripts`, in
-  order, with the request nonce, on every mount (`NonceProvider` / `useNonce`). Before, they were blocked on
-  first load and never ran after a client navigation.
+  order, with the page's nonce, on every mount; an unmount mid-load stops the run. Before, they
+  were blocked on first load and never ran after a client navigation.
 - **compliance · auth · security-reports — server calls name the visitor.** `logConsent`,
   `logSession`, `submitDataRequest` and `forwardCspReports` take the visitor IP and send it as
   `x-client-ip`, so the api rate-limits per visitor.

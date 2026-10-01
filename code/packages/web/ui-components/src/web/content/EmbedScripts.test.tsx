@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { runScripts } from "./EmbedScripts";
+import { documentNonce, runScripts } from "./EmbedScripts";
 
 // A detached parent: happy-dom (like a browser) fetches nothing until a script is in the
 // document, so the test drives load/error itself.
@@ -74,6 +74,54 @@ describe("runScripts", () => {
     expect(inserted()).toHaveLength(2);
   });
 
+  it("stops when aborted mid-load: later scripts never run", async () => {
+    const abort = new AbortController();
+    const done = runScripts(
+      [
+        { attrs: { src: "https://cdn.example/lib.js" }, code: "" },
+        { attrs: {}, code: "window.qaInit = 1;" },
+      ],
+      "n0nce",
+      parent,
+      abort.signal,
+    );
+    await tick();
+    abort.abort(); // unmounted while lib.js loads
+    await done; // resolves without waiting for load
+    expect(inserted().map((s) => s.src ?? s.code)).toEqual([
+      "https://cdn.example/lib.js",
+    ]);
+  });
+
+  it("does not wait on a script that will never load (nomodule, non-JS type)", async () => {
+    await runScripts(
+      [
+        {
+          attrs: { src: "https://cdn.example/legacy.js", nomodule: true },
+          code: "",
+        },
+        {
+          attrs: { src: "https://cdn.example/x.txt", type: "text/plain" },
+          code: "",
+        },
+        { attrs: {}, code: "window.qaNext = 1;" },
+      ],
+      undefined,
+      parent,
+    );
+    expect(inserted()).toHaveLength(3);
+  });
+
+  it("skips an attribute name the DOM rejects instead of failing the run", async () => {
+    await runScripts(
+      [{ attrs: { '"': true, "data-ok": "1" }, code: "window.qaC = 1;" }],
+      undefined,
+      parent,
+    );
+    expect(inserted()).toHaveLength(1);
+    expect(parent.querySelector("script")!.getAttribute("data-ok")).toBe("1");
+  });
+
   it("returns a cleanup that removes what it inserted", async () => {
     const cleanup = await runScripts(
       [{ attrs: {}, code: "window.qaB = 1;" }],
@@ -82,5 +130,16 @@ describe("runScripts", () => {
     );
     cleanup();
     expect(inserted()).toEqual([]);
+  });
+});
+
+describe("documentNonce", () => {
+  it("reads the nonce the page enforces from a server-rendered script", () => {
+    expect(documentNonce()).toBeUndefined();
+    const el = document.createElement("script");
+    el.setAttribute("nonce", "page-n0nce"); // as server-rendered HTML carries it
+    document.head.append(el);
+    expect(documentNonce()).toBe("page-n0nce");
+    el.remove();
   });
 });
