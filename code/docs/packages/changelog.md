@@ -30,6 +30,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **compliance — data-request emails to the requester.** Two Studio groups,
+  `dataRequestReceipt` and `dataRequestClosed`, hold the receipt and closing copy (the api sends
+  them). The owner alert links `${ADMIN_URL}/data-requests?id=<n>`, opening that request.
+
 - **utils — `apiFetch` (`@indiecrafts/packages-shared-utils/api-fetch`).** fetch for calls into the api:
   a 10 s timeout and one retry on a network error, timeout, 5xx or 429 (Retry-After or jittered
   backoff), never on another 4xx. A POST retries only when marked `idempotent`, with an
