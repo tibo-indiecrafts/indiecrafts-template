@@ -12,8 +12,8 @@ Auto-loads under `code/packages/web/security-reports/**`. Explicit per-file `exp
   **rate-limits per client IP** (`csp:<surface>:<ip>`, 30/min via `rateLimit` + `clientIp` from
   `packages-shared-security` — defence-in-depth, no-ops without `RATE_LIMIT_KV`; the CF WAF rule is
   primary), keeps at most 50 reports per request, then normalizes + sanitizes + drops extension noise
-  before forwarding survivors. Answers 204 (or 429 over the limit) — never reflects input or leaks
-  validation detail.
+  before forwarding survivors. Answers an empty 204 (415 wrong content-type, 413 over 64KB, 429 over
+  the limit) — never reflects input or leaks validation detail.
 - **`forwardCspReports(reports)`** (`./forward`) — `import "server-only"`; posts sanitized reports
   to the api's `POST /v1/events` (`kind: "csp-report"`) in batches of 5, bearer-authed with
   `APP_API_TOKEN`. Fire-and-forget: no-ops without `API_URL`/`APP_API_TOKEN`, swallows fetch errors.

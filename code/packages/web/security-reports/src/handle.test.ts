@@ -81,6 +81,42 @@ describe("handleCspReport", () => {
     expect(forwardCspReports).not.toHaveBeenCalled();
   });
 
+  it("rejects a declared body over 64KB with 413 before the rate limiter", async () => {
+    // A stub: Node's `Request` drops `content-length` (a forbidden header); the edge keeps it.
+    const request = {
+      headers: new Headers({
+        "content-type": "application/reports+json",
+        "content-length": String(64 * 1024 + 1),
+      }),
+      text: async () => "[]",
+    } as unknown as Request;
+    const res = await handleCspReport(request, { surface: "website" });
+    expect(res.status).toBe(413);
+    expect(rateLimit).not.toHaveBeenCalled();
+  });
+
+  it("rejects an undeclared body over 64KB with 413 and does not forward", async () => {
+    const body = JSON.stringify(
+      report({
+        effectiveDirective: "img-src",
+        documentURL: "https://x.dev/",
+        blockedURL: "https://evil.example/a.png",
+        sample: "x".repeat(64 * 1024),
+        disposition: "report",
+      }),
+    );
+    const res = await handleCspReport(
+      new Request("https://x.dev/api/csp-report", {
+        method: "POST",
+        body,
+        headers: { "content-type": "application/reports+json" },
+      }),
+      { surface: "website" },
+    );
+    expect(res.status).toBe(413);
+    expect(forwardCspReports).not.toHaveBeenCalled();
+  });
+
   it("drops extension noise and does not forward", async () => {
     const body = JSON.stringify(
       report({
