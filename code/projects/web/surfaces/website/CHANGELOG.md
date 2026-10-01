@@ -48,6 +48,8 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **The data-request success message mentions the receipt email** (en/fr).
+
 - **The registry deploys the cron before the api** (`order: 5`): the api's new `CRON` service binding
   needs the cron to exist. Config tests pin that the cron has no public URL and the binding targets
   it, and that `project:rename` rewrites the binding target.

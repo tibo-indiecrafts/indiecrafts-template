@@ -278,15 +278,24 @@ The seven rights are the one `DATA_REQUEST_TYPES` set
 (`@indiecrafts/packages-web-compliance/requests/request-types`) — read by the form options, the validator, and
 the api's allowed set (mirrored in `code/shared/api/src/data-request/route.ts`), so they never drift.
 
+**Receipt.** Once a request is stored, the api emails the requester a receipt in the request's
+language: the right, the reference `#id`, and the due date (one calendar month). Copy: Studio →
+E-mails → **RGPD — accusé de réception** (`dataRequestReceipt`); blank fields use the built-in
+en/fr text, and unticking it turns the receipt off.
+
 **Admin.** Requests land in the admin **Data requests** screen (`/data-requests`, newest first,
-last 100). Each row shows the date (UTC), the right, the email (a `mailto:` reply link), the status
-(`New` / `In progress` / `Done`), the message (an excerpt that opens to the full text), and the
-locale + source page. The screen is read-only: flip a status with `wrangler d1 execute` (command in
-the page source). Act within **one month** (the legal window). The alert recipient (DPO /
-controller inbox) is set on the **E-mails** singleton → **RGPD — nouvelle demande**
-(`dataRequestOwner`); leave it off and the request is still recorded, just not emailed.
-`RESEND_API_KEY` powers the send. The alert links `${ADMIN_URL}/data-requests` when the website's
-`ADMIN_URL` is set; without it, the alert names the screen.
+last 100): date (UTC), the right, the due date (an **Overdue** badge on an open request past it),
+the email (a `mailto:` link), the status, the message, locale + source. The right opens a **side
+sheet** (`?id=<n>`) with the full request, its history, and the moves its status allows: **Start**
+(new → in progress), **Mark done**, **Reject**. Done / Reject open a reply **prefilled in the
+requester's language** (`admin.dataRequests.replies.*`); with "Email the requester" ticked, the api
+emails it (Studio → **RGPD — demande clôturée**, `dataRequestClosed`). A closed request stays
+closed. Each move is audited (`admin.data_request_status`). Act within **one month** (the legal
+window). The alert recipient (DPO / controller inbox) is set on the **E-mails** singleton →
+**RGPD — nouvelle demande** (`dataRequestOwner`); leave it off and the request is still recorded,
+just not emailed. `RESEND_API_KEY` powers the send. The alert links
+`${ADMIN_URL}/data-requests?id=<n>` (that request's sheet) when the website's `ADMIN_URL` is set;
+without it, the alert names the screen.
 
 The privacy policy's "Your rights" section links `/data-request`; the page appears in the footer
 **Legal** column. `pnpm seed` ships demo SEO + the footer link + the linked prose.

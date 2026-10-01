@@ -18,7 +18,8 @@ Update that page in the same change as a route.
 - `src/erasure/` — store-agnostic adapters (`d1` core + audit · `clerk` · `sanity` · `orders`) for the
   `@indiecrafts/packages-shared-compliance` `runErasure` / `runExport` engine; `email.ts` for its two emails.
 - `src/export/` — `POST /v1/export` → R2 `EXPORT_BUCKET` → single-use download link.
-- `src/data-request/` — DSAR intake + admin list (`data_requests`, `MAIN_DB`).
+- `src/data-request/` — DSAR intake, admin list + detail, status moves with history
+  (`data_requests`, `data_request_events`, `MAIN_DB`); `email.ts` for the receipt + closing emails.
 - `src/clerk-email/` — Clerk auth-email take-over; `src/security/` — incident alert email.
 - `src/auth/` — Clerk-JWT verification + the step-up `sensitive-action` gate.
 - `db/{main,audit}/migrations/` — the two EU D1s this worker owns; `db/kv/` — the KV namespaces.

@@ -31,6 +31,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Data-request side sheet with actions.** The right in each row opens a sheet (`?id=<n>`,
+  also the owner alert's link): full request, due date (Overdue flag, also as a list column),
+  history, and the moves the status allows — Start, Mark done, Reject. Closing opens a reply
+  prefilled in the **requester's** language that can be emailed; an unsent email is shown. Each
+  move is an admin-checked, audited server action (`admin.data_request_status`).
+
 - **System shows the api's version, both D1s and its bindings.** The api row carries its version and
   commit; Databases lists `audit` and `main` (it showed one D1 and never checked `main`); a line lists
   the KV, export bucket, cron link and rate limiter. en + fr.

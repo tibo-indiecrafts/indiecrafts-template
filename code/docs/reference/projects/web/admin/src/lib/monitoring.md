@@ -14,10 +14,11 @@ Server-only helpers for the admin "Scheduled jobs", "Erasure requests", "Data re
 
 ## Exports
 
-- Types — `PassResult`, `CronRun`, `CronStatus`, `ErasureRow`, `ErasureRequests`, `CronHealth`, `DataRequestRow`.
+- Types — `PassResult`, `CronRun`, `CronStatus`, `ErasureRow`, `ErasureRequests`, `CronHealth`, `DataRequestRow` (with `due_at`), `DataRequestEvent`, `DataRequestDetail`.
 - `cronHealth(status)` — `unreachable` · `never` · `stale` · `failed` · `ok`.
 - `healthVariant(health)` — the `Badge` variant for a health state.
-- `fetchCronStatus()` · `fetchErasureRequests()` · `fetchDataRequests()` — the api reads (through `apiFetch`: timeout + one retry). `fetchDataRequests` returns the newest 100 rows, or `null` when it cannot load — never an empty list.
+- `fetchCronStatus()` · `fetchErasureRequests()` · `fetchDataRequests()` — the api reads (through `apiFetch`: timeout + one retry). `fetchDataRequests` returns the newest 100 rows, or `null` when it cannot load — never an empty list. `fetchDataRequest(id)` returns one request with its history, or `null`.
+- `isOverdue(row, now?)` — an open (`new` / `in-progress`) request past its `due_at`.
 - `apiHealthView(body?)` — the api's authed `/health` flattened for System: version, commit, both D1s, the bindings (dashes and empty lists when there is no body).
 
 ## Source

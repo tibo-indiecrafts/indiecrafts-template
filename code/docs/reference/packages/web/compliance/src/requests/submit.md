@@ -15,7 +15,7 @@ The single runtime write path for the public data-request form. It validates the
 ## Exports
 
 - `submitDataRequest(input, submittedAt, policyVersion?)` — validates, stores, and alerts; returns a `DataRequestResult`.
-- `adminReviewUrl()` — `${ADMIN_URL}/data-requests`, or `undefined` when `ADMIN_URL` is unset (the alert and the email preview share it).
+- `adminReviewUrl(id?)` — `${ADMIN_URL}/data-requests` (with `?id=<n>` to open that request's sheet), or `undefined` when `ADMIN_URL` is unset (the alert and the email preview share it).
 - `validateDataRequest` — re-exported from `validate.ts`.
 - `DataRequestInput`, `DataRequestResult` — re-exported types.
 

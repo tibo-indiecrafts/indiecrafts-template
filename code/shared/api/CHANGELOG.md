@@ -42,6 +42,17 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **Data requests can be worked and answered.** `GET /v1/data-requests/:id` returns a request,
+  its due date (one calendar month, GDPR Art. 12(3)) and its history; `POST
+/v1/data-requests/:id/status` moves it (`new` → `in-progress` → `done` / `rejected`, no
+  reopen), guarded on the status the operator saw (`409 changed`). History lives in the new
+  `data_request_events` table (migration 0013, cascades with the request; notes encrypted like
+  messages). Closing can email the operator's note to the requester; a mail failure keeps the
+  change (`notified: false`). The intake now answers `{ ok, id }` and emails the requester a
+  receipt. Both emails are en/fr, Studio-editable (`dataRequestReceipt`, `dataRequestClosed`).
+- **The data-request routes are rate-limited.** The intake, the list, the detail and the status
+  route now pass the native `RATELIMIT` check like every other bearer route (they skipped it).
+
 - **The production contract (QA card 20).** Every response carries `X-Request-Id` (the `cf-ray`);
   every error is `{ error, message, requestId }`; a `rate_limited` 429 carries `Retry-After: 60` and
   `RateLimit-Policy: 20;w=60`; an uncaught throw is `500 internal` and a missing table

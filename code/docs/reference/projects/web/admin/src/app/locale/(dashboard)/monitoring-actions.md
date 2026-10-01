@@ -16,6 +16,7 @@ Each action re-checks the admin role on the server (never trusted from the clien
 
 - `retryErasure(id, email?)` — `{ ok, outcome: completed | partial }` or an error such as `email_required`, `clerk_email_changed` or `changed`.
 - `closeErasure(id, note)` — the note is required (5–500 characters).
+- `setDataRequestStatus(id, from, status, note, notify)` — moves a data request (`from` = the status the operator saw); `{ ok, notified }` or `note_required` / `not_allowed` / `changed` / `not_found` / `unreachable`. A reply is required before emailing.
 - `runCronNow()` — `{ ok, status: ok | failed }` or `cron_unbound` / `cron_unreachable` / `unreachable`.
 
 ## Source

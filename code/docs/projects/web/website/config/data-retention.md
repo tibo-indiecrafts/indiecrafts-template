@@ -80,8 +80,12 @@ inserts a row; operators view requests in the admin "Data requests" screen, back
 `GET /v1/data-requests` (bearer-gated), newest-first.
 
 - **Fields:** request type, a **plaintext, replyable email**, an optional **free-text
-  message** (≤4000 chars), status (`new`/`in-progress`/`done`), submitted-at, source
-  page, locale, policy version.
+  message** (≤4000 chars), status (`new`/`in-progress`/`done`/`rejected`), submitted-at,
+  source page, locale, policy version.
+- **History (`data_request_events`, migration 0013):** one row per operator move — status,
+  an optional note (operational PII, encrypted like `message`), the admin's Clerk id, whether
+  the closing email went out, the time. Rows cascade with their request, so the 365-day
+  purge removes both.
 - **Deliberate PII departure:** unlike the minimized tables above (country + hashed IP,
   no free text), `data_requests` stores real, replyable operator-facing PII. This is
   intentional — the operator needs the plaintext email and message to action the

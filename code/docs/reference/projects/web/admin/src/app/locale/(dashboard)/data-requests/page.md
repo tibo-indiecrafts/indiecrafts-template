@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-This is the `/data-requests` segment of the admin dashboard. It fetches the newest 100 data-subject requests server-side with `fetchDataRequests` (`@/lib/monitoring`; the token stays on the server), then renders them through `DataRequestsTable`. A failed read shows an error alert, never "no requests". The view is read-only; status changes are done by hand with `wrangler d1 execute` until write-back lands.
+This is the `/data-requests` segment of the admin dashboard. It fetches the newest 100 data-subject requests server-side with `fetchDataRequests` (`@/lib/monitoring`; the token stays on the server), then renders them through `DataRequestsTable`. A failed read shows an error alert, never "no requests". With `?id=<n>` it also loads that request (`fetchDataRequest`) and renders `DataRequestSheet`, with the two closing replies rendered through next-intl in the **requester's** language (en / fr), whatever the admin's UI locale.
 
 ## Exports
 

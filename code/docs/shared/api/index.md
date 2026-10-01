@@ -38,28 +38,29 @@ server-side only). Clerk-JWT routes authenticate the caller's own session.
 
 **Authenticated routes** (bearer or Clerk-JWT):
 
-| Route                                             | Auth                | What it does                                                                                                                            |
-| ------------------------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `POST /v1/events`                                 | `APP_API_TOKEN`     | Audit + session sink → EU D1. Kinds: `admin` · `session` · `security` · `consent` · `csp-report`. Every caller is a first-party server. |
-| `GET /v1/sessions`                                | `APP_API_TOKEN`     | Recent session activity for the admin screen.                                                                                           |
-| `GET /v1/security`                                | `APP_API_TOKEN`     | Recent security incidents.                                                                                                              |
-| `GET /v1/csp-reports`                             | `APP_API_TOKEN`     | Aggregated CSP violations.                                                                                                              |
-| `GET /v1/churn`                                   | `APP_API_TOKEN`     | Churn-survey aggregate.                                                                                                                 |
-| `GET/PUT /v1/settings`                            | `APP_API_TOKEN`     | Read/edit `site_settings` (the `cron` worker reads these too).                                                                          |
-| `GET /v1/backups/status`                          | `APP_API_TOKEN`     | Backup-run history + bucket/retention info.                                                                                             |
-| `GET /v1/cron/status`                             | `APP_API_TOKEN`     | Last 24 `cron_runs`, a `stale` flag (no run in 2 h), live erasure/export counts — the admin Scheduled jobs page.                        |
-| `GET /v1/erasure-requests`                        | `APP_API_TOKEN`     | Open erasure requests by deadline + 20 recently closed, with a computed state; no fingerprint or user id — the admin Erasure page.      |
-| `POST /v1/erasure-requests/:id/retry`             | `APP_API_TOKEN`     | Re-run a stuck (`confirmed`) request; email from Clerk by user id, else typed by the operator (fingerprint-checked, never stored).      |
-| `POST /v1/erasure-requests/:id/close`             | `APP_API_TOKEN`     | Close an open request by hand with a required note → `closed_manual`.                                                                   |
-| `POST /v1/cron/run`                               | `APP_API_TOKEN`     | Run one cron tick now over the private `CRON` service binding (admin "Run now").                                                        |
-| `POST /v1/profiles/consent`                       | `APP_API_TOKEN`     | Marketing-consent batch for the admin users list.                                                                                       |
-| `POST /v1/data-request` · `GET /v1/data-requests` | `APP_API_TOKEN`     | DSAR intake write + admin list.                                                                                                         |
-| `POST /v1/clerk-webhook`                          | Svix-signed         | `user_profiles` sync, welcome email, role→admin alert, Clerk email take-over.                                                           |
-| `GET/POST /v1/consent/marketing-email`            | Clerk-JWT           | The caller's own marketing opt-in.                                                                                                      |
-| `GET/POST /v1/consent/email-preferences`          | Clerk-JWT           | The caller's own per-category preferences.                                                                                              |
-| `GET/POST /v1/consent/legal`                      | Clerk-JWT           | The caller's accepted policy version — accept on one surface, the "policies updated" banner clears on all.                              |
-| `POST /v1/erasure/self`                           | Clerk-JWT + step-up | Self-service erasure; runs the engine, no email round-trip.                                                                             |
-| `POST /v1/export`                                 | Clerk-JWT + step-up | Runs `runExport`, stores the bundle in R2, returns a single-use link.                                                                   |
+| Route                                                             | Auth                | What it does                                                                                                                            |
+| ----------------------------------------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /v1/events`                                                 | `APP_API_TOKEN`     | Audit + session sink → EU D1. Kinds: `admin` · `session` · `security` · `consent` · `csp-report`. Every caller is a first-party server. |
+| `GET /v1/sessions`                                                | `APP_API_TOKEN`     | Recent session activity for the admin screen.                                                                                           |
+| `GET /v1/security`                                                | `APP_API_TOKEN`     | Recent security incidents.                                                                                                              |
+| `GET /v1/csp-reports`                                             | `APP_API_TOKEN`     | Aggregated CSP violations.                                                                                                              |
+| `GET /v1/churn`                                                   | `APP_API_TOKEN`     | Churn-survey aggregate.                                                                                                                 |
+| `GET/PUT /v1/settings`                                            | `APP_API_TOKEN`     | Read/edit `site_settings` (the `cron` worker reads these too).                                                                          |
+| `GET /v1/backups/status`                                          | `APP_API_TOKEN`     | Backup-run history + bucket/retention info.                                                                                             |
+| `GET /v1/cron/status`                                             | `APP_API_TOKEN`     | Last 24 `cron_runs`, a `stale` flag (no run in 2 h), live erasure/export counts — the admin Scheduled jobs page.                        |
+| `GET /v1/erasure-requests`                                        | `APP_API_TOKEN`     | Open erasure requests by deadline + 20 recently closed, with a computed state; no fingerprint or user id — the admin Erasure page.      |
+| `POST /v1/erasure-requests/:id/retry`                             | `APP_API_TOKEN`     | Re-run a stuck (`confirmed`) request; email from Clerk by user id, else typed by the operator (fingerprint-checked, never stored).      |
+| `POST /v1/erasure-requests/:id/close`                             | `APP_API_TOKEN`     | Close an open request by hand with a required note → `closed_manual`.                                                                   |
+| `POST /v1/cron/run`                                               | `APP_API_TOKEN`     | Run one cron tick now over the private `CRON` service binding (admin "Run now").                                                        |
+| `POST /v1/profiles/consent`                                       | `APP_API_TOKEN`     | Marketing-consent batch for the admin users list.                                                                                       |
+| `POST /v1/data-request` · `GET /v1/data-requests`                 | `APP_API_TOKEN`     | DSAR intake write (→ `{ ok, id }` + receipt email to the requester) + admin list (each row with `due_at`).                              |
+| `GET /v1/data-requests/:id` · `POST /v1/data-requests/:id/status` | `APP_API_TOKEN`     | One request + its history; move it (`new` → `in-progress` → `done` / `rejected`, guarded on `from`; closing can email the note).        |
+| `POST /v1/clerk-webhook`                                          | Svix-signed         | `user_profiles` sync, welcome email, role→admin alert, Clerk email take-over.                                                           |
+| `GET/POST /v1/consent/marketing-email`                            | Clerk-JWT           | The caller's own marketing opt-in.                                                                                                      |
+| `GET/POST /v1/consent/email-preferences`                          | Clerk-JWT           | The caller's own per-category preferences.                                                                                              |
+| `GET/POST /v1/consent/legal`                                      | Clerk-JWT           | The caller's accepted policy version — accept on one surface, the "policies updated" banner clears on all.                              |
+| `POST /v1/erasure/self`                                           | Clerk-JWT + step-up | Self-service erasure; runs the engine, no email round-trip.                                                                             |
+| `POST /v1/export`                                                 | Clerk-JWT + step-up | Runs `runExport`, stores the bundle in R2, returns a single-use link.                                                                   |
 
 ## Invariants
 

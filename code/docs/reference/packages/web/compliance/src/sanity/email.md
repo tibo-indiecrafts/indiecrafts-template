@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Defines the compliance surface's transactional-email groups on the shared `emailStrings` singleton. It contributes three groups: `dataRequestOwner` (the team alert on a new GDPR data-subject request), and `erasureToken` / `erasureComplete` (the api worker's two account-erasure emails). The erasure emails have no locale signal, so only the default-locale copy is used and empty fields fall back to the worker's built-in English copy.
+Defines the compliance surface's transactional-email groups on the shared `emailStrings` singleton. It contributes five groups: `dataRequestOwner` (the team alert on a new GDPR data-subject request), `dataRequestReceipt` / `dataRequestClosed` (the api worker's receipt and closing emails to the requester, in the request's language; placeholders <code v-pre>{{id}}</code> <code v-pre>{{right}}</code> <code v-pre>{{due}}</code> <code v-pre>{{outcome}}</code>), and `erasureToken` / `erasureComplete` (the api worker's two account-erasure emails). The erasure emails have no locale signal, so only the default-locale copy is used and empty fields fall back to the worker's built-in English copy.
 
 ## Exports
 

@@ -14,7 +14,8 @@ A component used by the admin data-requests page (next-intl `useTranslations` + 
 
 ## Exports
 
-- `DataRequestsTable` — takes `rows: DataRequestRow[]` and renders the table.
+- `DataRequestsTable` — takes `rows: DataRequestRow[]` and renders the table. The right links to `?id=<n>` (the side sheet); a Due column flags an open request past its date as **Overdue**.
+- `TYPES` · `STATUSES` · `statusVariant(status)` — the known keys and badge variants, shared with the side sheet.
 
 ## Usage
 
