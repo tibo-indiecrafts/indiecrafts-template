@@ -34,7 +34,7 @@ describe("POST /v1/data-request", () => {
       "test-token",
     );
     expect(res.status).toBe(201);
-    expect(await res.json()).toEqual({ ok: true });
+    expect(await res.json()).toEqual({ ok: true, id: expect.any(Number) });
 
     const row = await env.AUDIT_DB.prepare(
       "SELECT request_type, email, message, status, source, locale, policy_version FROM data_requests WHERE email = ?",
@@ -146,9 +146,11 @@ describe("GET /v1/data-requests", () => {
         message: string;
         status: string;
         request_type: string;
+        due_at: string;
       }>;
     };
     expect(data.length).toBe(1);
+    expect(data[0].due_at).toBe("2030-02-01T00:00:00.000Z");
     expect(data[0].email).toBe("newer@example.com");
     expect(data[0].message).toBe("new one");
     expect(data[0].status).toBe("new");

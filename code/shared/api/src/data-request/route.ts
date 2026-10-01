@@ -15,6 +15,8 @@ import {
   type EncryptedData,
 } from "@indiecrafts/packages-shared-security/crypto";
 import { type Env, corsHeaders, safeEqual } from "../index";
+import { sendDataRequestReceipt } from "./email";
+import { dueAt } from "./status";
 
 // The 7 GDPR request types — mirrors `DATA_REQUEST_TYPES` in
 // code/packages/web/compliance/src/requests/request-types.ts (the source of truth).
@@ -34,7 +36,7 @@ const DATA_REQUEST_TYPES = new Set([
 // `security.dataRequest.bodyMax` (8000), which must fit the 4000-char free-text message.
 const BODY_MAX = 8000;
 
-function json(
+export function json(
   body: unknown,
   status: number,
   cors: Record<string, string>,
@@ -45,7 +47,7 @@ function json(
   });
 }
 
-function bearerOf(request: Request): string {
+export function bearerOf(request: Request): string {
   return (request.headers.get("authorization") ?? "").replace(
     /^Bearer\s+/i,
     "",
@@ -70,7 +72,7 @@ function isEncrypted(v: unknown): v is EncryptedData {
 }
 
 /** Encrypt a field for storage when a key is set; else store as-is (backward compatible). */
-async function encField(
+export async function encField(
   value: string | null,
   key: string | undefined,
 ): Promise<string | null> {
@@ -80,7 +82,7 @@ async function encField(
 
 /** Decrypt a stored field: encrypted-JSON → plaintext (needs the key); legacy plaintext
  *  (or a value we can't decrypt) → returned as-is, never throwing. */
-async function decField(
+export async function decField(
   value: string | null,
   key: string | undefined,
 ): Promise<string | null> {
@@ -102,6 +104,9 @@ async function decField(
 export async function handleDataRequestWrite(
   request: Request,
   env: Env,
+  deps: { sendReceipt: typeof sendDataRequestReceipt } = {
+    sendReceipt: sendDataRequestReceipt,
+  },
 ): Promise<Response> {
   const cors = corsHeaders(request.headers.get("origin"));
   if (request.method === "OPTIONS")
@@ -158,9 +163,10 @@ export async function handleDataRequestWrite(
   const emailStored = await encField(email, env.PII_ENCRYPTION_KEY);
   const messageStored = await encField(message, env.PII_ENCRYPTION_KEY);
 
+  let id = 0;
   try {
-    await env.MAIN_DB.prepare(
-      "INSERT INTO data_requests (request_type, email, message, status, submitted_at, source, locale, policy_version) VALUES (?, ?, ?, 'new', ?, ?, ?, ?)",
+    const inserted = await env.MAIN_DB.prepare(
+      "INSERT INTO data_requests (request_type, email, message, status, submitted_at, source, locale, policy_version) VALUES (?, ?, ?, 'new', ?, ?, ?, ?) RETURNING id",
     )
       .bind(
         requestType,
@@ -171,7 +177,8 @@ export async function handleDataRequestWrite(
         locale,
         policyVersion,
       )
-      .run();
+      .first<{ id: number }>();
+    id = inserted?.id ?? 0;
   } catch (error) {
     // Never log email/message — only the error's name.
     logger.error("data-request write failed", {
@@ -179,7 +186,23 @@ export async function handleDataRequestWrite(
     });
     return json({ error: "server" }, 502, cors);
   }
-  return json({ ok: true }, 201, cors);
+  // Best-effort receipt to the requester — a mail failure never fails a stored request.
+  try {
+    await deps.sendReceipt(env, {
+      to: email,
+      id,
+      requestType,
+      locale: locale ?? "en",
+      submittedAt,
+    });
+  } catch (error) {
+    // `message` is "resend <status>" — no PII.
+    logger.error("data-request receipt failed", {
+      name: (error as Error)?.name,
+      message: (error as Error)?.message,
+    });
+  }
+  return json({ ok: true, id }, 201, cors);
 }
 
 export async function handleDataRequestList(
@@ -213,6 +236,7 @@ export async function handleDataRequestList(
     const data = await Promise.all(
       results.map(async (r) => ({
         ...r,
+        due_at: dueAt((r as { submitted_at: string }).submitted_at),
         email: await decField((r as { email: string | null }).email, key),
         message: await decField((r as { message: string | null }).message, key),
       })),

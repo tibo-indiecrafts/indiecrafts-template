@@ -65,6 +65,10 @@ import {
   handleDataRequestWrite,
   handleDataRequestList,
 } from "./data-request/route";
+import {
+  handleDataRequestDetail,
+  handleDataRequestStatus,
+} from "./data-request/status";
 import { sendSecurityAlertEmail } from "./security/alert";
 import { readChurnAggregate } from "./consent/churn-store";
 import { cronStatus, erasureRequests, forwardCronRun } from "./monitoring";
@@ -1041,6 +1045,12 @@ async function route(
     return handleDataRequestWrite(request, env);
   if (url.pathname === "/v1/data-requests")
     return handleDataRequestList(request, env);
+  // GET /v1/data-requests/:id (detail + history) · POST …/:id/status (operator moves).
+  const dr = url.pathname.match(/^\/v1\/data-requests\/(\d+)(\/status)?$/);
+  if (dr)
+    return dr[2]
+      ? handleDataRequestStatus(request, env, Number(dr[1]))
+      : handleDataRequestDetail(request, env, Number(dr[1]));
 
   // ── Clerk webhook — POST /v1/clerk-webhook (Svix-signed; server-verified events) ──
   // Fail-closed: no secret set → 503; bad signature → 401. Records only genuinely
