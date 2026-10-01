@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { declaredKeys, collectSecrets } from "./secrets.mjs";
+import { declaredKeys, collectSecrets, secretsFileFor } from "./secrets.mjs";
 
 test("declaredKeys reads keys incl. commented; skips NEXT_PUBLIC_", () => {
   const example = [
@@ -60,4 +60,22 @@ test("collectSecrets works from the env alone (no local file — the CI case)", 
     IP_HASH_SALT: "ci-salt",
     PII_ENCRYPTION_KEY: "ci-pii",
   });
+});
+
+test("secretsFileFor: dev reads .dev.vars; staging/prod never fall back to the dev file", () => {
+  const has =
+    (...files) =>
+    (f) =>
+      files.includes(f);
+  assert.equal(secretsFileFor("dev", has(".dev.vars")), ".dev.vars");
+  assert.equal(secretsFileFor("dev", has(".env.local")), ".env.local");
+  assert.equal(secretsFileFor("prod", has(".dev.vars")), null);
+  assert.equal(
+    secretsFileFor("prod", has(".dev.vars", ".dev.vars.prod")),
+    ".dev.vars.prod",
+  );
+  assert.equal(
+    secretsFileFor("staging", has(".dev.vars.staging")),
+    ".dev.vars.staging",
+  );
 });

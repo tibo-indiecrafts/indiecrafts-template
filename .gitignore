@@ -86,6 +86,7 @@ docs/modules/changelog.md
 **/.open-next/
 **/.wrangler/
 **/.dev.vars
+**/.dev.vars.*
 !**/.dev.vars.example
 
 # Local backups — Sanity dataset dumps, D1 dumps, subscriber CSVs (may hold PII).

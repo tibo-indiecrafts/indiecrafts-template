@@ -71,8 +71,10 @@ Full model → the [`code/shared/db` brief](/.claude/CLAUDE).
    `wrangler deploy`, `secrets.mjs` bulk-pushes every secret the app's `.dev.vars.example`
    declares, sourced from the local `.dev.vars` OR, in CI, the matching **GitHub Environment
    Secrets** — so `pnpm deploy:<app>:<env>` and a CI deploy both set them, no manual step.
-   Locally one `.dev.vars` feeds whatever env you deploy; in CI each Environment holds its own
-   value, so a per-env secret like `GDPR_FINGERPRINT_SALT` stays DISTINCT per env. (A one-off
+   Locally, `.dev.vars` feeds **dev only**; a hand-run staging/prod deploy reads `.dev.vars.staging`
+   / `.dev.vars.prod` (gitignored) and never falls back to the dev file. In CI each Environment
+   holds its own value. Either way a per-env secret like `GDPR_FINGERPRINT_SALT` stays DISTINCT per
+   env. (A one-off
    still works: `wrangler secret put <NAME> --env <env>`.)
 5. **Production domain** — declare the host once in the registry (`code/shared/scripts/lib/domains.mjs`),
    then `pnpm domains:print website prod` and attach it with **ONE** of the two options it prints — never

@@ -1,6 +1,6 @@
 // Sync a Worker's secrets to a Cloudflare env via `wrangler secret bulk`. Registry-driven:
 // the KEYS are the app's `.dev.vars.example`; the VALUES come from the gitignored `.dev.vars`
-// (local dev) OR `process.env` (CI — the deploy workflow injects them from the matching
+// (dev) or `.dev.vars.<staging|prod>` (a hand-run staging/prod deploy) OR `process.env` (CI — the deploy workflow injects them from the matching
 // GitHub Environment's Secrets). So `pnpm deploy:<app>:<env>` auto-syncs secrets in BOTH
 // places. Run from the app dir via its `secrets:sync:<app>:<env>` script, so `.dev.vars` +
 // `wrangler` resolve against that Worker.
@@ -60,6 +60,16 @@ export function collectSecrets(devVarsText, exampleText, env = {}) {
   return secrets;
 }
 
+/** The local secrets file for an env: dev reads `.dev.vars` (else `.env.local`); staging/prod
+ *  read only `.dev.vars.<env>` (wrangler's per-env convention) — never the dev file, which would
+ *  push dev keys and the dev GDPR salt to prod. No file → the env (CI) path alone. Pure. */
+export function secretsFileFor(env, exists) {
+  if (env !== "dev")
+    return exists(`.dev.vars.${env}`) ? `.dev.vars.${env}` : null;
+  if (exists(".dev.vars")) return ".dev.vars";
+  return exists(".env.local") ? ".env.local" : null;
+}
+
 async function main() {
   const [app, env] = process.argv.slice(2);
   const yes = process.argv.includes("--yes");
@@ -78,11 +88,7 @@ async function main() {
   assertRenamed(app, env);
   await confirmProd("Sync secrets to", app, env, { yes });
 
-  const fileSrc = existsSync(".dev.vars")
-    ? ".dev.vars"
-    : existsSync(".env.local")
-      ? ".env.local"
-      : null;
+  const fileSrc = secretsFileFor(env, existsSync);
   const devVarsText = fileSrc ? readFileSync(fileSrc, "utf8") : "";
   const exampleText = existsSync(".dev.vars.example")
     ? readFileSync(".dev.vars.example", "utf8")

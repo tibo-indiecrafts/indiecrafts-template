@@ -7,6 +7,12 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **A hand-run staging/prod deploy no longer pushes the dev secrets.** `secrets.mjs` read the
+  local `.dev.vars` for every env, so `pnpm deploy:shared:api:prod` would have synced the dev
+  Clerk key and the dev `GDPR_FINGERPRINT_SALT` to prod. Staging/prod now read only
+  `.dev.vars.<env>` (now gitignored) or the CI env. `WEBSITE_URL` is set on dev + staging, so the
+  erasure email links to the website's confirm page.
+
 - **Clerk auth emails (verification codes) are sent again.** Two faults dropped every taken-over
   email: the webhook shared the 4 KB route cap, but Clerk's `email.created` payload holds the
   rendered HTML (~12 KB), so it answered 413; and the dispatch checked `emails.created`, a name
