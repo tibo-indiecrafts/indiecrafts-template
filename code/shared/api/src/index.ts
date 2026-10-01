@@ -182,6 +182,9 @@ const ALLOWED_ORIGINS = new Set(["http://localhost:3000"]);
 /** Per-isolate settings cache for the monitoring routes (the SLA warning window). */
 const monitoringSettings: Parameters<typeof readSettings>[1] = { value: null };
 const BODY_MAX = 4000;
+/** The Clerk webhook's own cap: an `email.created` event carries Clerk's rendered HTML
+ *  (~12 KB for a verification code), so the 4 KB route cap would drop every auth email. */
+const WEBHOOK_BODY_MAX = 64 * 1024;
 
 export function corsHeaders(origin: string | null): Record<string, string> {
   if (origin && ALLOWED_ORIGINS.has(origin))
@@ -1050,13 +1053,13 @@ async function route(
       return json({ error: "unavailable" }, 503, cors);
     // Cap before the read (like /v1/events) so an unauthenticated caller can't force a
     // full body read + HMAC on an oversized payload.
-    if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
+    if (Number(request.headers.get("content-length") ?? 0) > WEBHOOK_BODY_MAX)
       return json({ error: "too_large" }, 413, cors);
     const svixId = request.headers.get("svix-id");
     const svixTs = request.headers.get("svix-timestamp");
     const svixSig = request.headers.get("svix-signature");
     const raw = await request.text();
-    if (new TextEncoder().encode(raw).length > BODY_MAX)
+    if (new TextEncoder().encode(raw).length > WEBHOOK_BODY_MAX)
       return json({ error: "too_large" }, 413, cors);
     if (
       !svixId ||
@@ -1306,11 +1309,11 @@ async function route(
         }
       }
     }
-    // ── emails.created — Clerk email take-over (localized auth emails via Resend) ──
+    // ── email.created — Clerk email take-over (localized auth emails via Resend) ──
     // Fires only when the operator toggled "Delivered by Clerk" off for a template.
     // Localize + send; a failure throws → 502 so Clerk retries (a verification code
     // must not be silently lost). No-op (200) only when the event has no recipient.
-    if (evt.type === "emails.created") {
+    if (evt.type === "email.created") {
       try {
         await handleClerkEmail(env, data);
       } catch (error) {

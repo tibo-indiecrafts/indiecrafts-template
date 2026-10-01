@@ -342,6 +342,42 @@ describe("clerk webhook → user_profiles", () => {
     expect(profile?.marketing_email).toBe(1);
   });
 
+  // Clerk's real event is `email.created`, and its payload carries the rendered HTML
+  // (~12 KB for a verification code) — far over the 4 KB route cap the webhook once shared.
+  it("email.created (real size) is sent via Resend", async () => {
+    const calls: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        calls.push(String(input));
+        return new Response(JSON.stringify({ id: "re_1" }), { status: 200 });
+      }),
+    );
+    const res = await postWebhook(
+      {
+        type: "email.created",
+        data: {
+          to_email_address: "otp@x.com",
+          slug: "verification_code",
+          subject: "123456 is your verification code",
+          body: "<p>x</p>".repeat(1500),
+          data: { otp_code: "123456" },
+        },
+      },
+      { RESEND_API_KEY: "re_test", EMAIL_FROM: "no-reply@x.com" },
+    );
+    expect(res.status).toBe(200);
+    expect(calls.some((u) => u.includes("api.resend.com"))).toBe(true);
+  });
+
+  it("rejects a webhook body over the webhook cap (413)", async () => {
+    const res = await postWebhook({
+      type: "user.updated",
+      data: { id: "u", pad: "x".repeat(70_000) },
+    });
+    expect(res.status).toBe(413);
+  });
+
   it("no marketing opt-in at sign-up → no granted email_preferences rows", async () => {
     await postWebhook({
       type: "user.created",

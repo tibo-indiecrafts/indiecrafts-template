@@ -94,7 +94,7 @@ The five rules every route meets (api brief, "Production-ready contract"; QA car
   | `invalid`            | 400    | Body or parameters invalid                                                |
   | `not_found`          | 404    | Nothing at this id                                                        |
   | `method_not_allowed` | 405    | Wrong method for the route                                                |
-  | `too_large`          | 413    | Body over the cap                                                         |
+  | `too_large`          | 413    | Body over the cap — 4 KB; 64 KB on `/v1/clerk-webhook`                    |
   | `rate_limited`       | 429    | Over the rate limit — see below                                           |
   | `too_many_attempts`  | 429    | Erasure-confirm link used 5 times — request a new link (no `Retry-After`) |
   | `unavailable`        | 503    | The route's configuration (secret or binding) is missing                  |

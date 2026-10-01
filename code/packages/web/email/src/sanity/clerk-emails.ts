@@ -11,7 +11,7 @@ import { confirmationGroup } from "./groups";
 
 /**
  * E-mails Clerk (singleton) — the editable copy for EVERY Clerk authentication +
- * security email our API worker takes over (`emails.created` → `code/shared/api/src/
+ * security email our API worker takes over (`email.created` → `code/shared/api/src/
  * clerk-email`). A **separate** document from the "E-mails" singleton so the auth/security
  * set lives on its own. Each group's copy is translated per language
  * (`localeString`/`localeText`), resolved to the RECIPIENT's stored locale; every field is

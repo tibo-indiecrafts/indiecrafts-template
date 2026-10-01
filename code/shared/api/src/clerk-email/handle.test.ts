@@ -24,7 +24,7 @@ const baseEnv = { RESEND_API_KEY: "k", EMAIL_FROM: "no-reply@x.com" };
 const record = (sink: Sent[]) => async (_e: unknown, m: Sent) =>
   void sink.push(m);
 
-describe("handleClerkEmail (Clerk emails.created take-over)", () => {
+describe("handleClerkEmail (Clerk email.created take-over)", () => {
   it("localizes the verification code by user_profiles.locale", async () => {
     const sent: Sent[] = [];
     await handleClerkEmail(

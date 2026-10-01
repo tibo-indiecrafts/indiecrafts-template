@@ -1,6 +1,6 @@
 ---
 title: "Clerk email handler"
-description: "Renders and sends a localized auth email from a Clerk emails.created event via Resend."
+description: "Renders and sends a localized auth email from a Clerk email.created event via Resend."
 status: stable
 ---
 
@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Handles a Clerk `emails.created` event. It resolves the recipient's stored locale, renders a localized auth email from the event's `data` variables, and sends it via Resend. A known template slug is localized; an unknown slug forwards Clerk's own rendered English body so nothing is dropped. It throws when the mailer is unset or the send fails, so the caller returns 502 and Clerk retries — a verification code must not be silently lost.
+Handles a Clerk `email.created` event. It resolves the recipient's stored locale, renders a localized auth email from the event's `data` variables, and sends it via Resend. A known template slug is localized; an unknown slug forwards Clerk's own rendered English body so nothing is dropped. It throws when the mailer is unset or the send fails, so the caller returns 502 and Clerk retries — a verification code must not be silently lost.
 
 ## Exports
 

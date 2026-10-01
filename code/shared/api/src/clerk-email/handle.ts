@@ -1,5 +1,5 @@
 /**
- * Render and send a localized Clerk auth email from an emails.created event.
+ * Render and send a localized Clerk auth email from an email.created event.
  *
  * @see docs/reference/shared/api/src/clerk-email/handle.md
  */
@@ -28,7 +28,7 @@ export type ClerkEmailEnv = MailEnv & {
 
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
 
-/** The `emails.created` payload we read. Defensive: Clerk field names are stable per
+/** The `email.created` payload we read. Defensive: Clerk field names are stable per
  *  template but vary a little, and unread fields are ignored. */
 type ClerkEmailData = {
   to_email_address?: unknown;
@@ -67,7 +67,7 @@ async function resolveLocale(
 }
 
 /**
- * Handle a Clerk `emails.created` event (fired when "Delivered by Clerk" is toggled
+ * Handle a Clerk `email.created` event (fired when "Delivered by Clerk" is toggled
  * off): render a LOCALIZED auth email from the event's `data` variables and send it
  * via Resend, in the user's stored locale (`user_profiles.locale`, else the default).
  * A known template `slug` is localized; an unknown slug forwards Clerk's own rendered

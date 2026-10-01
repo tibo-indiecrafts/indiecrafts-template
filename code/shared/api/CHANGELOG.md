@@ -7,6 +7,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Clerk auth emails (verification codes) are sent again.** Two faults dropped every taken-over
+  email: the webhook shared the 4 KB route cap, but Clerk's `email.created` payload holds the
+  rendered HTML (~12 KB), so it answered 413; and the dispatch checked `emails.created`, a name
+  Clerk never sends. The webhook now has its own 64 KB cap and matches `email.created`.
+
 - **The deploy syncs every secret the api reads.** `CLERK_SECRET_KEY`, `SANITY_API_WRITE_TOKEN` and
   `TURNSTILE_SECRET` were missing from `.dev.vars.example` and from the CI deploy job's `env:`, so
   `secrets.mjs` never pushed them — a deployed export or self-erasure answered 503. Declared + passed

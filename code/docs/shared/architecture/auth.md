@@ -125,7 +125,7 @@ carry the locale (below).
 webhook validates it (`isLocale`) and mirrors it to `user_profiles.locale`.
 
 **Emails** — the `localization` prop does **not** touch Clerk's emails. To localize them, the api
-takes over delivery via the `emails.created` webhook. **Operator runbook:**
+takes over delivery via the `email.created` webhook. **Operator runbook:**
 
 1. Set `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up` on the web surfaces so sign-up uses the app's own
    `<SignUp>` (not the English Account Portal).
@@ -133,9 +133,12 @@ takes over delivery via the `emails.created` webhook. **Operator runbook:**
    emails have no sender and fail (the webhook returns 502 so failures are visible, never silent).
 3. In the **Clerk Dashboard → Customization → Emails**, toggle **"Delivered by Clerk" off** for the
    templates you want localized (verification code, reset-password code, magic link). Clerk then
-   fires `emails.created`; the api renders our localized copy from `user_profiles.locale` and sends
+   fires `email.created`; the api renders our localized copy from `user_profiles.locale` and sends
    via Resend. A template left on stays with Clerk (English); a slug we don't localize is forwarded
    as Clerk's own rendered English body — never dropped.
+4. The Clerk webhook endpoint (Dashboard → Webhooks) must subscribe to `email.created` (singular).
+   Its payload holds Clerk's rendered HTML (~12 KB), so the webhook has its own 64 KB body cap.
+   Check: Svix → endpoint → attempts shows `200 {"ok":true}`, and Resend lists the send.
 
 **Auth-email copy is Studio-editable.** The four auth emails contribute groups to the shared
 `emailStrings` singleton — `authVerification`, `authResetPassword`, `authMagicLink`,
@@ -151,7 +154,7 @@ location + a "sign out this device" revoke button) is a **first-party** feature 
 Dashboard (no code). It flows through the same take-over: toggle it "Delivered by Clerk" off and it
 is localized like the rest (the `newDevice` template in `clerk-email/templates.ts`). **Caveat:** the
 revoke button survives the take-over **only if** Clerk includes the revoke link in the
-`emails.created` payload (undocumented) — the localized template renders the button when the link is
+`email.created` payload (undocumented) — the localized template renders the button when the link is
 present and degrades to a "change your password" warning otherwise. If the link turns out to be
 absent, **leave that one template on Clerk's delivery** (English, but keeps the one-click revoke).
 The handler logs any un-localized `slug` (no PII), so the real "new device" slug is discoverable in
