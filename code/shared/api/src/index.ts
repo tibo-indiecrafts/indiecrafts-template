@@ -1317,8 +1317,11 @@ async function route(
       try {
         await handleClerkEmail(env, data);
       } catch (error) {
+        // `message` is "resend <status>" or "mailer unconfigured" — no PII, and it names
+        // the cause (a 403 is a sender domain not verified in Resend).
         logger.error("clerk email delivery failed", {
           name: (error as Error)?.name,
+          message: (error as Error)?.message,
         });
         return json({ error: "email" }, 502, cors);
       }

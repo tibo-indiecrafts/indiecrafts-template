@@ -10,7 +10,8 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 - **Clerk auth emails (verification codes) are sent again.** Two faults dropped every taken-over
   email: the webhook shared the 4 KB route cap, but Clerk's `email.created` payload holds the
   rendered HTML (~12 KB), so it answered 413; and the dispatch checked `emails.created`, a name
-  Clerk never sends. The webhook now has its own 64 KB cap and matches `email.created`.
+  Clerk never sends. The webhook now has its own 64 KB cap and matches `email.created`. The failure log now
+  carries the error message (`resend 403` = sender domain not verified in Resend).
 
 - **The deploy syncs every secret the api reads.** `CLERK_SECRET_KEY`, `SANITY_API_WRITE_TOKEN` and
   `TURNSTILE_SECRET` were missing from `.dev.vars.example` and from the CI deploy job's `env:`, so

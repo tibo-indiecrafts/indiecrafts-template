@@ -131,6 +131,9 @@ takes over delivery via the `email.created` webhook. **Operator runbook:**
    `<SignUp>` (not the English Account Portal).
 2. Set the api's `RESEND_API_KEY` + `EMAIL_FROM` — **required before step 3**, or the taken-over
    emails have no sender and fail (the webhook returns 502 so failures are visible, never silent).
+   The `EMAIL_FROM` domain must be **verified in the Resend account of that key** (Resend → Domains,
+   then its DKIM/SPF records in DNS). An unverified domain fails each send: the log reads
+   `clerk email delivery failed` with `resend 403`.
 3. In the **Clerk Dashboard → Customization → Emails**, toggle **"Delivered by Clerk" off** for the
    templates you want localized (verification code, reset-password code, magic link). Clerk then
    fires `email.created`; the api renders our localized copy from `user_profiles.locale` and sends
