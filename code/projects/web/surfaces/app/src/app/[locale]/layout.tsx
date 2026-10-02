@@ -5,6 +5,7 @@
  */
 import "@indiecrafts/packages-web-ui-tokens/globals.css";
 import type { ReactNode } from "react";
+import type { Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -17,10 +18,14 @@ import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth"
 import { MarketingNudgeMount } from "@indiecrafts/packages-web-auth/marketing-nudge";
 import { routing } from "@/i18n/routing";
 import { ShellOverlays } from "@/user-interface/ShellOverlays";
-import { AnnouncementChrome } from "@/user-interface/AnnouncementChrome";
 import { buildInfo } from "@/lib/build-info";
 import { THEME_SCRIPT } from "@/user-interface/layout/theme-script";
 import { NativeBridge } from "@/user-interface/shell/NativeBridge";
+
+/** `viewport-fit=cover` exposes the iOS shell's notch and home-indicator insets
+ *  (`env(safe-area-inset-*)`): the app header pads below the status bar and the bottom
+ *  overlays clear the home indicator (`bottom-safe-4`). Without a notch they are 0. */
+export const viewport: Viewport = { viewportFit: "cover" };
 
 /** Prerender one tree per locale (`as-needed` → `/`, `/fr`). */
 export function generateStaticParams() {
@@ -73,8 +78,6 @@ export default async function LocaleLayout({
           {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
             <>
               <SessionLogger surface="app" />
-              {/* Logged-in-only announcement banner + toast (from the api Worker). */}
-              <AnnouncementChrome />
               <MarketingNudgeMount
                 apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
                 surface="app"

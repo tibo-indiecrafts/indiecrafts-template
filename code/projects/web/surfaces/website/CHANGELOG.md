@@ -63,6 +63,9 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **The announcement card mounts after every top strip** (bar, language suggestion, sub-nav), so on
+  a wide screen it sits under all of them; on a phone it stays at the bottom. The overlays e2e
+  checks both.
 - **Cloudflare observability is fully on.** Traces (10% sampled) and Issues (grouped production
   errors) join the Workers Logs in the top-level `wrangler.toml` `[observability]` block, which every
   env inherits. Wrangler is pinned to 4.143.0 (Issues needs ≥ 4.134). A test fails if a part is off.

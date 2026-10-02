@@ -71,7 +71,7 @@ export function UpdatePrompt({
       role="status"
       aria-live="polite"
       className={cn(
-        "bg-card text-foreground ring-border/60 fixed right-4 bottom-4 left-4 z-50",
+        "bg-card text-foreground ring-border/60 fixed right-4 bottom-safe-4 left-4 z-50",
         "mx-auto flex w-auto max-w-md items-center justify-between gap-3 rounded-xl",
         "border-0 p-3 shadow-lg ring-1 backdrop-blur",
       )}

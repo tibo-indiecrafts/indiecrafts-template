@@ -14,6 +14,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The header no longer hides under the iOS status bar.** In the iOS shell the WebView runs
+  edge to edge: the sidebar button sat on the clock row, the locale and theme toggles on the
+  Wi-Fi and battery icons. The app now sets `viewport-fit=cover`, and the header pads by
+  `env(safe-area-inset-top)` (0 in a browser). Checked in the iOS simulator.
 - **The announcement banner has an accessible name.** It is a `region` landmark, but the app
   passed no label, so screen readers listed an unnamed region. It now reads "Announcement" /
   "Annonce" (`announcement.region`).
@@ -30,6 +34,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **The announcement bar and card sit under the navbar.** `AnnouncementChrome` moved from the
+  root layout (above the whole shell) into `AppShell`, right under the app header. On a phone the
+  card is a bottom sheet. Checked in the Android shell.
 - **Cloudflare observability is fully on.** Traces (10% sampled) and Issues (grouped production
   errors) join the Workers Logs in the top-level `wrangler.toml` `[observability]` block, which every
   env inherits. Wrangler is pinned to 4.143.0 (Issues needs ≥ 4.134). A test fails if a part is off.

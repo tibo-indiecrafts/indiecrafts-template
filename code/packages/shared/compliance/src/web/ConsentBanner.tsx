@@ -45,7 +45,7 @@ export function ConsentBanner({
       aria-modal="false"
       aria-label={copy.title ?? copy.body}
       className={cn(
-        "bg-card text-foreground ring-border/60 fixed inset-x-4 bottom-4 z-50",
+        "bg-card text-foreground ring-border/60 fixed inset-x-4 bottom-safe-4 z-50",
         "mx-auto flex w-auto max-w-lg flex-col gap-3 rounded-xl border-0 p-4",
         "shadow-lg ring-1 backdrop-blur",
       )}

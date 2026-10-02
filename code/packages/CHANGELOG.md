@@ -14,6 +14,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **ui-tokens · compliance · version · announcement — bottom overlays clear the iPhone home
+  indicator.** New `bottom-safe-4` utility: `max(1rem, env(safe-area-inset-bottom))`. The cookie,
+  consent, legal, marketing-nudge, update and announcement overlays use it. Outside the iOS shell
+  the inset is 0, so nothing moves.
 - **announcement — the announcement card no longer covers the banner.** From 640px up the card sat
   top-right, over the announcement bar and its × button (and over the confirmation toasts on a
   tablet). It now uses the bottom overlay slot at every width, like every other queued overlay
@@ -129,6 +133,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **announcement — the card sits under the top chrome on wider screens.** On a phone it stays a
+  bottom sheet. From `sm` up it hangs top-right from a zero-height sticky anchor: mounted after the
+  navbar and any message strip, it sits under all of them and stays pinned 80px down on scroll —
+  clear of the top-center confirmation toasts. Pure CSS; DESIGN.md records the exception.
 - **Web-only bricks moved to `web/`** — the rule is now `shared/` = the api or workers use it too:
   | Before                                      | After                                                         |
   | ------------------------------------------- | ------------------------------------------------------------- |

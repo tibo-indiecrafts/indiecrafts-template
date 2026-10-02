@@ -341,6 +341,16 @@
  * card to match `rounded-tr-[5rem]`. Or set individual corners:
  * `{ "--bevel-tr": "5rem" }`.
  */
+/*
+ * Safe areas (notch, home indicator). `env(safe-area-inset-*)` is non-zero only under
+ * `viewport-fit=cover` (the app surface in the Capacitor shell); elsewhere it is 0, so
+ * `bottom-safe-4` is plain `bottom-4`. The bottom-slot overlays use it (DESIGN.md
+ * "Overlays take turns") so they clear the iPhone home indicator.
+ */
+@utility bottom-safe-4 {
+  bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
 @utility corner-bevel {
   --bevel-tl: var(--bevel-size, 1.5rem);
   --bevel-tr: var(--bevel-size, 1.5rem);

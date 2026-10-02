@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Renders the announcement card in the shared bottom overlay slot.
+ * Renders the announcement card: a bottom sheet on a phone, under the top chrome wider.
  *
  * @see docs/reference/packages/web/announcement/src/AnnouncementToast.md
  */
@@ -22,7 +22,7 @@ import { dismissToast, readToastAck } from "./announcement-store";
 import { useOverlayTurn } from "@indiecrafts/packages-web-ui-components/web/overlay-turn";
 
 /**
- * Announcement toast — a self-contained card in the shared bottom overlay slot (NOT a sonner toast:
+ * Announcement toast — a self-contained card (NOT a sonner toast:
  * it carries an image + a link the user may click, which sonner's own guidance says
  * never to auto-dismiss). Same shape as the version `UpdatePrompt`. `role="status"` +
  * `aria-live="polite"` announces it without stealing focus. i18n-agnostic — resolved
@@ -33,6 +33,12 @@ import { useOverlayTurn } from "@indiecrafts/packages-web-ui-components/web/over
  * with `useSyncExternalStore` (server snapshot `""`), never a setState-in-effect.
  * Either path — the × or the optional editor auto-dismiss timer — marks the version
  * seen, so it never nags.
+ *
+ * Placement (no JS): mount it right AFTER the top chrome — navbar, announcement bar, any
+ * message strip. On a phone the card is a bottom sheet (the overlay slot). From `sm` up it
+ * hangs from a zero-height sticky anchor at that spot, so it sits under every strip that is
+ * shown and, on scroll, stays pinned 80px down: under a navbar up to `h-20` and under the
+ * top-center confirmation toasts.
  */
 export function AnnouncementToast({
   toast,
@@ -70,52 +76,56 @@ export function AnnouncementToast({
   if (!toast || !visible) return null;
 
   return (
-    // A `div`: `<aside>` (complementary) may not carry the `status` live-region role.
-    <div
-      role="status"
-      aria-live="polite"
-      className={cn(
-        // The bottom overlay slot (DESIGN.md "Overlays take turns") at every width — never
-        // the top, where the banner (and its ×) and the confirmation toasts sit.
-        "bg-card text-foreground ring-border/60 fixed right-4 bottom-4 left-4 z-50",
-        "mx-auto flex w-auto max-w-md gap-3 rounded-xl border-0 p-4 shadow-lg ring-1 backdrop-blur",
-      )}
-    >
-      {toast.imageUrl ? (
-        // Already CDN-sized by the resolver (?w=128&auto=format&fit=max&q=75) — a raw
-        // <img> is allowed with those explicit params (`.claude/rules/web/sanity-images.md`).
-        <img
-          src={toast.imageUrl}
-          alt={toast.imageAlt ?? ""}
-          aria-hidden={toast.imageAlt ? undefined : true}
-          width={56}
-          height={56}
-          className="size-14 shrink-0 rounded-md object-cover"
-        />
-      ) : null}
-      <div className="min-w-0 flex-1">
-        <p className="text-foreground font-medium">{toast.title}</p>
-        {toast.body ? (
-          <p className="text-muted-foreground mt-1 text-sm">{toast.body}</p>
-        ) : null}
-        {toast.link?.label ? (
-          <LinkView
-            link={toast.link}
-            className="text-primary focus-visible:ring-ring mt-2 inline-block rounded text-sm font-medium underline underline-offset-2 focus-visible:ring-2 focus-visible:outline-none"
-          >
-            {toast.link.label}
-          </LinkView>
-        ) : null}
-      </div>
-      <button
-        type="button"
-        aria-label={dismissLabel}
-        title={dismissLabel}
-        onClick={close}
-        className="focus-visible:ring-ring text-muted-foreground hover:text-foreground -mt-1 -mr-1 shrink-0 self-start rounded p-1 text-lg leading-none focus-visible:ring-2 focus-visible:outline-none"
+    // Zero-height anchor: sticky from `sm` up, so the card hangs under the top chrome.
+    <div className="pointer-events-none relative z-40 h-0 sm:sticky sm:top-20">
+      {/* A `div`: `<aside>` (complementary) may not carry the `status` live-region role. */}
+      <div
+        role="status"
+        aria-live="polite"
+        className={cn(
+          "bg-card text-foreground ring-border/60 pointer-events-auto flex gap-3 rounded-xl border-0 p-4 shadow-lg ring-1 backdrop-blur",
+          // Phone: the bottom overlay slot (DESIGN.md "Overlays take turns").
+          "fixed inset-x-4 bottom-safe-4 mx-auto w-auto max-w-md",
+          // Wider: top-right, just under the anchor.
+          "sm:absolute sm:inset-x-auto sm:top-3 sm:right-4 sm:bottom-auto sm:mx-0 sm:w-full sm:max-w-sm",
+        )}
       >
-        <span aria-hidden="true">×</span>
-      </button>
+        {toast.imageUrl ? (
+          // Already CDN-sized by the resolver (?w=128&auto=format&fit=max&q=75) — a raw
+          // <img> is allowed with those explicit params (`.claude/rules/web/sanity-images.md`).
+          <img
+            src={toast.imageUrl}
+            alt={toast.imageAlt ?? ""}
+            aria-hidden={toast.imageAlt ? undefined : true}
+            width={56}
+            height={56}
+            className="size-14 shrink-0 rounded-md object-cover"
+          />
+        ) : null}
+        <div className="min-w-0 flex-1">
+          <p className="text-foreground font-medium">{toast.title}</p>
+          {toast.body ? (
+            <p className="text-muted-foreground mt-1 text-sm">{toast.body}</p>
+          ) : null}
+          {toast.link?.label ? (
+            <LinkView
+              link={toast.link}
+              className="text-primary focus-visible:ring-ring mt-2 inline-block rounded text-sm font-medium underline underline-offset-2 focus-visible:ring-2 focus-visible:outline-none"
+            >
+              {toast.link.label}
+            </LinkView>
+          ) : null}
+        </div>
+        <button
+          type="button"
+          aria-label={dismissLabel}
+          title={dismissLabel}
+          onClick={close}
+          className="focus-visible:ring-ring text-muted-foreground hover:text-foreground -mt-1 -mr-1 shrink-0 self-start rounded p-1 text-lg leading-none focus-visible:ring-2 focus-visible:outline-none"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
     </div>
   );
 }

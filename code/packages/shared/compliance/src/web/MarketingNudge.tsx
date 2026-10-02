@@ -96,7 +96,7 @@ export function MarketingNudge({
     <div
       role="dialog"
       aria-label={copy.title}
-      className="bg-card text-card-foreground fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-md flex-col gap-3 rounded-lg border p-4 shadow-lg sm:inset-x-auto sm:right-4 sm:left-auto"
+      className="bg-card text-card-foreground fixed inset-x-4 bottom-safe-4 z-50 mx-auto flex max-w-md flex-col gap-3 rounded-lg border p-4 shadow-lg sm:inset-x-auto sm:right-4 sm:left-auto"
     >
       <p className="text-sm">{copy.title}</p>
       <div className="flex items-center gap-2">

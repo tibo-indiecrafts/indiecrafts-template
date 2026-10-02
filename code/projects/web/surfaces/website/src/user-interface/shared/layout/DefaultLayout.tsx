@@ -150,7 +150,6 @@ export async function DefaultLayout({
             copiedLabel={t("copied")}
           />
         ) : null}
-        <AnnouncementToast toast={showToast ? toast : null} dismissLabel={t("dismiss")} />
         {suggested &&
         suggestCopy.message &&
         suggestCopy.switchLabel &&
@@ -164,6 +163,8 @@ export async function DefaultLayout({
           />
         ) : null}
         {subnav}
+        {/* After every top strip: the card hangs under them (a bottom sheet on a phone). */}
+        <AnnouncementToast toast={showToast ? toast : null} dismissLabel={t("dismiss")} />
         {children}
       </main>
       {resolveSlot(

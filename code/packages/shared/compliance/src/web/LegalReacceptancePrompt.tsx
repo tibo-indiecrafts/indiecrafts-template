@@ -45,7 +45,7 @@ export function LegalReacceptancePrompt({
     <div
       role="status"
       aria-live="polite"
-      className="bg-card text-foreground ring-border/60 fixed right-4 bottom-4 left-4 z-50 mx-auto flex w-auto max-w-md flex-col gap-3 rounded-2xl border-0 p-4 shadow-lg ring-1 backdrop-blur sm:flex-row sm:items-center sm:justify-between"
+      className="bg-card text-foreground ring-border/60 fixed right-4 bottom-safe-4 left-4 z-50 mx-auto flex w-auto max-w-md flex-col gap-3 rounded-2xl border-0 p-4 shadow-lg ring-1 backdrop-blur sm:flex-row sm:items-center sm:justify-between"
     >
       <p className="text-sm">
         {linkifyMessage(message, hrefs).map((part, i) =>

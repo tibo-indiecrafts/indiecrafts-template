@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Assembles the production page chrome and wraps page content. It fetches layout data (site settings, navigation, SEO, announcements, locale suggestion) in one batch keyed on the active locale, then renders the `Header`, `<main id="main">`, and `Footer`. Top-of-main chrome (announcement bar, toast, and language suggestion) is decided server-side from the cookie and `Accept-Language` so it never flashes. The footer's CCPA "Do Not Sell" link is gated to opt-out (US/CCPA) visitors via `resolveConsentMode`.
+Assembles the production page chrome and wraps page content. It fetches layout data (site settings, navigation, SEO, announcements, locale suggestion) in one batch keyed on the active locale, then renders the `Header`, `<main id="main">`, and `Footer`. Top-of-main chrome (announcement bar, toast, and language suggestion) is decided server-side from the cookie and `Accept-Language` so it never flashes. The announcement card mounts after every top strip (and the optional `subnav`), so from `sm` up it sits under all of them. The footer's CCPA "Do Not Sell" link is gated to opt-out (US/CCPA) visitors via `resolveConsentMode`.
 
 ## Exports
 

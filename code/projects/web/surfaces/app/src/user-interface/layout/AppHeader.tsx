@@ -12,8 +12,10 @@ import { LocaleSwitcher } from "./LocaleSwitcher";
 export async function AppHeader() {
   const t = await getTranslations("app");
 
+  // `box-content` + the top inset: in the iOS shell (viewport-fit=cover) the bar's 56px sit
+  // below the status bar, not under it. The inset is 0 in a browser.
   return (
-    <header className="bg-background sticky top-0 z-10 flex h-14 items-center gap-2 border-b px-4">
+    <header className="bg-background sticky top-0 z-10 box-content flex h-14 items-center gap-2 border-b px-4 pt-[env(safe-area-inset-top)]">
       <SidebarTrigger />
       <div className="ml-auto flex items-center gap-1">
         <LocaleSwitcher label={t("locale.label")} />

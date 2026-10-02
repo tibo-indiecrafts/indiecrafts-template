@@ -1,9 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 
 /**
- * Overlays take turns (`useOverlayTurn`): at most one fixed overlay on screen, the cookie
- * banner first, always in the bottom slot — the top belongs to the announcement bar and the
- * confirmation toasts. Needs the seeded `siteSettings.analytics.requireCookieConsent` on (the
+ * Overlays take turns (`useOverlayTurn`): at most one on screen, the cookie banner first, in
+ * the bottom slot. The announcement card is last: a bottom sheet on a phone; wider, it hangs
+ * under the navbar and the announcement bar — never over them. Needs the seeded `siteSettings.analytics.requireCookieConsent` on (the
  * banner mounts) and the seeded `announcementBar` + `announcementToast` — the same seed as
  * `consent.spec.ts`.
  */
@@ -61,9 +61,21 @@ for (const viewport of [
         await legal.getByRole("button", { name: "Accept" }).click();
       }
       await expect(card).toBeVisible();
-      const last = await visibleOverlays(page);
-      expect(last).toHaveLength(1);
-      last.forEach(inBottomSlot);
+      const box = (await card.boundingBox())!;
+      if (viewport.width < 640) {
+        const last = await visibleOverlays(page);
+        expect(last).toHaveLength(1);
+        last.forEach(inBottomSlot);
+      } else {
+        // Under the fixed navbar and under the announcement bar, never on top of them.
+        const header = (await page.locator("header").first().boundingBox())!;
+        const bar = (await page
+          .getByRole("region", { name: "Announcement" })
+          .boundingBox())!;
+        expect(box.y).toBeGreaterThanOrEqual(header.y + header.height);
+        expect(box.y).toBeGreaterThanOrEqual(bar.y + bar.height);
+        expect(await visibleOverlays(page)).toHaveLength(0);
+      }
     });
   });
 }

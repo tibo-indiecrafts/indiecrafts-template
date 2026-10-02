@@ -11,12 +11,12 @@ const props = {
 };
 
 describe("LegalReacceptancePrompt", () => {
-  it("renders the website banner: one sentence + Accept, centered, bottom-4", () => {
+  it("renders the website banner: one sentence + Accept, centered, in the bottom slot clear of the home indicator", () => {
     const html = renderToStaticMarkup(<LegalReacceptancePrompt {...props} />);
     expect(html).toContain('role="status"');
     expect(html).toContain("max-w-md");
     expect(html).toContain("mx-auto");
-    expect(html).toContain("bottom-4");
+    expect(html).toContain("bottom-safe-4");
     expect(html).not.toContain("font-semibold"); // no title line
     expect(html).toContain(">Accept<");
   });

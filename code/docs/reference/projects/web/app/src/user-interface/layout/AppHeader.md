@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Async server component that renders the sticky app header: the `SidebarTrigger`, then the `LocaleSwitcher` and `ThemeToggle` pushed to the right. Labels come from the `app` message namespace.
+Async server component that renders the sticky app header: the `SidebarTrigger`, then the `LocaleSwitcher` and `ThemeToggle` pushed to the right. Labels come from the `app` message namespace. It pads by `env(safe-area-inset-top)` (`box-content`, so the bar stays 56px tall): in the iOS shell it sits below the status bar; in a browser the inset is 0.
 
 ## Exports
 
