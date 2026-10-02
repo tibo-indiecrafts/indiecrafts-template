@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The account trigger and profile. It renders Clerk's `<UserButton>` (avatar to "Manage account") and `<UserProfile>` with Clerk's built-in tabs plus three custom pages: "Privacy & consent", "Emails" (the email preference centre, `#/emails`, read in the page `locale` with Clerk's stable `getToken`) and "Your data". The custom pages render inside Clerk's profile, so their hooks have a provider. All copy is resolved per surface from `messages/` and passed in.
+The account trigger and profile. It renders Clerk's `<UserButton>` (avatar to "Manage account") and `<UserProfile>` with Clerk's built-in tabs plus three custom pages, each opened by a `PageTitle` heading at the same size as Clerk's own titles (`text-lg` semibold; `headerTitle` in `authAppearance`): "Privacy & consent", "Emails" (the email preference centre, `#/emails`, read in the page `locale` with Clerk's stable `getToken`) and "Your data". The custom pages render inside Clerk's profile, so their hooks have a provider. All copy is resolved per surface from `messages/` and passed in.
 
 ## Exports
 

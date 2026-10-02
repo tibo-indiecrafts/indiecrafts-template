@@ -38,6 +38,13 @@ export function authAppearance() {
       // Clerk tints its badges ("Primary", "This device") from colorNeutral at a low
       // alpha — #dedede on white, contrast 1.3. Muted text on the badge passes AA.
       badge: { color: "var(--muted-foreground)" },
+      // Page titles ("Profile details", "Security", the sign-in card title) on the type
+      // scale — the account widget's own pages use the same size (`account-modal.tsx`).
+      headerTitle: {
+        fontSize: "var(--text-lg)",
+        lineHeight: "var(--text-lg--line-height)",
+        fontWeight: "var(--font-weight-semibold)",
+      },
     },
   };
 }

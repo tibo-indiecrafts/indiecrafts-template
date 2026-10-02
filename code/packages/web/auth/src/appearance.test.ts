@@ -14,6 +14,14 @@ describe("authAppearance", () => {
     expect(vars.colorPrimary).toBe("var(--primary)");
   });
 
+  it("puts Clerk's page titles on the token type scale", () => {
+    expect(authAppearance().elements.headerTitle).toEqual({
+      fontSize: "var(--text-lg)",
+      lineHeight: "var(--text-lg--line-height)",
+      fontWeight: "var(--font-weight-semibold)",
+    });
+  });
+
   it("gives Clerk's badges readable token text (Lighthouse color-contrast)", () => {
     expect(authAppearance().elements.badge).toEqual({
       color: "var(--muted-foreground)",

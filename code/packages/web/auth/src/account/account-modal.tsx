@@ -91,6 +91,12 @@ function MailIcon() {
   );
 }
 
+/** A custom page's title — the same size as Clerk's own page titles (`headerTitle` in
+ *  `authAppearance`), so every page of the account widget reads alike. */
+function PageTitle({ children }: { children: string }) {
+  return <h1 className="text-foreground text-lg font-semibold">{children}</h1>;
+}
+
 // The custom-page contents, shared by <AccountButton> (modal) and <AccountPage>
 // (standalone /account). Rendered inside Clerk's <UserProfile>, so their hooks
 // (useClerkAuthPort → useAuth/useReverification) have a provider.
@@ -98,6 +104,7 @@ function ConsentContent(p: AccountModalProps) {
   const auth = useClerkAuthPort(p.apiUrl);
   return (
     <div className="space-y-6">
+      <PageTitle>{p.copy.consentTabLabel}</PageTitle>
       <AccountConsentTab
         storageKey={p.consentStorageKey}
         version={p.policyVersion}
@@ -126,9 +133,7 @@ function EmailsContent(p: AccountModalProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-foreground text-lg font-semibold">
-          {p.copy.emailsTitle}
-        </h1>
+        <PageTitle>{p.copy.emailsTitle}</PageTitle>
         <p className="text-muted-foreground text-sm text-pretty">
           {p.copy.emailsIntro}
         </p>
@@ -145,13 +150,16 @@ function EmailsContent(p: AccountModalProps) {
 function DataContent(p: AccountModalProps) {
   const auth = useClerkAuthPort(p.apiUrl);
   return (
-    <AccountDataTab
-      auth={auth}
-      apiUrl={p.apiUrl}
-      deleteCopy={p.copy.delete}
-      exportCopy={p.copy.export}
-      showExport={p.showExport}
-    />
+    <div className="space-y-6">
+      <PageTitle>{p.copy.dataTabLabel}</PageTitle>
+      <AccountDataTab
+        auth={auth}
+        apiUrl={p.apiUrl}
+        deleteCopy={p.copy.delete}
+        exportCopy={p.copy.export}
+        showExport={p.showExport}
+      />
+    </div>
   );
 }
 

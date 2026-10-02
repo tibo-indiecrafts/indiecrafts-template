@@ -105,47 +105,65 @@ export function DeleteAccountSection({
             : null;
 
   return (
-    <div className={cn("bg-card text-foreground rounded-xl border p-4")}>
-      <p className="text-sm font-semibold">{copy.heading}</p>
-      <p className="text-muted-foreground mt-1 text-sm">{copy.body}</p>
-
-      <form onSubmit={onSubmit} className="mt-3 space-y-4">
-        <ChurnSurvey
-          copy={copy.survey}
-          idPrefix={uid}
-          reason={reason}
-          feedback={feedback}
-          competitor={competitor}
-          onReason={setReason}
-          onFeedback={setFeedback}
-          onCompetitor={setCompetitor}
-        />
-
-        <div className="space-y-1.5">
-          <Label htmlFor={`${uid}-email`}>{copy.emailLabel}</Label>
-          <Input
-            id={`${uid}-email`}
-            type="email"
-            placeholder={copy.emailPlaceholder}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <Button
-          type="submit"
-          variant="destructive"
-          disabled={status === "pending" || !email.trim()}
+    // Folded by default: an irreversible action stays one deliberate click away. A native
+    // <details> is keyboard- and screen-reader-ready (Enter/Space toggles, state announced).
+    <details className={cn("group bg-card text-foreground rounded-xl border")}>
+      <summary className="focus-visible:ring-ring flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl p-4 text-sm font-semibold focus-visible:ring-2 focus-visible:outline-none [&::-webkit-details-marker]:hidden">
+        {copy.heading}
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden
+          className="text-muted-foreground size-4 shrink-0 transition-transform group-open:rotate-180 motion-reduce:transition-none"
         >
-          {status === "pending" ? copy.pending : copy.confirmButton}
-        </Button>
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </summary>
+      <div className="px-4 pb-4">
+        <p className="text-muted-foreground text-sm">{copy.body}</p>
 
-        {statusText ? (
-          <p role="status" className="text-muted-foreground text-sm">
-            {statusText}
-          </p>
-        ) : null}
-      </form>
-    </div>
+        <form onSubmit={onSubmit} className="mt-3 space-y-4">
+          <ChurnSurvey
+            copy={copy.survey}
+            idPrefix={uid}
+            reason={reason}
+            feedback={feedback}
+            competitor={competitor}
+            onReason={setReason}
+            onFeedback={setFeedback}
+            onCompetitor={setCompetitor}
+          />
+
+          <div className="space-y-1.5">
+            <Label htmlFor={`${uid}-email`}>{copy.emailLabel}</Label>
+            <Input
+              id={`${uid}-email`}
+              type="email"
+              placeholder={copy.emailPlaceholder}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            variant="destructive"
+            disabled={status === "pending" || !email.trim()}
+          >
+            {status === "pending" ? copy.pending : copy.confirmButton}
+          </Button>
+
+          {statusText ? (
+            <p role="status" className="text-muted-foreground text-sm">
+              {statusText}
+            </p>
+          ) : null}
+        </form>
+      </div>
+    </details>
   );
 }

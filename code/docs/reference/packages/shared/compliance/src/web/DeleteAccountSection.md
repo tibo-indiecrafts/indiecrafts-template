@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The shared "Delete my account" section (web, shadcn), Clerk- and Next-free. It takes `getToken` and `apiUrl` as props and drives `submitAccountErasure`; copy is injected. A surface can inject its own `submitErasure` to add Clerk reverification step-up; otherwise the default no-step-up path runs.
+The shared "Delete my account" section (web, shadcn), Clerk- and Next-free. It takes `getToken` and `apiUrl` as props and drives `submitAccountErasure`; copy is injected. A surface can inject its own `submitErasure` to add Clerk reverification step-up; otherwise the default no-step-up path runs. It renders **folded**: a native `<details>` whose summary is the heading (with a chevron), so the warning, survey and confirm form stay one deliberate click away. The `<details>` element gives keyboard (Enter/Space) and screen-reader state for free.
 
 ## Exports
 

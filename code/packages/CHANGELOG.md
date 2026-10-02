@@ -26,6 +26,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 - **`AccountPage` fits its container.** Clerk caps its card at the viewport width, so next to the
   app sidebar it overflowed the screen. The card is now capped at its container.
+- **Every account page has a title of the same size.** Clerk's titles were 17 px bold, "Emails"
+  18 px semibold, "Privacy & consent" had only a 14 px section label and "Your data" none.
+  `authAppearance().elements.headerTitle` sets Clerk's to `--text-lg` semibold, and the three
+  custom pages open with a shared `PageTitle` at the same size.
+- **"Delete your account" is folded.** `DeleteAccountSection` is a `<details>`: the heading is the
+  summary; the warning, survey and confirm form open on click. An irreversible action no longer
+  fills the "Your data" page.
 - **Clerk badges are readable.** "Primary" / "This device" were #dedede on white (contrast 1.3,
   Lighthouse color-contrast). `authAppearance().elements.badge` uses `--muted-foreground`.
 - **`ui-tokens` scans `packages/web/auth`.** Its Tailwind classes were never generated unless
