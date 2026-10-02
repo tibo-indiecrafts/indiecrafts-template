@@ -19,6 +19,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **A cookie change in the account widget now takes effect and is logged.** The Privacy tab saved
+  through its own store: the page's consent gates did not see it until a reload, no Consent-Mode
+  update was pushed, nothing reached `consent_events`, and it used the default categories + version
+  `"1"` instead of the banner's Sanity ones (a first save there made the banner ask again). The tab
+  now gets the banner's categories + version (`CookieConsentConfig`) and saves through `applyConsent`.
 - **Email preferences live in the account widget, centred.** `/account` showed the preference
   centre as a separate block under Clerk's card, and the card sat to the left. The centre is now
   the widget's **Emails** tab (also in the header avatar modal), the card is centred, and the

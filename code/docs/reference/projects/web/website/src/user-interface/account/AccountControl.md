@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Client component in `src/user-interface/account`. It builds the account copy and consent categories from `messages` and `@/config`, then renders the shared `@indiecrafts/packages-web-auth/account` UI. The `variant` prop chooses the header trigger (`button`) or the `/account` full-page fallback (`page`). It replaces the old `AccountDeletePanel`.
+Client component in `src/user-interface/account`. It builds the account copy from `messages` and `@/config`, and takes the consent categories + version from the banner's Sanity document (`useCookieConsentConfig`; the message-based defaults when Sanity has none). A Privacy-tab save runs the banner's own `applyConsent` (change event, Consent-Mode update, server-side log). Then it renders the shared `@indiecrafts/packages-web-auth/account` UI. The `variant` prop chooses the header trigger (`button`) or the `/account` full-page fallback (`page`). It replaces the old `AccountDeletePanel`.
 
 ## Exports
 

@@ -16,7 +16,9 @@ import {
   DEFAULT_CONSENT_CATEGORIES,
   resolveCategories,
 } from "@indiecrafts/packages-shared-compliance/shared";
+import { applyConsent } from "@indiecrafts/packages-web-compliance/consent/consent-store";
 import { site, features } from "@/config";
+import { useCookieConsentConfig } from "./CookieConsentConfig";
 
 /**
  * Wires the shared unified account modal for the website. Builds copy + categories
@@ -34,11 +36,16 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
     title: tCat(`${key}.title`),
     description: tCat(`${key}.description`),
   });
-  const categories = resolveCategories(DEFAULT_CONSENT_CATEGORIES, {
-    necessary: cat("necessary"),
-    analytics: cat("analytics"),
-    marketing: cat("marketing"),
-  });
+  // The banner's own categories + version (Sanity), so the Privacy tab and the banner
+  // agree; the message-based defaults only when Sanity has none.
+  const banner = useCookieConsentConfig();
+  const categories = banner?.categories.length
+    ? banner.categories
+    : resolveCategories(DEFAULT_CONSENT_CATEGORIES, {
+        necessary: cat("necessary"),
+        analytics: cat("analytics"),
+        marketing: cat("marketing"),
+      });
 
   const locale = useLocale();
   const props = {
@@ -46,8 +53,12 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
     showExport: features.account.export,
     categories,
     // The banner owns re-versioning; the tab preserves the existing record's version,
-    // so this is only a fallback for a signed-in user with no consent record yet.
-    policyVersion: "1",
+    // so this is only used for a signed-in user with no consent record yet.
+    policyVersion: banner?.version || "1",
+    // A save goes through the banner's own path: store + change event (the page's
+    // consent gates update live), the Consent-Mode update, and the server-side log.
+    onConsentSaved: (choices: Record<string, boolean>, version: string) =>
+      applyConsent(categories, choices, version, "preferences"),
     consentStorageKey: `${site.prefix}.cookie-consent`,
     surface: "website",
     locale,

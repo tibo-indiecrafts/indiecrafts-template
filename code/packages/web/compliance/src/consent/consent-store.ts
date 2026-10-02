@@ -13,7 +13,7 @@ import {
   consentUpdate,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { type ConsentCategory } from "./consent-signals";
-import { reportConsent } from "./consent-report";
+import { reportConsent } from "@indiecrafts/packages-shared-compliance/web";
 
 // The pure decision math (`grantedKeys`, `consentUpdate`) + the `ConsentRecord` shape
 // moved to the portable brick so the shells reuse them; re-export here so this brick's

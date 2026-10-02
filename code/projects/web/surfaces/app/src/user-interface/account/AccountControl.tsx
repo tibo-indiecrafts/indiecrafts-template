@@ -10,6 +10,7 @@ import { AccountButton, AccountPage } from "@indiecrafts/packages-web-auth/accou
 import {
   buildDeleteAccountCopy,
   buildExportCopy,
+  reportConsent,
 } from "@indiecrafts/packages-shared-compliance/web";
 import {
   DEFAULT_CONSENT_CATEGORIES,
@@ -48,6 +49,9 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
     policyVersion,
     consentStorageKey: `${site.prefix}.cookie-consent`,
     surface: "app",
+    // The tab already saved the record; log it server-side (signed-in users only).
+    onConsentSaved: (choices: Record<string, boolean>, version: string) =>
+      reportConsent(choices, version, "preferences"),
     locale,
     copy: {
       consentTabLabel: tTabs("consent"),

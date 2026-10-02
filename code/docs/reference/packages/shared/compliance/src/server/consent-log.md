@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Forwards one consent decision to the api's `POST /v1/events` (`kind: consent`). Server-only: it holds `APP_API_TOKEN` and never runs in the browser. Fire-and-forget — a failed forward never breaks the caller. The api resolves the email fingerprint from `user_profiles`; the email itself is never sent.
+Forwards one consent decision to the api's `POST /v1/events` (`kind: consent`). Used by the website's and the app's `/api/consent-log` routes. Server-only: it holds `APP_API_TOKEN` and never runs in the browser. Fire-and-forget — a failed forward never breaks the caller. The api resolves the email fingerprint from `user_profiles`; the email itself is never sent.
 
 ## Exports
 
@@ -19,7 +19,7 @@ Forwards one consent decision to the api's `POST /v1/events` (`kind: consent`). 
 ## Usage
 
 ```ts
-import { logConsent } from "@indiecrafts/packages-web-compliance/consent-log";
+import { logConsent } from "@indiecrafts/packages-shared-compliance/server/consent-log";
 
 await logConsent({
   userId,
@@ -33,4 +33,4 @@ await logConsent({
 
 ## Source
 
-`code/packages/web/compliance/src/consent-log.ts`
+`code/packages/shared/compliance/src/server/consent-log.ts`

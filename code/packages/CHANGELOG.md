@@ -14,6 +14,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **One consent-proof path for the website and the app.** `reportConsent` / `consentEvents` moved
+  from `packages-web-compliance` to `@indiecrafts/packages-shared-compliance/web`, and the server-only
+  `logConsent` to `@indiecrafts/packages-shared-compliance/server/consent-log`. **Why:** the app logged
+  no cookie decision at all; it now uses the same two pieces as the website.
+- **The account Privacy tab hands its save to the surface.** `AccountConsentTab`'s `onSaved` now
+  receives `(choices, version)`, and `packages-web-auth`'s `AccountModalProps` gains
+  `onConsentSaved` to pass it on — so each surface logs and applies a Privacy-tab change.
 - **The account widget has an Emails page.** `packages-web-auth`'s `AccountButton` / `AccountPage`
   gain an "Emails" page (`#/emails`) with the email preference centre, so the website **and** the
   app (and the mobile shell) show it inside Clerk's account UI. `EmailPreferences` moved from the
@@ -24,6 +31,9 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **"Save choices" records every optional category.** The website's `CookiePreferences` stored only
+  the categories the visitor touched (`{"analytics":true}`), so the record and the consent log had
+  no explicit refusal for the others. It now saves each one, untouched ones as `false`.
 - **`AccountPage` fits its container.** Clerk caps its card at the viewport width, so next to the
   app sidebar it overflowed the screen. The card is now capped at its container.
 - **Every account page has a title of the same size.** Clerk's titles were 17 px bold, "Emails"

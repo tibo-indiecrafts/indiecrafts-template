@@ -49,6 +49,9 @@ export interface AccountModalProps {
   surface: string;
   /** The page locale — the email preference copy is read in it. */
   locale: string;
+  /** Called after the Privacy tab saves cookie choices — the surface logs + applies them
+   *  (the website's `applyConsent`, the app's `reportConsent`). */
+  onConsentSaved?: (choices: Record<string, boolean>, version: string) => void;
   copy: AccountCopy;
 }
 
@@ -111,6 +114,7 @@ function ConsentContent(p: AccountModalProps) {
         categories={p.categories}
         title={p.copy.consentTitle}
         saveLabel={p.copy.consentSaveLabel}
+        onSaved={p.onConsentSaved}
       />
       <MarketingEmailToggle
         apiUrl={p.apiUrl}

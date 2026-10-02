@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders the cookie-consent banner for the app surface. In opt-in regions it shows the blocking banner, first in the overlay queue (`useOverlayTurn("consent", …)`), so the other overlays wait until the visitor decides. In opt-out or none regions it seeds a default consent record once (accept-all unless a browser or server GPC signal denies), so the record exists for the legal gate and analytics default. Explicit accept, reject, and save calls persist the choice and show a saved toast; the geo seed stays silent. The whole gate is off unless `features.requireConsent` is enabled.
+Renders the cookie-consent banner for the app surface. In opt-in regions it shows the blocking banner, first in the overlay queue (`useOverlayTurn("consent", …)`), so the other overlays wait until the visitor decides. In opt-out or none regions it seeds a default consent record once (accept-all unless a browser or server GPC signal denies), so the record exists for the legal gate and analytics default. Explicit accept, reject, and save calls persist the choice and show a saved toast whose "Manage" opens the account's Privacy tab (`/account#/privacy`); the geo seed stays silent. Every decision, the seed included, goes to `reportConsent` → `/api/consent-log`, which logs it for a signed-in user. The whole gate is off unless `features.requireConsent` is enabled.
 
 ## Exports
 

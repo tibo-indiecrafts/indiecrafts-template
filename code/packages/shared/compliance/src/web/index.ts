@@ -31,6 +31,7 @@ export {
   type ExportFetchOutcome,
 } from "../shared/export-self";
 export { ExportSection } from "./ExportSection";
+export { consentEvents, reportConsent } from "./consent-report";
 export {
   EmailPreferences,
   emailPreferencesIo,

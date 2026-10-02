@@ -22,8 +22,9 @@ export interface AccountConsentTabProps {
   categories: readonly ConsentCategory[];
   title: string;
   saveLabel: string;
-  /** Called after a successful save — e.g. the surface shows a toast. */
-  onSaved?: () => void;
+  /** Called after a save with the saved choices + version — the surface applies them its
+   *  own way (Consent-Mode update, the server-side consent log, a toast). */
+  onSaved?: (choices: Record<string, boolean>, version: string) => void;
 }
 
 /**
@@ -56,8 +57,9 @@ export function AccountConsentTab({
   function handleSave() {
     // Preserve the record's version (the banner owns re-versioning); the `version`
     // prop is only the fallback for a signed-in user with no consent record yet.
-    store.save({ v: record?.v ?? version, t: Date.now(), choices });
-    onSaved?.();
+    const v = record?.v ?? version;
+    store.save({ v, t: Date.now(), choices });
+    onSaved?.(choices, v);
   }
 
   return (

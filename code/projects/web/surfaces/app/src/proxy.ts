@@ -102,5 +102,6 @@ export const config = {
     // for `auth()` (the proxy passes them straight through). Add any new api route that calls
     // `auth()` here.
     "/api/session-log",
+    "/api/consent-log",
   ],
 };

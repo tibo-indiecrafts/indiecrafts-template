@@ -15,7 +15,7 @@ The account trigger and profile. It renders Clerk's `<UserButton>` (avatar to "M
 ## Exports
 
 - `AccountCopy` — the localized copy the account tabs need (tab labels, consent title and save label, marketing label, the Emails page title/intro/chrome, and delete/export copy).
-- `AccountModalProps` — the props both entry points share (API URL, export flag, consent categories, policy version, storage key, surface, locale, and copy).
+- `AccountModalProps` — the props both entry points share (API URL, export flag, consent categories, policy version, storage key, surface, locale, copy, and `onConsentSaved(choices, version)` — called after a Privacy-tab save so the surface logs and applies the choice).
 - `AccountButton(props)` — the avatar trigger with the three custom profile pages, for the header and sidebar.
 - `AccountPage(props)` — the standalone `/account` full-page fallback with the same custom pages (hash routing, no catch-all route). Its card is capped at its container (Clerk caps it at the viewport, which overflows next to a sidebar); the surface page centres it.
 

@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Maps a stored consent choice-set to `consent_events` rows and POSTs them to `/api/consent-log`. The category-to-consent-type map is the single source of truth for which cookie categories are logged. The POST is fire-and-forget, so a failed request never blocks the local Consent-Mode write.
+Maps a stored consent choice-set to `consent_events` rows and POSTs them to the surface's same-origin `/api/consent-log` (the website's and the app's). Shared by both surfaces: the website calls it from `applyConsent`, the app from its banner (`ConsentGate`) and its account Privacy tab. The category-to-consent-type map is the single source of truth for which cookie categories are logged. The POST is fire-and-forget, so a failed request never blocks the local Consent-Mode write.
 
 ## Exports
 
@@ -20,11 +20,11 @@ Maps a stored consent choice-set to `consent_events` rows and POSTs them to `/ap
 ## Usage
 
 ```ts
-import { reportConsent } from "@indiecrafts/packages-web-compliance/consent/consent-report";
+import { reportConsent } from "@indiecrafts/packages-shared-compliance/web";
 
 reportConsent({ analytics: true, marketing: false }, "2", "banner");
 ```
 
 ## Source
 
-`code/packages/web/compliance/src/consent/consent-report.ts`
+`code/packages/shared/compliance/src/web/consent-report.ts`

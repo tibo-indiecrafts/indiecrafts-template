@@ -7,6 +7,7 @@
     "./shared": "./src/shared/index.ts",
     "./web": "./src/web/index.ts",
     "./web/*": "./src/web/*.tsx",
+    "./server/*": "./src/server/*.ts",
     "./package.json": "./package.json"
   },
   "scripts": {

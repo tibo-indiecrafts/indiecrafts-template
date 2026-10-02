@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-A dialog of per-category consent toggles. Required categories are locked on; optional categories default off. Saving applies the choices through the consent store and shows a saved toast. Mounted by `CookieBanner` and `CookiePreferencesHost`.
+A dialog of per-category consent toggles. Required categories are locked on; optional categories default off. Saving applies the choices through the consent store and shows a saved toast. "Save choices" records every optional category — an untouched one as an explicit `false` — so the stored record and the consent log name each refusal. Mounted by `CookieBanner` and `CookiePreferencesHost`.
 
 ## Exports
 

@@ -117,7 +117,12 @@ export function CookiePreferences({
             >
               {t("acceptAll")}
             </Button>
-            <Button size="sm" onClick={() => commit(draft)}>
+            {/* Every optional category is recorded — an untouched one as an explicit
+                `false` — so the stored record and the consent log name each refusal. */}
+            <Button
+              size="sm"
+              onClick={() => commit({ ...allOptional(false), ...draft })}
+            >
               {t("save")}
             </Button>
           </div>

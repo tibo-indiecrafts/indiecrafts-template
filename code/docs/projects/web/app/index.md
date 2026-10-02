@@ -84,14 +84,15 @@ unshelled — no sidebar, no header.
 
 Everything lives under `src/app/[locale]`. Locale prefixes are `as-needed` (`/` and `/fr`).
 
-| Route                                 | Page           | What it renders                                                                                                                                                                                          |
-| ------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                                   | Home           | `PageHeader` + two link cards (Account, Legal) + `ShareButtons`. The description is an editor-owned Sanity welcome (`getAppWelcome`) that falls back to the message file.                                |
-| `/account`                            | Account        | `<AccountControl variant="page">` — Clerk `<UserProfile>` with the Privacy & consent + Your data tabs. `notFound()` unless `features.deleteAccount`, a Clerk key, and `NEXT_PUBLIC_API_URL` are all set. |
-| `/legal`                              | Legal          | A list of the marketing site's legal pages, each opened cross-origin via `legalUrl(site.websiteUrl, …)` on a plain `<a>` — no content re-hosting.                                                        |
-| `/sign-in`, `/sign-up`                | Auth           | Clerk `SignInView` / sign-up. **Outside the `(app)` group — unshelled.** `notFound()` when Clerk is unconfigured.                                                                                        |
-| `/api/version`                        | build id       | JSON `{ version, commit }` with `no-store`; polled by the `UpdatePrompt` and used as the deploy smoke probe.                                                                                             |
-| `/api/csp-report`, `/api/session-log` | security sinks | CSP violation reports and session-log ingest.                                                                                                                                                            |
+| Route                                 | Page           | What it renders                                                                                                                                                                                                  |
+| ------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                                   | Home           | `PageHeader` + two link cards (Account, Legal) + `ShareButtons`. The description is an editor-owned Sanity welcome (`getAppWelcome`) that falls back to the message file.                                        |
+| `/account`                            | Account        | `<AccountControl variant="page">` — Clerk `<UserProfile>` with the Privacy & consent, Emails + Your data tabs. `notFound()` unless `features.deleteAccount`, a Clerk key, and `NEXT_PUBLIC_API_URL` are all set. |
+| `/legal`                              | Legal          | A list of the marketing site's legal pages, each opened cross-origin via `legalUrl(site.websiteUrl, …)` on a plain `<a>` — no content re-hosting.                                                                |
+| `/sign-in`, `/sign-up`                | Auth           | Clerk `SignInView` / sign-up. **Outside the `(app)` group — unshelled.** `notFound()` when Clerk is unconfigured.                                                                                                |
+| `/api/version`                        | build id       | JSON `{ version, commit }` with `no-store`; polled by the `UpdatePrompt` and used as the deploy smoke probe.                                                                                                     |
+| `/api/csp-report`, `/api/session-log` | security sinks | CSP violation reports and session-log ingest.                                                                                                                                                                    |
+| `/api/consent-log`                    | consent proof  | A signed-in user's cookie choice (banner or Privacy tab) → the api's `consent_events` (surface `app`). Signed out: `204`, nothing written.                                                                       |
 
 ## Wired baseline
 
@@ -110,7 +111,9 @@ Everything lives under `src/app/[locale]`. Locale prefixes are `as-needed` (`/` 
   `ShellOverlays` mounts `ConsentGate` (the cookie banner) and `LegalGate` (the legal
   re-acceptance popup) over the shared `compliance/web` stores. The consent mode is
   geo-resolved from the edge `cf-ipcountry` header, and honours a server-read `Sec-GPC: 1`
-  signal. Account delete and data export are separately gated by `features.deleteAccount` /
+  signal. Each decision — the banner's accept/reject/save, the geo auto-seed, a Privacy-tab
+  save — is logged for a signed-in user through `/api/consent-log` (`reportConsent`), like the
+  website's. Account delete and data export are separately gated by `features.deleteAccount` /
   `features.exportAccount` (each also needs Clerk + `NEXT_PUBLIC_API_URL`). Legal content is
   **not** re-hosted — `/legal` links out to the website. See
   [compliance](/packages/shared/compliance).

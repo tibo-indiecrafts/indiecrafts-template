@@ -14,7 +14,7 @@ The "Privacy & consent" account page. It re-opens and changes cookie-consent cho
 
 ## Exports
 
-- `AccountConsentTabProps` (interface) — the component props (`storageKey`, `version`, `categories`, copy, `onSaved`).
+- `AccountConsentTabProps` (interface) — the component props (`storageKey`, `version`, `categories`, copy, `onSaved`). `onSaved(choices, version)` receives what was saved, so the surface applies it its own way: the website runs `applyConsent` (change event, Consent-Mode update, server log), the app `reportConsent` (server log).
 - `AccountConsentTab` — the account consent panel component.
 
 ## Usage

@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import {
   ConsentBanner,
+  reportConsent,
   signalsDeny,
 } from "@indiecrafts/packages-shared-compliance/web";
 import {
@@ -41,13 +42,12 @@ export function ConsentGate({
   // or server GPC signal denies), so the record exists for the legal gate + the analytics default.
   useEffect(() => {
     if (!features.requireConsent || record !== null || mode === "opt-in") return;
-    consentStore.save({
-      v: policyVersion,
-      t: Date.now(),
-      choices: signalsDeny(gpcSignal)
-        ? rejectAllChoices(DEFAULT_CONSENT_CATEGORIES)
-        : acceptAllChoices(DEFAULT_CONSENT_CATEGORIES),
-    });
+    const choices = signalsDeny(gpcSignal)
+      ? rejectAllChoices(DEFAULT_CONSENT_CATEGORIES)
+      : acceptAllChoices(DEFAULT_CONSENT_CATEGORIES);
+    consentStore.save({ v: policyVersion, t: Date.now(), choices });
+    // Logged server-side for a signed-in user only (the route drops anonymous calls).
+    reportConsent(choices, policyVersion, "auto");
     // eslint-disable-next-line react-hooks/exhaustive-deps -- close is stable enough; re-arm on version/timer change
   }, [mode, gpcSignal, record]);
 
@@ -72,11 +72,12 @@ export function ConsentGate({
   // `consentStore.save` directly and stays silent.
   const persist = (choices: Record<string, boolean>) => {
     consentStore.save({ v: policyVersion, t: Date.now(), choices });
+    reportConsent(choices, policyVersion, "banner");
     showConsentSavedToast({
       saved: t("saved"),
       description: t("savedBody"),
       manage: t("manage"),
-      onManage: () => router.push("/account"),
+      onManage: () => router.push("/account#/privacy"),
     });
   };
 

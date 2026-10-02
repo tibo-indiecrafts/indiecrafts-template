@@ -1,7 +1,7 @@
 /**
  * Forward a consent decision to the shared api, server-side.
  *
- * @see docs/reference/packages/web/compliance/src/consent-log.md
+ * @see docs/reference/packages/shared/compliance/src/server/consent-log.md
  */
 import "server-only";
 import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";

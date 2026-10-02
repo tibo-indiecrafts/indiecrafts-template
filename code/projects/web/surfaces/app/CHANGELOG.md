@@ -14,6 +14,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **Cookie decisions are logged, like on the website.** The app saved the banner and Privacy-tab
+  choices locally only — a signed-in user had no `consent_events` proof. New `/api/consent-log`
+  (signed-in only; matched by the proxy so `auth()` has the session) + `reportConsent` on accept,
+  reject, save, the geo auto-seed and the Privacy tab. The banner's "saved" toast now opens the
+  Privacy tab (`/account#/privacy`), not the account profile.
 - **The account page has email preferences and fits the screen.** The app had no category-level
   email centre; it now has the account widget's **Emails** tab (`account.emailPreferences` +
   `account.tabs.emails`, en/fr). The widget is centred, and `AppShell`'s `main` gets `min-w-0`:

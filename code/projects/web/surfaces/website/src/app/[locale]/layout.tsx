@@ -25,6 +25,7 @@ import {
 import { fontClassName, fontStyle } from "@/lib/fonts";
 import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { CookieBanner } from "@indiecrafts/packages-web-compliance/consent/CookieBanner";
+import { CookieConsentConfig } from "@/user-interface/account/CookieConsentConfig";
 import { CookiePreferencesHost } from "@indiecrafts/packages-web-compliance/consent/CookiePreferencesHost";
 import { LegalNotice } from "@indiecrafts/packages-web-compliance/reacceptance/LegalNotice";
 import { SignedInLegalNotice } from "@/user-interface/legal/SignedInLegalNotice";
@@ -134,15 +135,16 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
-  const messages = await getMessages();
-  const nudge = await getTranslations("auth.nudge");
-  const [siteSeo, settings, cookieConsent, versionPrompt, legal] = await Promise.all([
-    getSiteSeo(locale as Locale),
-    getSiteSettings(),
-    getCookieConsent(locale as Locale),
-    getVersionPrompt(locale as Locale),
-    getLegalAcceptance(locale as Locale, features.legal),
-  ]);
+  const [messages, nudge, siteSeo, settings, cookieConsent, versionPrompt, legal] =
+    await Promise.all([
+      getMessages(),
+      getTranslations("auth.nudge"),
+      getSiteSeo(locale as Locale),
+      getSiteSettings(),
+      getCookieConsent(locale as Locale),
+      getVersionPrompt(locale as Locale),
+      getLegalAcceptance(locale as Locale, features.legal),
+    ]);
   const siteDescription = siteSeo.description;
   const requestHeaders = await headers();
   // Geo-resolve the consent mode from the visitor's edge country (opt-in EU/UK · opt-out US ·
@@ -221,7 +223,14 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
           >
             <NextIntlClientProvider messages={messages} locale={locale}>
               <LocaleSwitchBoundary>
-                {children}
+                <CookieConsentConfig
+                  value={{
+                    categories: cookieConsent.categories,
+                    version: cookieConsent.version,
+                  }}
+                >
+                  {children}
+                </CookieConsentConfig>
                 {/* Inside the intl provider — CookieBanner is a client component that
                 calls `useTranslations`, so it needs the context here. */}
                 {settings.analytics.requireCookieConsent ? (

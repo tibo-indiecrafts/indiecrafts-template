@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Client component that wires the shared unified account modal for the app. It builds the copy and consent categories from `messages` and config, then renders either the sidebar-footer trigger (`button` variant) or the `/account` full-page fallback (`page` variant). It replaces the old `AccountDeletePanel` and `CookiePreferencesSection`, and mirrors the website's `AccountControl`.
+Client component that wires the shared unified account modal for the app. It builds the copy and consent categories from `messages` and config (the same ones the app banner uses). A Privacy-tab save is logged server-side through `reportConsent` → `/api/consent-log` (signed-in users). Then it renders either the sidebar-footer trigger (`button` variant) or the `/account` full-page fallback (`page` variant). It replaces the old `AccountDeletePanel` and `CookiePreferencesSection`, and mirrors the website's `AccountControl`.
 
 ## Exports
 

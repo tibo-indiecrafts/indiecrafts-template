@@ -6,7 +6,7 @@
 import { randomUUID } from "node:crypto";
 import { cookies, headers } from "next/headers";
 import { auth } from "@clerk/nextjs/server";
-import { logConsent } from "@indiecrafts/packages-web-compliance/consent-log";
+import { logConsent } from "@indiecrafts/packages-shared-compliance/server/consent-log";
 import { clientIp } from "@indiecrafts/packages-shared-security/guard";
 import { features, surface } from "@/config";
 
