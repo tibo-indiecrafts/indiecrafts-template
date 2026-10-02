@@ -57,7 +57,8 @@ and waitlist templates are not localized — toggled off, they forward Clerk's b
 
 The **E-mails Clerk** singleton (`clerkEmails`, Studio → Contenu partagé) holds one group
 per kind: `subject` / `intro` / `outro` (+ `buttonLabel` on `magicLink`, `newDevice`,
-`invitation`). Every field is translatable. An empty field falls back to the hardcoded
+`invitation`; on `newDevice` it labels the disconnect link, whichever one the email carries).
+Every field is translatable. An empty field falls back to the hardcoded
 en/fr. The schema lives in `code/packages/web/email/src/sanity/clerk-emails.ts`.
 
 The same singleton also holds a **`welcome`** group — the post-signup welcome email. Unlike

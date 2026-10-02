@@ -105,8 +105,10 @@ dashboard enables, so the dashboard is the one home for the method set.
 
 Enable Clerk's **unauthorized sign-in detection**: it emails the account owner when a sign-in
 looks unusual. We run on the **Clerk free
-plan**, so the one-click revoke-from-email button is unavailable — revoke is manual from the
-account UI. Bot protection and user-enumeration protection stay on by default; the
+plan**, so Clerk's one-click revoke-from-email link is unavailable. The email links instead to
+the account's device list (`<WEBSITE_URL>/account#/security`), where the user signs the device
+out in one click. Clerk's lockout and new-device events also reach the admin security feed — see
+[Security hardening](/projects/web/website/config/security-hardening). Bot protection and user-enumeration protection stay on by default; the
 `@indiecrafts/packages-shared-security` `withGuard` + Cloudflare WAF are defence-in-depth.
 
 ## Web wiring
@@ -165,13 +167,17 @@ are injected by the worker; only the surrounding copy is editable.
 **New-device sign-in email.** Clerk's "Sign in from new device" security email (device / OS /
 location + a "sign out this device" revoke button) is a **first-party** feature — enable it in the
 Dashboard (no code). It flows through the same take-over: toggle it "Delivered by Clerk" off and it
-is localized like the rest (the `newDevice` template in `clerk-email/templates.ts`). **Caveat:** the
-revoke button survives the take-over **only if** Clerk includes the revoke link in the
-`email.created` payload (undocumented) — the localized template renders the button when the link is
-present and degrades to a "change your password" warning otherwise. If the link turns out to be
-absent, **leave that one template on Clerk's delivery** (English, but keeps the one-click revoke).
-The handler logs any un-localized `slug` (no PII), so the real "new device" slug is discoverable in
-the api logs once the feature is on — then lock it in `AUTH_TEMPLATES`.
+is localized like the rest (the `newDevice` template in `clerk-email/templates.ts`; Clerk's slug is
+`new_device_sign_in`). It shows Clerk's `device_type` · `operating_system` · `browser_name`,
+`location` and `ip_address`, then **one disconnect link**:
+
+- Clerk's `revoke_session_url` when the payload has it (a paid Clerk plan) — signs out that exact
+  session in one click;
+- else `<WEBSITE_URL>/account#/security` — Clerk's `<UserProfile>` Security tab, which lists every
+  signed-in device with a **Sign out** button (the user signs in first if needed);
+- else (no `WEBSITE_URL`) a "change your password" warning.
+
+Only an `https` link is used.
 
 ## Commercial-email consent (marketing opt-in)
 

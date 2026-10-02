@@ -282,14 +282,22 @@ function newDevice(vars: EmailVars, locale: string, copy?: AuthCopy): Rendered {
   const what = [
     str(vars.device_type) || str(vars.device),
     str(vars.os) || str(vars.operating_system),
-    str(vars.browser),
+    str(vars.browser_name) || str(vars.browser),
   ]
     .filter(Boolean)
     .join(" · ");
-  const where = [str(vars.city), str(vars.country)].filter(Boolean).join(", ");
+  const where =
+    str(vars.location) ||
+    [str(vars.city), str(vars.country)].filter(Boolean).join(", ");
   const ip = str(vars.ip_address) || str(vars.ip);
-  const revoke =
-    str(vars.revoke_session_url) || str(vars.sign_out_url) || str(vars.link);
+  // Clerk's one-click "sign out this session" link — optional in its payload. Without
+  // it, the account's device list (Clerk <UserProfile> Security tab: every signed-in
+  // device with a Sign out button). https only: the link goes straight into an href.
+  const https = (u: string) => (/^https:\/\//i.test(u) ? u : "");
+  const revoke = https(
+    str(vars.revoke_session_url) || str(vars.sign_out_url) || str(vars.link),
+  );
+  const review = revoke ? "" : https(str(vars.account_security_url));
 
   const details = [what, where, ip ? `IP ${ip}` : ""].filter(Boolean);
   const intro =
@@ -310,6 +318,15 @@ function newDevice(vars: EmailVars, locale: string, copy?: AuthCopy): Rendered {
       },
       locale,
     );
+  const reviewLabel =
+    copy?.buttonLabel ||
+    pickLocale(
+      {
+        en: "This wasn't you? Disconnect it from your devices list",
+        fr: "Ce n'était pas vous ? Déconnectez-le depuis la liste de vos appareils",
+      },
+      locale,
+    );
   const noRevoke =
     copy?.outro ||
     pickLocale(
@@ -322,8 +339,13 @@ function newDevice(vars: EmailVars, locale: string, copy?: AuthCopy): Rendered {
   const listHtml = details.length
     ? `<ul>${details.map((d) => `<li>${escapeHtml(d)}</li>`).join("")}</ul>`
     : "";
-  const cta = revoke
-    ? `<p><a href="${escapeHtml(revoke)}">${escapeHtml(revokeLabel)}</a></p>`
+  const link = revoke
+    ? { href: revoke, label: revokeLabel }
+    : review
+      ? { href: review, label: reviewLabel }
+      : null;
+  const cta = link
+    ? `<p><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></p>`
     : `<p>${escapeHtml(noRevoke)}</p>`;
   return {
     subject:
@@ -336,6 +358,6 @@ function newDevice(vars: EmailVars, locale: string, copy?: AuthCopy): Rendered {
         locale,
       ),
     html: `<p>${escapeHtml(intro)}</p>${listHtml}${cta}`,
-    text: `${intro}\n${details.join("\n")}\n\n${revoke ? `${revokeLabel}: ${revoke}` : noRevoke}`,
+    text: `${intro}\n${details.join("\n")}\n\n${link ? `${link.label}: ${link.href}` : noRevoke}`,
   };
 }

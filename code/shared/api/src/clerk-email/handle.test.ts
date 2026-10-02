@@ -165,4 +165,73 @@ describe("handleClerkEmail (Clerk email.created take-over)", () => {
     expect(sent[0].html).not.toContain("<a href");
     expect(sent[0].html.toLowerCase()).toContain("change your password");
   });
+
+  it("new-device email shows Clerk's own detail fields (browser_name, location)", async () => {
+    const sent: Sent[] = [];
+    await handleClerkEmail(
+      baseEnv,
+      {
+        to_email_address: "u@x.com",
+        slug: "new_device_sign_in",
+        data: {
+          device_type: "Mac",
+          browser_name: "Firefox",
+          operating_system: "macOS",
+          location: "Lyon, FR",
+        },
+      },
+      record(sent),
+    );
+    expect(sent[0].text).toContain("Mac · macOS · Firefox");
+    expect(sent[0].text).toContain("Lyon, FR");
+  });
+
+  it("without Clerk's revoke link, links to the account's device list to disconnect", async () => {
+    const sent: Sent[] = [];
+    await handleClerkEmail(
+      { ...baseEnv, MAIN_DB: db("fr"), WEBSITE_URL: "https://site.example" },
+      {
+        to_email_address: "u@x.com",
+        slug: "new_device_sign_in",
+        user_id: "u",
+        data: { device_type: "Mac" },
+      },
+      record(sent),
+    );
+    expect(sent[0].html).toContain(
+      'href="https://site.example/account#/security"',
+    );
+    expect(sent[0].html).toContain("Déconnectez-le");
+    expect(sent[0].text).toContain("https://site.example/account#/security");
+  });
+
+  it("the Studio button label also labels the device-list link", async () => {
+    const sent: Sent[] = [];
+    await handleClerkEmail(
+      { ...baseEnv, WEBSITE_URL: "https://site.example" },
+      { to_email_address: "u@x.com", slug: "new_device_sign_in", data: {} },
+      record(sent),
+      async () => ({
+        newDevice: { buttonLabel: { en: "Not me — sign it out" } },
+      }),
+    );
+    expect(sent[0].html).toContain(
+      '<a href="https://site.example/account#/security">Not me — sign it out</a>',
+    );
+  });
+
+  it("ignores a revoke link that is not https", async () => {
+    const sent: Sent[] = [];
+    await handleClerkEmail(
+      { ...baseEnv, WEBSITE_URL: "https://site.example" },
+      {
+        to_email_address: "u@x.com",
+        slug: "new_device_sign_in",
+        data: { revoke_session_url: "javascript:alert(1)" },
+      },
+      record(sent),
+    );
+    expect(sent[0].html).not.toContain("javascript:");
+    expect(sent[0].html).toContain("https://site.example/account#/security");
+  });
 });

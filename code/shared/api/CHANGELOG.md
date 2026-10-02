@@ -7,6 +7,12 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **The new-device email always has a disconnect link.** On Clerk's free plan the payload has
+  no one-click `revoke_session_url`, so the email only said "change your password". It now links
+  to the website's device list (`WEBSITE_URL/account#/security`, Clerk's Security tab), where the
+  user signs that device out; Clerk's own link still wins when present. Only `https` links are
+  used. The email also shows the browser and location again — it read `browser` / `city`, but
+  Clerk sends `browser_name` / `location`.
 - **Clerk's own sign-in detections reach the security feed.** Clerk locks an account after
   failed sign-ins and flags a new-device sign-in, but it emails only the user. The Clerk
   webhook now records them when their email passes through the api (`email.created`):

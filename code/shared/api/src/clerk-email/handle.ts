@@ -24,6 +24,8 @@ import {
 export type ClerkEmailEnv = MailEnv & {
   MAIN_DB?: D1Database;
   GDPR_FINGERPRINT_SALT?: string;
+  /** The website origin — the new-device email links to its `/account` device list. */
+  WEBSITE_URL?: string;
 };
 
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
@@ -103,7 +105,15 @@ export async function handleClerkEmail(
     // Studio override (Sanity `clerkEmails`), resolved to the recipient's locale; null/
     // unset → the template's hardcoded copy.
     const copy = resolveAuthCopy(strings, slug, locale);
-    const { subject, html, text } = tpl(d.data ?? {}, locale, copy);
+    // Our own link next to Clerk's variables: the device list where the user signs out
+    // a device (the new-device email's fallback when Clerk sends no revoke link).
+    const vars = {
+      ...d.data,
+      ...(env.WEBSITE_URL && {
+        account_security_url: `${env.WEBSITE_URL}/account#/security`,
+      }),
+    };
+    const { subject, html, text } = tpl(vars, locale, copy);
     await send(env, {
       to,
       subject,

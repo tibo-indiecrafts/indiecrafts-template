@@ -14,7 +14,7 @@ Handles a Clerk `email.created` event. It resolves the recipient's stored locale
 
 ## Exports
 
-- `ClerkEmailEnv` — the env slice this handler needs: the mailer env plus a read handle to `MAIN_DB` and the fingerprint salt.
+- `ClerkEmailEnv` — the env slice this handler needs: the mailer env plus a read handle to `MAIN_DB`, the fingerprint salt, and `WEBSITE_URL` (the new-device email's device-list link, passed to the template as `account_security_url`).
 - `handleClerkEmail(env, data, send?, fetchStrings?)` — renders and sends the localized email; `send` and `fetchStrings` are injectable for tests.
 
 ## Usage
