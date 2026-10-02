@@ -32,7 +32,10 @@ export default async function AccountPage({ params }: Props) {
   return (
     <div className="p-4 md:p-6">
       <PageHeader title={th("title")} description={th("description")} />
-      <AccountControl variant="page" />
+      {/* Clerk's <UserProfile> has a fixed max width — centre it in the content area. */}
+      <div className="flex justify-center">
+        <AccountControl variant="page" />
+      </div>
     </div>
   );
 }

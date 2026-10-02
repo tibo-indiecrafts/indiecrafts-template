@@ -6,12 +6,16 @@
  * @see docs/reference/packages/web/auth/src/account/account-modal.md
  */
 
-import { UserButton, UserProfile } from "@clerk/nextjs";
+import { useMemo } from "react";
+import { UserButton, UserProfile, useAuth } from "@clerk/nextjs";
 import {
   AccountConsentTab,
   AccountDataTab,
+  EmailPreferences,
+  emailPreferencesIo,
   MarketingEmailToggle,
   type DeleteAccountCopy,
+  type EmailPreferencesCopy,
   type ExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
 import type { ConsentCategory } from "@indiecrafts/packages-shared-compliance/shared";
@@ -25,6 +29,11 @@ export interface AccountCopy {
   consentSaveLabel: string;
   /** The commercial-email toggle row label. */
   marketingLabel: string;
+  /** The "Emails" page: tab label, heading, intro, and the preference centre's chrome. */
+  emailsTabLabel: string;
+  emailsTitle: string;
+  emailsIntro: string;
+  emailPreferences: EmailPreferencesCopy;
   delete: DeleteAccountCopy;
   export: ExportCopy;
 }
@@ -38,6 +47,8 @@ export interface AccountModalProps {
   consentStorageKey: string;
   /** This surface's name — recorded on the marketing consent proof row. */
   surface: string;
+  /** The page locale — the email preference copy is read in it. */
+  locale: string;
   copy: AccountCopy;
 }
 
@@ -71,7 +82,16 @@ function DataIcon() {
   );
 }
 
-// The two custom-page contents, shared by <AccountButton> (modal) and <AccountPage>
+function MailIcon() {
+  return (
+    <svg {...iconProps}>
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="m22 7-10 6L2 7" />
+    </svg>
+  );
+}
+
+// The custom-page contents, shared by <AccountButton> (modal) and <AccountPage>
 // (standalone /account). Rendered inside Clerk's <UserProfile>, so their hooks
 // (useClerkAuthPort → useAuth/useReverification) have a provider.
 function ConsentContent(p: AccountModalProps) {
@@ -95,6 +115,33 @@ function ConsentContent(p: AccountModalProps) {
   );
 }
 
+function EmailsContent(p: AccountModalProps) {
+  // Clerk's own getToken is stable across renders (useClerkAuthPort wraps it in a new
+  // function each render) — EmailPreferences re-reads whenever `read` changes.
+  const { getToken } = useAuth();
+  const io = useMemo(
+    () => emailPreferencesIo(p.apiUrl, () => getToken(), p.surface, p.locale),
+    [p.apiUrl, getToken, p.surface, p.locale],
+  );
+  return (
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-foreground text-lg font-semibold">
+          {p.copy.emailsTitle}
+        </h1>
+        <p className="text-muted-foreground text-sm text-pretty">
+          {p.copy.emailsIntro}
+        </p>
+      </div>
+      <EmailPreferences
+        read={io.read}
+        write={io.write}
+        chrome={p.copy.emailPreferences}
+      />
+    </div>
+  );
+}
+
 function DataContent(p: AccountModalProps) {
   const auth = useClerkAuthPort(p.apiUrl);
   return (
@@ -111,7 +158,7 @@ function DataContent(p: AccountModalProps) {
 /**
  * The account trigger + modal. Renders Clerk's `<UserButton>` (avatar → "Manage
  * account" opens `<UserProfile>`) with Clerk's built-in Profile/Security/Devices tabs
- * plus our two custom pages: "Privacy & consent" and "Your data". One component,
+ * plus our three custom pages: "Privacy & consent", "Emails" and "Your data". One component,
  * mounted identically on the website header and the app sidebar. `@clerk/nextjs`-based (website + app).
  */
 export function AccountButton(props: AccountModalProps) {
@@ -123,6 +170,13 @@ export function AccountButton(props: AccountModalProps) {
         labelIcon={<ShieldIcon />}
       >
         <ConsentContent {...props} />
+      </UserButton.UserProfilePage>
+      <UserButton.UserProfilePage
+        label={props.copy.emailsTabLabel}
+        url="emails"
+        labelIcon={<MailIcon />}
+      >
+        <EmailsContent {...props} />
       </UserButton.UserProfilePage>
       <UserButton.UserProfilePage
         label={props.copy.dataTabLabel}
@@ -142,13 +196,27 @@ export function AccountButton(props: AccountModalProps) {
  */
 export function AccountPage(props: AccountModalProps) {
   return (
-    <UserProfile routing="hash">
+    // Clerk caps the card at the VIEWPORT width; next to a sidebar that overflows. Cap it at
+    // its container instead (the surface page centres it).
+    <UserProfile
+      routing="hash"
+      appearance={{
+        elements: { rootBox: "min-w-0 max-w-full", cardBox: "max-w-full!" },
+      }}
+    >
       <UserProfile.Page
         label={props.copy.consentTabLabel}
         url="privacy"
         labelIcon={<ShieldIcon />}
       >
         <ConsentContent {...props} />
+      </UserProfile.Page>
+      <UserProfile.Page
+        label={props.copy.emailsTabLabel}
+        url="emails"
+        labelIcon={<MailIcon />}
+      >
+        <EmailsContent {...props} />
       </UserProfile.Page>
       <UserProfile.Page
         label={props.copy.dataTabLabel}

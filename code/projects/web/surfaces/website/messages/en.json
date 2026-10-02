@@ -135,6 +135,7 @@
     },
     "tabs": {
       "consent": "Privacy & consent",
+      "emails": "Emails",
       "data": "Your data",
       "consentTitle": "Cookie preferences",
       "consentSave": "Save"

@@ -5,7 +5,11 @@ import { describe, expect, it, vi } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { EmailPreferences, type EmailPreferencesData } from "./EmailPreferences";
+import {
+  EmailPreferences,
+  emailPreferencesIo,
+  type EmailPreferencesData,
+} from "./EmailPreferences";
 
 const chrome = {
   noticesHeading: "Account & security",
@@ -48,7 +52,9 @@ describe("EmailPreferences", () => {
     render(<EmailPreferences read={read} write={write} chrome={chrome} />);
 
     await waitFor(() => expect(read).toHaveBeenCalledOnce());
-    const productSwitch = await screen.findByRole("switch", { name: /product updates/i });
+    const productSwitch = await screen.findByRole("switch", {
+      name: /product updates/i,
+    });
     const marketingSwitch = screen.getByRole("switch", { name: /marketing/i });
 
     expect(productSwitch).toHaveAttribute("aria-checked", "true");
@@ -69,7 +75,9 @@ describe("EmailPreferences", () => {
 
     render(<EmailPreferences read={read} write={write} chrome={chrome} />);
 
-    const marketingSwitch = await screen.findByRole("switch", { name: /marketing/i });
+    const marketingSwitch = await screen.findByRole("switch", {
+      name: /marketing/i,
+    });
     await user.click(marketingSwitch);
 
     await waitFor(() =>
@@ -86,11 +94,82 @@ describe("EmailPreferences", () => {
 
     render(<EmailPreferences read={read} write={write} chrome={chrome} />);
 
-    const marketingSwitch = await screen.findByRole("switch", { name: /marketing/i });
+    const marketingSwitch = await screen.findByRole("switch", {
+      name: /marketing/i,
+    });
     await user.click(marketingSwitch);
 
-    await waitFor(() => expect(marketingSwitch).toHaveAttribute("aria-checked", "false"));
+    await waitFor(() =>
+      expect(marketingSwitch).toHaveAttribute("aria-checked", "false"),
+    );
     expect(screen.getByRole("alert")).toHaveTextContent(chrome.error);
     await waitFor(() => expect(marketingSwitch).toBeEnabled()); // saving flag cleared on failure too
+  });
+});
+
+describe("emailPreferencesIo (signed-in transport)", () => {
+  const ok = (body: unknown = {}) =>
+    vi.fn(async (_u: string | URL | Request, _i?: RequestInit) =>
+      Response.json(body),
+    );
+
+  it("reads with the Clerk JWT", async () => {
+    const f = ok(DATA);
+    const io = emailPreferencesIo(
+      "https://api.x",
+      async () => "jwt",
+      "app",
+      "fr",
+      f,
+    );
+    expect(await io.read()).toEqual(DATA);
+    expect(f).toHaveBeenCalledWith(
+      "https://api.x/v1/consent/email-preferences?locale=fr",
+      {
+        headers: { authorization: "Bearer jwt" },
+      },
+    );
+  });
+
+  it("writes the updates with the surface", async () => {
+    const f = ok();
+    const io = emailPreferencesIo(
+      "https://api.x",
+      async () => "jwt",
+      "app",
+      "fr",
+      f,
+    );
+    await io.write([{ key: "product", granted: false }]);
+    const init = f.mock.calls[0]![1]!;
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(String(init.body))).toEqual({
+      updates: [{ key: "product", granted: false }],
+      surface: "app",
+    });
+  });
+
+  it("throws on no token or a non-2xx, never a falsely empty list", async () => {
+    const f = ok(DATA);
+    await expect(
+      emailPreferencesIo(
+        "https://api.x",
+        async () => null,
+        "app",
+        "fr",
+        f,
+      ).read(),
+    ).rejects.toThrow("no token");
+    expect(f).not.toHaveBeenCalled();
+    const bad = vi.fn(async () => new Response("", { status: 502 }));
+    await expect(
+      emailPreferencesIo(
+        "https://api.x",
+        async () => "jwt",
+        "app",
+        "fr",
+        bad,
+      ).read(),
+    ).rejects.toThrow("502");
   });
 });

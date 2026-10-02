@@ -135,6 +135,7 @@
     },
     "tabs": {
       "consent": "Confidentialité et consentement",
+      "emails": "E-mails",
       "data": "Vos données",
       "consentTitle": "Préférences de cookies",
       "consentSave": "Enregistrer"

@@ -14,6 +14,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The account page has email preferences and fits the screen.** The app had no category-level
+  email centre; it now has the account widget's **Emails** tab (`account.emailPreferences` +
+  `account.tabs.emails`, en/fr). The widget is centred, and `AppShell`'s `main` gets `min-w-0`:
+  at 768 px Clerk's card pushed the page 256 px wider than the screen.
 - **The deployed app calls the deployed api.** Its build baked `.env.local`'s
   `localhost` `NEXT_PUBLIC_API_URL` / `NEXT_PUBLIC_WEBSITE_URL`. `wrangler.toml` now sets them per env
   (`[env.dev.vars]`, `[env.staging.vars]`) and the deploy bakes them. Prod gets the api from the

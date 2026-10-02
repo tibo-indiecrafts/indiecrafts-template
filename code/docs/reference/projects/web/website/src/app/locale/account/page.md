@@ -6,11 +6,11 @@ status: stable
 
 # Account page route
 
-> The `/[locale]/account` route: the account modal rendered full-page, plus the email preference centre.
+> The `/[locale]/account` route: the account modal rendered full-page, centred.
 
 ## Purpose
 
-Renders `AccountControl` in its `page` variant (Clerk `<UserProfile>` with the Privacy & consent and Your data tabs), the same experience that opens from the header avatar. Below it, a website-only email preference centre mounts through `EmailPreferencesMount`. The route is gated by `features.account.delete` (`isPageVisible`), Clerk being configured, a client API origin, and a signed-in user — a signed-out visitor is redirected home.
+Renders `AccountControl` in its `page` variant (Clerk `<UserProfile>` with the Privacy & consent, Emails and Your data tabs), centred in the page — the same experience that opens from the header avatar. The email preference centre is the widget's Emails tab (`/account#/emails`). The route is gated by `features.account.delete` (`isPageVisible`), Clerk being configured, a client API origin, and a signed-in user — a signed-out visitor is redirected home.
 
 ## Exports
 

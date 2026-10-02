@@ -14,7 +14,7 @@ Maps Clerk's `appearance.variables` to the `@indiecrafts/packages-web-ui-tokens`
 
 ## Exports
 
-- `authAppearance()` — returns the Clerk `appearance` object whose color and radius variables reference `var(--...)` design tokens.
+- `authAppearance()` — returns the Clerk `appearance` object whose color and radius variables reference `var(--...)` design tokens. `elements.badge` sets badge text ("Primary", "This device") to `var(--muted-foreground)`: Clerk's default tint is #dedede on white (contrast 1.3).
 
 ## Usage
 

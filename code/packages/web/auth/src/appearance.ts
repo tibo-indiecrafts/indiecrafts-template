@@ -34,5 +34,10 @@ export function authAppearance() {
       colorText: "var(--foreground)",
       colorTextSecondary: "var(--muted-foreground)",
     },
+    elements: {
+      // Clerk tints its badges ("Primary", "This device") from colorNeutral at a low
+      // alpha — #dedede on white, contrast 1.3. Muted text on the badge passes AA.
+      badge: { color: "var(--muted-foreground)" },
+    },
   };
 }

@@ -22,6 +22,7 @@
 // A write appends the append-only proof + per-category state (Task 5's store) and best-effort
 // mirrors the changed categories to Resend Topics (Task 8).
 import { logger } from "@indiecrafts/packages-shared-logger";
+import { isLocale, localeCodes } from "@indiecrafts/packages-shared-config";
 import { type Env, PUBLIC_CORS_POST, clientIp } from "../index";
 import { readProfileLocale } from "../erasure/email";
 import { verifyUserId } from "./marketing";
@@ -221,7 +222,12 @@ export async function handleEmailPreferences(
   const userId = await authenticate(request, env);
   if (!userId) return json({ error: "unauthorized" }, 401);
 
-  const locale = await readProfileLocale(env.MAIN_DB, { userId });
+  // The page's own locale (?locale=, a site locale only) wins for what the user sees;
+  // else the stored profile locale (the one the emails use).
+  const asked = new URL(request.url).searchParams.get("locale") ?? "";
+  const locale = isLocale(asked, localeCodes)
+    ? asked
+    : await readProfileLocale(env.MAIN_DB, { userId });
 
   if (request.method === "GET") {
     const state = await readState({

@@ -12,7 +12,24 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **The account widget has an Emails page.** `packages-web-auth`'s `AccountButton` / `AccountPage`
+  gain an "Emails" page (`#/emails`) with the email preference centre, so the website **and** the
+  app (and the mobile shell) show it inside Clerk's account UI. `EmailPreferences` moved from the
+  website into `@indiecrafts/packages-shared-compliance/web`, with the signed-in transport
+  `emailPreferencesIo` (reads in the page `locale`). `AccountModalProps` gains `locale`;
+  `AccountCopy` gains the Emails copy. **Why:** a shared package can't import a website
+  component, so the centre lived only on the website's `/account`, below the widget.
+
 ### Fixed
+
+- **`AccountPage` fits its container.** Clerk caps its card at the viewport width, so next to the
+  app sidebar it overflowed the screen. The card is now capped at its container.
+- **Clerk badges are readable.** "Primary" / "This device" were #dedede on white (contrast 1.3,
+  Lighthouse color-contrast). `authAppearance().elements.badge` uses `--muted-foreground`.
+- **`ui-tokens` scans `packages/web/auth`.** Its Tailwind classes were never generated unless
+  another source used them too.
 
 - **`classifyFailedLogins` reports each crossing once.** It returned an incident for every count
   at or past the threshold, so the api stored a row (and paged the owner) per attempt. It now

@@ -35,13 +35,13 @@ controls, each mapped to a Resend Topic for real sending.
 
 All on `code/shared/api` (`code/shared/api/src/consent/email-preferences.ts`):
 
-| Route                                            | Auth                   | Purpose                                                       |
-| ------------------------------------------------ | ---------------------- | ------------------------------------------------------------- |
-| `GET /v1/consent/email-preferences`              | Clerk JWT              | Read the caller's categories, notices, and `marketing_email`. |
-| `POST /v1/consent/email-preferences`             | Clerk JWT              | Write `{ updates: [{key, granted}], surface? }`.              |
-| `GET /v1/email-preferences?token=…`              | signed token, no login | Same read, from an email link.                                |
-| `POST /v1/email-preferences`                     | signed token, no login | Same write, `{ token, updates, surface? }`.                   |
-| `POST /v1/email-preferences/unsubscribe?token=…` | signed token, no login | RFC 8058 one-click unsubscribe.                               |
+| Route                                            | Auth                   | Purpose                                                                                                                |
+| ------------------------------------------------ | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `GET /v1/consent/email-preferences`              | Clerk JWT              | Read the caller's categories, notices, and `marketing_email`; `?locale=` picks the copy language (else the profile's). |
+| `POST /v1/consent/email-preferences`             | Clerk JWT              | Write `{ updates: [{key, granted}], surface? }`.                                                                       |
+| `GET /v1/email-preferences?token=…`              | signed token, no login | Same read, from an email link.                                                                                         |
+| `POST /v1/email-preferences`                     | signed token, no login | Same write, `{ token, updates, surface? }`.                                                                            |
+| `POST /v1/email-preferences/unsubscribe?token=…` | signed token, no login | RFC 8058 one-click unsubscribe.                                                                                        |
 
 A write validates every `key` against the current Sanity categories, upserts the D1 row,
 appends the proof row, recomputes `marketing_email`, and best-effort mirrors the changed
@@ -101,15 +101,17 @@ chose as defaults, with the same D1 write + proof row as any other change.
 
 ## Web + mobile
 
-- **Website** — `EmailPreferences` (`code/projects/web/surfaces/website/src/user-interface/account/EmailPreferences.tsx`)
+- **Website + app** — `EmailPreferences` (`@indiecrafts/packages-shared-compliance/web`)
   renders a switch per category plus the read-only notices list. It's transport-agnostic
-  (`read`/`write` injected), mounted twice: on `/account` (JWT, via `EmailPreferencesMount`)
-  and on the public, unauthenticated `/email-preferences?token=…` page
-  (`EmailPreferencesPublic`) for a recipient who isn't signed in — kept out of nav, sitemap,
-  and llms.txt, like `/newsletter/confirm`.
-- **Mobile** — the Capacitor shell loads the `app` surface, which has no category-level
-  centre. The account modal's single "Commercial emails" toggle (Clerk, `packages-web-auth`)
-  covers the one-flag case; the category-level centre lives only on the website.
+  (`read`/`write` injected), mounted twice:
+  - in the account widget's **Emails** page (Clerk `<UserProfile>`, `packages-web-auth`) —
+    the header avatar modal and the full `/account` page, on the website **and** the app,
+    through the JWT transport `emailPreferencesIo`. The read sends the page `locale`, so the
+    category copy matches the UI language;
+  - on the website's public, unauthenticated `/email-preferences?token=…` page
+    (`EmailPreferencesPublic`) for a recipient who isn't signed in — kept out of nav,
+    sitemap, and llms.txt, like `/newsletter/confirm`.
+- **Mobile** — the Capacitor shell loads the `app` surface, so it has the same Emails page.
 
 ## Known gaps / follow-ups
 
@@ -119,5 +121,5 @@ chose as defaults, with the same D1 write + proof row as any other change.
 - **Erasure `preview()` undercounts.** The `d1-core` adapter's dry-run preview doesn't yet
   count `email_preferences` rows in its estimate; the real (non-preview) erasure does
   delete them. A follow-up should add the count to `preview()`.
-- **No manual visual/a11y pass yet** on the web account section or the public token page —
-  not runnable in this CI.
+- **No manual visual/a11y pass yet** on the public token page — not runnable in this CI. The
+  account widget's Emails page was checked on 2026-10-02 (website + app, en/fr, 375/768/1280).

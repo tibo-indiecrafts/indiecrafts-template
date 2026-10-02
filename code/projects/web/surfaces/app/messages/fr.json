@@ -106,12 +106,21 @@
     },
     "tabs": {
       "consent": "Confidentialité et consentement",
+      "emails": "E-mails",
       "data": "Vos données",
       "consentTitle": "Préférences de cookies",
       "consentSave": "Enregistrer"
     },
     "marketing": {
       "label": "E-mails commerciaux"
+    },
+    "emailPreferences": {
+      "heading": "Préférences d'e-mails",
+      "intro": "Choisissez les e-mails que vous souhaitez recevoir, et consultez ceux que nous envoyons toujours.",
+      "noticesHeading": "Compte et sécurité",
+      "loading": "Chargement de vos préférences d'e-mails…",
+      "error": "Une erreur s'est produite. Merci de réessayer.",
+      "retry": "Réessayer"
     }
   },
   "legal": {

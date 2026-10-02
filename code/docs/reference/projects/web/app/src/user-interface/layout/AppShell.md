@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The app shell that every `(app)` page renders inside: the `AppSidebar` and the sticky `AppHeader` around the page content, inside a `SidebarProvider`. Right under the header it mounts `AnnouncementChrome` (when Clerk is configured), so the signed-in announcement bar and card sit under the navbar. The `Toaster` lives at `[locale]/layout.tsx` (so it covers sign-in too), not here.
+The app shell that every `(app)` page renders inside: the `AppSidebar` and the sticky `AppHeader` around the page content, inside a `SidebarProvider`. Right under the header it mounts `AnnouncementChrome` (when Clerk is configured), so the signed-in announcement bar and card sit under the navbar. The content area (`SidebarInset`, the `<main>`) has `min-w-0`: without it, a wide child such as Clerk's account card grows the page past the screen next to the sidebar. The `Toaster` lives at `[locale]/layout.tsx` (so it covers sign-in too), not here.
 
 ## Exports
 

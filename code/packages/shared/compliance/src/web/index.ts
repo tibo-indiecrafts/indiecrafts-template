@@ -31,6 +31,16 @@ export {
   type ExportFetchOutcome,
 } from "../shared/export-self";
 export { ExportSection } from "./ExportSection";
+export {
+  EmailPreferences,
+  emailPreferencesIo,
+  type EmailPreferencesData,
+  type EmailPreferencesCopy,
+  type EmailPreferencesProps,
+  type EmailPreferencesUpdate,
+  type EmailPreferenceCategory,
+  type EmailPreferenceNotice,
+} from "./EmailPreferences";
 export type { ExportSectionProps } from "./ExportSection";
 export {
   buildDeleteAccountCopy,

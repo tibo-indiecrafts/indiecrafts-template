@@ -16,7 +16,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset id="main" tabIndex={-1}>
+      {/* min-w-0: as a flex item `main` would otherwise grow to its widest child (Clerk's
+          account card) and push the page wider than the screen next to the sidebar. */}
+      <SidebarInset id="main" tabIndex={-1} className="min-w-0">
         <AppHeader />
         {/* Under the navbar: the announcement bar, then the card (Clerk-gated: it reads
             `useAuth`, so it mounts only when Clerk is configured). */}

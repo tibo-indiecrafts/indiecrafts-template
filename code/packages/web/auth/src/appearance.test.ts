@@ -13,4 +13,10 @@ describe("authAppearance", () => {
     }
     expect(vars.colorPrimary).toBe("var(--primary)");
   });
+
+  it("gives Clerk's badges readable token text (Lighthouse color-contrast)", () => {
+    expect(authAppearance().elements.badge).toEqual({
+      color: "var(--muted-foreground)",
+    });
+  });
 });

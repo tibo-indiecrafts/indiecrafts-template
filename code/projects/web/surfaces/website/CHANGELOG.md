@@ -19,6 +19,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Email preferences live in the account widget, centred.** `/account` showed the preference
+  centre as a separate block under Clerk's card, and the card sat to the left. The centre is now
+  the widget's **Emails** tab (also in the header avatar modal), the card is centred, and the
+  category copy follows the page language (it used the profile's). `EmailPreferencesMount` is
+  gone; `EmailPreferences` moved to `packages-shared-compliance`.
 - **Legal acceptance reaches your other surfaces even if the first write was lost.** Signed-in
   builds now mount the legal notice even after a local accept (hidden, `acceptedHere`), so a lost
   server write is re-sent on the next load.

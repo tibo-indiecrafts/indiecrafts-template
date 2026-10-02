@@ -12,7 +12,7 @@ import {
   type EmailPreferencesCopy,
   type EmailPreferencesData,
   type EmailPreferencesUpdate,
-} from "@/user-interface/account/EmailPreferences";
+} from "@indiecrafts/packages-shared-compliance/web";
 
 /**
  * The public token mount for the email preference centre — no login. Reads/writes

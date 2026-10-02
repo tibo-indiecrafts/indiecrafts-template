@@ -6,7 +6,7 @@
  * @see docs/reference/projects/web/website/src/user-interface/account/AccountControl.md
  */
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { AccountButton, AccountPage } from "@indiecrafts/packages-web-auth/account";
 import {
   buildDeleteAccountCopy,
@@ -28,6 +28,7 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
   const tDelete = useTranslations("account.delete");
   const tExport = useTranslations("account.export");
   const tMkt = useTranslations("account.marketing");
+  const tEmails = useTranslations("account.emailPreferences");
   const tCat = useTranslations("consent.categories");
   const cat = (key: string) => ({
     title: tCat(`${key}.title`),
@@ -39,6 +40,7 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
     marketing: cat("marketing"),
   });
 
+  const locale = useLocale();
   const props = {
     apiUrl: process.env.NEXT_PUBLIC_API_URL ?? "",
     showExport: features.account.export,
@@ -48,12 +50,22 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
     policyVersion: "1",
     consentStorageKey: `${site.prefix}.cookie-consent`,
     surface: "website",
+    locale,
     copy: {
       consentTabLabel: tTabs("consent"),
       dataTabLabel: tTabs("data"),
       consentTitle: tTabs("consentTitle"),
       consentSaveLabel: tTabs("consentSave"),
       marketingLabel: tMkt("label"),
+      emailsTabLabel: tTabs("emails"),
+      emailsTitle: tEmails("heading"),
+      emailsIntro: tEmails("intro"),
+      emailPreferences: {
+        noticesHeading: tEmails("noticesHeading"),
+        loading: tEmails("loading"),
+        error: tEmails("error"),
+        retry: tEmails("retry"),
+      },
       delete: buildDeleteAccountCopy(tDelete),
       export: buildExportCopy(tExport),
     },

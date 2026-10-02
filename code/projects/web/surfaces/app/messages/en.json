@@ -106,12 +106,21 @@
     },
     "tabs": {
       "consent": "Privacy & consent",
+      "emails": "Emails",
       "data": "Your data",
       "consentTitle": "Cookie preferences",
       "consentSave": "Save"
     },
     "marketing": {
       "label": "Commercial emails"
+    },
+    "emailPreferences": {
+      "heading": "Email preferences",
+      "intro": "Choose which emails you'd like to receive, and see the emails we always send.",
+      "noticesHeading": "Account & security",
+      "loading": "Loading your email preferences…",
+      "error": "Something went wrong. Please try again.",
+      "retry": "Try again"
     }
   },
   "legal": {

@@ -7,6 +7,9 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **`GET /v1/consent/email-preferences?locale=`.** The account page asks for its own language,
+  so the category names match the UI; a value outside the site locales is ignored, and the
+  profile locale stays the default (it is still what the emails use).
 - **The new-device email always has a disconnect link.** On Clerk's free plan the payload has
   no one-click `revoke_session_url`, so the email only said "change your password". It now links
   to the website's device list (`WEBSITE_URL/account#/security`, Clerk's Security tab), where the

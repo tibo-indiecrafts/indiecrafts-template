@@ -3,13 +3,12 @@
 /**
  * Renders the transport-agnostic email preference centre.
  *
- * @see docs/reference/projects/web/website/src/user-interface/account/EmailPreferences.md
+ * @see docs/reference/packages/shared/compliance/src/web/EmailPreferences.md
  */
 
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Switch } from "@indiecrafts/packages-web-ui/web/switch";
-import { logger } from "@indiecrafts/packages-shared-logger";
 
 export interface EmailPreferenceCategory {
   key: string;
@@ -52,14 +51,59 @@ export interface EmailPreferencesProps {
   chrome: EmailPreferencesCopy;
 }
 
+/** The signed-in transport: `GET/POST /v1/consent/email-preferences` with the user's
+ *  Clerk JWT. The read asks for the page's `locale`, so the category copy matches the UI.
+ *  Throws on a missing token or a non-2xx, so the UI shows its error state instead of a
+ *  falsely empty list. `f` is injectable for tests. */
+export function emailPreferencesIo(
+  apiUrl: string,
+  getToken: () => Promise<string | null>,
+  surface: string,
+  locale: string,
+  f: typeof fetch = (...a) => fetch(...a),
+): Pick<EmailPreferencesProps, "read" | "write"> {
+  const url = `${apiUrl}/v1/consent/email-preferences`;
+  const auth = async () => {
+    const token = await getToken();
+    if (!token) throw new Error("no token");
+    return `Bearer ${token}`;
+  };
+  return {
+    read: async () => {
+      const res = await f(`${url}?locale=${encodeURIComponent(locale)}`, {
+        headers: { authorization: await auth() },
+      });
+      if (!res.ok) throw new Error(`email-preferences ${res.status}`);
+      return (await res.json()) as EmailPreferencesData;
+    },
+    write: async (updates) => {
+      const res = await f(url, {
+        method: "POST",
+        headers: {
+          authorization: await auth(),
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ updates, surface }),
+      });
+      if (!res.ok) throw new Error(`email-preferences ${res.status}`);
+    },
+  };
+}
+
 /**
  * The email preference centre — a switch per category (optimistic, rolls back on a
  * failed write) plus a read-only "Account & security" notices list. Transport-agnostic:
  * `read`/`write` are injected, so the same UI serves the JWT account mount and the
  * public token page. Category/notice copy comes from the api already locale-resolved.
  */
-export function EmailPreferences({ read, write, chrome }: EmailPreferencesProps) {
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+export function EmailPreferences({
+  read,
+  write,
+  chrome,
+}: EmailPreferencesProps) {
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [categories, setCategories] = useState<EmailPreferenceCategory[]>([]);
   const [notices, setNotices] = useState<EmailPreferenceNotice[]>([]);
   const [saveError, setSaveError] = useState(false);
@@ -77,7 +121,7 @@ export function EmailPreferences({ read, write, chrome }: EmailPreferencesProps)
         setNotices(data.notices);
         setStatus("ready");
       } catch (error) {
-        logger.error("email preferences load failed", error);
+        console.error("email preferences load failed", error);
         if (alive) setStatus("error");
       }
     })();
@@ -89,12 +133,14 @@ export function EmailPreferences({ read, write, chrome }: EmailPreferencesProps)
   const toggle = useCallback(
     async (key: string, granted: boolean) => {
       setSaveError(false);
-      setCategories((cs) => cs.map((c) => (c.key === key ? { ...c, granted } : c)));
+      setCategories((cs) =>
+        cs.map((c) => (c.key === key ? { ...c, granted } : c)),
+      );
       setSavingKeys((s) => new Set(s).add(key));
       try {
         await write([{ key, granted }]);
       } catch (error) {
-        logger.error("email preference save failed", error, { key });
+        console.error("email preference save failed", key, error);
         setCategories((cs) =>
           cs.map((c) => (c.key === key ? { ...c, granted: !granted } : c)),
         );
@@ -143,7 +189,10 @@ export function EmailPreferences({ read, write, chrome }: EmailPreferencesProps)
         {categories.map((category) => {
           const id = `email-preference-${category.key}`;
           return (
-            <li key={category.key} className="flex items-start justify-between gap-4">
+            <li
+              key={category.key}
+              className="flex items-start justify-between gap-4"
+            >
               <label htmlFor={id} className="flex-1 cursor-pointer">
                 <span className="text-foreground block text-sm font-medium">
                   {category.name}
@@ -156,7 +205,9 @@ export function EmailPreferences({ read, write, chrome }: EmailPreferencesProps)
                 id={id}
                 checked={category.granted}
                 disabled={savingKeys.has(category.key)}
-                onCheckedChange={(checked) => void toggle(category.key, checked)}
+                onCheckedChange={(checked) =>
+                  void toggle(category.key, checked)
+                }
               />
             </li>
           );
@@ -177,7 +228,9 @@ export function EmailPreferences({ read, write, chrome }: EmailPreferencesProps)
           <ul className="flex flex-col gap-3">
             {notices.map((notice) => (
               <li key={notice.name} className="flex flex-col gap-0.5">
-                <span className="text-foreground text-sm font-medium">{notice.name}</span>
+                <span className="text-foreground text-sm font-medium">
+                  {notice.name}
+                </span>
                 <span className="text-muted-foreground text-xs">
                   {notice.description}
                 </span>

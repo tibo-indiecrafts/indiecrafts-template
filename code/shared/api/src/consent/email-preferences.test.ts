@@ -77,6 +77,26 @@ const unsubPost = (token: string) =>
   );
 
 describe("GET/POST /v1/consent/email-preferences", () => {
+  it("GET resolves the copy in the page's ?locale=, else the profile's", async () => {
+    await seed("user_ep_locale");
+    const seen: string[] = [];
+    const spy = async (_env: unknown, locale: string) => {
+      seen.push(locale);
+      return { categories: CATEGORIES, notices: NOTICES };
+    };
+    const at = (q: string) =>
+      handleEmailPreferences(
+        new Request(`https://x/v1/consent/email-preferences${q}`),
+        ENV,
+        undefined,
+        { authenticate: async () => "user_ep_locale", fetchCategories: spy },
+      );
+    await at("?locale=fr");
+    await at("?locale=xx"); // not a site locale → ignored
+    await at("");
+    expect(seen).toEqual(["fr", "en", "en"]);
+  });
+
   it("401s when the JWT does not verify", async () => {
     const res = await handleEmailPreferences(get(), ENV, undefined, {
       authenticate: authFail,
