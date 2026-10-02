@@ -14,6 +14,9 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`classifyFailedLogins` reports each crossing once.** It returned an incident for every count
+  at or past the threshold, so the api stored a row (and paged the owner) per attempt. It now
+  returns `high` at the threshold, `critical` at 4×, and `null` for every other count.
 - **`security-events` exports its taxonomy as values.** `SECURITY_EVENT_TYPES` · `SEVERITIES`
   and the `isSecurityEventType` · `isSeverity` guards. **Why:** the api rejects an unknown
   type or severity, and the admin feed picks a translated label — both from one list.

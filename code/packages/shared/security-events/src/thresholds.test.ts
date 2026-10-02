@@ -16,6 +16,12 @@ describe("classifyFailedLogins", () => {
       "critical",
     );
   });
+  it("reports each crossing once, not every attempt after it", () => {
+    const hits = Array.from({ length: 100 }, (_, i) =>
+      classifyFailedLogins(i + 1),
+    ).filter(Boolean);
+    expect(hits.map((h) => h?.severity)).toEqual(["high", "critical"]);
+  });
 });
 
 describe("bumpCounter", () => {

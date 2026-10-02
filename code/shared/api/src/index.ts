@@ -560,7 +560,14 @@ async function route(
           ].filter((k): k is string => k !== null);
           if (keys.length === 0)
             return json({ ok: true, counted: 0 }, 202, cors);
+          // Classify each key's own count: a key crosses its threshold on its own
+          // attempt, even while the other key is already past it.
           let peak = 0;
+          let hit: {
+            count: number;
+            severity: string;
+            eventType: string;
+          } | null = null;
           for (const k of keys) {
             const c = await bumpCounter(
               env.SECURITY_COUNTERS,
@@ -568,13 +575,15 @@ async function route(
               FAILED_LOGIN.windowSeconds,
             );
             if (c > peak) peak = c;
+            const incident = classifyFailedLogins(c);
+            if (incident && (!hit || incident.severity === "critical"))
+              hit = { count: c, ...incident };
           }
-          const incident = classifyFailedLogins(peak);
-          if (!incident) return json({ ok: true, counted: peak }, 202, cors);
+          if (!hit) return json({ ok: true, counted: peak }, 202, cors);
           await insertSecurity(
-            incident.eventType,
-            incident.severity,
-            `${peak} failed logins in ${FAILED_LOGIN.windowSeconds}s`,
+            hit.eventType,
+            hit.severity,
+            `${hit.count} failed logins in ${FAILED_LOGIN.windowSeconds}s`,
           );
           return json({ ok: true, escalated: true }, 201, cors);
         }

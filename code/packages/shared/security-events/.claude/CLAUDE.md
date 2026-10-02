@@ -10,9 +10,9 @@ pure detection logic the `api` shell imports (services are shells — job logic 
   rejects anything else). The single home
   for the incident shape every surface posts to the api `/v1/events` (`kind:"security"`). Data-minimized:
   no raw IP, no PII free-text — the api derives country + a salted IP hash server-side.
-- **`classifyFailedLogins(count)` · `FAILED_LOGIN`** (`./thresholds`) — pure sliding-window policy: does
-  the running failed-login count for one key cross into a stored `credential_stuffing` incident, and at
-  what severity. No I/O.
+- **`classifyFailedLogins(count)` · `FAILED_LOGIN`** (`./thresholds`) — pure sliding-window policy: the
+  running failed-login count for one key reports each crossing ONCE — `high` at the threshold, `critical`
+  at 4× — as a stored `credential_stuffing` incident; every other count is quiet. No I/O.
 - **`bumpCounter(kv, key, ttl)` · `KvLike`** (`./kv-counter`) — a TTL counter over a structural KV
   surface. Failed-login rates are counted in KV (cheap, ephemeral); only a threshold crossing writes one
   D1 row. `ponytail:` read-then-write, not atomic — fine for low-volume counting.

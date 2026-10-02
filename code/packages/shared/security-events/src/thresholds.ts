@@ -19,14 +19,18 @@ export const FAILED_LOGIN = {
 
 /**
  * Classify the running failed-login count for one key. Returns the incident to store, or
- * `null` to stay quiet and just keep counting. A sustained burst (≥ 4× the threshold)
- * is `critical`; crossing the threshold is `high`.
+ * `null` to stay quiet and just keep counting. Each crossing reports ONCE: the count
+ * reaching the threshold is `high`, reaching 4× it is `critical`. Every other attempt is
+ * quiet, so a 100-attempt burst writes two rows (and two alerts), not 96.
+ * The counter never skips a value (each bump stores the last value + 1), so an exact
+ * match always fires; a concurrent bump can at worst repeat it (one duplicate row).
  */
 export function classifyFailedLogins(
   count: number,
 ): { eventType: SecurityEventType; severity: Severity } | null {
-  if (count < FAILED_LOGIN.escalateAt) return null;
-  const severity: Severity =
-    count >= FAILED_LOGIN.escalateAt * 4 ? "critical" : "high";
-  return { eventType: "credential_stuffing", severity };
+  if (count === FAILED_LOGIN.escalateAt)
+    return { eventType: "credential_stuffing", severity: "high" };
+  if (count === FAILED_LOGIN.escalateAt * 4)
+    return { eventType: "credential_stuffing", severity: "critical" };
+  return null;
 }

@@ -109,6 +109,9 @@ describe("POST /v1/events kind:security", () => {
       severity: "high",
       user_id: "user_2",
     });
+    // A sustained burst adds ONE critical row at 4× — not a row per attempt.
+    for (let i = 6; i <= 25; i++) await fail();
+    expect((await rows()).map((r) => r.severity)).toEqual(["high", "critical"]);
   });
 
   it("emails the alert recipient for a high incident, not for a low one", async () => {

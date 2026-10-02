@@ -15,6 +15,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   the admin UI too: a compromised admin who grants a second admin must page the owner. The
   description no longer says "out-of-band". After the migration, an existing admin counts as
   a grant once, on their next update.
+- **A failed-login burst writes two incidents, not one per attempt.** Past the threshold, every
+  further failed login wrote another `credential_stuffing` row and sent another alert — a
+  100-attempt attack meant 96 rows and 96 emails. Now one `high` row when a count reaches the
+  threshold and one `critical` row at 4×. Each key (hashed IP, user) is judged on its own count,
+  so one key crossing is not hidden by the other already being past it.
 - **`kind:"security"` accepts only the taxonomy.** Any `eventType` or `severity` string was
   stored — a made-up severity could dodge or fake the alert. Unknown values are now a `400`.
 - **The rate limit is per visitor, not per calling server.** Every bearer route keyed its

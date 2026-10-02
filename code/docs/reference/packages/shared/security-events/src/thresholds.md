@@ -15,7 +15,7 @@ The pure detection logic the api shell imports. Given a running counter for one 
 ## Exports
 
 - `FAILED_LOGIN` — the sliding-window policy: `escalateAt` count and `windowSeconds` TTL.
-- `classifyFailedLogins(count)` — the incident to store (`credential_stuffing` at `high`, or `critical` at four times the threshold), or `null` to stay quiet.
+- `classifyFailedLogins(count)` — the incident to store, or `null` to stay quiet. Each crossing reports once: `credential_stuffing` at `high` when the count reaches the threshold, at `critical` when it reaches four times it. Every other count is `null`, so a burst writes two rows, not one per attempt.
 
 ## Usage
 

@@ -120,8 +120,9 @@ in the `@indiecrafts/packages-shared-security-events` brick.
   (the mobile shell wraps the `app`), so our code never sees a failed attempt; Clerk's
   brute-force lockout and the edge rate limits cover it. The api path is ready for a surface
   that verifies credentials itself: post `kind:"security" failed_login`; the api **counts**
-  it in a **KV TTL counter** and writes ONE `credential_stuffing` row only when the rate
-  crosses the threshold — never a per-request D1 write. The api hashes the **calling**
+  it in a **KV TTL counter** (per hashed IP and per user) and writes ONE `credential_stuffing`
+  row when a count reaches the threshold (`high`) and one more at 4× (`critical`) — never a
+  per-request D1 write. The api hashes the **calling**
   connection's IP, so such a producer must call the api from the user's device, or the
   per-source counter counts the server.
 
