@@ -247,29 +247,28 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
                 )}
                 {/* "Policies updated — please Accept" banner. Copy edited per language
                 in Sanity (`legalConsent`); version = the tracked legal pages'
-                lastUpdated. Server-gated on the deposited cookie; no fallback. */}
-                {legal.version &&
-                legal.message &&
-                legal.acceptLabel &&
-                legalAck !== legal.version ? (
+                lastUpdated. Signed out: gated on the deposited cookie; no fallback. */}
+                {legal.version && legal.message && legal.acceptLabel ? (
                   process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
                     // Signed-in visitors sync acceptance across surfaces (app · mobile)
-                    // via the api Worker; signed-out falls back to the cookie deposit.
+                    // via the api Worker. Mounted even after a local accept (hidden,
+                    // `acceptedHere`) so a lost server write is re-sent on the next load.
                     <SignedInLegalNotice
                       version={legal.version}
                       message={legal.message}
                       hrefs={legalHrefs}
                       acceptLabel={legal.acceptLabel}
                       apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
+                      acceptedHere={legalAck === legal.version}
                     />
-                  ) : (
+                  ) : legalAck !== legal.version ? (
                     <LegalNotice
                       version={legal.version}
                       message={legal.message}
                       hrefs={legalHrefs}
                       acceptLabel={legal.acceptLabel}
                     />
-                  )
+                  ) : null
                 ) : null}
                 {/* "New version available" banner — copy is edited per language in
                 Sanity (`siteMeta.<locale>.versionPrompt`), no fallback. Mounted

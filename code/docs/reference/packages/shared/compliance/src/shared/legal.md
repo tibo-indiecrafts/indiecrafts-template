@@ -20,6 +20,8 @@ One source of truth for the canonical legal pages, so the `app` surface can link
 - `legalUrl` — the absolute URL of a legal page on the website for a locale.
 - `LegalAcceptanceRecord` (type) — the accepted policy version and timestamp.
 - `needsReacceptance` — true when the visitor must (re-)accept the legal policies.
+- `readLegalConsent` / `writeLegalConsent` — the signed-in user's server-recorded acceptance (`GET`/`POST /v1/consent/legal`); best-effort.
+- `syncLegalConsent` — reconciles on load: true when the server holds the version; re-sends an acceptance made here that never landed; never accepts otherwise.
 
 ## Usage
 

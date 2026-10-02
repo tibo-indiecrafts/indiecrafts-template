@@ -14,6 +14,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **compliance — a lost legal-acceptance write is re-sent.** Accepting the policies wrote to the
+  api once, fire-and-forget. If that write was lost (a reload, offline, a failed token refresh —
+  seen in the Android shell), only that device knew, and every other surface kept asking. New
+  `syncLegalConsent` reconciles on every signed-in load: accepted here but missing on the server →
+  sent again. It never accepts on the user's behalf. `LegalNotice` takes `acceptedHere`.
 - **ui-tokens · compliance · version · announcement — bottom overlays clear the iPhone home
   indicator.** New `bottom-safe-4` utility: `max(1rem, env(safe-area-inset-bottom))`. The cookie,
   consent, legal, marketing-nudge, update and announcement overlays use it. Outside the iOS shell

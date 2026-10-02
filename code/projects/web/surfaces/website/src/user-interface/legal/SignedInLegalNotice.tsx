@@ -22,6 +22,9 @@ export function SignedInLegalNotice(props: {
   hrefs: string[];
   acceptLabel: string;
   apiUrl: string;
+  /** The `legal-ack` cookie already holds `version` — the notice stays hidden and only
+   *  re-sends the acceptance if the server never got it. */
+  acceptedHere: boolean;
 }) {
   const { getToken, userId } = useAuth();
   // Sign-in is a client-side navigation (the banner stays mounted): keying on the user

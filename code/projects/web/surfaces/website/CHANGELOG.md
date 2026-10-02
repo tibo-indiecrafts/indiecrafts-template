@@ -19,6 +19,9 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Legal acceptance reaches your other surfaces even if the first write was lost.** Signed-in
+  builds now mount the legal notice even after a local accept (hidden, `acceptedHere`), so a lost
+  server write is re-sent on the next load.
 - **The announcement banner has an accessible name.** It is a `region` landmark with no label, so
   screen readers listed an unnamed region. It now reads "Announcement" / "Annonce"
   (`common.announcement`). The overlays e2e journey now also checks that every fixed overlay sits

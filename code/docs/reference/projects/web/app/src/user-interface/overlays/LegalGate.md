@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders the legal re-acceptance prompt when the user's accepted policy version is out of date. It waits its turn in the overlay queue (`useOverlayTurn("legal", …)`): behind the consent banner, one overlay at a time. It waits for the effective version (`useEffectiveLegalVersion`: the website's live version, else the static `policyVersion`), so an early Accept never records a stale version. `SignedInLegalGate` keys the gate on the Clerk user id, so signing in (a client-side navigation) remounts it and re-reads the server acceptance. The policy links open the website's pages; Accept records that version and shows a saved toast.
+Renders the legal re-acceptance prompt when the user's accepted policy version is out of date. It waits its turn in the overlay queue (`useOverlayTurn("legal", …)`): behind the consent banner, one overlay at a time. It waits for the effective version (`useEffectiveLegalVersion`: the website's live version, else the static `policyVersion`), so an early Accept never records a stale version. `SignedInLegalGate` keys the gate on the Clerk user id, so signing in (a client-side navigation) remounts it and re-reads the server acceptance. The accept-time write is fire-and-forget and can be lost (a reload, offline, a failed token refresh), so every load reconciles through `syncLegalConsent`: accepted here but missing on the server → re-sent. The policy links open the website's pages; Accept records that version and shows a saved toast.
 
 ## Exports
 

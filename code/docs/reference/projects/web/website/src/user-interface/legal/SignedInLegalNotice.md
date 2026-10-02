@@ -12,7 +12,7 @@ status: stable
 
 Wraps `LegalNotice` (`@indiecrafts/packages-web-compliance`) with Clerk's `getToken`, so a **signed-in** visitor's legal acceptance syncs across website · app · mobile via the api Worker's `/v1/consent/legal` route: the server-recorded version hides the banner here, and accepting here records it. This keeps `LegalNotice` itself Clerk-free — the token getter is injected.
 
-Rendered **only** when a publishable key is set (a `ClerkProvider` exists), so `useAuth` always has its provider. Anonymous or no-Clerk builds mount the plain `LegalNotice` (cookie-only) instead. The layout's server-side cookie gate still handles the common anonymous case with no flash; this wrapper only adds the signed-in cross-surface case.
+Rendered **only** when a publishable key is set (a `ClerkProvider` exists), so `useAuth` always has its provider. Anonymous or no-Clerk builds mount the plain `LegalNotice` (cookie-only) instead. The layout's server-side cookie gate still handles the common anonymous case with no flash; this wrapper only adds the signed-in cross-surface case. It is mounted even when the cookie already holds the version (`acceptedHere`): the notice stays hidden and only re-sends an acceptance the server never got.
 
 It keys the banner on the Clerk user id. Sign-in is a client-side navigation, so the banner stays mounted; the key remounts it, and the server acceptance is re-read for the new identity.
 

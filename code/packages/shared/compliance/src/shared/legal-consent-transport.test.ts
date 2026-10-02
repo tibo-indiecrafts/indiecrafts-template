@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   fetchLegalVersion,
   readLegalConsent,
+  syncLegalConsent,
   writeLegalConsent,
 } from "./legal";
 
@@ -101,5 +102,44 @@ describe("writeLegalConsent", () => {
         surface: "app",
       }),
     ).toBe(false);
+  });
+});
+
+describe("syncLegalConsent", () => {
+  const base = {
+    apiUrl: "https://api.test",
+    getToken: async () => "jwt",
+    version: "v2",
+    surface: "app",
+  };
+  const posts = (spy: ReturnType<typeof mockFetch>) =>
+    spy.mock.calls.filter(([, init]) => init?.method === "POST");
+
+  it("is synced when the server already holds this version — no write", async () => {
+    const spy = mockFetch(() => json({ legal_acked_version: "v2" }));
+    expect(await syncLegalConsent({ ...base, acceptedHere: false })).toBe(true);
+    expect(posts(spy)).toHaveLength(0);
+  });
+
+  it("re-sends an acceptance made here that the server never got (a lost write)", async () => {
+    const spy = mockFetch((_, init) =>
+      init?.method === "POST"
+        ? json({ ok: true })
+        : json({ legal_acked_version: "v1" }),
+    );
+    expect(await syncLegalConsent({ ...base, acceptedHere: true })).toBe(true);
+    expect(posts(spy)).toHaveLength(1);
+    expect(JSON.parse(String(posts(spy)[0]![1]!.body))).toEqual({
+      version: "v2",
+      surface: "app",
+    });
+  });
+
+  it("does not accept on the user's behalf when they have not accepted here", async () => {
+    const spy = mockFetch(() => json({ legal_acked_version: "v1" }));
+    expect(await syncLegalConsent({ ...base, acceptedHere: false })).toBe(
+      false,
+    );
+    expect(posts(spy)).toHaveLength(0);
   });
 });

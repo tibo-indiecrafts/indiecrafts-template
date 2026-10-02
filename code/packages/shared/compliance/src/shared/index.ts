@@ -41,6 +41,7 @@ export {
   LEGAL_VERSION_ENDPOINT,
   fetchLegalVersion,
   readLegalConsent,
+  syncLegalConsent,
   writeLegalConsent,
 } from "./legal";
 

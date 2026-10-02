@@ -221,3 +221,22 @@ export async function writeLegalConsent(input: {
     return false;
   }
 }
+
+/**
+ * Reconcile the SIGNED-IN user's legal acceptance with the server, on every load.
+ * `writeLegalConsent` is fire-and-forget: a navigation, an offline moment or a failed
+ * token refresh can drop it, and then only this device knows — every other surface keeps
+ * asking. So: if the server already holds `version`, it is synced (true). If the user
+ * accepted it HERE (`acceptedHere`) but the server does not have it, send it now (the
+ * write is idempotent). Never accepts on the user's behalf otherwise (false).
+ */
+export async function syncLegalConsent(input: {
+  apiUrl: string;
+  getToken: () => Promise<string | null>;
+  version: string;
+  surface: string;
+  acceptedHere: boolean;
+}): Promise<boolean> {
+  if ((await readLegalConsent(input)) === input.version) return true;
+  return input.acceptedHere ? writeLegalConsent(input) : false;
+}

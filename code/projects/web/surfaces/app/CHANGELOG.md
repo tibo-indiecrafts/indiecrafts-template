@@ -14,6 +14,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **Legal acceptance reaches your other surfaces even if the first write was lost.** `LegalGate`
+  reconciles with the server on every signed-in load (`syncLegalConsent`) and re-sends an
+  acceptance made here that never landed.
 - **The header no longer hides under the iOS status bar.** In the iOS shell the WebView runs
   edge to edge: the sidebar button sat on the clock row, the locale and theme toggles on the
   Wi-Fi and battery icons. The app now sets `viewport-fit=cover`, and the header pads by

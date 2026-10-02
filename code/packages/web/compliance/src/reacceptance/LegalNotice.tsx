@@ -13,7 +13,7 @@ import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/w
 import { LegalReacceptancePrompt } from "@indiecrafts/packages-shared-compliance/web";
 import { useOverlayTurn } from "@indiecrafts/packages-web-ui-components/web/overlay-turn";
 import {
-  readLegalConsent,
+  syncLegalConsent,
   writeLegalConsent,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { acceptLegal } from "./legal-store";
@@ -30,14 +30,18 @@ type Props = {
   apiUrl?: string;
   /** Clerk session token getter (signed-in only) — supplied by `SignedInLegalNotice`. */
   getToken?: () => Promise<string | null>;
+  /** The `legal-ack` cookie already holds `version`: render nothing, only make sure the
+   *  server has it (the signed-in layout mounts the notice either way). */
+  acceptedHere?: boolean;
 };
 
 /**
  * "We updated our policies — please Accept" banner — the shared
  * `LegalReacceptancePrompt` (the same banner as the `app` surface), with the website's
- * locale `Link`. The layout renders it only when the
- * deposited `legal-ack` cookie differs from the live version, so this component just
- * writes the cookie on Accept and hides — no polling. i18n-agnostic: copy in as props.
+ * locale `Link`. Signed out, the layout renders it only when the deposited `legal-ack`
+ * cookie differs from the live version. Signed-in builds mount it always (`acceptedHere`
+ * when the cookie matches) so a lost server write is re-sent. It writes the cookie on
+ * Accept and hides — no polling. i18n-agnostic: copy in as props.
  *
  * It waits its turn in the overlay queue (`useOverlayTurn`): it shows once the cookie
  * banner is gone, so the two never stack.
@@ -49,19 +53,26 @@ export function LegalNotice({
   acceptLabel,
   apiUrl,
   getToken,
+  acceptedHere = false,
 }: Props) {
-  const [accepted, setAccepted] = useState(false);
+  const [accepted, setAccepted] = useState(acceptedHere);
   const t = useTranslations("legal");
 
-  // Signed-in: pull the server-recorded acceptance. If they already accepted THIS
-  // version on another surface (app · mobile), deposit the cookie + hide — so the
-  // banner clears here too. The server-cookie gate in the layout still handles the
-  // common anonymous case with no flash; this only covers the cross-surface case.
+  // Signed-in: reconcile with the server. Accepted THIS version on another surface (app ·
+  // mobile) → deposit the cookie + hide, so the banner clears here too. Accepted it HERE
+  // but the server never got the write (a reload, offline, a failed token refresh) →
+  // re-send it. The server-cookie gate in the layout still handles the anonymous case.
   useEffect(() => {
     if (!getToken || !apiUrl) return;
     let alive = true;
-    void readLegalConsent({ apiUrl, getToken }).then((acked) => {
-      if (alive && acked === version) {
+    void syncLegalConsent({
+      apiUrl,
+      getToken,
+      version,
+      surface: "website",
+      acceptedHere,
+    }).then((synced) => {
+      if (alive && synced && !acceptedHere) {
         acceptLegal(version);
         setAccepted(true);
       }
@@ -69,7 +80,7 @@ export function LegalNotice({
     return () => {
       alive = false;
     };
-  }, [getToken, apiUrl, version]);
+  }, [getToken, apiUrl, version, acceptedHere]);
 
   const turn = useOverlayTurn("legal", !accepted);
   if (!turn) return null;

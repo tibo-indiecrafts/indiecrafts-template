@@ -12,7 +12,7 @@ import { LegalReacceptancePrompt } from "@indiecrafts/packages-shared-compliance
 import {
   needsReacceptance,
   legalUrl,
-  readLegalConsent,
+  syncLegalConsent,
   writeLegalConsent,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
@@ -25,7 +25,8 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
 /** The legal re-acceptance prompt — shown when the accepted policy version is stale.
  *  Waits its turn in the overlay queue (`useOverlayTurn`): after the consent banner, one at a time.
  *  `getToken` (signed-in only) syncs acceptance across surfaces via the api Worker: the
- *  server-recorded version suppresses the banner here, and accepting here records it. */
+ *  server-recorded version suppresses the banner here, and accepting here records it —
+ *  re-sent on the next load if that write was lost (`syncLegalConsent`). */
 export function LegalGate({
   locale,
   getToken,
@@ -37,13 +38,21 @@ export function LegalGate({
   const record = useRecord(legalStore);
   const version = useEffectiveLegalVersion();
 
-  // Signed-in: pull the server-recorded acceptance. If they already accepted THIS
-  // version on another surface, deposit it locally so the banner never shows here.
+  // Signed-in: reconcile with the server. Accepted THIS version on another surface →
+  // deposit it locally so the banner never shows here. Accepted it HERE but the server
+  // never got the write (a reload, offline, a failed token refresh) → re-send it.
   useEffect(() => {
     if (!getToken || !apiUrl || !version) return;
     let alive = true;
-    void readLegalConsent({ apiUrl, getToken }).then((acked) => {
-      if (alive && acked === version)
+    const acceptedHere = legalStore.get()?.version === version;
+    void syncLegalConsent({
+      apiUrl,
+      getToken,
+      version,
+      surface: "app",
+      acceptedHere,
+    }).then((synced) => {
+      if (alive && synced && !acceptedHere)
         legalStore.save({ version, t: Date.now() });
     });
     return () => {
@@ -86,5 +95,11 @@ export function SignedInLegalGate({ locale }: { locale: Locale }) {
   const { getToken, userId } = useAuth();
   // Sign-in is a client-side navigation (the gate stays mounted): keying on the user
   // remounts it, so the server acceptance is re-read for the new identity.
-  return <LegalGate key={userId ?? "anonymous"} locale={locale} getToken={getToken} />;
+  return (
+    <LegalGate
+      key={userId ?? "anonymous"}
+      locale={locale}
+      getToken={getToken}
+    />
+  );
 }
