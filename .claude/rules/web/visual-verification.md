@@ -25,7 +25,12 @@ tests the app you _wrote_, not the app the user _sees_. Close that gap by lookin
    elements · clipped / overflowing text · a card wrapping to a lonely second row · an off-centre
    modal · **low contrast / dark-mode grey-on-grey** · a control hidden behind a sticky footer.
    These are exactly what selector assertions miss.
-4. **Fix what you saw, re-screenshot, confirm.** **Do not mark the task done until the screenshots
+4. **Run a Lighthouse diagnosis on every page you checked** — `mcp__chrome-devtools__lighthouse_audit`,
+   or headless `npx lighthouse <url> --chrome-flags=--headless`. Report performance · accessibility ·
+   best practices · SEO and the top issues; fix a regression your change caused, or name it as a
+   finding. Judge **performance** on a production build (`pnpm build && pnpm start`) — a dev server
+   scores low by design. The `lighthouse-nudge` hook reminds you after each browser navigation.
+5. **Fix what you saw, re-screenshot, confirm.** **Do not mark the task done until the screenshots
    look correct.** Interpret the image ("is this usable?") — don't chase byte-identical pixels.
 
 ## Adaptive & responsive — verify the mechanism, not just the width

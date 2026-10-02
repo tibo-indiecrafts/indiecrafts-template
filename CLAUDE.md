@@ -15,6 +15,7 @@ touch files under `code/projects/web/surfaces/website/**`); design tokens in **[
 - User-facing strings live in `messages/<locale>.json` — never inline.
 - Don't hand-edit `@indiecrafts/packages-web-ui` primitives (shadcn CLI) or depend on the component library at runtime.
 - **Observability is Cloudflare, on everywhere.** Every Cloudflare app's `wrangler.toml` keeps logs, traces and issues on in its top-level `[observability]` block. Never add an `[env.<name>.observability]` table: it replaces that block. `code/shared/scripts/lib/wrangler-parity.test.mjs` fails otherwise.
+- **A browser check includes a Lighthouse diagnosis** (performance · accessibility · best practices · SEO; performance on a production build). The `lighthouse-nudge` hook reminds you after each navigation; the `visual-verification` rule has the loop.
 - **Login and money paths are verified secure, every time.** A change to sign-in, sessions or roles — or to a money path (checkout, payments, refunds, payouts; none live yet) — is not done until you check it: authz on the server, input validated at the boundary, amounts computed server-side, webhooks signature-checked and idempotent, secrets server-only, errors fail closed. Use the `security-hardening` skill; state the result in the PR or the QA note.
 - The gate is the **commit hook** (`lint-staged` + `tsc`) + **CI** — not a manual step. Live **lint cards** (the `a11y-check` hook, full eslint config) + the **`typescript-lsp` plugin** give continuous feedback as you edit, so there's no need to manually run `verify:quick` before a PR.
 
