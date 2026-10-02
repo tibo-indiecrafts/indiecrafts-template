@@ -14,6 +14,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The announcement banner has an accessible name.** It is a `region` landmark, but the app
+  passed no label, so screen readers listed an unnamed region. It now reads "Announcement" /
+  "Annonce" (`announcement.region`).
+
 - **Server calls reach the api on deployed envs.** Same-zone Worker-to-Worker fetches fail with
   Cloudflare error 1042; the `global_fetch_strictly_public` compatibility flag sends them over the
   public internet, as `API_URL` already assumed.

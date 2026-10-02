@@ -6,6 +6,7 @@
 
 import { defineField, defineType } from "sanity";
 import { BellIcon } from "@sanity/icons/Bell";
+import { SAFE_HREF } from "@indiecrafts/packages-shared-announcement";
 import { surfacesField } from "./surfaces";
 
 /**
@@ -45,6 +46,13 @@ export const announcementLink = defineType({
       type: "string",
       description:
         "Un chemin interne (ex. « /boutique ») ou une adresse complète (ex. « https://exemple.com »).",
+      // The resolver drops any other link at render time; this tells the editor why.
+      validation: (rule) =>
+        rule.custom((href?: string) =>
+          !href || SAFE_HREF.test(href.trim())
+            ? true
+            : "Commencez par « / » (page du site) ou par « https:// », « mailto: », « tel: ».",
+        ),
     }),
     defineField({
       name: "newTab",

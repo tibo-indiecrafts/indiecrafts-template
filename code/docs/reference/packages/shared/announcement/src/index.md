@@ -15,7 +15,7 @@ Re-exports the portable announcement core so the Next server readers and the bar
 ## Exports
 
 - `SURFACES`, `Surface` — the target surfaces and their union type.
-- `resolveBanner`, `resolveToast` — the pure resolve path.
+- `resolveBanner`, `resolveToast` — the pure resolve path; `SAFE_HREF` — the allowed link shapes.
 - `bannerQuery`, `toastQuery` — the GROQ strings.
 - `fetchAnnouncements` — the public-endpoint fetch client.
 - Types: `AnnouncementLink`, `BannerItem`, `Banner`, `Toast`, `AnnouncementPayload`, and the raw Sanity shapes (`RawLocaleString`, `RawLink`, `RawBannerItem`, `RawBanner`, `RawToast`).

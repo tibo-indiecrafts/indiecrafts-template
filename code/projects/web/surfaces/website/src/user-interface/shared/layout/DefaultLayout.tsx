@@ -144,6 +144,7 @@ export async function DefaultLayout({
             variant={announcement.variant}
             dismissible={announcement.dismissible}
             version={announcement.version}
+            regionLabel={t("announcement")}
             dismissLabel={t("dismiss")}
             copyLabel={t("copy")}
             copiedLabel={t("copied")}

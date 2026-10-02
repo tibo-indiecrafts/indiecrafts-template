@@ -66,11 +66,15 @@ function sizedImageUrl(url: string, w = 128): string {
   return url.includes("?") ? url : `${url}?w=${w}&auto=format&fit=max&q=75`;
 }
 
+/** A site path (`/…`, not protocol-relative `//…`) or an http(s) / mailto / tel URL. */
+export const SAFE_HREF = /^(\/(?!\/)|https?:\/\/|mailto:|tel:)/i;
+
 function resolveLink(
   link: RawLink,
   locale: Locale,
 ): AnnouncementLink | undefined {
-  if (!link?.href) return undefined;
+  // Editor free text: drop anything else (`javascript:`, `//host`, a typo) — no link beats a bad one.
+  if (!link?.href || !SAFE_HREF.test(link.href.trim())) return undefined;
   return {
     href: link.href,
     external: link.linkType === "external",

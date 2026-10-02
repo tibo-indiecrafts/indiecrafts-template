@@ -135,7 +135,8 @@
   "announcement": {
     "dismiss": "Dismiss",
     "copy": "Copy",
-    "copied": "Copied"
+    "copied": "Copied",
+    "region": "Announcement"
   },
   "auth": {
     "marketingOptIn": "Send me occasional product news and offers. You can unsubscribe anytime.",

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AnnouncementToast } from "./AnnouncementToast";
 
 /**
- * The announcement toast — a fixed top-right card that can carry an image and a
+ * The announcement toast — a card in the bottom overlay slot that can carry an image and a
  * clickable link (unlike the sonner toasts, which never auto-dismiss a link). Content
  * is the `announcementToast` Sanity singleton in the app; these stories pass a resolved
  * `toast` directly. Dismiss is remembered per content `version` (cookie), so each story

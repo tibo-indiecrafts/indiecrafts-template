@@ -14,6 +14,15 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **announcement — the announcement card no longer covers the banner.** From 640px up the card sat
+  top-right, over the announcement bar and its × button (and over the confirmation toasts on a
+  tablet). It now uses the bottom overlay slot at every width, like every other queued overlay
+  (DESIGN.md "Overlays take turns").
+- **announcement — unsafe links are dropped.** The link address is editor free text. The shared
+  resolver (`SAFE_HREF`) now keeps only a site path or an http(s) / mailto / tel URL, so a
+  `javascript:` or `//host` value never reaches the website, the app or the api. The Studio
+  shows the same rule as a validation error.
+
 - **security — `CSP_MODE=report-only` no longer floods the CSP board.** Next takes its script
   nonce from the enforced header; the permissive rollback policy had none, so Next nonced 4 of 39
   scripts and the Report-Only policy reported every framework chunk. The new `buildRollbackCsp`

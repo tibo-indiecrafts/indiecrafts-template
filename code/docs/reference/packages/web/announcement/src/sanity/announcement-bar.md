@@ -14,7 +14,7 @@ The Sanity schema for the announcement bar, a single language-independent single
 
 ## Exports
 
-- `announcementLink` — the link object type: an internal path or an external URL.
+- `announcementLink` — the link object type: an internal path or an external URL. The address must pass `SAFE_HREF` (a site path, or an http(s) / mailto / tel URL); the Studio shows an error otherwise.
 - `announcementItem` — one announcement: text, optional discount code, optional link, and a date window.
 - default export — the `announcementBar` document type (enable toggle, dismissible flag, variant, surfaces, date window, and the `items` array).
 

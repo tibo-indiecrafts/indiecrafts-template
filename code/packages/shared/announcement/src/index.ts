@@ -20,6 +20,6 @@ export {
   type RawBanner,
   type RawToast,
 } from "./types";
-export { resolveBanner, resolveToast } from "./resolve";
+export { resolveBanner, resolveToast, SAFE_HREF } from "./resolve";
 export { bannerQuery, toastQuery } from "./queries";
 export { fetchAnnouncements } from "./client";

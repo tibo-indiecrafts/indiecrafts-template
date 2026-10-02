@@ -10,7 +10,7 @@ import { surfacesField } from "./surfaces";
 
 /**
  * Announcement toast — a single, language-independent singleton (`_id:
- * announcementToast`) that drives a richer, corner announcement than the bar: a
+ * announcementToast`) that drives a richer card announcement than the bar: a
  * title + body, an OPTIONAL image, and an optional link. Targeted per surface
  * (`surfaces`) and shown "live now" from the enable toggle + date window.
  *

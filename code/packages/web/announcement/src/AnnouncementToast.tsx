@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Renders the fixed corner announcement toast card.
+ * Renders the announcement card in the shared bottom overlay slot.
  *
  * @see docs/reference/packages/web/announcement/src/AnnouncementToast.md
  */
@@ -22,7 +22,7 @@ import { dismissToast, readToastAck } from "./announcement-store";
 import { useOverlayTurn } from "@indiecrafts/packages-web-ui-components/web/overlay-turn";
 
 /**
- * Announcement toast — a self-contained card (bottom sheet on a phone, top-right wider) (NOT a sonner toast:
+ * Announcement toast — a self-contained card in the shared bottom overlay slot (NOT a sonner toast:
  * it carries an image + a link the user may click, which sonner's own guidance says
  * never to auto-dismiss). Same shape as the version `UpdatePrompt`. `role="status"` +
  * `aria-live="polite"` announces it without stealing focus. i18n-agnostic — resolved
@@ -75,10 +75,10 @@ export function AnnouncementToast({
       role="status"
       aria-live="polite"
       className={cn(
-        "bg-card text-foreground ring-border/60 fixed right-4 bottom-4 left-4 z-40",
-        "flex max-w-none gap-3 rounded-xl border-0 p-4 shadow-lg ring-1 backdrop-blur",
-        // Phone: a bottom sheet, clear of the page heading. Wider: the top-right corner.
-        "sm:top-20 sm:bottom-auto sm:left-auto sm:max-w-sm",
+        // The bottom overlay slot (DESIGN.md "Overlays take turns") at every width — never
+        // the top, where the banner (and its ×) and the confirmation toasts sit.
+        "bg-card text-foreground ring-border/60 fixed right-4 bottom-4 left-4 z-50",
+        "mx-auto flex w-auto max-w-md gap-3 rounded-xl border-0 p-4 shadow-lg ring-1 backdrop-blur",
       )}
     >
       {toast.imageUrl ? (

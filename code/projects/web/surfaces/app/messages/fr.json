@@ -135,7 +135,8 @@
   "announcement": {
     "dismiss": "Fermer",
     "copy": "Copier",
-    "copied": "Copié"
+    "copied": "Copié",
+    "region": "Annonce"
   },
   "auth": {
     "marketingOptIn": "Envoyez-moi occasionnellement des nouveautés et des offres. Vous pouvez vous désabonner à tout moment.",

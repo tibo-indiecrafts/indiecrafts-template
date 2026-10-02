@@ -19,6 +19,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The announcement banner has an accessible name.** It is a `region` landmark with no label, so
+  screen readers listed an unnamed region. It now reads "Announcement" / "Annonce"
+  (`common.announcement`). The overlays e2e journey now also checks that every fixed overlay sits
+  in the bottom slot, and that a dismissed banner stays dismissed after a reload.
+
 - **Server calls reach the api on deployed envs.** A fetch from one Worker to another on the
   same zone (every `*.workers.dev` Worker of the account) fails with Cloudflare error 1042, so
   on dev no consent log, CSP report or data request ever reached the api (`csp_reports` was

@@ -13,7 +13,7 @@ the **portable resolve + types + fetch** live in
 `code/shared/api` Worker share one transform. Two formats:
 
 - **Bar** — the rotating strip under the nav (message + optional copyable discount code + link).
-- **Toast** — a richer corner card: title + body + **optional image** + link. Not a sonner toast
+- **Toast** — a richer card in the bottom overlay slot: title + body + **optional image** + link. Not a sonner toast
   (sonner's own guidance says never auto-dismiss a must-click link) — a self-contained
   `role="status"` card like the version `UpdatePrompt`.
 

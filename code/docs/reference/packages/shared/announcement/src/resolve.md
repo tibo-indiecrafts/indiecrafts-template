@@ -16,6 +16,7 @@ Turns the raw Sanity result into the resolved shapes for one surface and locale.
 
 - `resolveBanner(raw, { locale, surface, now? })` — returns the resolved `Banner`, or an empty banner when nothing is live.
 - `resolveToast(raw, { locale, surface, now? })` — returns the resolved `Toast`, or `null` when nothing is live.
+- `SAFE_HREF` — the link rule: a site path (`/…`, not `//…`) or an http(s) / mailto / tel URL. A link that fails it is dropped; the Studio reuses it as a validation.
 
 ## Usage
 

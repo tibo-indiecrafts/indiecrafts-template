@@ -22,7 +22,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
  * only when Clerk is configured, so `useAuth` has its provider. Fetches the shared api
  * Worker's PUBLIC `/v1/announcements` for this surface + locale ONLY when signed in, and
  * renders the shared banner (top strip) + toast. Copy is authored in Sanity; the only
- * chrome strings are the dismiss/copy labels (`messages.announcement.*`).
+ * chrome strings are the region/dismiss/copy labels (`messages.announcement.*`).
  */
 export function AnnouncementChrome() {
   const { isSignedIn } = useAuth();
@@ -51,6 +51,7 @@ export function AnnouncementChrome() {
           variant={banner.variant}
           dismissible={banner.dismissible}
           version={banner.version}
+          regionLabel={t("region")}
           dismissLabel={t("dismiss")}
           copyLabel={t("copy")}
           copiedLabel={t("copied")}

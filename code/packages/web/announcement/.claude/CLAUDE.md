@@ -16,8 +16,9 @@ web-ui · web-i18n · web-sanity · shared-utils · shared-config.
 - **Exports:** `./*` → `src/*` (no root `.`) — subpaths: `.../AnnouncementBar`, `.../AnnouncementToast`,
   `.../sanity/announcement`, `.../announcement-store`.
 - **`AnnouncementToast` is a self-contained card, NOT sonner** — a must-click link must never
-  auto-dismiss (`sonner.md`). `getAnnouncement(locale, surface)` / `getAnnouncementToast(locale, surface)`
-  now take a surface.
+  auto-dismiss (`sonner.md`). It waits its turn (`useOverlayTurn`) in the **bottom** overlay slot —
+  never the top, where the bar (and its ×) and the confirmation toasts sit.
+- `getAnnouncement(locale, surface)` / `getAnnouncementToast(locale, surface)` take a surface.
 - **Dismiss** — cookies (`announcement-ack` / `announcement-toast-ack`); the website decides them
   server-side (no flash), and both components also self-suppress client-side (`useSyncExternalStore`) so
   the logged-in surfaces stay dismissed across a reload.

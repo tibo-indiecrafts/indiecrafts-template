@@ -65,6 +65,23 @@ describe("resolveBanner", () => {
     ).toHaveLength(0);
   });
 
+  it("hides the whole bar (and the toast) outside their own start/end window", () => {
+    const at = { locale: "en" as const, surface: "app" as const, now: NOW };
+    const past = "2026-06-01T00:00:00Z";
+    const future = "2026-07-01T00:00:00Z";
+    expect(resolveBanner({ ...baseBanner, end: past }, at).items).toHaveLength(
+      0,
+    );
+    expect(
+      resolveBanner({ ...baseBanner, start: future }, at).items,
+    ).toHaveLength(0);
+    expect(
+      resolveBanner({ ...baseBanner, start: past, end: future }, at).items,
+    ).toHaveLength(1);
+    expect(resolveToast({ ...baseToast, end: past }, at)).toBeNull();
+    expect(resolveToast({ ...baseToast, start: future }, at)).toBeNull();
+  });
+
   it("hashes a stable version that changes with content", () => {
     const a = resolveBanner(baseBanner, {
       locale: "en",
@@ -144,6 +161,20 @@ describe("resolveToast", () => {
       resolveToast(baseToast, { locale: "en", surface: "app", now: NOW })
         ?.autoDismissMs,
     ).toBeUndefined();
+  });
+
+  it("drops a link whose href is not a site path or an http(s)/mailto/tel URL", () => {
+    const withHref = (href: string) =>
+      resolveToast(
+        { ...baseToast, link: { ...baseToast.link, href } },
+        { locale: "en", surface: "app", now: NOW },
+      )?.link?.href;
+    expect(withHref("/waitlist")).toBe("/waitlist");
+    expect(withHref("https://example.com")).toBe("https://example.com");
+    expect(withHref("mailto:hi@example.com")).toBe("mailto:hi@example.com");
+    expect(withHref("javascript:alert(1)")).toBeUndefined();
+    expect(withHref("//evil.example")).toBeUndefined();
+    expect(withHref("example.com")).toBeUndefined();
   });
 
   it("resolves the link and localized fields", () => {
