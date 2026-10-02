@@ -108,6 +108,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **Cloudflare observability is fully on.** Traces (10% sampled) and Issues (grouped production
+  errors) join the Workers Logs in the top-level `wrangler.toml` `[observability]` block, which every
+  env inherits. Wrangler is pinned to 4.143.0 (Issues needs ≥ 4.134). A test fails if a part is off.
 - **`.env.example` documents `CLOUDFLARE_SECURITY_URL`** — the Security screen's deep link to the
   zone's Cloudflare events, read by the screen but listed nowhere.
 - **Confirmation toasts sit at the top** (`<Toaster position="top-center" />`), like the website

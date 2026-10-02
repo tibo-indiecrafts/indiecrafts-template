@@ -17,6 +17,9 @@ _Activated bare-Worker scaffold for queue/event consumers + background jobs (sha
 
 ### Changed
 
+- **Cloudflare observability is fully on.** Traces (10% sampled) and Issues (grouped production
+  errors) join the Workers Logs in the top-level `wrangler.toml` `[observability]` block, which every
+  env inherits. Wrangler is pinned to 4.143.0 (Issues needs ≥ 4.134). A test fails if a part is off.
 - **Docs and brief describe the Worker as it is.** The template Worker name is
   `indiecrafts-<env>-shared-workers` (not `indiecrafts-workers-*`); `pnpm dev` runs it with `--remote`;
   fire `scheduled` locally with `/cdn-cgi/handler/scheduled`; logic follows the ≥2-consumer rule.

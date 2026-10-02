@@ -20,9 +20,24 @@ preview_urls = false
 [triggers]
 crons = ["0 * * * *"]
 
+# Observability (logs · traces · issues) — every env inherits this block. Never add an
+# [env.<name>.observability] block: it replaces this one. View: dashboard → Worker → Observability.
+[observability]
+enabled = true
+
 [observability.logs]
 enabled = true
 invocation_logs = true
+
+# Traces: sampled — every request is still in the logs above.
+# ponytail: 10% of requests; raise to 1 on a low-traffic site, lower on a busy one.
+[observability.traces]
+enabled = true
+head_sampling_rate = 0.1
+
+# Issues: groups production errors (dashboard → Worker → Issues). Needs Wrangler ≥ 4.134.
+[observability.issues]
+enabled = true
 
 # ── Bindings & options (the ones a scheduled worker usually wants) ───────
 # FULL reference (every binding + placement/limits/DO/AI/…): code/shared/api/wrangler.toml.

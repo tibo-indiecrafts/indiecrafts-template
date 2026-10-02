@@ -63,6 +63,9 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **Cloudflare observability is fully on.** Traces (10% sampled) and Issues (grouped production
+  errors) join the Workers Logs in the top-level `wrangler.toml` `[observability]` block, which every
+  env inherits. Wrangler is pinned to 4.143.0 (Issues needs ≥ 4.134). A test fails if a part is off.
 - **The data-request success message mentions the receipt email** (en/fr).
 
 - **The registry deploys the cron before the api** (`order: 5`): the api's new `CRON` service binding

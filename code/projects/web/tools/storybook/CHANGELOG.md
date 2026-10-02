@@ -33,6 +33,9 @@ _The Storybook gallery for the design-system bricks (`ui` · `ui-components` · 
 
 ### Changed
 
+- **Cloudflare observability is fully on.** Traces (10% sampled) and Issues (grouped production
+  errors) join the Workers Logs in the top-level `wrangler.toml` `[observability]` block, which every
+  env inherits. Wrangler is pinned to 4.143.0 (Issues needs ≥ 4.134). A test fails if a part is off.
 - **One sidebar tree.** Dropped the `Native` root, `react-native-web`, the native theme decorator and the
   `Tokens-Native` page; stories lost their `Web/` title prefix. The order stays: Introduction · Design
   Tokens · domain components · UI atoms last. **Why:** React Native is gone from the codebase.

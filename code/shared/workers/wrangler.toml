@@ -13,10 +13,24 @@ keep_vars = true
 [triggers]
 crons = ["0 6 * * *"]
 
-# Workers Logs on for every env (view: dashboard → Worker → Logs, or `wrangler tail`).
+# Observability (logs · traces · issues) — every env inherits this block. Never add an
+# [env.<name>.observability] block: it replaces this one. View: dashboard → Worker → Observability.
+[observability]
+enabled = true
+
 [observability.logs]
 enabled = true
 invocation_logs = true
+
+# Traces: sampled — every request is still in the logs above.
+# ponytail: 10% of requests; raise to 1 on a low-traffic site, lower on a busy one.
+[observability.traces]
+enabled = true
+head_sampling_rate = 0.1
+
+# Issues: groups production errors (dashboard → Worker → Issues). Needs Wrangler ≥ 4.134.
+[observability.issues]
+enabled = true
 
 # ── dev ──────────────────────────────────────────────────────
 [env.dev]
@@ -26,10 +40,6 @@ workers_dev = true
 [env.dev.vars]
 NEXT_PUBLIC_ENVIRONMENT = "development"
 
-[env.dev.observability.logs]
-enabled = true
-invocation_logs = true
-
 # ── staging ──────────────────────────────────────────────────
 [env.staging]
 name = "indiecrafts-staging-shared-workers"
@@ -38,10 +48,6 @@ workers_dev = true
 [env.staging.vars]
 NEXT_PUBLIC_ENVIRONMENT = "staging"
 
-[env.staging.observability.logs]
-enabled = true
-invocation_logs = true
-
 # ── prod ─────────────────────────────────────────────────────
 [env.prod]
 name = "indiecrafts-prod-shared-workers"
@@ -49,10 +55,6 @@ workers_dev = false
 
 [env.prod.vars]
 NEXT_PUBLIC_ENVIRONMENT = "production"
-
-[env.prod.observability.logs]
-enabled = true
-invocation_logs = true
 
 # ── Bindings & options (queue/background worker — declare PER ENV) ───────
 # FULL reference (every binding + placement/limits/DO/AI/…): code/shared/api/wrangler.toml.

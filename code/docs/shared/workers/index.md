@@ -72,8 +72,11 @@ run `pnpm project:rename <slug>` first — and asks to confirm prod (CI / `--yes
 
 ## Observability
 
-Workers log through the shared `@indiecrafts/packages-shared-logger` (`console`-based; `[observability.logs]`
-is on in each `wrangler.toml`, so Workers Logs captures the output + `wrangler tail` streams it). Because the
+Every Cloudflare app turns on Workers Observability — logs, traces (10% sampled) and issues — in its
+top-level `wrangler.toml` `[observability]` block. Every env inherits it; an `[env.<name>.observability]`
+table would replace it, so there is none (`code/shared/scripts/lib/wrangler-parity.test.mjs` guards this).
+Workers log through the shared `@indiecrafts/packages-shared-logger` (`console`-based, so Workers Logs
+captures the output + `wrangler tail` streams it). Because the
 prod console level is `silent` (no request-log noise), each Worker entry wires the **Cloudflare transport**,
 gated to production, so `error`/`fatal` still reach Workers Logs:
 
@@ -86,7 +89,7 @@ if (getCurrentEnvironment() === "production")
   addTransport(cloudflareTransport());
 ```
 
-Live in `api` + `cron` today (`workers` doesn't wire it yet). Full contract → [logger](/packages/shared/logger).
+Live in `api` + `cron`, and in the `website` + `app` surfaces through their `instrumentation.ts`. The `workers` skeleton and `admin` log with plain `console`, which production does not silence. Full contract → [logger](/packages/shared/logger).
 
 ## Testing
 

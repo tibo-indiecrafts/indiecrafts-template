@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { wranglerEnvSection } from "./project.mjs";
+import { APPS, isCloudflare } from "./apps.mjs";
 
 const read = (p) =>
   readFileSync(fileURLToPath(new URL(p, import.meta.url)), "utf8");
@@ -120,3 +121,56 @@ for (const env of ["dev", "staging", "prod"]) {
     );
   });
 }
+
+/** What a wrangler.toml is missing from full Cloudflare observability (logs · traces · issues).
+ *  Each must be on in the top-level block; an `[env.<name>.observability…]` table REPLACES that
+ *  block for the env (Wrangler does not merge it), so any env-level table is a gap too. */
+export function observabilityGaps(toml) {
+  const table = (name) =>
+    toml.match(
+      new RegExp(`^\\[${name.replace(".", "\\.")}\\]\\s*\\n([^[]*)`, "m"),
+    )?.[1] ?? "";
+  const on = (name) => /^\s*enabled\s*=\s*true\b/m.test(table(name));
+  const gaps = [
+    "observability",
+    "observability.logs",
+    "observability.traces",
+    "observability.issues",
+  ].filter((name) => !on(name));
+  for (const [header] of toml.matchAll(
+    /^\[env\.[^.\]]+\.observability[^\]]*\]/gm,
+  ))
+    gaps.push(header);
+  return gaps;
+}
+
+test("observabilityGaps flags a missing, disabled or env-overridden part", () => {
+  const full =
+    "[observability]\nenabled = true\n[observability.logs]\nenabled = true\n" +
+    "[observability.traces]\nenabled = true\n[observability.issues]\nenabled = true\n";
+  assert.deepEqual(observabilityGaps(full), []);
+  assert.deepEqual(
+    observabilityGaps(full.replace(/\[observability\.traces\][^[]*/, "")),
+    ["observability.traces"],
+  );
+  assert.deepEqual(
+    observabilityGaps(
+      full.replace(
+        "[observability.issues]\nenabled = true",
+        "[observability.issues]\nenabled = false",
+      ),
+    ),
+    ["observability.issues"],
+  );
+  assert.deepEqual(
+    observabilityGaps(`${full}[env.prod.observability.logs]\nenabled = true\n`),
+    ["[env.prod.observability.logs]"],
+  );
+});
+
+test("every Cloudflare app has logs, traces and issues on in every env", () => {
+  for (const app of APPS.filter(isCloudflare)) {
+    const toml = read(`../../../../${app.dir}/wrangler.toml`);
+    assert.deepEqual(observabilityGaps(toml), [], `${app.dir}/wrangler.toml`);
+  }
+});

@@ -5,6 +5,12 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ## [Unreleased]
 
+### Changed
+
+- **Cloudflare observability is fully on.** Traces (10% sampled) and Issues (grouped production
+  errors) join the Workers Logs in the top-level `wrangler.toml` `[observability]` block, which every
+  env inherits. Wrangler is pinned to 4.143.0 (Issues needs ≥ 4.134). A test fails if a part is off.
+
 ### Added
 
 - **`audit_purge` drops Idempotency-Key results after 24 h** (the api's replay window).

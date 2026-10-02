@@ -30,6 +30,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **Cloudflare observability is fully on.** Traces (10% sampled) and Issues (grouped production
+  errors) join the Workers Logs in the top-level `wrangler.toml` `[observability]` block, which every
+  env inherits. Wrangler is pinned to 4.143.0 (Issues needs ≥ 4.134). A test fails if a part is off.
+- **Server errors reach Workers Logs.** The app logs through the shared logger, which is silent
+  in production, so a `logger.error` was lost. `src/instrumentation.ts` now adds the Cloudflare
+  transport in production, like the website.
 - **Signing in re-checks the legal acceptance.** `SignedInLegalGate` keys the gate on the user id.
   Sign-in is a client-side navigation, so the gate stayed mounted and never re-read the server
   record: a user who accepted on another surface saw the banner until a reload.

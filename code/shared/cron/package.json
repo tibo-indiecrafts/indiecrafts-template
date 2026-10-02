@@ -26,6 +26,6 @@
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^20",
     "typescript": "^5",
-    "wrangler": "^4.0.0"
+    "wrangler": "4.143.0"
   }
 }
