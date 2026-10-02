@@ -138,6 +138,8 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **system-pages — `brand` slot.** `NotFoundContent` and `ErrorContent` take an optional `brand`
+  node above the copy, so a host can show its configured logo (the app's 404 / error screens).
 - **announcement — the card sits under the top chrome on wider screens.** On a phone it stays a
   bottom sheet. From `sm` up it hangs top-right from a zero-height sticky anchor: mounted after the
   navbar and any message strip, it sits under all of them and stays pinned 80px down on scroll —

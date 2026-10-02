@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Reads the editor-owned home welcome message (the `appContent` singleton) live from Sanity's CDN with a short per-isolate cache, so an editor's change appears within the TTL without a redeploy. It fails open: an unset project id or any error yields no welcome, never a broken page. It reads the public project id and dataset straight from env.
+Reads the editor-owned home welcome message (the `appContent` singleton) live from Sanity's CDN with a short per-isolate cache, so an editor's change appears within the TTL without a redeploy. It fails open: an unset project id or any error yields no welcome, never a broken page. The cached, fail-open read is the shared `liveQuery` (`src/lib/sanity-live.ts`). It reads the public project id and dataset straight from env.
 
 ## Exports
 

@@ -14,6 +14,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **404 and error screens, branded.** The app had none: an unknown URL fell through to the root
+  not-found, outside `[locale]`, where the passthrough root layout has no `<html>` — a dev runtime
+  error, Next's bare 404 in production (also in the mobile shell). Now `[locale]/[...rest]` →
+  `[locale]/not-found`, plus `[locale]/error`: both show the Sanity-configured logo (`getBrand`)
+  and bundled en/fr copy. The welcome and the logo share one cached, fail-open reader
+  (`liveQuery`).
 - **Legal acceptance reaches your other surfaces even if the first write was lost.** `LegalGate`
   reconciles with the server on every signed-in load (`syncLegalConsent`) and re-sends an
   acceptance made here that never landed.

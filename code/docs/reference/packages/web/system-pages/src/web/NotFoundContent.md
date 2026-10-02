@@ -15,7 +15,7 @@ Renders the centered 404 card for web surfaces. The app's `not-found.tsx` route 
 ## Exports
 
 - `NotFoundContent` — the DOM 404 card.
-- `NotFoundContentProps` — the base copy contract plus optional `LinkComponent` and `homeHref`.
+- `NotFoundContentProps` — the base copy contract plus optional `LinkComponent`, `homeHref` and a `brand` slot (the host's logo, above the copy).
 
 ## Usage
 

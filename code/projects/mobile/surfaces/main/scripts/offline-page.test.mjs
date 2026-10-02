@@ -98,3 +98,27 @@ test("hides the native splash so the offline page is visible", () => {
     "You're offline",
   );
 });
+
+test("shows the configured logo (dark variant in dark mode), named after the app", () => {
+  const html = renderOfflinePage({
+    appName: "Acme",
+    messages,
+    serverUrl: SERVER,
+    logo: "brand/logo.png",
+    logoDark: "brand/logo-dark.png",
+  });
+  assert.match(html, /<img src="brand\/logo.png" alt="Acme"/);
+  assert.match(
+    html,
+    /<source srcset="brand\/logo-dark.png" media="\(prefers-color-scheme: dark\)">/,
+  );
+});
+
+test("no configured logo → no image (never a broken one)", () => {
+  const html = renderOfflinePage({
+    appName: "Acme",
+    messages,
+    serverUrl: SERVER,
+  });
+  assert.doesNotMatch(html, /<img/);
+});

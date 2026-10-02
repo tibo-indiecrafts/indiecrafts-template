@@ -146,5 +146,16 @@
       "no": "Non merci",
       "dismiss": "Fermer"
     }
+  },
+  "notFound": {
+    "eyebrow": "404",
+    "title": "Page introuvable",
+    "description": "La page demandée n'existe pas ou a été déplacée.",
+    "homeLabel": "← Retour à l'accueil"
+  },
+  "error": {
+    "title": "Une erreur est survenue",
+    "description": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "retryLabel": "Réessayer"
   }
 }

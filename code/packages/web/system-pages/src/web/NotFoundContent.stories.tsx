@@ -29,3 +29,17 @@ export const French: Story = {
     homeHref: "/",
   },
 };
+
+/** With the host's configured logo in the `brand` slot (the app's 404 / error screens). */
+export const WithBrand: Story = {
+  args: {
+    brand: (
+      <span
+        aria-hidden="true"
+        className="bg-primary text-primary-foreground inline-flex size-16 items-center justify-center rounded-xl text-2xl font-bold"
+      >
+        W
+      </span>
+    ),
+  },
+};

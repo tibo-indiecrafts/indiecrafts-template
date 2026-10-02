@@ -102,6 +102,11 @@ Connect it over USB, then run the Android steps with `ANDROID_SERIAL=<serial>`
 
 - The shell needs a network. A failed first load shows the bundled offline page with a
   Retry button; after that, the app's own offline banner covers drops.
+- **Branding.** The service screens show the logo configured in Sanity (`siteSettings.logo`,
+  `logoDark` for dark mode): `pnpm www` puts it on the offline page and re-renders the native
+  splash images when it changes (`brand.lock.json` records which logo they came from). The app's
+  404 and error screens show the same logo. Change the logo in Sanity, run `pnpm www`, commit the
+  splash images.
 - Sign-in is password or an email code — social OAuth does not run inside a web view.
 - A public App Store release needs one real native feature (Apple Guideline 4.2) and a
   release pipeline. Both belong to a later spec.

@@ -13,6 +13,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The splash screen and the offline page show your logo.** The splash was Capacitor's default
+  logo and the offline page had none. `pnpm www` now reads the logo configured in Sanity
+  (`siteSettings`) and puts it on the offline page (dark variant in dark mode), and re-renders the
+  14 native splash images when it changes (`brand.lock.json`). Sanity's image CDN does the
+  resizing — no new dependency. No config or network → the build keeps the existing images.
 - **`ios` runs on Xcode 27.** The script builds with `xcodebuild`, installs + launches with `simctl`,
   then opens DeviceHub (Xcode 27 replaced `Simulator.app`, which `cap run ios` still looks for).
   **Why:** `cap run ios` failed after a successful build. The mobile guide gains a TestFlight section.

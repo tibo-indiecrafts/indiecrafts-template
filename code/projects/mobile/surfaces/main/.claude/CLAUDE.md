@@ -11,6 +11,7 @@ by the Cloudflare runners — the release pipeline comes with the App Store spec
 - **Server URL:** `src/server-url.ts` → `CAP_SERVER_URL` (required). Dev = `http://localhost:3002`.
 - **Clerk host:** `CAP_CLERK_PUBLISHABLE_KEY` (required) → `server.allowNavigation`; else Clerk's handshake opens the system browser. Dev scripts read it from the app's `.env.local`.
 - **Offline:** `scripts/build-www.mjs` renders `www/offline.html` from `messages/*.json` (`server.errorPath`).
+- **Brand:** the logo is Sanity config (`siteSettings.logo`/`logoDark`) — `scripts/brand.mjs` puts it on the offline page and re-renders the native splashes when it changes (`brand.lock.json`). Never a static logo file.
 - **Run:** `pnpm dev` + `pnpm --filter @indiecrafts/web-surfaces-app dev --port 3002`, boot an emulator, then `pnpm --filter @indiecrafts/mobile-surfaces-main android` (JDK 21). iOS: boot a simulator, then `… ios` (Xcode 27; opens DeviceHub). TestFlight → the mobile guide.
 - **Native projects:** `android/` + `ios/` are committed; `www/` is generated (git-ignored).
 

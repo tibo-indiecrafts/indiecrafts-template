@@ -146,5 +146,16 @@
       "no": "No thanks",
       "dismiss": "Dismiss"
     }
+  },
+  "notFound": {
+    "eyebrow": "404",
+    "title": "Page not found",
+    "description": "The page you requested doesn't exist or has moved.",
+    "homeLabel": "← Back home"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "retryLabel": "Try again"
   }
 }

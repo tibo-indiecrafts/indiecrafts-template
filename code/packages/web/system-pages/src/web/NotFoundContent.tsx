@@ -23,6 +23,8 @@ export type NotFoundContentProps = BaseProps & {
   LinkComponent?: LinkLike;
   /** Home href (default `/`). */
   homeHref?: string;
+  /** Optional brand mark above the copy (the host's configured logo). */
+  brand?: ReactNode;
 };
 
 const DefaultLink: LinkLike = ({ href, className, children }) => (
@@ -42,9 +44,11 @@ export function NotFoundContent({
   homeLabel,
   LinkComponent = DefaultLink,
   homeHref = "/",
+  brand,
 }: NotFoundContentProps) {
   return (
     <section className="mx-auto flex w-full max-w-xl flex-col items-center justify-center gap-4 px-(--gutter) py-24 text-center md:py-32">
+      {brand}
       <p className="text-brand text-sm font-medium tracking-widest uppercase">
         {eyebrow}
       </p>

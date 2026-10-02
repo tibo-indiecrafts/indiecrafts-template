@@ -5,7 +5,7 @@
  */
 import "@indiecrafts/packages-web-ui-tokens/globals.css";
 import type { ReactNode } from "react";
-import type { Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -14,18 +14,35 @@ import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shar
 import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { OfflineBanner } from "@indiecrafts/packages-web-system-pages/web";
 import { consent, localeDir, site, type Locale } from "@/config";
-import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
+import {
+  AppClerkProvider,
+  SessionLogger,
+} from "@indiecrafts/packages-web-auth";
 import { MarketingNudgeMount } from "@indiecrafts/packages-web-auth/marketing-nudge";
 import { routing } from "@/i18n/routing";
 import { ShellOverlays } from "@/user-interface/ShellOverlays";
 import { buildInfo } from "@/lib/build-info";
 import { THEME_SCRIPT } from "@/user-interface/layout/theme-script";
 import { NativeBridge } from "@/user-interface/shell/NativeBridge";
+import { BrandProvider } from "@/user-interface/BrandProvider";
+import { getBrand } from "@/lib/brand";
 
 /** `viewport-fit=cover` exposes the iOS shell's notch and home-indicator insets
  *  (`env(safe-area-inset-*)`): the app header pads below the status bar and the bottom
  *  overlays clear the home indicator (`bottom-safe-4`). Without a notch they are 0. */
 export const viewport: Viewport = { viewportFit: "cover" };
+
+/** Every page gets a `<title>` (WCAG 2.4.2 — also the browser tab and the shell's app
+ *  switcher): the app name, or "Page · app name" when a page sets its own. */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "app" });
+  return { title: { default: t("title"), template: `%s · ${t("title")}` } };
+}
 
 /** Prerender one tree per locale (`as-needed` → `/`, `/fr`). */
 export function generateStaticParams() {
@@ -58,49 +75,60 @@ export default async function LocaleLayout({
   // Carries the per-request CSP nonce (set by src/proxy.ts) so the inline theme script runs
   // under the strict nonce CSP.
   const nonce = requestHeaders.get("x-nonce") ?? undefined;
-  const tOffline = await getTranslations("offline");
-  const nudge = await getTranslations("auth.nudge");
+  // Copy + the configured logo (Sanity, live + fail-open, for the client error screen).
+  const [tOffline, nudge, brand] = await Promise.all([
+    getTranslations("offline"),
+    getTranslations("auth.nudge"),
+    getBrand(),
+  ]);
 
   return (
     // suppressHydrationWarning: the inline THEME_SCRIPT sets `data-theme` on <html> before
     // hydration, so the server/client attributes differ by design (one level deep only).
     <AppClerkProvider locale={locale} nonce={nonce}>
-      <html lang={locale} dir={localeDir(locale as Locale)} suppressHydrationWarning>
-      {/* suppressHydrationWarning: browser extensions inject attributes on <body>
+      <html
+        lang={locale}
+        dir={localeDir(locale as Locale)}
+        suppressHydrationWarning
+      >
+        {/* suppressHydrationWarning: browser extensions inject attributes on <body>
           (e.g. data-atm-installed) before React hydrates — a one-level-deep,
           client-only diff, not an app mismatch. */}
-      <body suppressHydrationWarning>
-        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
-        <NextIntlClientProvider>
-          {/* Capacitor shell native events — a no-op in a browser. */}
-          <NativeBridge />
-          <OfflineBanner message={tOffline("banner")} />
-          {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
-            <>
-              <SessionLogger surface="app" />
-              <MarketingNudgeMount
-                apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
-                surface="app"
-                snoozeKey={`${site.prefix}.mkt-nudge-snooze`}
-                copy={{
-                  title: nudge("title"),
-                  yes: nudge("yes"),
-                  no: nudge("no"),
-                  dismiss: nudge("dismiss"),
-                }}
-              />
-            </>
-          ) : null}
-          {children}
-          {/* Compliance + version overlays (consent, legal re-acceptance, update prompt). */}
-          <ShellOverlays
-            commit={buildInfo.commit}
-            mode={consentMode}
-            gpcSignal={gpcSignal}
+        <body suppressHydrationWarning>
+          <script
+            nonce={nonce}
+            dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }}
           />
-          <Toaster position="top-center" />
-        </NextIntlClientProvider>
-      </body>
+          <NextIntlClientProvider>
+            {/* Capacitor shell native events — a no-op in a browser. */}
+            <NativeBridge />
+            <OfflineBanner message={tOffline("banner")} />
+            {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+              <>
+                <SessionLogger surface="app" />
+                <MarketingNudgeMount
+                  apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
+                  surface="app"
+                  snoozeKey={`${site.prefix}.mkt-nudge-snooze`}
+                  copy={{
+                    title: nudge("title"),
+                    yes: nudge("yes"),
+                    no: nudge("no"),
+                    dismiss: nudge("dismiss"),
+                  }}
+                />
+              </>
+            ) : null}
+            <BrandProvider brand={brand}>{children}</BrandProvider>
+            {/* Compliance + version overlays (consent, legal re-acceptance, update prompt). */}
+            <ShellOverlays
+              commit={buildInfo.commit}
+              mode={consentMode}
+              gpcSignal={gpcSignal}
+            />
+            <Toaster position="top-center" />
+          </NextIntlClientProvider>
+        </body>
       </html>
     </AppClerkProvider>
   );

@@ -14,8 +14,8 @@ Renders the centered 500 error card for web surfaces. It is a client component (
 
 ## Exports
 
-- `ErrorContent` — the DOM error card; takes `title`, `description`, `retryLabel`, `onRetry`.
-- `ErrorContentProps` — re-exported copy contract.
+- `ErrorContent` — the DOM error card; takes `title`, `description`, `retryLabel`, `onRetry`, and an optional `brand` slot (the host's logo, above the copy).
+- `ErrorContentProps` — the copy contract plus the optional `brand` slot.
 
 ## Usage
 
