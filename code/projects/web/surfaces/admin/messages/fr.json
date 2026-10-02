@@ -94,7 +94,21 @@
       "surface": "Surface",
       "user": "Utilisateur",
       "country": "Pays",
-      "description": "Détail"
+      "description": "Détail",
+      "types": {
+        "failed_login": "Échec de connexion",
+        "credential_stuffing": "Bourrage d'identifiants",
+        "privilege_escalation": "Rôle admin accordé",
+        "data_exfiltration": "Exfiltration de données",
+        "suspicious_pattern": "Comportement suspect",
+        "rate_limit_exceeded": "Limite de débit dépassée"
+      },
+      "severities": {
+        "low": "Faible",
+        "medium": "Moyenne",
+        "high": "Élevée",
+        "critical": "Critique"
+      }
     },
     "csp": {
       "title": "Violations CSP",

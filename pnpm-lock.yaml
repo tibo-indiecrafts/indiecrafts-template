@@ -906,6 +906,9 @@ importers:
       '@indiecrafts/packages-shared-security':
         specifier: workspace:*
         version: link:../../../../packages/shared/security
+      '@indiecrafts/packages-shared-security-events':
+        specifier: workspace:*
+        version: link:../../../../packages/shared/security-events
       '@indiecrafts/packages-shared-utils':
         specifier: workspace:*
         version: link:../../../../packages/shared/utils

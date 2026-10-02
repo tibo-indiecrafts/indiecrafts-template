@@ -4,15 +4,27 @@
  * @see docs/reference/projects/web/admin/src/app/locale/layout.md
  */
 import "@indiecrafts/packages-web-ui-tokens/globals.css";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { localeDir, type Locale } from "@/config";
 import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
 import { routing } from "@/i18n/routing";
 import { THEME_SCRIPT } from "@/user-interface/layout/theme-script";
+
+/** Every page is titled "<page> · Admin"; a page without its own title is "Admin". */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "admin" });
+  return { title: { default: t("title"), template: `%s · ${t("title")}` } };
+}
 
 /** Prerender one tree per locale (`as-needed` → `/`, `/fr`). */
 export function generateStaticParams() {

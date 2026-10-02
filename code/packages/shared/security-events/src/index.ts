@@ -4,6 +4,10 @@
  * @see docs/reference/packages/shared/security-events/src/index.md
  */
 export {
+  SECURITY_EVENT_TYPES,
+  SEVERITIES,
+  isSecurityEventType,
+  isSeverity,
   type SecurityEventType,
   type Severity,
   type SecurityEvent,

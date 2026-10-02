@@ -5,7 +5,9 @@
 pure detection logic the `api` shell imports (services are shells — job logic lives here, never in
 `api/src`). No dependencies. Auto-loads under `code/packages/shared/security-events/**`. Subpath `exports`.
 
-- **`SecurityEventType` · `Severity` · `SecurityEvent`** (`./events`) — the taxonomy. The single home
+- **`SecurityEventType` · `Severity` · `SecurityEvent`** (`./events`) — the taxonomy, also as the
+  `SECURITY_EVENT_TYPES` / `SEVERITIES` lists with `isSecurityEventType` / `isSeverity` guards (the api
+  rejects anything else). The single home
   for the incident shape every surface posts to the api `/v1/events` (`kind:"security"`). Data-minimized:
   no raw IP, no PII free-text — the api derives country + a salted IP hash server-side.
 - **`classifyFailedLogins(count)` · `FAILED_LOGIN`** (`./thresholds`) — pure sliding-window policy: does

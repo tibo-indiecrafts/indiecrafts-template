@@ -29,6 +29,8 @@ export default defineWorkersConfig(async () => {
             },
             // Same reasoning for R2 — EXPORT_BUCKET is a local simulated bucket.
             r2Buckets: ["EXPORT_BUCKET"],
+            // And for KV — the failed-login counters (per-env in wrangler.toml).
+            kvNamespaces: ["SECURITY_COUNTERS"],
             bindings: {
               // The bearer the authenticated-route tests send. Safe: the
               // existing no-bearer 401 tests are unaffected.

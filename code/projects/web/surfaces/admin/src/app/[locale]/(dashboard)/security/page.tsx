@@ -3,6 +3,7 @@
  *
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/security/page.md
  */
+import type { Metadata } from "next";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
@@ -14,6 +15,10 @@ import {
   TableBody,
   TableCell,
 } from "@indiecrafts/packages-web-ui/web/table";
+import {
+  isSecurityEventType,
+  isSeverity,
+} from "@indiecrafts/packages-shared-security-events";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 type SecurityRow = {
@@ -45,6 +50,16 @@ async function fetchSecurity(): Promise<SecurityRow[] | null> {
   } catch {
     return null;
   }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "admin.security" });
+  return { title: t("title") };
 }
 
 export default async function SecurityPage({
@@ -110,7 +125,11 @@ export default async function SecurityPage({
                     <TableCell className="tabular-nums">
                       {format.dateTime(new Date(row.ts), { dateStyle: "medium", timeStyle: "short" })}
                     </TableCell>
-                    <TableCell>{row.event_type}</TableCell>
+                    <TableCell>
+                      {isSecurityEventType(row.event_type)
+                        ? t(`types.${row.event_type}`)
+                        : row.event_type}
+                    </TableCell>
                     <TableCell>
                       <Badge
                         variant={
@@ -119,7 +138,9 @@ export default async function SecurityPage({
                             : "outline"
                         }
                       >
-                        {row.severity}
+                        {isSeverity(row.severity)
+                          ? t(`severities.${row.severity}`)
+                          : row.severity}
                       </Badge>
                     </TableCell>
                     <TableCell>{row.surface ?? "—"}</TableCell>

@@ -7,6 +7,16 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **A role→admin grant alerts once, not on every edit of an admin.** The Clerk webhook wrote a
+  `privilege_escalation` row and emailed the owner on every `user.updated` of a user who was
+  admin — a name change paged the operator. Clerk sends no previous values, so the webhook now
+  keeps the last role it saw in `user_profiles.role` (main migration `0014`) and records a grant
+  only when the role turns `admin`. It now also checks `user.created`. Every grant counts, from
+  the admin UI too: a compromised admin who grants a second admin must page the owner. The
+  description no longer says "out-of-band". After the migration, an existing admin counts as
+  a grant once, on their next update.
+- **`kind:"security"` accepts only the taxonomy.** Any `eventType` or `severity` string was
+  stored — a made-up severity could dodge or fake the alert. Unknown values are now a `400`.
 - **The rate limit is per visitor, not per calling server.** Every bearer route keyed its
   20/min limit on `cf-connecting-ip` — for the website server that is one IP for every visitor, so
   a busy page dropped CSP reports and could starve consent writes. A caller with a valid bearer now

@@ -14,6 +14,9 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`security-events` exports its taxonomy as values.** `SECURITY_EVENT_TYPES` · `SEVERITIES`
+  and the `isSecurityEventType` · `isSeverity` guards. **Why:** the api rejects an unknown
+  type or severity, and the admin feed picks a translated label — both from one list.
 - **compliance — a lost legal-acceptance write is re-sent.** Accepting the policies wrote to the
   api once, fire-and-forget. If that write was lost (a reload, offline, a failed token refresh —
   seen in the Android shell), only that device knew, and every other surface kept asking. New

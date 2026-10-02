@@ -16,6 +16,8 @@ The app-level security-event taxonomy: the post-auth events Cloudflare's edge WA
 
 - `SecurityEventType` — the incident types, such as `failed_login`, `credential_stuffing`, `privilege_escalation`.
 - `Severity` — `low`, `medium`, `high`, or `critical`.
+- `SECURITY_EVENT_TYPES` · `SEVERITIES` — the same values as lists.
+- `isSecurityEventType(v)` · `isSeverity(v)` — type guards. The api rejects any other value (`400`); the admin feed uses them to pick a label.
 - `SecurityEvent` — the posted payload: `eventType`, `severity`, and optional `surface`, `userId`, and a short non-PII `description`.
 
 ## Usage

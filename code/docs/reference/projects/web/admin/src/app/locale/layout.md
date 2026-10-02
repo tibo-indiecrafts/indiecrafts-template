@@ -15,6 +15,7 @@ This layout wraps every admin route under a locale segment. It validates the loc
 ## Exports
 
 - `default` — `LocaleLayout`, an async server component. Not imported by other code; Next.js applies it to each locale segment.
+- `generateMetadata` — the document title: `<page> · Admin`, or `Admin` for a page without its own title.
 - `generateStaticParams` — prerenders one tree per configured locale.
 
 ## Source

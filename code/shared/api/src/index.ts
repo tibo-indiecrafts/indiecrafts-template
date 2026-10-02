@@ -26,6 +26,8 @@ import {
   FAILED_LOGIN,
   bumpCounter,
   shouldAlert,
+  isSecurityEventType,
+  isSeverity,
 } from "@indiecrafts/packages-shared-security-events";
 import {
   SURFACES,
@@ -505,7 +507,9 @@ async function route(
         if (!env.AUDIT_DB) return json({ error: "unavailable" }, 503, cors);
         const eventType = str(body.eventType, 32);
         const severity = str(body.severity, 10);
-        if (!eventType || !severity)
+        // Only the taxonomy: a made-up type would pollute the feed, a made-up severity
+        // would dodge (or fake) the alert.
+        if (!isSecurityEventType(eventType) || !isSeverity(severity))
           return json({ error: "invalid" }, 400, cors);
         const secSurface = str(body.surface, 16) || null;
         const secUserId = str(body.userId) || null;
@@ -1116,14 +1120,37 @@ async function route(
       return json({ error: "invalid" }, 400, cors);
     }
 
-    // The one wired mapping: a role→admin grant that did NOT go through our admin action.
+    // The one wired mapping: a role→admin GRANT. Clerk sends no previous values, so the
+    // last role we saw lives in user_profiles.role (written by the sync below). An update
+    // of a user who is already admin (a name change, …) is not a new grant. An unknown
+    // previous role (no MAIN_DB, first sight) counts as a grant — fail towards alerting.
     const data = evt.data ?? {};
-    const role = (data.public_metadata as { role?: string } | undefined)?.role;
-    if (evt.type === "user.updated" && role === "admin" && env.AUDIT_DB) {
+    const rawRole = (data.public_metadata as { role?: unknown } | undefined)
+      ?.role;
+    const role = typeof rawRole === "string" ? rawRole.slice(0, 16) : null;
+    const previousRole =
+      (evt.type === "user.created" || evt.type === "user.updated") &&
+      role === "admin" &&
+      env.MAIN_DB &&
+      typeof data.id === "string"
+        ? ((
+            await env.MAIN_DB.prepare(
+              "SELECT role FROM user_profiles WHERE user_id = ?",
+            )
+              .bind(data.id)
+              .first<{ role: string | null }>()
+          )?.role ?? null)
+        : null;
+    if (
+      (evt.type === "user.created" || evt.type === "user.updated") &&
+      role === "admin" &&
+      previousRole !== "admin" &&
+      env.AUDIT_DB
+    ) {
       const privEscTs = new Date().toISOString();
       const privEscUserId = typeof data.id === "string" ? data.id : null;
       const privEscCountry = request.headers.get("cf-ipcountry") ?? null;
-      const privEscDesc = "role→admin via Clerk (out-of-band)";
+      const privEscDesc = "role→admin granted";
       try {
         await env.AUDIT_DB.prepare(
           "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, NULL, ?)",
@@ -1230,9 +1257,9 @@ async function route(
             // email still overwrites, via excluded. full_name has no such guard —
             // a name clear/update should propagate; it is not the erasure key.
             await env.MAIN_DB.prepare(
-              "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, locale, marketing_email, created_at, last_login_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, NULL) " +
-                "ON CONFLICT(user_id) DO UPDATE SET email = COALESCE(excluded.email, email), full_name = excluded.full_name, email_fingerprint = COALESCE(excluded.email_fingerprint, email_fingerprint), locale = COALESCE(excluded.locale, locale)",
+              "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, locale, marketing_email, role, created_at, last_login_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL) " +
+                "ON CONFLICT(user_id) DO UPDATE SET email = COALESCE(excluded.email, email), full_name = excluded.full_name, email_fingerprint = COALESCE(excluded.email_fingerprint, email_fingerprint), locale = COALESCE(excluded.locale, locale), role = excluded.role",
             )
               .bind(
                 userId,
@@ -1241,6 +1268,7 @@ async function route(
                 fingerprint,
                 locale,
                 marketingEmail,
+                role,
                 now,
               )
               .run();

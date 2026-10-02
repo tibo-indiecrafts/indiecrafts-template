@@ -29,6 +29,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **Admin pages have a document title.** No admin page set a `<title>`: the browser tab showed
+  the URL and Lighthouse accessibility scored 96. The locale layout now titles every page
+  `<page> · Admin` (`Admin` when a page sets none); the security page sets its own.
+- **The security feed speaks the admin's language.** Event types and severities showed as raw
+  codes (`credential_stuffing`, `high`) in both locales. They now read from
+  `admin.security.types` / `severities` (en/fr); an unknown code still shows as is.
 - **"Sign out everywhere" signs out every device.** It tries every session, audits a partial run,
   and writes no row when nothing was revoked. It reads up to 500 sessions — Clerk's default page of
   10 left an 11th device signed in while the action reported success. A malformed session id now

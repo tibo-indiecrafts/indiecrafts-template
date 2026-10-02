@@ -94,7 +94,21 @@
       "surface": "Surface",
       "user": "User",
       "country": "Country",
-      "description": "Detail"
+      "description": "Detail",
+      "types": {
+        "failed_login": "Failed sign-in",
+        "credential_stuffing": "Credential stuffing",
+        "privilege_escalation": "Admin role granted",
+        "data_exfiltration": "Data exfiltration",
+        "suspicious_pattern": "Suspicious pattern",
+        "rate_limit_exceeded": "Rate limit exceeded"
+      },
+      "severities": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "critical": "Critical"
+      }
     },
     "csp": {
       "title": "CSP violations",

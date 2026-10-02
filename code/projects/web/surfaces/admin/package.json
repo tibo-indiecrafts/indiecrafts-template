@@ -19,6 +19,7 @@
     "@indiecrafts/packages-shared-auth": "workspace:*",
     "@indiecrafts/packages-shared-config": "workspace:*",
     "@indiecrafts/packages-shared-security": "workspace:*",
+    "@indiecrafts/packages-shared-security-events": "workspace:*",
     "@indiecrafts/packages-web-ui-tokens": "workspace:*",
     "@indiecrafts/packages-shared-utils": "workspace:*",
     "@indiecrafts/packages-web-auth": "workspace:*",

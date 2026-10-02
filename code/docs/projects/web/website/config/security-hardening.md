@@ -108,14 +108,24 @@ in the `@indiecrafts/packages-shared-security-events` brick.
 
 **Feeds** (what writes them):
 
-- **Failed logins** → the surfaces we drive by hand (mobile OTP verify) post a
-  `kind:"security" failed_login`. The api **counts** these against a **KV TTL counter** and
-  writes ONE `credential_stuffing` row only when the rate crosses the threshold — never a
-  per-request D1 write. Web/admin use Clerk's own UI, so their failed logins are
-  caught by the edge (leaked-creds + rate-limit), not an app hook.
 - **Privilege escalation** → the **Clerk webhook** (`/v1/clerk-webhook`, Svix-verified)
-  records any `user.updated` that grants `role: admin` — including a grant made OUTSIDE our
-  admin UI (e.g. directly in the Clerk dashboard), which our own audit trail would miss.
+  records every `user.created` / `user.updated` that **grants** `role: admin` — one row (and
+  one alert) per grant. A grant made in our admin UI also has an `admin.grant` row in
+  `admin_audit` that names the actor; a grant made in the Clerk dashboard has only this row.
+  Clerk sends no previous values, so the webhook keeps the last role it saw in
+  `user_profiles.role`: a later edit of a user who is already admin is not a new grant.
+- **Erasure SLA** → the `cron` worker writes a `medium` row when an erasure request is due
+  soon and a `high` row when it is past its one-month deadline. The cron sends no email.
+- **Failed logins** → **no producer today.** Every surface signs in through Clerk's own UI
+  (the mobile shell wraps the `app`), so our code never sees a failed attempt; Clerk's
+  brute-force lockout and the edge rate limits cover it. The api path is ready for a surface
+  that verifies credentials itself: post `kind:"security" failed_login`; the api **counts**
+  it in a **KV TTL counter** and writes ONE `credential_stuffing` row only when the rate
+  crosses the threshold — never a per-request D1 write. The api hashes the **calling**
+  connection's IP, so such a producer must call the api from the user's device, or the
+  per-source counter counts the server.
+
+The api accepts only the taxonomy: an unknown `eventType` or `severity` is a `400`.
 
 **Efficiency rules** (baked in): count thresholds against a **KV counter with TTL**,
 never a per-request DB query; write a row only when an incident crosses a threshold;

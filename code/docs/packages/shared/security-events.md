@@ -23,7 +23,8 @@ Root `.` barrel:
 
 - **`SecurityEventType` · `Severity` · `SecurityEvent`** (`./events`) — the taxonomy and the
   `kind:"security"` payload. Data-minimized: no raw IP, no PII free-text; the api derives country
-  and a salted IP hash server-side.
+  and a salted IP hash server-side. `SECURITY_EVENT_TYPES` · `SEVERITIES` list the same values;
+  `isSecurityEventType` · `isSeverity` guard them — the api rejects anything else with a `400`.
 - **`classifyFailedLogins(count)` · `FAILED_LOGIN`** (`./thresholds`) — pure sliding-window policy.
   It decides whether a running failed-login count crosses into a `credential_stuffing` incident,
   and at what severity. No I/O.
