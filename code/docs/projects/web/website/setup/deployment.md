@@ -83,7 +83,9 @@ Full model → the [`code/shared/db` brief](/.claude/CLAUDE).
    same layer that owns the WAF / rate-limit / SSL). Only if you deploy **without** the infra/ layer,
    uncomment the `[[env.prod.routes]]` block in `wrangler.toml` instead (and keep `attach_domain = false`).
    The deploy runner exports `NEXT_PUBLIC_SITE_URL` from the registry either way (until a real host is set,
-   robots.txt serves Disallow).
+   robots.txt serves Disallow). It also bakes `NEXT_PUBLIC_API_URL` from the env's `API_URL` and every
+   `NEXT_PUBLIC_*` of `[env.<env>.vars]`, and refuses a build that would ship a `localhost` URL — see
+   [Platform deploy](/shared/architecture/platform-deploy).
 
 ## GitHub Actions (auto-deploy)
 

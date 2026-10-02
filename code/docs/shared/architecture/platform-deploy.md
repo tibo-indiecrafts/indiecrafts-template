@@ -55,6 +55,14 @@ pnpm deploy:web:website:prod    → node ../../../../../code/shared/scripts/depl
 pnpm deploy:shared:api:staging     → node ../../../../../code/shared/scripts/deploy/worker.mjs api staging
 ```
 
+**Build-time public vars (`next-cf`).** Next bakes every `NEXT_PUBLIC_*` value into the
+browser bundle at build, from `process.env` first, then the app's `.env*` files. A deploy from
+a laptop would bake `.env.local`'s `localhost` URLs, so `deploy/next.mjs` exports, before the
+build: every `NEXT_PUBLIC_*` key of the app's `[env.<env>.vars]`, and `NEXT_PUBLIC_API_URL` from
+that block's `API_URL` (else the api host in the domain registry). A value already exported
+wins. Then it **refuses to build** if any `NEXT_PUBLIC_*` the build would see still points at
+`localhost` / `127.0.0.1` (`loopbackPublicVars`).
+
 The runners share `code/shared/scripts/lib/deploy-shared.mjs` (`run` + the prod confirm) and
 `code/shared/scripts/lib/project.mjs` (`assertRenamed(app, env)` — the shared-account clobber guard: refuses a
 staging/prod deploy while a Worker name is still on the template prefix). Every Cloudflare resource name is

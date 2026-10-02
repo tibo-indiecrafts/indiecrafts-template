@@ -14,6 +14,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The deployed app calls the deployed api.** Its build baked `.env.local`'s
+  `localhost` `NEXT_PUBLIC_API_URL` / `NEXT_PUBLIC_WEBSITE_URL`. `wrangler.toml` now sets them per env
+  (`[env.dev.vars]`, `[env.staging.vars]`) and the deploy bakes them. Prod gets the api from the
+  domain registry; set `NEXT_PUBLIC_WEBSITE_URL` under `[env.prod.vars]` once the website has its
+  host — until then a prod deploy refuses to build.
 - **404 and error screens, branded.** The app had none: an unknown URL fell through to the root
   not-found, outside `[locale]`, where the passthrough root layout has no `<html>` — a dev runtime
   error, Next's bare 404 in production (also in the mobile shell). Now `[locale]/[...rest]` →

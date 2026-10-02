@@ -18,6 +18,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 
 ## [Unreleased]
 
+- **A deploy never ships a `localhost` api URL.** `deploy/next.mjs` let Next bake
+  `.env.local` into the browser bundle, so the deployed dev website and app called
+  `http://localhost:8787` from every visitor's browser: email preferences, the marketing toggle and
+  legal sync all failed. It now bakes `NEXT_PUBLIC_API_URL` from the env's `API_URL` (else the
+  registry's api host) and every `NEXT_PUBLIC_*` of `[env.<env>.vars]` — so dev and staging also stop
+  baking "production" as `NEXT_PUBLIC_ENVIRONMENT`. It refuses a build that would still ship a
+  `localhost` URL (`loopbackPublicVars`, tested).
 - **D1 backups export the right database.** `data/backup.mjs` took the first `database_name` in the
   owner's `wrangler.toml` (the dev audit D1), so every "main" dump — manual, pre-migration and the
   nightly run — and every staging/prod D1 dump was a copy of the dev audit D1. It now resolves the

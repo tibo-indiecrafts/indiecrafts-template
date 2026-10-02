@@ -6,9 +6,17 @@
 //
 //   node ../../../scripts/deploy-next.mjs <app> <dev|staging|prod> [--yes]
 
+import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { assertRenamed } from "../lib/project.mjs";
-import { run, gate, confirmProd } from "../lib/deploy-shared.mjs";
+import {
+  run,
+  gate,
+  confirmProd,
+  envVars,
+  buildEnv,
+  loopbackPublicVars,
+} from "../lib/deploy-shared.mjs";
 import { ENVS } from "../lib/apps.mjs";
 import { originFor } from "../lib/domains.mjs";
 
@@ -39,6 +47,39 @@ const origin = originFor(app, env);
 if (origin && !process.env.NEXT_PUBLIC_SITE_URL) {
   process.env.NEXT_PUBLIC_SITE_URL = origin;
   console.log(`↪ NEXT_PUBLIC_SITE_URL=${origin} (from the domain registry)`);
+}
+
+// The browser calls the api at NEXT_PUBLIC_API_URL, baked at build. Take it from this
+// env's `API_URL` var (wrangler.toml `[env.<env>.vars]`, the server's own api origin),
+// else the api's host in the domain registry — otherwise a deploy from a laptop bakes
+// `.env.local`'s localhost into the bundle.
+// Every other NEXT_PUBLIC_* in that block is baked the same way. An exported value wins.
+const vars = envVars(readFileSync("wrangler.toml", "utf8"), env);
+const apiUrl = vars.API_URL || originFor("api", env);
+const baked = {
+  ...Object.fromEntries(
+    Object.entries(vars).filter(([k]) => k.startsWith("NEXT_PUBLIC_")),
+  ),
+  ...(apiUrl && { NEXT_PUBLIC_API_URL: apiUrl }),
+};
+for (const [k, v] of Object.entries(baked)) {
+  if (process.env[k]) continue;
+  process.env[k] = v;
+  console.log(`↪ ${k}=${v} (${env})`);
+}
+// Fail closed: a public URL pointing at this machine breaks the site for every visitor.
+const envFiles = Object.fromEntries(
+  [".env", ".env.production", ".env.local", ".env.production.local"]
+    .filter((f) => existsSync(f))
+    .map((f) => [f, readFileSync(f, "utf8")]),
+);
+const local = loopbackPublicVars(buildEnv(envFiles, process.env));
+if (local.length) {
+  console.error(
+    `✗ ${local.join(", ")} point at localhost — the ${env} build would ship them to every visitor.\n` +
+      `  Set them for ${env}: an \`API_URL\` in wrangler.toml [env.${env}.vars], or export the value before deploying.`,
+  );
+  process.exit(1);
 }
 
 run("pnpm", ["run", "build:cf"]); // per-app build recipe (web: version stamp + OpenNext)

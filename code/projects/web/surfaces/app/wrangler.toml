@@ -36,8 +36,19 @@ enabled = true
 [env.dev]
 name = "indiecrafts-dev-web-surfaces-app"
 
+# Per-env origins. The deploy bakes them into the browser bundle (NEXT_PUBLIC_API_URL from
+# API_URL) — never .env.local's localhost. Prod: the api comes from the domain registry;
+# set NEXT_PUBLIC_WEBSITE_URL under [env.prod.vars] once the website has its host.
+[env.dev.vars]
+API_URL = "https://indiecrafts-dev-shared-api.thibault-montaufray.workers.dev"
+NEXT_PUBLIC_WEBSITE_URL = "https://indiecrafts-dev-web-surfaces-website.thibault-montaufray.workers.dev"
+
 [env.staging]
 name = "indiecrafts-staging-web-surfaces-app"
+
+[env.staging.vars]
+API_URL = "https://indiecrafts-staging-shared-api.thibault-montaufray.workers.dev"
+NEXT_PUBLIC_WEBSITE_URL = "https://indiecrafts-staging-web-surfaces-website.thibault-montaufray.workers.dev"
 
 [env.prod]
 name = "indiecrafts-prod-web-surfaces-app"

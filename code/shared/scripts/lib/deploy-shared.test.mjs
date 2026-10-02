@@ -1,6 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { gateSkipped, confirmSkipped, buildVarArgs } from "./deploy-shared.mjs";
+import {
+  gateSkipped,
+  confirmSkipped,
+  buildVarArgs,
+  envVars,
+  buildEnv,
+  loopbackPublicVars,
+} from "./deploy-shared.mjs";
 
 // The verify gate is tiered: dev + CI skip; staging/prod run it; --skip-gate opts out.
 test("gateSkipped — dev + CI skip, staging/prod gate", () => {
@@ -30,4 +37,59 @@ test("buildVarArgs stamps the version and commit as wrangler --var pairs", () =>
     "--var",
     "BUILD_COMMIT:abc123",
   ]);
+});
+
+const TOML = `
+[vars]
+API_URL = "http://top-level"
+
+[env.dev.vars]
+# a comment
+API_URL = "https://dev-api.example.workers.dev"
+NEXT_PUBLIC_ENVIRONMENT = "development"
+
+[[env.dev.r2_buckets]]
+binding = "X"
+
+[env.prod.vars]
+API_URL = "https://api.example.com"
+`;
+
+test("envVars — reads only that env's [env.<env>.vars] strings", () => {
+  assert.deepEqual(envVars(TOML, "dev"), {
+    API_URL: "https://dev-api.example.workers.dev",
+    NEXT_PUBLIC_ENVIRONMENT: "development",
+  });
+  assert.deepEqual(envVars(TOML, "prod"), {
+    API_URL: "https://api.example.com",
+  });
+  assert.deepEqual(envVars(TOML, "staging"), {});
+});
+
+// Next.js loads env files under process.env: .env.production.local > .env.local >
+// .env.production > .env. The build sees the first value found.
+test("buildEnv — the value the Next build will see, by Next's precedence", () => {
+  const files = {
+    ".env": "NEXT_PUBLIC_A=env\nNEXT_PUBLIC_B=env",
+    ".env.local": "NEXT_PUBLIC_A=local\nNEXT_PUBLIC_C=local",
+  };
+  assert.deepEqual(buildEnv(files, { NEXT_PUBLIC_C: "process" }), {
+    NEXT_PUBLIC_A: "local",
+    NEXT_PUBLIC_B: "env",
+    NEXT_PUBLIC_C: "process",
+  });
+});
+
+test("loopbackPublicVars — flags a public URL that points at this machine", () => {
+  assert.deepEqual(
+    loopbackPublicVars({
+      NEXT_PUBLIC_API_URL: "http://localhost:8787",
+      NEXT_PUBLIC_SITE_URL: "http://127.0.0.1:3000",
+      NEXT_PUBLIC_CDN: "http://[::1]/x",
+      NEXT_PUBLIC_OK: "https://api.example.com",
+      API_URL: "http://localhost:8787", // server-only: not baked into the bundle
+      NEXT_PUBLIC_HOSTISH: "https://localhost-tools.example.com",
+    }),
+    ["NEXT_PUBLIC_API_URL", "NEXT_PUBLIC_SITE_URL", "NEXT_PUBLIC_CDN"],
+  );
 });

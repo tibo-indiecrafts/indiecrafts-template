@@ -2,6 +2,7 @@
 
 import { spawnSync } from "node:child_process";
 import { createInterface } from "node:readline";
+import { parseEnv } from "node:util";
 
 /** Run a command, inheriting stdio; exit the process on a non-zero status. */
 export function run(cmd, args) {
@@ -63,3 +64,46 @@ export const buildVarArgs = (version, commit) => [
   "--var",
   `BUILD_COMMIT:${commit}`,
 ];
+
+/** The string `KEY = "value"` pairs of `[env.<env>.vars]` in a wrangler.toml. Only what
+ *  the deploy needs (plain string vars) — not a TOML parser. */
+export function envVars(toml, env) {
+  const vars = {};
+  let inBlock = false;
+  for (const raw of toml.split("\n")) {
+    const line = raw.trim();
+    if (line.startsWith("[")) {
+      inBlock = line === `[env.${env}.vars]`;
+      continue;
+    }
+    const m = inBlock && line.match(/^([A-Z0-9_]+)\s*=\s*"([^"]*)"/);
+    if (m) vars[m[1]] = m[2];
+  }
+  return vars;
+}
+
+/** The env a `next build` sees: `process.env` over the app's env files, in Next's own
+ *  order (`.env.production.local` > `.env.local` > `.env.production` > `.env`).
+ *  `files` maps a file name to its contents (absent = not there). */
+export function buildEnv(files, processEnv) {
+  const order = [
+    ".env",
+    ".env.production",
+    ".env.local",
+    ".env.production.local",
+  ];
+  const merged = {};
+  for (const f of order)
+    if (files[f]) Object.assign(merged, parseEnv(files[f]));
+  return { ...merged, ...processEnv };
+}
+
+const LOOPBACK =
+  /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)(:\d+)?(\/|$)/i;
+
+/** The `NEXT_PUBLIC_*` keys whose value points at this machine. Next bakes them into
+ *  the browser bundle, so a remote build with one is broken for every visitor. */
+export const loopbackPublicVars = (env) =>
+  Object.keys(env).filter(
+    (k) => k.startsWith("NEXT_PUBLIC_") && LOOPBACK.test(String(env[k])),
+  );
