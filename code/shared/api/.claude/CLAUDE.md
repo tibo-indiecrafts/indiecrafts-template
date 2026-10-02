@@ -20,7 +20,8 @@ Update that page in the same change as a route.
 - `src/export/` — `POST /v1/export` → R2 `EXPORT_BUCKET` → single-use download link.
 - `src/data-request/` — DSAR intake, admin list + detail, status moves with history
   (`data_requests`, `data_request_events`, `MAIN_DB`); `email.ts` for the receipt + closing emails.
-- `src/clerk-email/` — Clerk auth-email take-over; `src/security/` — incident alert email.
+- `src/clerk-email/` — Clerk auth-email take-over; `src/security/` — `recordIncident` (every
+  `security_events` write + its alert) and the alert email.
 - `src/auth/` — Clerk-JWT verification + the step-up `sensitive-action` gate.
 - `db/{main,audit}/migrations/` — the two EU D1s this worker owns; `db/kv/` — the KV namespaces.
 

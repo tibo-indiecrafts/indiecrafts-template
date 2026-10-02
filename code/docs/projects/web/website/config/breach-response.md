@@ -36,12 +36,14 @@ A high or critical `security_events` row triggers an automatic email alert.
 - **No review link:** the email has no admin-dashboard link. No `ADMIN_URL`
   variable exists. Read the incident at `/admin/security` instead.
 
-The alert fires at three points:
+The alert fires at four points:
 
-1. A `credential_stuffing` incident (high severity), once the KV failed-login
-   counter crosses its threshold.
-2. Any high or critical incident posted directly to `POST /v1/events`.
-3. A `privilege_escalation` incident (high severity), from the Clerk webhook.
+1. A `credential_stuffing` incident (high severity), when Clerk locks an account
+   after failed sign-ins (its `account_locked` email passes through the api).
+2. A `credential_stuffing` incident (high, then critical at 4×), once the KV
+   failed-login counter crosses its threshold.
+3. Any high or critical incident posted directly to `POST /v1/events`.
+4. A `privilege_escalation` incident (high severity), from the Clerk webhook.
 
 The alert starts the human 72-hour clock. It is not a regulator notification. An
 operator must still read the incident and decide whether to notify anyone.

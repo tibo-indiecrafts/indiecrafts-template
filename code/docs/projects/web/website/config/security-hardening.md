@@ -116,9 +116,16 @@ in the `@indiecrafts/packages-shared-security-events` brick.
   `user_profiles.role`: a later edit of a user who is already admin is not a new grant.
 - **Erasure SLA** → the `cron` worker writes a `medium` row when an erasure request is due
   soon and a `high` row when it is past its one-month deadline. The cron sends no email.
-- **Failed logins** → **no producer today.** Every surface signs in through Clerk's own UI
-  (the mobile shell wraps the `app`), so our code never sees a failed attempt; Clerk's
-  brute-force lockout and the edge rate limits cover it. The api path is ready for a surface
+- **Suspicious sign-ins** → **Clerk detects them.** Every surface signs in through Clerk's
+  own UI (the mobile shell wraps the `app`), so our code never sees a failed attempt. Clerk
+  locks an account after too many failed attempts and flags a sign-in from a new device —
+  but it emails only the **user**. Those emails pass through our api (the email take-over,
+  `email.created`), so the webhook also records them for the owner: `account_locked` →
+  `credential_stuffing` **high** (alerts), `new_device_sign_in` → `suspicious_pattern`
+  **low** (feed only). Surface `clerk`, the Clerk user id, no country, no IP. It works only
+  while those two templates have **Delivered by Clerk** off. Lockout thresholds live in the
+  Clerk dashboard (attack protection).
+- **Failed logins (direct)** → **no producer today.** The api path is ready for a surface
   that verifies credentials itself: post `kind:"security" failed_login`; the api **counts**
   it in a **KV TTL counter** (per hashed IP and per user) and writes ONE `credential_stuffing`
   row when a count reaches the threshold (`high`) and one more at 4× (`critical`) — never a

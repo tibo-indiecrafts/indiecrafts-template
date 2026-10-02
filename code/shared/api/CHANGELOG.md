@@ -5,6 +5,16 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **Clerk's own sign-in detections reach the security feed.** Clerk locks an account after
+  failed sign-ins and flags a new-device sign-in, but it emails only the user. The Clerk
+  webhook now records them when their email passes through the api (`email.created`):
+  `account_locked` → `credential_stuffing` high, which alerts the owner; `new_device_sign_in`
+  → `suspicious_pattern` low, feed only. Written after the send, so a Clerk retry adds no
+  duplicate. Every security write now goes through one helper, `recordIncident`
+  (`src/security/record.ts`).
+
 ### Fixed
 
 - **A role→admin grant alerts once, not on every edit of an admin.** The Clerk webhook wrote a

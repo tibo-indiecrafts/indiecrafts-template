@@ -193,6 +193,22 @@ async function svixHeaders(id: string, ts: string, body: string) {
   };
 }
 
+async function clerkWebhook(payload: unknown, overrides: Partial<Env> = {}) {
+  const body = JSON.stringify(payload);
+  return call(
+    new Request("https://example.com/v1/clerk-webhook", {
+      method: "POST",
+      body,
+      headers: await svixHeaders(
+        `msg_${crypto.randomUUID()}`,
+        String(Math.floor(Date.now() / 1000)),
+        body,
+      ),
+    }),
+    { CLERK_WEBHOOK_SECRET: SECRET, ...overrides },
+  );
+}
+
 async function userUpdated(role?: string, firstName = "Ada") {
   const body = JSON.stringify({
     type: "user.updated",
@@ -236,5 +252,80 @@ describe("Clerk webhook → privilege_escalation", () => {
     await userUpdated(undefined);
     await userUpdated("admin");
     expect(await rows()).toHaveLength(2);
+  });
+});
+
+describe("Clerk email.created → Clerk's own sign-in detections", () => {
+  const subjects: string[] = [];
+  const mail = {
+    RESEND_API_KEY: "re_test",
+    EMAIL_FROM: "auth@example.com",
+    SECURITY_ALERT_EMAIL: "owner@example.com",
+  } as Partial<Env>;
+  const emailCreated = (slug: string) =>
+    clerkWebhook(
+      {
+        type: "email.created",
+        data: {
+          slug,
+          to_email_address: "someone@example.com",
+          user_id: "user_locked",
+          data: {},
+        },
+      },
+      mail,
+    );
+  const stubResend = () => {
+    subjects.length = 0;
+    vi.stubGlobal("fetch", async (url: string, init?: RequestInit) => {
+      if (String(url).includes("api.resend.com"))
+        subjects.push(
+          (JSON.parse(String(init?.body)) as { subject: string }).subject,
+        );
+      return new Response("{}", { status: 200 });
+    });
+  };
+
+  it("an account lockout is a high credential_stuffing incident that alerts", async () => {
+    stubResend();
+    expect((await emailCreated("account_locked")).status).toBe(200);
+    const stored = await rows();
+    expect(stored).toHaveLength(1);
+    expect(stored[0]).toMatchObject({
+      event_type: "credential_stuffing",
+      severity: "high",
+      surface: "clerk",
+      user_id: "user_locked",
+      ip_hash: null,
+    });
+    expect(JSON.stringify(stored[0])).not.toContain("someone@example.com");
+    // The user's lockout email + the owner's alert.
+    expect(subjects).toHaveLength(2);
+    expect(subjects).toContain("[Security] high — credential_stuffing (clerk)");
+  });
+
+  it("a new-device sign-in is a low suspicious_pattern row, no alert", async () => {
+    stubResend();
+    await emailCreated("new_device_sign_in");
+    const stored = await rows();
+    expect(stored).toHaveLength(1);
+    expect(stored[0]).toMatchObject({
+      event_type: "suspicious_pattern",
+      severity: "low",
+      user_id: "user_locked",
+    });
+    expect(subjects).toHaveLength(1); // the user's email only
+  });
+
+  it("other auth emails record nothing", async () => {
+    stubResend();
+    await emailCreated("verification_code");
+    expect(await rows()).toHaveLength(0);
+  });
+
+  it("a failed send records nothing (Clerk retries the whole event)", async () => {
+    vi.stubGlobal("fetch", async () => new Response("{}", { status: 500 }));
+    expect((await emailCreated("account_locked")).status).toBe(502);
+    expect(await rows()).toHaveLength(0);
   });
 });

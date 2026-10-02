@@ -25,7 +25,6 @@ import {
   classifyFailedLogins,
   FAILED_LOGIN,
   bumpCounter,
-  shouldAlert,
   isSecurityEventType,
   isSeverity,
 } from "@indiecrafts/packages-shared-security-events";
@@ -72,7 +71,7 @@ import {
   handleDataRequestDetail,
   handleDataRequestStatus,
 } from "./data-request/status";
-import { sendSecurityAlertEmail } from "./security/alert";
+import { clerkEmailIncident, recordIncident } from "./security/record";
 import { readChurnAggregate } from "./consent/churn-store";
 import { cronStatus, erasureRequests, forwardCronRun } from "./monitoring";
 import { handleErasureClose, handleErasureRetry } from "./erasure/admin";
@@ -518,33 +517,21 @@ async function route(
           env.IP_HASH_SALT && ip !== "unknown"
             ? await hashIpAddress(ip, env.IP_HASH_SALT)
             : null;
-        const insertSecurity = async (
-          et: string,
-          sev: string,
-          desc: string | null,
-        ) => {
-          await env
-            .AUDIT_DB!.prepare(
-              "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            )
-            .bind(ts, et, sev, secSurface, secUserId, country, ipHash, desc)
-            .run();
-          // Alert the owner/DPO on high/critical incidents. Fired via waitUntil so
-          // it never delays the response — the incident is already persisted.
-          if (shouldAlert(sev)) {
-            ctx.waitUntil(
-              sendSecurityAlertEmail(env, {
-                eventType: et,
-                severity: sev,
-                surface: secSurface,
-                userId: secUserId,
-                country,
-                description: desc,
-                ts,
-              }),
-            );
-          }
-        };
+        const insertSecurity = (et: string, sev: string, desc: string | null) =>
+          recordIncident(
+            env,
+            ctx,
+            {
+              eventType: et,
+              severity: sev,
+              surface: secSurface,
+              userId: secUserId,
+              country,
+              ipHash,
+              description: desc,
+            },
+            ts,
+          );
 
         // Failed logins are COUNTED in KV (cheap, ephemeral), NOT written per-request to
         // D1. Only when a count crosses the threshold do we store ONE credential_stuffing
@@ -1156,37 +1143,17 @@ async function route(
       previousRole !== "admin" &&
       env.AUDIT_DB
     ) {
-      const privEscTs = new Date().toISOString();
-      const privEscUserId = typeof data.id === "string" ? data.id : null;
-      const privEscCountry = request.headers.get("cf-ipcountry") ?? null;
-      const privEscDesc = "role→admin granted";
       try {
-        await env.AUDIT_DB.prepare(
-          "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, NULL, ?)",
-        )
-          .bind(
-            privEscTs,
-            "privilege_escalation",
-            "high",
-            "api",
-            privEscUserId,
-            privEscCountry,
-            privEscDesc,
-          )
-          .run();
-        // Always alerts — privilege_escalation is always "high", and shouldAlert("high")
-        // is always true. Fired via waitUntil so it never delays the response.
-        ctx.waitUntil(
-          sendSecurityAlertEmail(env, {
-            eventType: "privilege_escalation",
-            severity: "high",
-            surface: "api",
-            userId: privEscUserId,
-            country: privEscCountry,
-            description: privEscDesc,
-            ts: privEscTs,
-          }),
-        );
+        // Always alerts — privilege_escalation is "high".
+        await recordIncident(env, ctx, {
+          eventType: "privilege_escalation",
+          severity: "high",
+          surface: "api",
+          userId: typeof data.id === "string" ? data.id : null,
+          country: request.headers.get("cf-ipcountry") ?? null,
+          ipHash: null,
+          description: "role→admin granted",
+        });
       } catch (error) {
         logger.error("clerk webhook write failed", {
           name: (error as Error)?.name,
@@ -1395,6 +1362,31 @@ async function route(
           message: (error as Error)?.message,
         });
         return json({ error: "email" }, 502, cors);
+      }
+      // Clerk detects suspicious sign-ins itself (lockout after failed attempts, a
+      // new device) and only emails the USER. Record them so the owner sees them too.
+      // After the send: a failed send is a 502 that Clerk retries, so the row is written
+      // once. Best-effort: a failed insert must not trigger a resend of the email.
+      const incident = clerkEmailIncident(
+        typeof data.slug === "string" ? data.slug : "",
+      );
+      if (incident) {
+        try {
+          await recordIncident(env, ctx, {
+            ...incident,
+            surface: "clerk",
+            userId:
+              typeof data.user_id === "string"
+                ? data.user_id.slice(0, 128)
+                : null,
+            country: null, // the request comes from Clerk, not the user
+            ipHash: null,
+          });
+        } catch (error) {
+          logger.error("clerk incident write failed", {
+            name: (error as Error)?.name,
+          });
+        }
       }
     }
     return json({ ok: true }, 200, cors);
