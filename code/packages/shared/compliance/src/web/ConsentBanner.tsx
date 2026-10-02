@@ -10,7 +10,7 @@ import { useState } from "react";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import type { ConsentCategory } from "../shared/consent-signals";
-import type { ConsentBannerCopy } from "../shared/consent";
+import { rejectAllChoices, type ConsentBannerCopy } from "../shared/consent";
 import { ConsentPreferences } from "./ConsentPreferences";
 
 /**
@@ -53,7 +53,22 @@ export function ConsentBanner({
       {copy.title ? (
         <p className="text-sm font-semibold">{copy.title}</p>
       ) : null}
-      <p className="text-muted-foreground text-sm">{copy.body}</p>
+      <p className="text-muted-foreground text-sm">
+        {copy.body}
+        {copy.learnMore ? (
+          <>
+            {" "}
+            <a
+              href={copy.learnMore.href}
+              target="_blank"
+              rel="noreferrer"
+              className="text-foreground underline underline-offset-4"
+            >
+              {copy.learnMore.label}
+            </a>
+          </>
+        ) : null}
+      </p>
 
       {expanded ? (
         <ConsentPreferences
@@ -76,7 +91,13 @@ export function ConsentBanner({
             >
               {copy.backLabel}
             </Button>
-            <Button size="sm" onClick={() => onSave(choices)}>
+            {/* Every optional category is saved — an untouched one as an explicit false. */}
+            <Button
+              size="sm"
+              onClick={() =>
+                onSave({ ...rejectAllChoices(categories), ...choices })
+              }
+            >
               {copy.saveLabel}
             </Button>
           </>

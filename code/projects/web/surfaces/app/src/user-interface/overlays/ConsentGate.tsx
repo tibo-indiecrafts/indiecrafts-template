@@ -6,7 +6,7 @@
  * @see docs/reference/projects/web/app/src/user-interface/overlays/ConsentGate.md
  */
 import { useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   ConsentBanner,
   reportConsent,
@@ -17,11 +17,12 @@ import {
   resolveCategories,
   acceptAllChoices,
   rejectAllChoices,
+  legalUrl,
   type ConsentMode,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
 import { useRouter } from "@/i18n/routing";
-import { features, policyVersion } from "@/config";
+import { features, policyVersion, site, type Locale } from "@/config";
 import { useOverlayTurn } from "@indiecrafts/packages-web-ui-components/web/overlay-turn";
 import { consentStore, useRecord } from "./stores";
 
@@ -35,6 +36,7 @@ export function ConsentGate({
   gpcSignal: boolean;
 }) {
   const t = useTranslations("consent");
+  const locale = useLocale() as Locale;
   const router = useRouter();
   const record = useRecord(consentStore);
 
@@ -92,6 +94,11 @@ export function ConsentGate({
         customizeLabel: t("customize"),
         saveLabel: t("save"),
         backLabel: t("back"),
+        // The cookie policy lives on the website (the app re-hosts no legal content).
+        learnMore: {
+          label: t("learnMore"),
+          href: legalUrl(site.websiteUrl, "cookies", locale),
+        },
       }}
       onAccept={() => persist(acceptAllChoices(DEFAULT_CONSENT_CATEGORIES))}
       onReject={() => persist(rejectAllChoices(DEFAULT_CONSENT_CATEGORIES))}

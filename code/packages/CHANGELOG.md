@@ -31,6 +31,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **The app's cookie banner links the cookie policy and records every refusal.** `ConsentBanner`
+  had no link to the policy (the website's has "Learn more"); its copy gains an optional
+  `learnMore: { label, href }`, which the app points at the website's cookie policy. Its "Save"
+  stored only the touched categories; it now saves each optional one, untouched ones as `false`.
 - **"Save choices" records every optional category.** The website's `CookiePreferences` stored only
   the categories the visitor touched (`{"analytics":true}`), so the record and the consent log had
   no explicit refusal for the others. It now saves each one, untouched ones as `false`.

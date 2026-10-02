@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The shared cookie-consent banner (web, shadcn), Next-free so plain-React surfaces can use it. Mount it at the shell root only when consent is needed. Copy and `categories` are injected — no next-intl or Sanity inside. Three one-tap choices (Accept all, Reject, Customize); Customize expands the per-category toggles.
+The shared cookie-consent banner (web, shadcn), Next-free so plain-React surfaces can use it. Mount it at the shell root only when consent is needed. Copy and `categories` are injected — no next-intl or Sanity inside. Three one-tap choices (Accept all, Reject, Customize); Customize expands the per-category toggles; its Save records every optional category, an untouched one as an explicit `false`. An optional `copy.learnMore` (`{ label, href }`) adds a cookie-policy link after the body, opened in a new tab (the app passes the website's policy).
 
 ## Exports
 

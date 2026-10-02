@@ -115,6 +115,8 @@ export type ConsentBannerCopy = {
   customizeLabel: string;
   saveLabel: string;
   backLabel: string;
+  /** The cookie-policy link after the body ("Learn more"). Optional: omitted → no link. */
+  learnMore?: { label: string; href: string };
 };
 
 /** Every non-required category granted — the "Accept all" choice. */
