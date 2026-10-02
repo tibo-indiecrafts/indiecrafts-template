@@ -61,7 +61,7 @@ routes through an audited server action, not a client call.
 
 | Route            | What it does                                                                                             | Data source                                                                                                |
 | ---------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `/`              | Overview — one count card per section, plus the grant/revoke admin-role form                             | Shared api list counts (`/v1/sessions` · `/v1/data-requests` · `/v1/csp-reports` · `/v1/security`) + Clerk |
+| `/`              | Overview — one count card per section, plus the grant-admin form                                         | Shared api list counts (`/v1/sessions` · `/v1/data-requests` · `/v1/csp-reports` · `/v1/security`) + Clerk |
 | `/users`         | Browse and search Clerk users; shows each user's marketing-email consent                                 | Clerk `getUserList` + shared api `POST /v1/profiles/consent`                                               |
 | `/sessions`      | Recent sign-ins across surfaces (last 100) with each user's email; revoke one or all                     | Shared api `/v1/sessions?limit=100` (D1); emails live from Clerk; revoke via Clerk action                  |
 | `/data-requests` | GDPR data-subject requests (last 100, UTC) with due date; `?id=` opens a side sheet to start / close one | Shared api `/v1/data-requests?limit=100` (D1)                                                              |
@@ -97,14 +97,14 @@ both.
   redirects to `/sign-in`. This is coarse routing, not the trust boundary.
 - **Data layer (`(dashboard)/layout.tsx`)** — every dashboard route re-checks `isAdmin`
   server-side before rendering. This is the real gate, because middleware is bypassable
-  (Next.js CVE-2025-29927). Each server action (`grantAdmin`, `revokeAdmin`, `revokeSession`,
+  (Next.js CVE-2025-29927). Each server action (`grantAdmin`, `revokeSession`,
   `revokeUserSessions`, `saveSetting`) independently calls `requireAdmin`.
 
 The role grant is the crown jewel. Sign-up is open and passwordless, so `grantAdmin` is the
 only thing between a stranger and admin. It is admin-gated on the server, validates the
-target id, writes an audit row, and — on revoke — kills the target's live Clerk sessions so
-a demotion is immediate, not "eventually, when the token expires". An admin cannot revoke their own
-role, so the dashboard can never demote its last admin. Privileged actions log to
+target id, and writes an audit row. Demotion is deliberately not a dashboard action: an operator
+removes the role in the Clerk Dashboard (Users → user → Public metadata), so the dashboard can
+never lock out its own admins. Privileged actions log to
 the shared audit sink (`src/lib/audit.ts`), which stores the actor id and edge country but
 no IP (GDPR data minimization), with a durable console fallback so an audit is never lost.
 

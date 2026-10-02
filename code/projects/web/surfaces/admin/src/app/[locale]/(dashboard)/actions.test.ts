@@ -44,7 +44,6 @@ vi.stubGlobal("fetch", fetchMock);
 
 const {
   grantAdmin,
-  revokeAdmin,
   revokeSession,
   revokeUserSessions,
   listUserSessions,
@@ -91,57 +90,6 @@ describe("grantAdmin", () => {
       publicMetadata: { role: "admin" },
     });
     expect(auditMock).toHaveBeenCalledWith("admin.grant", {
-      actor: ADMIN_ID,
-      target: TARGET_ID,
-    });
-  });
-});
-
-describe("revokeAdmin", () => {
-  it("fails closed for a non-admin session — no mutation, no audit", async () => {
-    authMock.mockResolvedValueOnce(nonAdmin);
-    expect(await revokeAdmin(TARGET_ID)).toEqual({ ok: false, error: "forbidden" });
-    expect(clerkClientMock).not.toHaveBeenCalled();
-    expect(auditMock).not.toHaveBeenCalled();
-  });
-
-  it("rejects a malformed target id before any mutation", async () => {
-    authMock.mockResolvedValueOnce(admin);
-    expect(await revokeAdmin("not-a-user-id")).toEqual({ ok: false, error: "invalid_user" });
-    expect(clerkClientMock).not.toHaveBeenCalled();
-  });
-
-  it("refuses to let an admin revoke their own role — no mutation, no audit", async () => {
-    // The caller stays admin, so revoking another admin can never leave zero admins.
-    authMock.mockResolvedValueOnce(admin);
-    expect(await revokeAdmin(ADMIN_ID)).toEqual({ ok: false, error: "self" });
-    expect(clerkClientMock).not.toHaveBeenCalled();
-    expect(auditMock).not.toHaveBeenCalled();
-  });
-
-  it("clears the role, revokes live sessions, and audits", async () => {
-    authMock.mockResolvedValueOnce(admin);
-    getSessionList.mockResolvedValueOnce({ data: [{ id: "sess_1" }, { id: "sess_2" }] });
-    expect(await revokeAdmin(TARGET_ID)).toEqual({ ok: true });
-    expect(updateUserMetadata).toHaveBeenCalledWith(TARGET_ID, {
-      publicMetadata: { role: null },
-    });
-    // Clerk pages at 10 by default — ask for the max so no session is left signed in.
-    expect(getSessionList).toHaveBeenCalledWith({ userId: TARGET_ID, status: "active", limit: 500 });
-    expect(revokeSessionApi).toHaveBeenCalledWith("sess_1");
-    expect(revokeSessionApi).toHaveBeenCalledWith("sess_2");
-    expect(auditMock).toHaveBeenCalledWith("admin.revoke", {
-      actor: ADMIN_ID,
-      target: TARGET_ID,
-    });
-  });
-
-  it("still audits the demotion when revoking the live sessions fails", async () => {
-    authMock.mockResolvedValueOnce(admin);
-    getSessionList.mockRejectedValueOnce(new Error("clerk down"));
-    expect(await revokeAdmin(TARGET_ID)).toEqual({ ok: false, error: "failed" });
-    // The role is already cleared — that privilege change must never go unrecorded.
-    expect(auditMock).toHaveBeenCalledWith("admin.revoke", {
       actor: ADMIN_ID,
       target: TARGET_ID,
     });

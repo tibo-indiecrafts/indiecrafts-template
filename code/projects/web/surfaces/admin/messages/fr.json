@@ -42,11 +42,8 @@
       "title": "Gérer les administrateurs",
       "label": "Identifiant utilisateur Clerk",
       "grant": "Accorder admin",
-      "revoke": "Révoquer admin",
       "granted": "Rôle accordé.",
-      "revoked": "Rôle révoqué et sessions terminées.",
-      "error": "Échec de l'action.",
-      "errorSelf": "Vous ne pouvez pas révoquer votre propre rôle admin. Demandez à un autre admin."
+      "error": "Échec de l'action."
     },
     "sessions": {
       "title": "Sessions",
@@ -54,6 +51,7 @@
       "empty": "Aucune session enregistrée pour l'instant.",
       "when": "Quand",
       "surface": "Surface",
+      "email": "E-mail",
       "user": "Utilisateur",
       "country": "Pays",
       "actions": "Actions",

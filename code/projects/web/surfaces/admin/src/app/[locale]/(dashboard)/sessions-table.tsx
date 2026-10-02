@@ -33,7 +33,7 @@ export type SessionRow = {
 };
 
 // Column count of the table below — the expanded detail row spans all of them.
-const COLUMN_COUNT = 5;
+const COLUMN_COUNT = 6;
 
 /** The sign-in activity feed (from the EU D1) with per-user LIVE session management:
  *  expand a row to load the user's active Clerk sessions and revoke one — or all. */
@@ -53,6 +53,7 @@ export function SessionsTable({
           <TableRow>
             <TableHead>{t("when")}</TableHead>
             <TableHead>{t("surface")}</TableHead>
+            <TableHead>{t("email")}</TableHead>
             <TableHead>{t("user")}</TableHead>
             <TableHead>{t("country")}</TableHead>
             <TableHead>{t("actions")}</TableHead>
@@ -109,10 +110,8 @@ function Row({ row, email }: { row: SessionRow; email?: string }) {
           {format.dateTime(new Date(row.ts), WHEN)}
         </TableCell>
         <TableCell>{row.surface}</TableCell>
-        <TableCell>
-          {email ? <div>{email}</div> : null}
-          <div className="font-mono text-xs text-muted-foreground">{row.user_id}</div>
-        </TableCell>
+        <TableCell>{email ?? "—"}</TableCell>
+        <TableCell className="font-mono text-xs">{row.user_id}</TableCell>
         <TableCell>{row.country ?? "—"}</TableCell>
         <TableCell className="flex gap-2">
           <Button variant="outline" size="sm" disabled={pending} onClick={toggle}>

@@ -15,7 +15,7 @@ A client component used by the admin sessions page. It renders each recorded sig
 ## Exports
 
 - `SessionRow` — the feed row type: `ts`, `surface`, `user_id`, `session_id`, `country`.
-- `SessionsTable` — client component; takes `rows: SessionRow[]` and an optional `emails` map (user id → email, from `fetchEmails` in `src/lib/clerk-users.ts`). The user cell shows the email above the Clerk id.
+- `SessionsTable` — client component; takes `rows: SessionRow[]` and an optional `emails` map (user id → email, from `fetchEmails` in `src/lib/clerk-users.ts`). The email has its own column next to the Clerk id, with a dash when Clerk returns none.
 
 ## Usage
 

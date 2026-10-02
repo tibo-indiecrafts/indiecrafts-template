@@ -10,18 +10,15 @@ status: stable
 
 ## Purpose
 
-Holds the admin dashboard's privileged mutations. Because open passwordless sign-up means anyone can create an account, the role-grant path is the only thing between a stranger and admin. Every action re-checks the caller is a signed-in admin on the server (`requireAdmin`), validates the target id against a strict pattern, and writes an `audit` log. Revoking a role also revokes the target's live Clerk sessions, so a demotion is immediate.
+Holds the admin dashboard's privileged mutations. Because open passwordless sign-up means anyone can create an account, the role-grant path is the only thing between a stranger and admin. Every action re-checks the caller is a signed-in admin on the server (`requireAdmin`), validates the target id against a strict pattern, and writes an `audit` log. Demotion is not a dashboard action: an operator removes the role in the Clerk Dashboard (Users → user → Public metadata).
 
-An admin cannot revoke their own role (`self`). The caller stays admin, so `revokeAdmin` can never leave the app with zero admins; recovery stays `code/shared/scripts/data/set-admin.mjs`.
+A session revocation reads up to 500 active sessions (Clerk's default page is 10), tries every one, and returns `failed` if one revoke failed. It audits any real sign-out, even a partial one, and writes no row when nothing was revoked.
 
-The audit row never goes missing for a change that happened. `revokeAdmin` audits as soon as the role is cleared, before it revokes sessions. A session revocation reads up to 500 active sessions (Clerk's default page is 10), tries every one, and returns `failed` if one revoke failed. It audits any real sign-out, even a partial one, and writes no row when nothing was revoked.
-
-Each action returns `{ ok: true }` or `{ ok: false, error }`, where `error` is `forbidden` (not an admin), `invalid_user` or `invalid_session` (a malformed id), `self` (an admin tried to revoke their own role), or `failed` (Clerk or the api failed).
+Each action returns `{ ok: true }` or `{ ok: false, error }`, where `error` is `forbidden` (not an admin), `invalid_user` or `invalid_session` (a malformed id), or `failed` (Clerk or the api failed).
 
 ## Exports
 
 - `grantAdmin` — grant the `admin` role to a Clerk user id.
-- `revokeAdmin` — clear the role and revoke the user's active sessions.
 - `listUserSessions` — read a user's active Clerk sessions, sanitized for the admin view; returns `[]` on failure.
 - `revokeSession` — revoke one live session (immediate sign-out on that device).
 - `revokeUserSessions` — revoke all of a user's active sessions ("sign out everywhere").

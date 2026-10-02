@@ -42,11 +42,8 @@
       "title": "Manage admins",
       "label": "Clerk user ID",
       "grant": "Grant admin",
-      "revoke": "Revoke admin",
       "granted": "Role granted.",
-      "revoked": "Role revoked and sessions ended.",
-      "error": "Action failed.",
-      "errorSelf": "You can't revoke your own admin role. Ask another admin."
+      "error": "Action failed."
     },
     "sessions": {
       "title": "Sessions",
@@ -54,6 +51,7 @@
       "empty": "No sessions recorded yet.",
       "when": "When",
       "surface": "Surface",
+      "email": "Email",
       "user": "User",
       "country": "Country",
       "actions": "Actions",

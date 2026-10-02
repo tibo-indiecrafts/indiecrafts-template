@@ -39,14 +39,21 @@ describe("SessionsTable", () => {
     expect(screen.queryByText(row.ts)).toBeNull();
   });
 
-  it("shows the user's email, with the Clerk id kept for copy-paste", () => {
+  it("shows the user's email in its own column, next to the Clerk id", () => {
     render(
       <NextIntlClientProvider locale="fr" messages={messages} timeZone="UTC">
         <SessionsTable rows={[row]} emails={{ user_abc: "jane@example.com" }} />
       </NextIntlClientProvider>,
     );
-    expect(screen.getByText("jane@example.com")).toBeTruthy();
-    expect(screen.getByText("user_abc")).toBeTruthy();
+    // Its own column: the email and the Clerk id are separate cells.
+    expect(screen.getByRole("columnheader", { name: "E-mail" })).toBeTruthy();
+    expect(screen.getByRole("cell", { name: "jane@example.com" })).toBeTruthy();
+    expect(screen.getByRole("cell", { name: "user_abc" })).toBeTruthy();
+  });
+
+  it("shows a dash when Clerk returned no email for the user", () => {
+    renderTable();
+    expect(screen.getAllByRole("cell", { name: "—" }).length).toBeGreaterThan(0);
   });
 
   it("formats a live session's last activity the same way", async () => {

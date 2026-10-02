@@ -14,23 +14,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
-- **Sessions show who signed in.** Each sign-in row shows the user's email above the Clerk id. The
+- **Sessions show who signed in.** Each sign-in row shows the user's email in its own column, next to the Clerk id. The
   page resolves the ids live from Clerk in one call (`src/lib/clerk-users.ts`); D1 still stores only
-  the id. On a Clerk error the row shows the bare id.
+  the id. On a Clerk error the email cell shows a dash.
 - **A test user to sign out.** `code/shared/scripts/data/qa-session-user.mjs` creates a
   development-only Clerk user with live sessions and feed rows, so the Sessions revoke actions can be
   tested on demand. `--delete` removes it.
-- **An admin cannot revoke their own role.** `revokeAdmin` returns `self` and the form says why
-  (en/fr). The caller always stays admin, so the dashboard can never remove the last admin.
+
+### Removed
+
+- **"Revoke admin" is gone from the dashboard.** The Overview form only grants the role; the
+  `revokeAdmin` action and its `admin.revoke` audit event are removed. Demote in the Clerk Dashboard
+  (Users → user → Public metadata), so the dashboard can never lock out its own admins.
 
 ### Fixed
 
-- **A demotion is always audited.** `revokeAdmin` cleared the role, then revoked sessions, then
-  wrote the audit row — a failed revoke skipped the audit. It now audits as soon as the role is
-  cleared. "Sign out everywhere" tries every session, audits a partial run, and writes no row
-  when nothing was revoked. Both read up to 500 sessions — Clerk's default page of 10 left an 11th
-  device signed in while the action reported success. A malformed session
-  id now returns `invalid_session`, not `invalid_user`.
+- **"Sign out everywhere" signs out every device.** It tries every session, audits a partial run,
+  and writes no row when nothing was revoked. It reads up to 500 sessions — Clerk's default page of
+  10 left an 11th device signed in while the action reported success. A malformed session id now
+  returns `invalid_session`, not `invalid_user`.
 - **Times and sizes follow the admin locale.** The sessions, security, users, backups, erasure and
   cron screens printed raw ISO strings or `toLocaleString` output (the server's locale and the
   browser's zone, so client tables mismatched on hydration). They now use the next-intl formatter

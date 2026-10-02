@@ -20,7 +20,6 @@ import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
 export async function audit(
   event:
     | "admin.grant"
-    | "admin.revoke"
     | "admin.revoke_session"
     | "admin.revoke_user_sessions"
     | "admin.erasure_retry"

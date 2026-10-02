@@ -14,12 +14,12 @@ import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
 /**
  * The role-grant path — the crown jewel. Open passwordless sign-up means anyone can
  * create an account, so the ONLY thing between a stranger and admin is this write. It
- * is admin-gated server-side, validates the target id, audit-logged, and (on revoke)
- * revokes the target's live sessions so a demotion is immediate — not "≤ token TTL".
+ * is admin-gated server-side, validates the target id, and audit-logged. Demotion is
+ * deliberately not a dashboard action — an operator demotes in the Clerk Dashboard.
  */
 type Result =
   | { ok: true }
-  | { ok: false; error: "forbidden" | "invalid_user" | "invalid_session" | "self" | "failed" };
+  | { ok: false; error: "forbidden" | "invalid_user" | "invalid_session" | "failed" };
 
 const USER_ID = /^user_[A-Za-z0-9]+$/;
 
@@ -69,37 +69,6 @@ export async function grantAdmin(targetUserId: string): Promise<Result> {
     });
     await audit("admin.grant", { actor, target: targetUserId });
     return { ok: true };
-  } catch {
-    return { ok: false, error: "failed" };
-  }
-}
-
-export async function revokeAdmin(targetUserId: string): Promise<Result> {
-  let actor: string;
-  try {
-    actor = await requireAdmin();
-  } catch {
-    return { ok: false, error: "forbidden" };
-  }
-  if (!USER_ID.test(targetUserId)) return { ok: false, error: "invalid_user" };
-  // No self-demotion: the caller stays admin, so this action can never leave zero admins.
-  if (targetUserId === actor) return { ok: false, error: "self" };
-  let client: Clerk;
-  try {
-    client = await clerkClient();
-    // Clear the role, then audit at once: the privilege change is done, so it is
-    // recorded even if the session revocation below fails.
-    await client.users.updateUserMetadata(targetUserId, {
-      publicMetadata: { role: null },
-    });
-  } catch {
-    return { ok: false, error: "failed" };
-  }
-  await audit("admin.revoke", { actor, target: targetUserId });
-  // Revoke live sessions so the demotion takes effect now, not on next refresh.
-  try {
-    const { revoked, total } = await revokeActiveSessions(client, targetUserId);
-    return revoked === total ? { ok: true } : { ok: false, error: "failed" };
   } catch {
     return { ok: false, error: "failed" };
   }

@@ -6,11 +6,11 @@ status: stable
 
 # Admin role form
 
-> The one UI for the crown-jewel grant / revoke action.
+> The one UI for the crown-jewel grant action.
 
 ## Purpose
 
-Drives the `admin` role grant and revoke by Clerk user id. It is a thin client form: the operator enters a `user_...` id and clicks grant or revoke, and the form calls the matching server action. Every call is re-authorized and audited on the server; this form only collects the id and shows a `sonner` toast on success or error.
+Drives the `admin` role grant by Clerk user id. It is a thin client form: the operator enters a `user_...` id and clicks grant, and the form calls `grantAdmin`. There is no revoke button: demotion is done in the Clerk Dashboard. Every call is re-authorized and audited on the server; this form only collects the id and shows a `sonner` toast on success or error.
 
 ## Exports
 
