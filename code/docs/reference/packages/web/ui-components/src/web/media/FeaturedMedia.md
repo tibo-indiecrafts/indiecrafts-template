@@ -15,7 +15,8 @@ with `next/image`, and when `videoUrl` resolves to a known provider it adds a
 player. With `autoplay` the player mounts muted and looping as an ambient
 backdrop; otherwise a play button swaps the poster for the player in place (no
 dialog). A direct file uses a native `<video>`; YouTube, Vimeo, and Dailymotion
-use a lazy `<iframe>`.
+use a lazy `<iframe>`, loaded only on play (or with `autoplay`). No tracking cookies: YouTube plays
+from `youtube-nocookie.com`, Vimeo with `dnt=1`. `iframeSrc` (exported for its test) builds the URL.
 
 ## Exports
 

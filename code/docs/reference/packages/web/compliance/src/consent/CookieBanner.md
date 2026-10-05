@@ -14,7 +14,7 @@ The GDPR cookie banner plus preferences dialog. It shows on first visit, or when
 
 ## Exports
 
-- `CookieBanner({ categories, version, title?, body?, respectGpc?, gpcSignal?, mode? })` — the banner and preferences dialog. `mode` `opt-in` blocks with the banner; `opt-out` / `none` auto-seed a default and rely on the dialog.
+- `CookieBanner({ categories, version, title?, body?, respectGpc?, gpcSignal?, mode? })` — the banner and preferences dialog. `mode` `opt-in` blocks with the banner and never decides for the visitor — even with GPC/DNT (Brave sends GPC by default); `opt-out` / `none` auto-seed a default (reject when GPC/DNT is on) and rely on the dialog.
 
 ## Usage
 

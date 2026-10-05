@@ -59,3 +59,39 @@ describe("applyConsent → reportConsent source threading", () => {
     expect(JSON.parse(init.body as string)).toMatchObject({ source: "banner" });
   });
 });
+
+describe("applyConsent → Consent Mode", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    localStorage.clear();
+    delete window.dataLayer;
+  });
+
+  it("pushes the update as gtag's arguments object (gtag.js ignores a plain array)", () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(new Response(null, { status: 204 })),
+    );
+    applyConsent(
+      [
+        {
+          key: "analytics",
+          title: "Analytics",
+          signals: ["analytics_storage"],
+        },
+      ],
+      { analytics: true },
+      "v1",
+    );
+    const entry = window.dataLayer!.at(-1);
+    expect(Object.prototype.toString.call(entry)).toBe("[object Arguments]");
+    expect(Array.from(entry as ArrayLike<unknown>).slice(0, 2)).toEqual([
+      "consent",
+      "update",
+    ]);
+    expect(
+      (Array.from(entry as ArrayLike<unknown>)[2] as Record<string, string>)
+        .analytics_storage,
+    ).toBe("granted");
+  });
+});

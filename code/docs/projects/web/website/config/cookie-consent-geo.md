@@ -20,7 +20,7 @@ client adds/overrides entries via config.
 
 | Key          | Name                  | Mode      | Behaviour                                                                                                                                                          |
 | ------------ | --------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `gdpr`       | GDPR                  | `opt-in`  | Blocking banner; non-essential denied until consent; honours GPC.                                                                                                  |
+| `gdpr`       | GDPR                  | `opt-in`  | Blocking banner, shown even with GPC (nothing is decided for the visitor); non-essential denied until consent.                                                     |
 | `ukgdpr`     | UK GDPR               | `opt-in`  | Same as GDPR (UK/ePrivacy).                                                                                                                                        |
 | `ccpa`       | CCPA/CPRA             | `opt-out` | **No** blocking banner; default accept, but a "manage preferences" affordance + **GPC honoured**.                                                                  |
 | `lgpd`       | LGPD                  | `opt-in`  | Brazil. Consent-based, like GDPR — blocking banner until consent.                                                                                                  |

@@ -105,6 +105,17 @@ export function signalsDeny(gpcSignal: boolean): boolean {
 }
 
 /**
+ * The `gtag()` command form. gtag.js only runs a `dataLayer` entry that is an
+ * `arguments` object — a plain array (`push(["consent", …])`) is silently ignored, so
+ * a consent update must go through this, exactly like Google's own snippet.
+ */
+export function gtag(..._args: unknown[]) {
+  window.dataLayer = window.dataLayer ?? [];
+  // eslint-disable-next-line prefer-rest-params -- gtag.js requires the arguments object
+  window.dataLayer.push(arguments);
+}
+
+/**
  * Persist the visitor's choices and push the matching Consent-Mode `update` to
  * `dataLayer` (harmless when no gtag is present). Used by the banner buttons and
  * the preferences dialog alike, so consent is written one way only.
@@ -116,14 +127,8 @@ export function applyConsent(
   source: "banner" | "preferences" | "auto" = "banner",
 ) {
   consentStore.save({ v: version, t: Date.now(), choices });
-  if (typeof window !== "undefined") {
-    window.dataLayer = window.dataLayer ?? [];
-    window.dataLayer.push([
-      "consent",
-      "update",
-      consentUpdate(categories, choices),
-    ]);
-  }
+  if (typeof window !== "undefined")
+    gtag("consent", "update", consentUpdate(categories, choices));
   // Log the decision server-side (account-scoped) — one funnel covers accept /
   // reject / customize / auto-seed. Fire-and-forget; the route gates anonymous.
   reportConsent(choices, version, source);

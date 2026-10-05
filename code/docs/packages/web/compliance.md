@@ -72,8 +72,11 @@ seed` ships demo content.
 
 Accepting a category flips its `consentSignals` to `granted`; every signal no granted
 category lists stays `denied`. The layout emits `gtag('consent','default', …)` with all
-optional signals `denied` + `wait_for_update: 500`, then the store pushes a
-`['consent','update', …]` payload to `window.dataLayer` on every choice.
+optional signals `denied` + `wait_for_update: 500`, then — still before `gtag('config')` — the
+returning visitor's stored choice (`consentRestoreScript`, when the record matches the current
+version), so a visitor who accepted is measured from the first hit. On every new choice the store
+calls `gtag('consent','update', …)` (the exported `gtag`): gtag.js only runs a `dataLayer` entry
+that is an `arguments` object, never a plain array.
 
 The seven signals live in `CONSENT_SIGNALS` (`@indiecrafts/packages-web-compliance/consent/consent-signals`): `analytics_storage`,
 `ad_storage`, `ad_user_data`, `ad_personalization`, `functionality_storage`,

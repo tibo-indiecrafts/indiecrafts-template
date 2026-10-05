@@ -150,7 +150,7 @@ export function FeaturedMedia({
  * `controls=0` hides the chrome when `controls` is off. Param names differ per
  * provider, so branch on `kind`.
  */
-function iframeSrc(
+export function iframeSrc(
   embed: VideoEmbed,
   autoplay: boolean,
   controls: boolean,
@@ -161,6 +161,8 @@ function iframeSrc(
     if (autoplay) p.set("mute", "1");
     if (!controls) p.set("controls", "0");
   } else if (embed.kind === "vimeo") {
+    // Do-not-track: Vimeo sets no tracking cookies (YouTube already uses youtube-nocookie).
+    p.set("dnt", "1");
     if (autoplay) p.set("muted", "1");
     if (!controls) p.set("controls", "0");
   } else if (embed.kind === "dailymotion") {

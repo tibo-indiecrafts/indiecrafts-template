@@ -14,6 +14,8 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`consentRestoreScript`** (`packages-web-compliance/consent/consent-restore`) — the inline snippet that
+  restores a returning visitor's stored consent before GA's first hit.
 - **One consent-proof path for the website and the app.** `reportConsent` / `consentEvents` moved
   from `packages-web-compliance` to `@indiecrafts/packages-shared-compliance/web`, and the server-only
   `logConsent` to `@indiecrafts/packages-shared-compliance/server/consent-log`. **Why:** the app logged
@@ -31,6 +33,15 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **Google Analytics now follows the visitor's choice.** Measured live: after "Accept all" no `_ga`
+  cookie was set and no hit was sent — `applyConsent` pushed the update as a plain array, which
+  gtag.js ignores; it now calls `gtag()` (an `arguments` object). And the stored choice was never
+  restored, so a visitor who accepted was "denied" on every later page; the layout now runs
+  `consentRestoreScript` before `gtag('config')`. After the fix: accept → `_ga` set, hits `gcs=G111`.
+- **In an opt-in (EU) region the banner always shows.** With GPC/DNT (on by default in Brave)
+  `CookieBanner` recorded a silent reject and never showed — the visitor had no visible way to opt
+  in. Nothing non-essential runs before a choice anyway; GPC is still honoured in opt-out/none regions.
+- **Vimeo embeds play with do-not-track** (`dnt=1`); YouTube already uses `youtube-nocookie.com`.
 - **The app's cookie banner links the cookie policy and records every refusal.** `ConsentBanner`
   had no link to the policy (the website's has "Learn more"); its copy gains an optional
   `learnMore: { label, href }`, which the app points at the website's cookie policy. Its "Save"

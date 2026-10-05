@@ -19,6 +19,10 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Analytics respects consent, and the banner shows in Brave.** A visitor who accepted was never
+  measured (the consent update was ignored and not restored on later pages), and in the EU a browser
+  privacy signal (Brave's GPC) hid the banner behind a silent reject. Both fixed in
+  `packages-web-compliance`; the layout restores the stored choice before GA's first hit.
 - **A cookie change in the account widget now takes effect and is logged.** The Privacy tab saved
   through its own store: the page's consent gates did not see it until a reload, no Consent-Mode
   update was pushed, nothing reached `consent_events`, and it used the default categories + version

@@ -84,24 +84,16 @@ export function CookieBanner({
     });
   };
 
-  // Auto-decide on first visit without nagging, where the region + browser allow it:
-  //  - opt-in: only pre-seed a silent REJECT when a browser opt-out signal is present
-  //    (GPC / DNT). Otherwise the banner shows and the visitor chooses.
+  // Auto-decide on first visit without nagging, where the region allows it:
+  //  - opt-in: never decide for the visitor — the banner shows, even with a browser
+  //    opt-out signal (GPC / DNT, on by default in Brave). Nothing non-essential runs
+  //    before a choice anyway (Consent-Mode defaults are denied), and a silent reject
+  //    would leave the visitor no visible way to opt in.
   //  - opt-out / none: never block — seed the default (ACCEPT non-essential), but honour a
   //    browser opt-out signal (GPC / DNT → reject). Changeable later via the preferences dialog.
   useEffect(() => {
-    if (record !== null || categories.length === 0) return;
+    if (record !== null || categories.length === 0 || mode === "opt-in") return;
     const deny = respectGpc && signalsDeny(gpcSignal);
-    if (mode === "opt-in") {
-      if (deny)
-        applyConsent(
-          categories,
-          optionalChoices(categories, false),
-          version,
-          "auto",
-        );
-      return;
-    }
     applyConsent(
       categories,
       optionalChoices(categories, !deny),
