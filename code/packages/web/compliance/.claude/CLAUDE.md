@@ -13,7 +13,8 @@ Three domains under one Sanity barrel:
 - **`src/consent/`** — the **cookie-consent** runtime: `consent-store.ts` (framework-free store +
   Google Consent-Mode `dataLayer` push), `useConsent.ts`, `CookieBanner`/`CookiePreferences`,
   `ConsentGate`/`ConsentScript` (gate children / `next/script` on a granted category),
-  `ManagePreferencesButton`. Signal types (`ConsentSignal`, `CookieRow`, …) in
+  `ManagePreferencesButton`, and `GoogleAnalytics` (GA in basic consent mode: nothing from Google
+  loads until analytics is granted; `consent-restore.ts` restores the stored choice before the first hit). Signal types (`ConsentSignal`, `CookieRow`, …) in
   `consent/consent-signals.ts` (client-safe, no Sanity graph).
 - **`src/reacceptance/`** — the **legal re-acceptance** banner: `LegalNotice.tsx` + the first-party
   `legal-store.ts` cookie ("policies updated, please Accept" for privacy/terms/CGV).
@@ -36,5 +37,5 @@ Three domains under one Sanity barrel:
   **shells** that wrap `LegalPageContent` in `DefaultLayout`, gate on `features.legal.*`
   (`isPageVisible`), and emit SEO (`generateMetadata` + `PageSchemas`). The package owns the rest.
 - **Other host wiring in the app:** the banner + re-acceptance **mounts** in `[locale]/layout.tsx`
-  (banner gated on `siteSettings.analytics.requireCookieConsent`), the GA gtag `<head>` script.
+  (banner gated on `siteSettings.analytics.requireCookieConsent`), and `<GoogleAnalytics>` with the GA id.
 - Full reference → [`code/docs/packages/web/compliance.md`](../../../../docs/packages/web/compliance.md).
