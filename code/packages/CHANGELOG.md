@@ -37,6 +37,12 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **One way to delete an account.** Clerk's own "Delete account" (account widget → Security) skipped
+  our step-up re-check and exit survey. `authAppearance().elements.profileSection__danger` hides it;
+  "Your data" is the delete path. A Clerk-side deletion would still be erased in full by the webhook.
+- **Consent UI in Storybook.** Stories for `ConsentBanner`, `AccountConsentTab` (shared) and
+  `CookiePreferences` (web), each with an interaction test; the `DeleteAccountSection` story opens the
+  new fold. `packages-web-compliance` exports `./package.json` so Storybook can locate its stories.
 - **Google Analytics now follows the visitor's choice.** Measured live: after "Accept all" no `_ga`
   cookie was set and no hit was sent — `applyConsent` pushed the update as a plain array, which
   gtag.js ignores; it now calls `gtag()` (an `arguments` object). And the stored choice was never

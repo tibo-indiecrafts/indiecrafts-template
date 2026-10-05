@@ -1377,6 +1377,9 @@ importers:
       '@indiecrafts/packages-web-announcement':
         specifier: workspace:*
         version: link:../../../../packages/web/announcement
+      '@indiecrafts/packages-web-compliance':
+        specifier: workspace:*
+        version: link:../../../../packages/web/compliance
       '@indiecrafts/packages-web-i18n':
         specifier: workspace:*
         version: link:../../../../packages/web/i18n

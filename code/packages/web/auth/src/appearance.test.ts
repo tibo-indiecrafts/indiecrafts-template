@@ -22,6 +22,12 @@ describe("authAppearance", () => {
     });
   });
 
+  it("hides Clerk's own Delete account section (deletion goes through Your data)", () => {
+    expect(authAppearance().elements.profileSection__danger).toEqual({
+      display: "none",
+    });
+  });
+
   it("gives Clerk's badges readable token text (Lighthouse color-contrast)", () => {
     expect(authAppearance().elements.badge).toEqual({
       color: "var(--muted-foreground)",

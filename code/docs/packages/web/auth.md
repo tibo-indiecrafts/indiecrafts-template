@@ -33,7 +33,7 @@ Root `.` barrel:
 Subpath-only exports (not in the root barrel): `./persist-locale` (`usePersistLocale`),
 `./marketing-nudge` (`MarketingNudgeMount`), `./session-log` (`logSession`), `./account`
 (`AccountButton`, `AccountPage` — Clerk's account UI plus our Privacy & consent, Emails and
-Your data pages).
+Your data pages; Clerk's own "Delete account" is hidden, so "Your data" is the one way to delete).
 
 ## Usage example
 

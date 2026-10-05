@@ -56,8 +56,11 @@ const config: StorybookConfig = {
     // Cross-surface web bricks.
     brickStories("@indiecrafts/packages-web-system-pages"),
     brickStories("@indiecrafts/packages-web-ui-icons"),
-    // Compliance web UI (copy-injected, next-intl-free): DeleteAccountSection + ChurnSurvey.
+    // Compliance web UI: the shared copy-injected bricks (DeleteAccountSection, ChurnSurvey,
+    // ConsentBanner, AccountConsentTab) and the website's consent dialog (CookiePreferences,
+    // next-intl → the mock above).
     brickStories("@indiecrafts/packages-shared-compliance"),
+    brickStories("@indiecrafts/packages-web-compliance"),
   ],
   addons: [
     "@storybook/addon-docs",

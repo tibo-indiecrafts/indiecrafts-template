@@ -62,16 +62,17 @@ flowchart TB
 
 ## What it documents
 
-| Brick (package)                            | Renderer                   | What's shown                                                                                                            |
-| ------------------------------------------ | -------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `@indiecrafts/packages-web-ui`             | web                        | shadcn-derived primitives (Button, Input, …)                                                                            |
-| `@indiecrafts/packages-web-ui-components`  | web                        | page-builder block renderers (Callout, GalleryCarousel, QuoteList, CodeBlock)                                           |
-| `@indiecrafts/packages-web-announcement`   | web                        | the announcement-bar component                                                                                          |
-| `@indiecrafts/packages-web-locale-suggest` | web                        | the locale-suggestion prompt                                                                                            |
-| `@indiecrafts/packages-shared-compliance`  | web                        | compliance UI — `DeleteAccountSection` + `ChurnSurvey` (copy-injected, `next-intl`-free)                                |
-| `@indiecrafts/packages-web-system-pages`   | web                        | the status pages (maintenance · 404 · error · offline)                                                                  |
-| `@indiecrafts/packages-web-ui-icons`       | web                        | the icon set                                                                                                            |
-| `@indiecrafts/packages-web-ui-tokens`      | tokens (MDX in `stories/`) | live `var(--token)` swatches — Colors, Sidebar & Charts, Type & Radius — plus an Adaptive & container-query resize demo |
+| Brick (package)                            | Renderer                   | What's shown                                                                                                                     |
+| ------------------------------------------ | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `@indiecrafts/packages-web-ui`             | web                        | shadcn-derived primitives (Button, Input, …)                                                                                     |
+| `@indiecrafts/packages-web-ui-components`  | web                        | page-builder block renderers (Callout, GalleryCarousel, QuoteList, CodeBlock)                                                    |
+| `@indiecrafts/packages-web-announcement`   | web                        | the announcement-bar component                                                                                                   |
+| `@indiecrafts/packages-web-locale-suggest` | web                        | the locale-suggestion prompt                                                                                                     |
+| `@indiecrafts/packages-shared-compliance`  | web                        | compliance UI — `DeleteAccountSection` + `ChurnSurvey` + `ConsentBanner` + `AccountConsentTab` (copy-injected, `next-intl`-free) |
+| `@indiecrafts/packages-web-compliance`     | web                        | the website's cookie-preferences dialog — `CookiePreferences` (`next-intl` → the messages mock)                                  |
+| `@indiecrafts/packages-web-system-pages`   | web                        | the status pages (maintenance · 404 · error · offline)                                                                           |
+| `@indiecrafts/packages-web-ui-icons`       | web                        | the icon set                                                                                                                     |
+| `@indiecrafts/packages-web-ui-tokens`      | tokens (MDX in `stories/`) | live `var(--token)` swatches — Colors, Sidebar & Charts, Type & Radius — plus an Adaptive & container-query resize demo          |
 
 ## Run
 

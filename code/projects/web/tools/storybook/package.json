@@ -18,6 +18,7 @@
     "@indiecrafts/packages-web-announcement": "workspace:*",
     "@indiecrafts/packages-shared-config": "workspace:*",
     "@indiecrafts/packages-shared-compliance": "workspace:*",
+    "@indiecrafts/packages-web-compliance": "workspace:*",
     "@indiecrafts/packages-web-system-pages": "workspace:*",
     "@indiecrafts/packages-web-ui-icons": "workspace:*",
     "@indiecrafts/packages-web-i18n": "workspace:*",

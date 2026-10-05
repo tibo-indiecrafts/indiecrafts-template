@@ -16,6 +16,12 @@ _The Storybook gallery for the design-system bricks (`ui` · `ui-components` · 
 `announcement`/`locale-suggest` stories). Log new stories, addon/config changes, and the
 `test:stories` gate here._
 
+### Added
+
+- **The consent UI is in the gallery.** `packages-web-compliance` joins the story sources, so the
+  website's `CookiePreferences` dialog renders (through the `next-intl` mock) next to the shared
+  `ConsentBanner` and `AccountConsentTab`.
+
 ### Fixed
 
 - **The a11y gate now actually runs — in light and dark.** `test:stories` never failed on an axe violation:

@@ -38,6 +38,10 @@ export function authAppearance() {
       // Clerk tints its badges ("Primary", "This device") from colorNeutral at a low
       // alpha — #dedede on white, contrast 1.3. Muted text on the badge passes AA.
       badge: { color: "var(--muted-foreground)" },
+      // Hide Clerk's own "Delete account" (Security tab). Deleting goes through our "Your
+      // data" page: the step-up re-check, the exit survey and the erasure engine. (A Clerk
+      // deletion would still be fully erased by the webhook — this removes the second door.)
+      profileSection__danger: { display: "none" },
       // Page titles ("Profile details", "Security", the sign-in card title) on the type
       // scale — the account widget's own pages use the same size (`account-modal.tsx`).
       headerTitle: {

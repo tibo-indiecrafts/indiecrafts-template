@@ -62,12 +62,16 @@ export const DeletesAccount: Story = {
       new Response(JSON.stringify({ ok: true }), { status: 200 }),
     );
 
+    // The section is folded: open it from its heading, then confirm with the submit button.
+    await userEvent.click(
+      canvas.getByText("Delete my account", { selector: "summary" }),
+    );
     await userEvent.type(
       canvas.getByLabelText("Your email"),
       "you@example.com",
     );
     await userEvent.click(
-      canvas.getByRole("button", { name: "Delete my account" }),
+      canvasElement.querySelector<HTMLButtonElement>('button[type="submit"]')!,
     );
 
     await waitFor(() => expect(args.onDeleted).toHaveBeenCalled());
