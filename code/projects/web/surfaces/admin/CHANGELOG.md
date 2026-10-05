@@ -14,6 +14,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **See a user's consent in Users.** Each row has a "Consent" link opening a side sheet: the current
+  state (cookie categories, commercial emails, each email category, legal terms) and the dated history
+  (surface, source, country, policy version), en/fr. Each view is audited (`admin.view_consent`) —
+  looking at a person's consent history is itself an access to personal data.
 - **Sessions show who signed in.** Each sign-in row shows the user's email in its own column, next to the Clerk id. The
   page resolves the ids live from Clerk in one call (`src/lib/clerk-users.ts`); D1 still stores only
   the id. On a Clerk error the email cell shows a dash.

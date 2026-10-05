@@ -4,7 +4,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/users/page.md
  */
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
-import { clerkClient } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import {
   Table,
@@ -18,6 +18,9 @@ import { Input } from "@indiecrafts/packages-web-ui/web/input";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 import { primaryEmail } from "@/lib/clerk-users";
+import { fetchConsentHistory } from "@/lib/consent-history";
+import { Link } from "@/i18n/routing";
+import { ConsentSheet } from "../consent-sheet";
 
 type UserRow = {
   id: string;
@@ -78,17 +81,27 @@ export default async function UsersPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; consent?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const { q } = await searchParams;
+  const { q, consent: consentFor } = await searchParams;
   const query = typeof q === "string" ? q : "";
   const t = await getTranslations("admin.users");
+  const tc = await getTranslations("admin.consent");
   const format = await getFormatter();
   const day = (ms: number) => format.dateTime(new Date(ms), { dateStyle: "medium" });
   const users = await fetchUsers(query);
   const consent = await fetchMarketingConsent(users.map((u) => u.id));
+  // `?consent=<userId>` opens that user's consent sheet; the read is audited.
+  const listHref = query ? `/users?q=${encodeURIComponent(query)}` : "/users";
+  const consentHref = (id: string) =>
+    `${listHref}${query ? "&" : "?"}consent=${encodeURIComponent(id)}`;
+  const { userId: actor } = await auth();
+  const sheetUser =
+    typeof consentFor === "string" ? users.find((u) => u.id === consentFor) : undefined;
+  const history =
+    sheetUser && actor ? await fetchConsentHistory(sheetUser.id, actor) : null;
   const emailsLabel = (v: number | null | undefined) =>
     v === 1 ? t("emailsYes") : v === 0 ? t("emailsNo") : t("emailsUnknown");
 
@@ -121,6 +134,7 @@ export default async function UsersPage({
                     <TableHead>{t("created")}</TableHead>
                     <TableHead>{t("lastSignIn")}</TableHead>
                     <TableHead>{t("id")}</TableHead>
+                    <TableHead>{tc("column")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -136,6 +150,15 @@ export default async function UsersPage({
                         {u.lastSignIn ? day(u.lastSignIn) : "—"}
                       </TableCell>
                       <TableCell className="font-mono text-xs">{u.id}</TableCell>
+                      <TableCell>
+                        <Link
+                          href={consentHref(u.id)}
+                          className="text-primary underline underline-offset-4"
+                          aria-label={`${tc("column")} — ${u.email}`}
+                        >
+                          {tc("open")}
+                        </Link>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -144,6 +167,9 @@ export default async function UsersPage({
           )}
         </CardContent>
       </Card>
+      {sheetUser ? (
+        <ConsentSheet email={sheetUser.email} history={history} closeHref={listHref} />
+      ) : null}
     </div>
   );
 }

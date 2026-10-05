@@ -201,7 +201,10 @@ banner (`LegalNotice`, `@indiecrafts/packages-web-compliance/reacceptance/LegalN
 
 ## Loading scripts / cookies by consent
 
-Beyond GA (which loads always and gates via Consent Mode), gate **any** cookie-setting
+**Google Analytics runs in basic consent mode** (`<GoogleAnalytics>`, `consent/GoogleAnalytics`): with
+consent required, no script and no ping reach Google until the stored record (current version)
+grants a category carrying `analytics_storage`; then gtag.js loads with the choice restored before
+the first hit. Beyond GA, gate **any** cookie-setting
 script or embed on a category. Three tools:
 
 **`useConsent()`** (`@indiecrafts/packages-web-compliance/consent/useConsent`) — reactive read of the visitor's choices via

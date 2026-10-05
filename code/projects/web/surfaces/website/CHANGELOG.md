@@ -19,6 +19,9 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **No request to Google before consent.** GA now loads through `<GoogleAnalytics>` (basic consent
+  mode) at the end of the body instead of always in `<head>`: before a choice and after "Reject" the
+  browser contacts Google not at all (measured: 0 requests); after "Accept", GA loads and measures.
 - **Analytics respects consent, and the banner shows in Brave.** A visitor who accepted was never
   measured (the consent update was ignored and not restored on later pages), and in the EU a browser
   privacy signal (Brave's GPC) hid the banner behind a silent reject. Both fixed in

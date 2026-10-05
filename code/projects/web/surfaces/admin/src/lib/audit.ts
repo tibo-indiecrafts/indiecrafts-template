@@ -25,7 +25,8 @@ export async function audit(
     | "admin.erasure_retry"
     | "admin.erasure_close"
     | "admin.cron_run"
-    | "admin.data_request_status",
+    | "admin.data_request_status"
+    | "admin.view_consent",
   fields: { actor: string; target: string },
 ): Promise<void> {
   const url = process.env.API_URL;

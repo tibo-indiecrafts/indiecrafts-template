@@ -413,6 +413,43 @@
           "not_open": "This request is already closed."
         }
       }
+    },
+    "consent": {
+      "column": "Consent",
+      "open": "View",
+      "title": "Consent",
+      "description": "Decisions recorded for {email}. Newest first; the IP is never shown.",
+      "current": "Current state",
+      "history": "History",
+      "empty": "No consent decision recorded for this user.",
+      "loadError": "Could not load the consent history — the api is unreachable.",
+      "granted": "Granted",
+      "refused": "Refused",
+      "when": "When",
+      "type": "Consent",
+      "decision": "Decision",
+      "surface": "Surface",
+      "source": "Source",
+      "country": "Country",
+      "version": "Policy",
+      "types": {
+        "cookie_analytics": "Analytics cookies",
+        "cookie_marketing": "Marketing cookies",
+        "marketing_email": "Commercial emails",
+        "legal_reaccept": "Legal terms accepted",
+        "terms": "Terms",
+        "privacy": "Privacy policy",
+        "content_guidelines": "Content guidelines",
+        "emailPref": "Emails: {key}"
+      },
+      "sources": {
+        "banner": "Banner",
+        "preferences": "Preferences",
+        "auto": "Automatic (region)",
+        "signup": "Sign-up",
+        "settings": "Account settings",
+        "unsubscribe": "Unsubscribe link"
+      }
     }
   }
 }

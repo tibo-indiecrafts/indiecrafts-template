@@ -14,6 +14,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`<GoogleAnalytics>`** (`packages-web-compliance/consent/GoogleAnalytics`) — GA in **basic** consent
+  mode: with consent required, nothing from Google loads (no script, no ping) until the stored record
+  for the current version grants `analytics_storage`; then gtag.js loads with the choice restored.
+  **Why:** advanced mode still sent cookieless pings — with the visitor's IP — before and after a refusal.
 - **`consentRestoreScript`** (`packages-web-compliance/consent/consent-restore`) — the inline snippet that
   restores a returning visitor's stored consent before GA's first hit.
 - **One consent-proof path for the website and the app.** `reportConsent` / `consentEvents` moved

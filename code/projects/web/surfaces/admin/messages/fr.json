@@ -413,6 +413,43 @@
           "not_open": "Cette demande est déjà clôturée."
         }
       }
+    },
+    "consent": {
+      "column": "Consentement",
+      "open": "Voir",
+      "title": "Consentement",
+      "description": "Décisions enregistrées pour {email}. Les plus récentes d'abord ; l'IP n'est jamais affichée.",
+      "current": "État actuel",
+      "history": "Historique",
+      "empty": "Aucune décision de consentement enregistrée pour cet utilisateur.",
+      "loadError": "Impossible de charger l'historique — l'API est injoignable.",
+      "granted": "Accordé",
+      "refused": "Refusé",
+      "when": "Quand",
+      "type": "Consentement",
+      "decision": "Décision",
+      "surface": "Surface",
+      "source": "Origine",
+      "country": "Pays",
+      "version": "Politique",
+      "types": {
+        "cookie_analytics": "Cookies de mesure d'audience",
+        "cookie_marketing": "Cookies marketing",
+        "marketing_email": "E-mails commerciaux",
+        "legal_reaccept": "Conditions acceptées",
+        "terms": "Conditions",
+        "privacy": "Politique de confidentialité",
+        "content_guidelines": "Règles de contenu",
+        "emailPref": "E-mails : {key}"
+      },
+      "sources": {
+        "banner": "Bannière",
+        "preferences": "Préférences",
+        "auto": "Automatique (région)",
+        "signup": "Inscription",
+        "settings": "Paramètres du compte",
+        "unsubscribe": "Lien de désinscription"
+      }
     }
   }
 }

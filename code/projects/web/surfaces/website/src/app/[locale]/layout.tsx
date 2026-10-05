@@ -9,7 +9,6 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { cookies, headers } from "next/headers";
-import Script from "next/script";
 import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import {
   consent,
@@ -25,8 +24,7 @@ import {
 import { fontClassName, fontStyle } from "@/lib/fonts";
 import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { CookieBanner } from "@indiecrafts/packages-web-compliance/consent/CookieBanner";
-import { consentRestoreScript } from "@indiecrafts/packages-web-compliance/consent/consent-restore";
-import { STORAGE_KEY as CONSENT_STORAGE_KEY } from "@indiecrafts/packages-web-compliance/consent/consent-store";
+import { GoogleAnalytics } from "@indiecrafts/packages-web-compliance/consent/GoogleAnalytics";
 import { CookieConsentConfig } from "@/user-interface/account/CookieConsentConfig";
 import { CookiePreferencesHost } from "@indiecrafts/packages-web-compliance/consent/CookiePreferencesHost";
 import { LegalNotice } from "@indiecrafts/packages-web-compliance/reacceptance/LegalNotice";
@@ -193,32 +191,6 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
               href={`${localePrefix(locale as Locale)}/llms.txt`}
             />
           ) : null}
-
-          {/* Google Analytics — ID + consent are edited in Sanity
-            (`siteSettings.analytics`). Injected only when an ID is set; the
-            Consent-Mode `default: denied` preamble only when consent is required, then the
-            returning visitor's stored choice (consentRestoreScript) before the first hit. */}
-          {settings.analytics.googleAnalyticsId ? (
-            <>
-              <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${settings.analytics.googleAnalyticsId}`}
-                strategy="afterInteractive"
-                nonce={nonce}
-              />
-              <Script id="gtag-init" strategy="afterInteractive" nonce={nonce}>
-                {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-${
-  settings.analytics.requireCookieConsent
-    ? `gtag('consent', 'default', { ad_storage: 'denied', analytics_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', functionality_storage: 'denied', personalization_storage: 'denied', wait_for_update: 500 });
-${consentRestoreScript({ storageKey: CONSENT_STORAGE_KEY, version: cookieConsent.version, categories: cookieConsent.categories })}
-`
-    : ""
-}gtag('js', new Date());
-gtag('config', '${settings.analytics.googleAnalyticsId}');`}
-              </Script>
-            </>
-          ) : null}
         </head>
         <body className="bg-background text-foreground flex min-h-screen flex-col">
           <ThemeProvider
@@ -227,6 +199,18 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
           >
             <NextIntlClientProvider messages={messages} locale={locale}>
               <LocaleSwitchBoundary>
+                {/* Google Analytics — ID + consent are edited in Sanity (`siteSettings.analytics`).
+                    With consent required, nothing from Google loads until the visitor grants
+                    analytics (basic consent mode); the choice is restored before the first hit. */}
+                {settings.analytics.googleAnalyticsId ? (
+                  <GoogleAnalytics
+                    id={settings.analytics.googleAnalyticsId}
+                    version={cookieConsent.version}
+                    categories={cookieConsent.categories}
+                    requireConsent={settings.analytics.requireCookieConsent === true}
+                    nonce={nonce}
+                  />
+                ) : null}
                 <CookieConsentConfig
                   value={{
                     categories: cookieConsent.categories,

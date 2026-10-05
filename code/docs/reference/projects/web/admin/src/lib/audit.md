@@ -14,7 +14,7 @@ Posts each privileged admin action to the shared API's `/v1/events`, which write
 
 ## Exports
 
-- `audit(event, fields)` — record one admin event (`admin.grant`, `admin.revoke_session`, `admin.revoke_user_sessions`) with `actor` and `target` user ids.
+- `audit(event, fields)` — record one admin event (`admin.grant`, `admin.revoke_session`, `admin.revoke_user_sessions`, `admin.erasure_retry`, `admin.erasure_close`, `admin.cron_run`, `admin.data_request_status`, `admin.view_consent`) with `actor` and `target` user ids.
 
 ## Usage
 

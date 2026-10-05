@@ -72,6 +72,10 @@ import {
   handleDataRequestStatus,
 } from "./data-request/status";
 import { clerkEmailIncident, recordIncident } from "./security/record";
+import {
+  readConsentHistory,
+  USER_ID as CONSENT_USER_ID,
+} from "./consent/history";
 import { readChurnAggregate } from "./consent/churn-store";
 import { cronStatus, erasureRequests, forwardCronRun } from "./monitoring";
 import { handleErasureClose, handleErasureRetry } from "./erasure/admin";
@@ -736,6 +740,30 @@ async function route(
 
   // ── Marketing-consent batch — POST /v1/profiles/consent (bearer; the admin users list) ──
   // Body { userIds: string[] } → { [userId]: 0 | 1 | null }. Unknown ids resolve to null.
+  // ── Consent history — GET /v1/consent/history?userId= (bearer; admin user view) ──
+  // One user's consent decisions: the latest per type + the timeline. Data-minimized:
+  // no ip_hash, no fingerprint. The admin app records the view in its own audit trail.
+  if (url.pathname === "/v1/consent/history") {
+    if (request.method !== "GET")
+      return json({ error: "method_not_allowed" }, 405, cors);
+    const denied =
+      requireAdminBearer(request, env, cors) ??
+      (await rateLimit(request, env, cors));
+    if (denied) return denied;
+    if (!env.MAIN_DB) return json({ error: "unavailable" }, 503, cors);
+    const userId = url.searchParams.get("userId") ?? "";
+    if (!CONSENT_USER_ID.test(userId))
+      return json({ error: "invalid" }, 400, cors);
+    try {
+      return json(await readConsentHistory(env.MAIN_DB, userId), 200, cors);
+    } catch (error) {
+      logger.error("consent history read failed", {
+        name: (error as Error)?.name,
+      });
+      return json({ error: "server" }, 502, cors);
+    }
+  }
+
   if (url.pathname === "/v1/profiles/consent") {
     if (request.method !== "POST")
       return json({ error: "method_not_allowed" }, 405, cors);

@@ -7,6 +7,9 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **`GET /v1/consent/history?userId=`** (admin bearer) — one user's consent decisions from
+  `consent_events`: the latest per type + the last 100, newest first. Data-minimized (no IP hash, no
+  fingerprint); `400` on a non-Clerk id. **Why:** the admin can show a user's consent state and its proof.
 - **`GET /v1/consent/email-preferences?locale=`.** The account page asks for its own language,
   so the category names match the UI; a value outside the site locales is ignored, and the
   profile locale stays the default (it is still what the emails use).
