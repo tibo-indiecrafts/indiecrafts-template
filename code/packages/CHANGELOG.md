@@ -48,6 +48,8 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **Version-prompt docs match the code** (`packages-web-version`). The dev placeholder id is `"dev"`, not
+  `"unknown"`. The app's banner copy comes from `messages` (`version.*`); only the website reads it from Sanity.
 - **`ContactForm` takes `headingAs`** (`h1`/`h2`/`h3`, default `h3`), so a full-page form can own the
   page heading. Blocks keep `h3`.
 - **A language choice now survives a restart.** `localeCookie` (`packages-shared-config/web`) gives the

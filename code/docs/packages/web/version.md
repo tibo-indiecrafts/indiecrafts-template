@@ -31,15 +31,17 @@ worker sees the mismatch.
 1. `build:cf` runs `scripts/version.mjs`, which bakes `src/lib/build-info.ts` (`{ version, branch, commit, buildTime }`) at build time — each deploy gets its own id.
 2. The app serves `GET /api/version` (`no-store`) returning the **live** deploy's `{ version, commit }`.
 3. `useVersionCheck({ current: buildInfo.commit })` polls that endpoint and reports `updateAvailable` when the served id differs from `current`.
-4. In dev, `buildInfo.commit` is the `"unknown"` placeholder and the endpoint returns the same → `current === latest` → no false prompt.
+4. In dev, `buildInfo.commit` is the committed `"dev"` placeholder and the endpoint returns the same → `current === latest` → no false prompt.
 
 Two update paths, never a forced reload: the **Reload** button, and — the safe one — an **automatic
 reload on the next navigation** (`reloadOnNavigate`, default on): a natural break with no unsaved-input
 risk.
 
-## Copy is in Sanity (no fallback)
+## Copy
 
-The banner text is edited per language in Sanity — `siteMeta.<locale>.versionPrompt`
+**app** — `messages/<locale>.json` → `version.{message,reload,dismiss}`, passed by `ShellOverlays`. The banner is always on.
+
+**website** — Sanity, no fallback. The banner text is edited per language in Sanity — `siteMeta.<locale>.versionPrompt`
 (`message` · `reload` · `dismiss`), read by `getVersionPrompt` (`src/lib/system-pages.ts`). There is
 **no `messages` fallback**: the layout mounts `<UpdatePrompt>` only when all three strings are present,
 so an unset banner is simply off. Studio → SEO par langue → Pages système → Bandeau « nouvelle version ».

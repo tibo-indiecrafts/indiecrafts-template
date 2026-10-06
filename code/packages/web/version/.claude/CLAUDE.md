@@ -11,7 +11,7 @@ props, so any app reuses it. Consumed by the website + app layouts. Area rules �
   `isUpdateAvailable`) · `./update-prompt` (the self-contained banner).
 - **String identity, not semver** — a deploy stamps a new opaque id; equality is the whole test.
 - **Detection is a `no-store` poll of `/api/version`** vs the build id baked at build time
-  (`build:cf` → `build-info.ts`) — no service worker (OpenNext/Cloudflare). Dev → both `"unknown"` →
+  (`build:cf` → `build-info.ts`) — no service worker (OpenNext/Cloudflare). Dev → both the `"dev"` placeholder →
   no false prompt.
 - **Explicit per-file exports (no wildcard)** → no tsconfig `paths` entry needed. Never imports an app
   or a module.
