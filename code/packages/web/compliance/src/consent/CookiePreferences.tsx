@@ -103,7 +103,7 @@ export function CookiePreferences({
 
         <DialogFooter className="gap-2 sm:justify-between">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={() => commit(allOptional(false))}
           >

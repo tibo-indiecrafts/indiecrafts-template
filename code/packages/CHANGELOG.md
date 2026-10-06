@@ -37,6 +37,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **Consent UI polish.** In the cookie-preferences dialog "Reject all" is an outline button, like
+  "Accept all" — the two choices weigh the same (a ghost reject read as the lesser option). And
+  toasts are 28rem wide from `sm` up (`ui-tokens/globals.css`): sonner's 356px squeezed the consent
+  "saved" toast and its "Manage cookie preferences" action into four lines. sonner sets `--width`
+  inline, so the override needs `!important`. Phones keep the full-width toast.
 - **One way to delete an account.** Clerk's own "Delete account" (account widget → Security) skipped
   our step-up re-check and exit survey. `authAppearance().elements.profileSection__danger` hides it;
   "Your data" is the delete path. A Clerk-side deletion would still be erased in full by the webhook.

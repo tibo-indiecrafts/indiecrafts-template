@@ -29,6 +29,9 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Security alerts have a recipient.** `SECURITY_ALERT_EMAIL = "support@indiecrafts.dev"` in dev,
+  staging and prod `[vars]` — without it, high/critical incidents (lockouts, admin grants) emailed
+  no one.
 - **A role→admin grant alerts once, not on every edit of an admin.** The Clerk webhook wrote a
   `privilege_escalation` row and emailed the owner on every `user.updated` of a user who was
   admin — a name change paged the operator. Clerk sends no previous values, so the webhook now

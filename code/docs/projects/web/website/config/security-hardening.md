@@ -140,7 +140,7 @@ never a per-request DB query; write a row only when an incident crosses a thresh
 D1 is for review, not the firehose.
 
 **Alerting.** A high or critical incident also emails the owner/DPO —
-`SECURITY_ALERT_EMAIL`, falling back to `EMAIL_ADMIN_BCC` — sent non-blocking via
+`SECURITY_ALERT_EMAIL` (set to `support@indiecrafts.dev` in every env's `[vars]`), falling back to `EMAIL_ADMIN_BCC` — sent non-blocking via
 `ctx.waitUntil`. It never fails the write. See the
 [breach-response runbook](/projects/web/website/config/breach-response) for what to do next.
 

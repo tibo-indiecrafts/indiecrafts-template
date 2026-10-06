@@ -171,6 +171,8 @@ simple = { limit = 20, period = 60 }
 
 # vars are NOT inherited from the top level — declare them per env (wrangler warns otherwise).
 [env.dev.vars]
+# Security alerts (high/critical incidents) — the operator inbox; falls back to EMAIL_ADMIN_BCC.
+SECURITY_ALERT_EMAIL = "support@indiecrafts.dev"
 SANITY_API_VERSION = "2025-01-01"
 # Sanity is one project + one dataset for the whole platform — identical in every env
 # (the website reads the same NEXT_PUBLIC_SANITY_* values). Public, so [vars] not secrets.
@@ -227,6 +229,8 @@ namespace_id = "3001"
 simple = { limit = 20, period = 60 }
 
 [env.staging.vars]
+# Security alerts (high/critical incidents) — the operator inbox; falls back to EMAIL_ADMIN_BCC.
+SECURITY_ALERT_EMAIL = "support@indiecrafts.dev"
 SANITY_API_VERSION = "2025-01-01"
 SANITY_PROJECT_ID = "qy2pp5sn"
 SANITY_DATASET = "production"
@@ -270,6 +274,8 @@ namespace_id = "4001"
 simple = { limit = 20, period = 60 }
 
 [env.prod.vars]
+# Security alerts (high/critical incidents) — the operator inbox; falls back to EMAIL_ADMIN_BCC.
+SECURITY_ALERT_EMAIL = "support@indiecrafts.dev"
 SANITY_API_VERSION = "2025-01-01"
 SANITY_PROJECT_ID = "qy2pp5sn"
 SANITY_DATASET = "production"

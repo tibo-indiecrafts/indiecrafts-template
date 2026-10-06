@@ -352,6 +352,18 @@
   bottom: max(1rem, env(safe-area-inset-bottom));
 }
 
+/*
+ * Toasts (sonner). Its default 356px squeezes a description + an action button (the
+ * consent "saved" toast with "Manage cookie preferences") into four lines on desktop.
+ * From `sm` up, a wider toast; phones keep sonner's full-width one. sonner sets
+ * `--width` INLINE on its list, so only `!important` overrides it.
+ */
+@media (min-width: 40rem) {
+  [data-sonner-toaster] {
+    --width: 28rem !important;
+  }
+}
+
 @utility corner-bevel {
   --bevel-tl: var(--bevel-size, 1.5rem);
   --bevel-tr: var(--bevel-size, 1.5rem);
