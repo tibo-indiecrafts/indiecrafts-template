@@ -7,9 +7,10 @@ import { getTranslations } from "next-intl/server";
 import { SidebarTrigger } from "@indiecrafts/packages-web-ui/web/sidebar";
 import { Separator } from "@indiecrafts/packages-web-ui/web/separator";
 import { ThemeToggle } from "@/user-interface/layout/ThemeToggle";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 import { Breadcrumbs } from "./Breadcrumbs";
 
-/** Sticky dashboard header: sidebar toggle, breadcrumbs, theme toggle (pushed right). */
+/** Sticky dashboard header: sidebar toggle, breadcrumbs, language + theme toggles (pushed right). */
 export async function AppHeader() {
   const t = await getTranslations("admin");
 
@@ -18,7 +19,8 @@ export async function AppHeader() {
       <SidebarTrigger />
       <Separator orientation="vertical" className="mr-2 h-4" />
       <Breadcrumbs />
-      <div className="ml-auto">
+      <div className="ml-auto flex items-center gap-1">
+        <LocaleSwitcher label={t("locale.label")} />
         <ThemeToggle
           label={{
             toggle: t("theme.toggle"),

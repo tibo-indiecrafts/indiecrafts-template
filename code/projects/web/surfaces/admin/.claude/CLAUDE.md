@@ -5,7 +5,7 @@ roles, sessions, GDPR requests, CSP and security feeds, backups, cron, system he
 read from Clerk and the shared api (EU D1). Not public — behind auth, `noindex`, its own subdomain.
 Page map → [`code/docs/projects/web/admin/index.md`](../../../../../docs/projects/web/admin/index.md). **Has a shadcn dashboard
 shell**: `src/user-interface/layout/` (`AppShell` → `AppSidebar` + `SidebarInset`/`AppHeader`, a grouped
-nav driven by `src/user-interface/lib/nav.ts`, a no-flash light/dark `ThemeToggle`) and a consistent
+nav driven by `src/user-interface/lib/nav.ts`, a no-flash light/dark `ThemeToggle`, a `LocaleSwitcher`) and a consistent
 shadcn page treatment (`PageHeader` + `Card`, shadcn `Table`/`Badge`, `Input`/`Label` + `sonner` toasts)
 across every page. These are **app-owned components — no Storybook**; Storybook's globs only cover the
 design-system packages, not app UI.

@@ -31,7 +31,8 @@ auto-redirect** (best practice); language **names**, never flags.
   `getLocaleSuggest(locale)`.
 - **`LocaleSuggest`** client strip — Switch reuses `useLocaleSwitch`
   (`@indiecrafts/packages-web-i18n`); Switch or dismiss writes the `locale-suggest` cookie so it stops
-  suggesting.
+  suggesting. The website's header `LocaleSwitcher` writes it too (`dismissLocaleSuggest`): a
+  language the visitor picked by hand is never contradicted by the strip.
 
 ## Wiring
 

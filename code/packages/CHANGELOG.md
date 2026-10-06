@@ -37,6 +37,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **A language choice now survives a restart.** `localeCookie` (`packages-shared-config/web`) gives the
+  namespaced `<prefix>_NEXT_LOCALE` cookie a one-year life. next-intl v4 defaults to a session
+  cookie, so closing the browser or the mobile shell dropped the choice and the browser language
+  won again. Every routing (website, app, admin, `packages-web-i18n`) uses it. The cookie policy
+  already declared "1 year"; the code now matches it.
 - **Consent UI polish.** In the cookie-preferences dialog "Reject all" is an outline button, like
   "Accept all" — the two choices weigh the same (a ghost reject read as the lesser option). And
   toasts are 28rem wide from `sm` up (`ui-tokens/globals.css`): sonner's 356px squeezed the consent

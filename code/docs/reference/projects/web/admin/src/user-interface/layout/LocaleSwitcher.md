@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders a language-icon dropdown listing every routing locale. Selecting one persists the choice and replaces the route with the same path under the new locale. This surface has no localized pathnames, so the path is preserved as-is.
+Renders a language-icon dropdown in the dashboard header listing every routing locale. Selecting one persists the choice (cookie, plus the operator's Clerk profile) and replaces the route with the same path under the new locale. This surface has no localized pathnames, so the path is preserved as-is.
 
 ## Exports
 
@@ -26,4 +26,4 @@ import { LocaleSwitcher } from "@/user-interface/layout/LocaleSwitcher";
 
 ## Source
 
-`code/projects/web/surfaces/app/src/user-interface/layout/LocaleSwitcher.tsx`
+`code/projects/web/surfaces/admin/src/user-interface/layout/LocaleSwitcher.tsx`

@@ -19,6 +19,10 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The language strip no longer argues with the visitor.** A French browser that switched the site to
+  English saw "Ce site est aussi disponible en Français" on every page. The header `LocaleSwitcher`
+  now records the choice (`dismissLocaleSuggest`), like the strip's own buttons. The `i18n` e2e
+  journey covers it: a French browser lands on `/fr`, picks English, and stays there.
 - **No request to Google before consent.** GA now loads through `<GoogleAnalytics>` (basic consent
   mode) at the end of the body instead of always in `<head>`: before a choice and after "Reject" the
   browser contacts Google not at all (measured: 0 requests); after "Accept", GA loads and measures.

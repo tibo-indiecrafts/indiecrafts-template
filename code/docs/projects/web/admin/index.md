@@ -118,7 +118,9 @@ Cloudflare Access gate on the subdomain as defense-in-depth before the app goes 
 ## Wired baseline
 
 - **i18n** — next-intl with the `[locale]` segment and `src/i18n/routing.ts` (`as-needed`
-  prefixes). Strings live in `messages/<locale>.json` (`en` · `fr`); import `Link` and
+  prefixes). The first visit follows the browser language (`localeDetection`); the header
+  `LocaleSwitcher` corrects it and the namespaced locale cookie keeps the choice. Strings
+  live in `messages/<locale>.json` (`en` · `fr`); import `Link` and
   `redirect` from `@/i18n/routing`, never `next/link`. Dates, times and sizes go through
   the next-intl formatter (`getFormatter` / `useFormatter`), never `toLocaleString`. The zone
   is UTC (`src/i18n/request.ts`), so a client table renders the same on the server and in

@@ -95,8 +95,9 @@ helper used for manual URL building:
 
 `localeDetection: true` redirects a first-time visitor at `/` to their browser's
 `Accept-Language` locale when it's one of `locales`. Their explicit choice — the
-`NEXT_LOCALE` cookie — always wins afterwards. `false` = always serve the default locale
-until the user picks one.
+`<prefix>_NEXT_LOCALE` cookie (`localeCookie`, kept one year) — always wins afterwards,
+also after the browser or the mobile shell restarts. `false` = always serve the default
+locale until the user picks one.
 
 ## The routing definition
 

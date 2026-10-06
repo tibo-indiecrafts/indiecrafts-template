@@ -12,7 +12,7 @@ import { defineRouting } from "next-intl/routing";
 import {
   i18n,
   localeCodes,
-  localeCookieName,
+  localeCookie,
   type Locale,
   type StaticAppPathname,
 } from "@/config";
@@ -24,8 +24,9 @@ export const routing = defineRouting({
   localePrefix: i18n.localePrefix,
   localeDetection: i18n.localeDetection,
   // Namespaced per deployment (`site.prefix`) so two instances on a shared origin
-  // don't share the visitor's language choice. Read back in `maintenance/locale.ts`.
-  localeCookie: { name: localeCookieName },
+  // don't share the visitor's language choice; kept a year so the choice outlives the
+  // session. Read back in `maintenance/locale.ts`.
+  localeCookie,
   pathnames: PATHNAMES,
 });
 

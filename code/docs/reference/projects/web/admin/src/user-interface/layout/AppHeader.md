@@ -1,6 +1,6 @@
 ---
 title: "Admin app header"
-description: "Sticky dashboard header with sidebar toggle, breadcrumbs, and theme toggle."
+description: "Sticky dashboard header with sidebar toggle, breadcrumbs, language switcher, and theme toggle."
 status: stable
 ---
 
@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The sticky header rendered at the top of every dashboard page. It holds the sidebar toggle, the breadcrumb trail, and a right-aligned theme toggle. An async server component that reads its labels from the `admin` translations.
+The sticky header rendered at the top of every dashboard page. It holds the sidebar toggle, the breadcrumb trail, and right-aligned language and theme toggles. An async server component that reads its labels from the `admin` translations.
 
 ## Exports
 

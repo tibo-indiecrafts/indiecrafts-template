@@ -71,6 +71,16 @@ export const isSiteConfigured = site.url !== PLACEHOLDER_SITE_URL;
 export const localeCookieName = `${site.prefix}_NEXT_LOCALE`;
 
 /**
+ * next-intl `localeCookie` for every surface: the namespaced name + a one-year life.
+ * next-intl v4 defaults to a session cookie, so closing the browser or the mobile shell
+ * dropped the visitor's language choice and the browser language won again.
+ */
+export const localeCookie = {
+  name: localeCookieName,
+  maxAge: 60 * 60 * 24 * 365,
+} as const;
+
+/**
  * Logging config (read by `@indiecrafts/packages-shared-logger`). Per-environment minimum console
  * level — **`production` is `"silent"`** so live sites emit no console noise;
  * error/fatal still reach transports (e.g. Sentry) when one is wired. Override the

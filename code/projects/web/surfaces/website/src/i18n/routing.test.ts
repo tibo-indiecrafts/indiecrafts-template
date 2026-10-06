@@ -47,6 +47,8 @@ describe("routing config", () => {
     expect(routing.localeDetection).toBe(i18n.localeDetection);
     expect(routing.localeCookie).toMatchObject({
       name: expect.stringContaining("NEXT_LOCALE"),
+      // A year, not next-intl's session default: the choice survives a closed browser/app.
+      maxAge: 60 * 60 * 24 * 365,
     });
   });
 });

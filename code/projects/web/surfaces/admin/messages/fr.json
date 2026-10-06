@@ -24,6 +24,9 @@
       "cron": "Tâches planifiées",
       "erasure": "Demandes d'effacement"
     },
+    "locale": {
+      "label": "Changer de langue"
+    },
     "theme": {
       "toggle": "Changer de thème",
       "light": "Clair",

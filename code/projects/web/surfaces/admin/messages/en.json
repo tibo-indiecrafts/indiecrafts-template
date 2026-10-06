@@ -24,6 +24,9 @@
       "cron": "Scheduled jobs",
       "erasure": "Erasure requests"
     },
+    "locale": {
+      "label": "Change language"
+    },
     "theme": {
       "toggle": "Toggle theme",
       "light": "Light",

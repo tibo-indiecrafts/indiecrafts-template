@@ -14,6 +14,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Language switcher in the header.** The first visit follows the browser language; an operator
+  can now correct it next to the theme toggle (`LocaleSwitcher`, as in the app). The choice is
+  kept in the locale cookie and the operator's Clerk profile.
 - **See a user's consent in Users.** Each row has a "Consent" link opening a side sheet: the current
   state (cookie categories, commercial emails, each email category, legal terms) and the dated history
   (surface, source, country, policy version), en/fr. Each view is audited (`admin.view_consent`) —

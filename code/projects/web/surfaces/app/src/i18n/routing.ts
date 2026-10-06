@@ -8,7 +8,7 @@
 
 import { createNavigation } from "next-intl/navigation";
 import { defineRouting } from "next-intl/routing";
-import { i18n, localeCodes, localeCookieName } from "@/config";
+import { i18n, localeCodes, localeCookie } from "@/config";
 
 export const routing = defineRouting({
   locales: [...localeCodes],
@@ -16,8 +16,8 @@ export const routing = defineRouting({
   localePrefix: i18n.localePrefix,
   localeDetection: i18n.localeDetection,
   // Namespaced per deployment (`site.prefix`) so two instances on a shared origin
-  // don't share the visitor's language choice.
-  localeCookie: { name: localeCookieName },
+  // don't share the visitor's language choice; kept a year so the choice outlives the session.
+  localeCookie,
 });
 
 export const { Link, redirect, usePathname, useRouter, getPathname } =

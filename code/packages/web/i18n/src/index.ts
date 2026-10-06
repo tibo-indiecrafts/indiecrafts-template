@@ -9,7 +9,7 @@ import { defineRouting } from "next-intl/routing";
 import {
   i18n,
   localeCodes,
-  localeCookieName,
+  localeCookie,
 } from "@indiecrafts/packages-shared-config";
 
 export const routing = defineRouting({
@@ -20,7 +20,7 @@ export const routing = defineRouting({
   // Same namespaced cookie the app's typed routing uses (`${site.prefix}_NEXT_LOCALE`), so a
   // module navigating through this shim reads/writes the SAME locale cookie as the app — not
   // next-intl's un-namespaced `NEXT_LOCALE` default.
-  localeCookie: { name: localeCookieName },
+  localeCookie,
 });
 
 export const { Link, redirect, usePathname, useRouter, getPathname } =

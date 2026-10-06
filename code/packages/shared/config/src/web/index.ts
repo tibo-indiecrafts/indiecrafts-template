@@ -12,6 +12,7 @@ export {
   site,
   isSiteConfigured,
   localeCookieName,
+  localeCookie,
   logging,
 } from "./site";
 export { seoDefaults, AI_TRAINING_USER_AGENTS } from "./seo";

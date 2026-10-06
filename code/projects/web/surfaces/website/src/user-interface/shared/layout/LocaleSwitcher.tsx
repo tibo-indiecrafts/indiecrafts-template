@@ -10,6 +10,7 @@ import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useLocaleSwitch } from "@indiecrafts/packages-web-i18n";
 import { usePersistLocale } from "@indiecrafts/packages-web-auth/persist-locale";
+import { dismissLocaleSuggest } from "@indiecrafts/packages-web-locale-suggest/locale-suggest-store";
 import { localeMap, locales, type Locale } from "@/config";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import {
@@ -74,6 +75,8 @@ export function LocaleSwitcher({
         <DropdownMenuRadioGroup
           value={current}
           onValueChange={(value: string) => {
+            // An explicit choice answers the "available in your language" strip too.
+            dismissLocaleSuggest();
             void switchTo(value);
             persistLocale(value);
           }}
