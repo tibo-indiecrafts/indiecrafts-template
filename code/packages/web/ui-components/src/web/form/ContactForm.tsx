@@ -18,7 +18,13 @@ import type { ContactModule } from "@indiecrafts/packages-web-ui-components/shar
 import { TurnstileWidget, turnstileActive } from "./TurnstileWidget";
 
 /** Just the resolved copy — so the form is reusable both as a block and on a full page. */
-export type ContactFormProps = Omit<ContactModule, "_type" | "_key" | "hidden">;
+export type ContactFormProps = Omit<
+  ContactModule,
+  "_type" | "_key" | "hidden"
+> & {
+  /** Heading element — `h3` inside a page's blocks; `h1` when the form IS the page. */
+  headingAs?: "h1" | "h2" | "h3";
+};
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -46,6 +52,7 @@ export function ContactForm({
   errorMessage = "Une erreur s'est produite. Merci de réessayer.",
   variant = "card",
   anchor,
+  headingAs: Heading = "h3",
 }: ContactFormProps) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -109,7 +116,7 @@ export function ContactForm({
       >
         <div className="mx-auto max-w-lg text-center">
           {heading ? (
-            <h3
+            <Heading
               className={cn(
                 "font-sans font-semibold text-balance",
                 banner
@@ -118,7 +125,7 @@ export function ContactForm({
               )}
             >
               {heading}
-            </h3>
+            </Heading>
           ) : null}
           {body ? (
             <p

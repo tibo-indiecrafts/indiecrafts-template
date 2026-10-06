@@ -37,6 +37,8 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`ContactForm` takes `headingAs`** (`h1`/`h2`/`h3`, default `h3`), so a full-page form can own the
+  page heading. Blocks keep `h3`.
 - **A language choice now survives a restart.** `localeCookie` (`packages-shared-config/web`) gives the
   namespaced `<prefix>_NEXT_LOCALE` cookie a one-year life. next-intl v4 defaults to a session
   cookie, so closing the browser or the mobile shell dropped the choice and the browser language

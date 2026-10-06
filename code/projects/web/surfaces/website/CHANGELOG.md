@@ -19,6 +19,12 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The cookie table names the real cookies.** The seed declared `NEXT_LOCALE` and `legal-ack`; the
+  browser stores `<prefix>_NEXT_LOCALE` and `<prefix>.legal-ack`. The seed now uses `site.prefix` and
+  adds the three undeclared necessary cookies (`.locale-suggest`, `.announcement-ack`,
+  `.announcement-toast-ack`). The live dataset was patched the same way.
+- **The seed creates `contactSettings`** (heading, intro, message/button/success labels, en + fr).
+  Without it `/contact` showed no heading and French labels on the English page.
 - **The language strip no longer argues with the visitor.** A French browser that switched the site to
   English saw "Ce site est aussi disponible en Français" on every page. The header `LocaleSwitcher`
   now records the choice (`dismissLocaleSuggest`), like the strip's own buttons. The `i18n` e2e

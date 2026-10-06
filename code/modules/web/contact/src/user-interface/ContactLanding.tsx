@@ -38,6 +38,7 @@ export async function ContactLanding({ locale }: { locale: Locale }) {
         consentText={pick(settings?.consentLabel, locale)}
         successMessage={pick(settings?.successMessage, locale)}
         variant="card"
+        headingAs="h1"
       />
     </section>
   );

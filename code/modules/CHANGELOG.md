@@ -15,6 +15,8 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`/contact` has a page heading.** `ContactLanding` renders the `contactSettings` heading as the
+  page's `<h1>` (`ContactForm` `headingAs`); it was an `<h3>`, so the page had no `<h1>`.
 - **blog — the `llms.txt` section headings follow the locale.** `## Blog` / `## Categories` /
   `## Tags` / `## Authors` were English in every locale; they now come from the app's
   `messages.<locale>.llms` (`/fr/llms.txt` → `## Catégories`, `## Auteurs`).

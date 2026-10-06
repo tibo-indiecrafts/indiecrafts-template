@@ -14,7 +14,7 @@ status: stable
 
 ## Exports
 
-- `ContactFormProps` — type: the resolved copy, `Omit<ContactModule, "_type" | "_key" | "hidden">`.
+- `ContactFormProps` — type: the resolved copy, `Omit<ContactModule, "_type" | "_key" | "hidden">`, plus `headingAs` (`"h1" | "h2" | "h3"`, default `"h3"`; `"h1"` when the form is the whole page).
 - `ContactForm(props)` — the client contact form component.
 
 ## Usage

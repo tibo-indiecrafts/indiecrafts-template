@@ -3025,6 +3025,20 @@ const buildNavigation = () => ({
 // Cookie-consent singleton — banner copy + consent categories (with their Google
 // Consent-Mode signal mapping) + the cookie inventory shown on the policy page.
 // Read by `getCookieConsent` (src/lib/cookies.ts). `navLabel` builds localeStrings.
+// The real first-party cookie names carry the deployment's `site.prefix`
+// (@indiecrafts/packages-shared-config: NEXT_PUBLIC_SITE_PREFIX, else DEFAULT_SITE_PREFIX).
+const SITE_PREFIX = process.env.NEXT_PUBLIC_SITE_PREFIX || "indiecrafts";
+const firstPartyCookie = (name, en, fr) => ({
+  _key: key("ck"),
+  _type: "cookieEntry",
+  name,
+  provider: "Indiecrafts",
+  categoryKey: "necessary",
+  purpose: navLabel(en, fr),
+  duration: "1 year",
+  party: "first",
+});
+
 const buildCookieConsent = () => ({
   _id: "cookieConsent",
   _type: "cookieConsent",
@@ -3087,29 +3101,31 @@ const buildCookieConsent = () => ({
     },
   ],
   cookies: [
-    {
-      _key: key("ck"),
-      _type: "cookieEntry",
-      name: "NEXT_LOCALE",
-      provider: "Indiecrafts",
-      categoryKey: "necessary",
-      purpose: navLabel("Remembers your chosen language.", "Mémorise la langue choisie."),
-      duration: "1 year",
-      party: "first",
-    },
-    {
-      _key: key("ck"),
-      _type: "cookieEntry",
-      name: "legal-ack",
-      provider: "Indiecrafts",
-      categoryKey: "necessary",
-      purpose: navLabel(
-        "Remembers that you acknowledged the latest legal/policy update.",
-        "Mémorise que vous avez pris connaissance de la dernière mise à jour légale.",
-      ),
-      duration: "1 year",
-      party: "first",
-    },
+    firstPartyCookie(
+      `${SITE_PREFIX}_NEXT_LOCALE`,
+      "Remembers your chosen language.",
+      "Mémorise la langue choisie.",
+    ),
+    firstPartyCookie(
+      `${SITE_PREFIX}.legal-ack`,
+      "Remembers that you acknowledged the latest legal/policy update.",
+      "Mémorise que vous avez pris connaissance de la dernière mise à jour légale.",
+    ),
+    firstPartyCookie(
+      `${SITE_PREFIX}.locale-suggest`,
+      "Remembers that you answered the language suggestion.",
+      "Mémorise que vous avez répondu à la suggestion de langue.",
+    ),
+    firstPartyCookie(
+      `${SITE_PREFIX}.announcement-ack`,
+      "Remembers that you closed the announcement bar.",
+      "Mémorise que vous avez fermé la barre d'annonce.",
+    ),
+    firstPartyCookie(
+      `${SITE_PREFIX}.announcement-toast-ack`,
+      "Remembers that you closed the announcement pop-up.",
+      "Mémorise que vous avez fermé la fenêtre d'annonce.",
+    ),
     {
       _key: key("ck"),
       _type: "cookieEntry",
@@ -3241,6 +3257,24 @@ const buildLocaleSuggest = () => ({
   dismissLabel: navLabel("No thanks", "Non merci"),
 });
 
+// Contact page copy (@indiecrafts/modules-web-contact) — without it `/contact` has no heading.
+const buildContactSettings = () => ({
+  _id: "contactSettings",
+  _type: "contactSettings",
+  enabled: true,
+  heading: navLabel("Get in touch", "Contactez-nous"),
+  description: navLabel(
+    "Tell us about your project. We reply within two working days.",
+    "Parlez-nous de votre projet. Nous répondons sous deux jours ouvrés.",
+  ),
+  messageLabel: navLabel("Your message…", "Votre message…"),
+  buttonLabel: navLabel("Send", "Envoyer"),
+  successMessage: navLabel(
+    "Thanks — your message is on its way.",
+    "Merci — votre message est bien parti.",
+  ),
+});
+
 async function run() {
   console.log(`Seeding into ${projectId}/${dataset}…`);
   console.log("");
@@ -3272,6 +3306,7 @@ async function run() {
     buildAnnouncementBar(),
     buildAnnouncementToast(),
     buildLocaleSuggest(),
+    buildContactSettings(),
     blog,
     ...comments,
     ...subscribers,
