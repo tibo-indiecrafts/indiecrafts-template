@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The self-service account route on the app surface. It renders `<AccountControl variant="page">` — the Clerk `<UserProfile>` with the Privacy & consent and Your data tabs — the same experience that opens from the sidebar avatar. It 404s unless `features.deleteAccount` is on, Clerk is configured, and the client API origin is set; the `(app)` layout redirects signed-out users to sign-in.
+The self-service account route on the app surface. It renders `<AccountControl variant="page">` — the Clerk `<UserProfile>` with the Privacy & consent, Emails, Language and Your data tabs — the same experience that opens from the sidebar avatar. It 404s unless `features.deleteAccount` is on, Clerk is configured, and the client API origin is set; the `(app)` layout redirects signed-out users to sign-in.
 
 ## Exports
 

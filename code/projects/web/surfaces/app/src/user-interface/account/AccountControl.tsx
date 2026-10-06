@@ -62,6 +62,8 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
       emailsTabLabel: tTabs("emails"),
       emailsTitle: tEmails("heading"),
       emailsIntro: tEmails("intro"),
+      languageTabLabel: tTabs("language"),
+      languageIntro: tTabs("languageIntro"),
       emailPreferences: {
         noticesHeading: tEmails("noticesHeading"),
         loading: tEmails("loading"),

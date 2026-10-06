@@ -108,6 +108,8 @@
     "tabs": {
       "consent": "Privacy & consent",
       "emails": "Emails",
+      "language": "Language",
+      "languageIntro": "The language of this site and of the emails we send you.",
       "data": "Your data",
       "consentTitle": "Cookie preferences",
       "consentSave": "Save"

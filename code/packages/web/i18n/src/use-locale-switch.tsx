@@ -51,9 +51,10 @@ export function LocaleSwitchProvider({
  * Shared locale switcher — swaps the URL locale (next-intl re-prefixes as-needed).
  * When a resolver is available (an explicit arg, else the `LocaleSwitchProvider`
  * context), a content route whose slug differs per language navigates to the
- * resolved counterpart; otherwise the current path is just re-prefixed. Route
- * knowledge lives in the app, not this brick. Used by the app's `LocaleSwitcher` +
- * the `@indiecrafts/packages-web-locale-suggest` banner.
+ * resolved counterpart; otherwise the current path is just re-prefixed, keeping
+ * the URL hash. Route knowledge lives in the app, not this brick. Used by the app's
+ * `LocaleSwitcher`, the account Language tab + the
+ * `@indiecrafts/packages-web-locale-suggest` banner.
  */
 export function useLocaleSwitch(resolve?: TranslatedPathResolver) {
   const router = useRouter();
@@ -66,6 +67,10 @@ export function useLocaleSwitch(resolve?: TranslatedPathResolver) {
     const target = resolver
       ? await resolver(pathname, current, next).catch(() => null)
       : null;
-    router.replace(target ?? pathname, { locale: next as Locale });
+    // Same page, new prefix: keep the `#…` part (e.g. the account widget's `#/language` tab).
+    // A resolved counterpart is another document, so its anchors don't carry over.
+    router.replace(target ?? `${pathname}${window.location.hash}`, {
+      locale: next as Locale,
+    });
   };
 }

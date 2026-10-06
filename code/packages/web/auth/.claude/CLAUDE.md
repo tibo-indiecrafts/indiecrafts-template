@@ -1,8 +1,9 @@
 # `@indiecrafts/packages-web-auth` — themed Clerk provider (web tier)
 
 **Stack:** TypeScript + React 19 + `@clerk/nextjs` (v7). DOM-coupled → **web scope** (it
-themes DOM sign-in components, so it can't sit in `shared/`). Dep: `@indiecrafts/packages-shared-auth`
-(the DOM-free role contract). Auto-loads under `code/packages/web/auth/**`. Subpath-only `exports`.
+themes DOM sign-in components, so it can't sit in `shared/`). Deps: `@indiecrafts/packages-shared-auth`
+(the DOM-free role contract), plus `packages-web-i18n` + `packages-shared-config` for the account
+Language tab (`./account`). Auto-loads under `code/packages/web/auth/**`. Subpath-only `exports`.
 
 Consumed by the three Next surfaces (`website`, `admin`, `app`) — 3 consumers.
 

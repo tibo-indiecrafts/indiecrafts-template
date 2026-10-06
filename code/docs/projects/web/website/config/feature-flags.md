@@ -131,8 +131,9 @@ Self-service account actions:
 account: { delete: true, export: true },
 ```
 
-Both controls live in the account UI built on Clerk's `<UserProfile>` — with two custom tabs,
-**"Privacy & consent"** (cookie choices) and **"Your data"** (export + deletion). Its
+Both controls live in the account UI built on Clerk's `<UserProfile>` — with four custom tabs,
+**"Privacy & consent"** (cookie choices), **"Emails"**, **"Language"** (site + email language) and
+**"Your data"** (export + deletion). Its
 presentation is per surface: the **website** opens it as a **modal** from the header avatar
 (and serves `/account` as a page); the **app** renders it **embedded** in its `/account` page
 (reached from the sidebar nav) — also inside the Capacitor mobile shell, which loads the app. See the account-modal spec for the full per-surface matrix.

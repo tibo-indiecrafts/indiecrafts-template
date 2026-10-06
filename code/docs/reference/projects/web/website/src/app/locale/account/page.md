@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders `AccountControl` in its `page` variant (Clerk `<UserProfile>` with the Privacy & consent, Emails and Your data tabs), centred in the page — the same experience that opens from the header avatar. The email preference centre is the widget's Emails tab (`/account#/emails`). The route is gated by `features.account.delete` (`isPageVisible`), Clerk being configured, a client API origin, and a signed-in user — a signed-out visitor is redirected home.
+Renders `AccountControl` in its `page` variant (Clerk `<UserProfile>` with the Privacy & consent, Emails, Language and Your data tabs), centred in the page — the same experience that opens from the header avatar. The email preference centre is the widget's Emails tab (`/account#/emails`). The route is gated by `features.account.delete` (`isPageVisible`), Clerk being configured, a client API origin, and a signed-in user — a signed-out visitor is redirected home.
 
 ## Exports
 

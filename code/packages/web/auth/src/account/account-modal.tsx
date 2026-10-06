@@ -1,25 +1,25 @@
 "use client";
 
 /**
- * Renders the Clerk account UI with custom consent and data tabs.
+ * Renders the Clerk account UI with our custom pages (consent, emails, language, data).
  *
  * @see docs/reference/packages/web/auth/src/account/account-modal.md
  */
 
-import { useMemo } from "react";
-import { UserButton, UserProfile, useAuth } from "@clerk/nextjs";
-import {
-  AccountConsentTab,
-  AccountDataTab,
-  EmailPreferences,
-  emailPreferencesIo,
-  MarketingEmailToggle,
-  type DeleteAccountCopy,
-  type EmailPreferencesCopy,
-  type ExportCopy,
+import { UserButton, UserProfile } from "@clerk/nextjs";
+import type {
+  DeleteAccountCopy,
+  EmailPreferencesCopy,
+  ExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
 import type { ConsentCategory } from "@indiecrafts/packages-shared-compliance/shared";
-import { useClerkAuthPort } from "./use-clerk-auth-port";
+import { DataIcon, GlobeIcon, MailIcon, ShieldIcon } from "./icons";
+import {
+  ConsentContent,
+  DataContent,
+  EmailsContent,
+  LanguageContent,
+} from "./pages";
 
 /** All copy the account tabs need — resolved per surface from `messages/` and passed in. */
 export interface AccountCopy {
@@ -34,6 +34,9 @@ export interface AccountCopy {
   emailsTitle: string;
   emailsIntro: string;
   emailPreferences: EmailPreferencesCopy;
+  /** The "Language" page: tab label (also its heading) and intro. */
+  languageTabLabel: string;
+  languageIntro: string;
   delete: DeleteAccountCopy;
   export: ExportCopy;
 }
@@ -52,125 +55,15 @@ export interface AccountModalProps {
   /** Called after the Privacy tab saves cookie choices — the surface logs + applies them
    *  (the website's `applyConsent`, the app's `reportConsent`). */
   onConsentSaved?: (choices: Record<string, boolean>, version: string) => void;
+  /** Called when the user picks a language in the Language tab, before the page switches. */
+  onLocaleChange?: (locale: string) => void;
   copy: AccountCopy;
-}
-
-const iconProps = {
-  width: 16,
-  height: 16,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 2,
-  strokeLinecap: "round" as const,
-  strokeLinejoin: "round" as const,
-  "aria-hidden": true,
-};
-
-function ShieldIcon() {
-  return (
-    <svg {...iconProps}>
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    </svg>
-  );
-}
-
-function DataIcon() {
-  return (
-    <svg {...iconProps}>
-      <ellipse cx="12" cy="5" rx="9" ry="3" />
-      <path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5" />
-      <path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3" />
-    </svg>
-  );
-}
-
-function MailIcon() {
-  return (
-    <svg {...iconProps}>
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <path d="m22 7-10 6L2 7" />
-    </svg>
-  );
-}
-
-/** A custom page's title — the same size as Clerk's own page titles (`headerTitle` in
- *  `authAppearance`), so every page of the account widget reads alike. */
-function PageTitle({ children }: { children: string }) {
-  return <h1 className="text-foreground text-lg font-semibold">{children}</h1>;
-}
-
-// The custom-page contents, shared by <AccountButton> (modal) and <AccountPage>
-// (standalone /account). Rendered inside Clerk's <UserProfile>, so their hooks
-// (useClerkAuthPort → useAuth/useReverification) have a provider.
-function ConsentContent(p: AccountModalProps) {
-  const auth = useClerkAuthPort(p.apiUrl);
-  return (
-    <div className="space-y-6">
-      <PageTitle>{p.copy.consentTabLabel}</PageTitle>
-      <AccountConsentTab
-        storageKey={p.consentStorageKey}
-        version={p.policyVersion}
-        categories={p.categories}
-        title={p.copy.consentTitle}
-        saveLabel={p.copy.consentSaveLabel}
-        onSaved={p.onConsentSaved}
-      />
-      <MarketingEmailToggle
-        apiUrl={p.apiUrl}
-        getToken={auth.getToken}
-        label={p.copy.marketingLabel}
-        surface={p.surface}
-      />
-    </div>
-  );
-}
-
-function EmailsContent(p: AccountModalProps) {
-  // Clerk's own getToken is stable across renders (useClerkAuthPort wraps it in a new
-  // function each render) — EmailPreferences re-reads whenever `read` changes.
-  const { getToken } = useAuth();
-  const io = useMemo(
-    () => emailPreferencesIo(p.apiUrl, () => getToken(), p.surface, p.locale),
-    [p.apiUrl, getToken, p.surface, p.locale],
-  );
-  return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <PageTitle>{p.copy.emailsTitle}</PageTitle>
-        <p className="text-muted-foreground text-sm text-pretty">
-          {p.copy.emailsIntro}
-        </p>
-      </div>
-      <EmailPreferences
-        read={io.read}
-        write={io.write}
-        chrome={p.copy.emailPreferences}
-      />
-    </div>
-  );
-}
-
-function DataContent(p: AccountModalProps) {
-  const auth = useClerkAuthPort(p.apiUrl);
-  return (
-    <div className="space-y-6">
-      <PageTitle>{p.copy.dataTabLabel}</PageTitle>
-      <AccountDataTab
-        auth={auth}
-        apiUrl={p.apiUrl}
-        deleteCopy={p.copy.delete}
-        exportCopy={p.copy.export}
-        showExport={p.showExport}
-      />
-    </div>
-  );
 }
 
 /**
  * The account trigger + modal. Renders Clerk's `<UserButton>` (avatar → "Manage
  * account" opens `<UserProfile>`) with Clerk's built-in Profile/Security/Devices tabs
- * plus our three custom pages: "Privacy & consent", "Emails" and "Your data". One component,
+ * plus our four custom pages: "Privacy & consent", "Emails", "Language" and "Your data". One component,
  * mounted identically on the website header and the app sidebar. `@clerk/nextjs`-based (website + app).
  */
 export function AccountButton(props: AccountModalProps) {
@@ -189,6 +82,13 @@ export function AccountButton(props: AccountModalProps) {
         labelIcon={<MailIcon />}
       >
         <EmailsContent {...props} />
+      </UserButton.UserProfilePage>
+      <UserButton.UserProfilePage
+        label={props.copy.languageTabLabel}
+        url="language"
+        labelIcon={<GlobeIcon />}
+      >
+        <LanguageContent {...props} />
       </UserButton.UserProfilePage>
       <UserButton.UserProfilePage
         label={props.copy.dataTabLabel}
@@ -229,6 +129,13 @@ export function AccountPage(props: AccountModalProps) {
         labelIcon={<MailIcon />}
       >
         <EmailsContent {...props} />
+      </UserProfile.Page>
+      <UserProfile.Page
+        label={props.copy.languageTabLabel}
+        url="language"
+        labelIcon={<GlobeIcon />}
+      >
+        <LanguageContent {...props} />
       </UserProfile.Page>
       <UserProfile.Page
         label={props.copy.dataTabLabel}

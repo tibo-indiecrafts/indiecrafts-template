@@ -17,6 +17,7 @@ import {
   resolveCategories,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { applyConsent } from "@indiecrafts/packages-web-compliance/consent/consent-store";
+import { dismissLocaleSuggest } from "@indiecrafts/packages-web-locale-suggest/locale-suggest-store";
 import { site, features } from "@/config";
 import { useCookieConsentConfig } from "./CookieConsentConfig";
 
@@ -61,6 +62,8 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
       applyConsent(categories, choices, version, "preferences"),
     consentStorageKey: `${site.prefix}.cookie-consent`,
     surface: "website",
+    // A language picked in the account answers the "available in …" strip too.
+    onLocaleChange: dismissLocaleSuggest,
     locale,
     copy: {
       consentTabLabel: tTabs("consent"),
@@ -71,6 +74,8 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
       emailsTabLabel: tTabs("emails"),
       emailsTitle: tEmails("heading"),
       emailsIntro: tEmails("intro"),
+      languageTabLabel: tTabs("language"),
+      languageIntro: tTabs("languageIntro"),
       emailPreferences: {
         noticesHeading: tEmails("noticesHeading"),
         loading: tEmails("loading"),

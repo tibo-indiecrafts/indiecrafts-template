@@ -14,6 +14,17 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **A "Language" tab in account management** (`packages-web-auth/account`, `AccountLanguageTab`), on the
+  website and the app (and so the mobile shell), after "Emails". One option per locale by native name.
+  Picking one saves it to the Clerk profile (the email language), then switches the page, like the
+  header switcher. A single-choice toggle group: arrow keys only move focus, so browsing the options
+  switches nothing. From the header modal it closes Clerk's modal first (left open, it lost the custom
+  pages). The website also silences its "available in …" strip (`onLocaleChange`). Copy:
+  `account.tabs.language` + `languageIntro`, en/fr. `account-modal.tsx` is split into `icons.tsx` +
+  `pages.tsx` (under 200 lines).
+- **A same-page locale switch keeps the URL hash** (`useLocaleSwitch`, `packages-web-i18n`): switching
+  language on `/account#/language` lands on `/fr/account#/language`, not the Profile tab. The brick
+  gets its first tests.
 - **`<GoogleAnalytics>`** (`packages-web-compliance/consent/GoogleAnalytics`) — GA in **basic** consent
   mode: with consent required, nothing from Google loads (no script, no ping) until the stored record
   for the current version grants `analytics_storage`; then gtag.js loads with the choice restored.

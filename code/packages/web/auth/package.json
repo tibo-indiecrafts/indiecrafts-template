@@ -21,8 +21,10 @@
     "@clerk/nextjs": "^7.7.7",
     "@indiecrafts/packages-shared-auth": "workspace:*",
     "@indiecrafts/packages-shared-compliance": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
     "@indiecrafts/packages-shared-logger": "workspace:*",
     "@indiecrafts/packages-shared-utils": "workspace:*",
+    "@indiecrafts/packages-web-i18n": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*"
   },
   "peerDependencies": {

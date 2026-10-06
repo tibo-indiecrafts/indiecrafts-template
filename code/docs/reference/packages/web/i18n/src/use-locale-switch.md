@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The shared locale switcher. `useLocaleSwitch` returns a `switchTo` function that re-prefixes the current path for a new locale. When a content route's slug differs per language, it uses a resolver (an explicit argument, else the `LocaleSwitchProvider` context) to navigate to the translated counterpart. Route knowledge lives in the app, so the app injects the resolver rather than this brick knowing module routes.
+The shared locale switcher. `useLocaleSwitch` returns a `switchTo` function that re-prefixes the current path for a new locale, keeping the URL hash (so `/account#/language` stays on its tab). When a content route's slug differs per language, it uses a resolver (an explicit argument, else the `LocaleSwitchProvider` context) to navigate to the translated counterpart (a different document, so the old hash is dropped). Route knowledge lives in the app, so the app injects the resolver rather than this brick knowing module routes.
 
 ## Exports
 

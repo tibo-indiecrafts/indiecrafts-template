@@ -14,7 +14,8 @@ order: 1
 `@indiecrafts/packages-web-auth` is the DOM-coupled web tier over Clerk (`@clerk/nextjs` v7). It
 themes Clerk UI from the design tokens, localizes it, logs sessions, and guards redirects. It
 depends on the DOM-free `@indiecrafts/packages-shared-auth` for the role contract, plus
-`packages-shared-compliance`, `packages-shared-logger`, and `packages-web-ui`.
+`packages-shared-compliance`, `packages-shared-config`, `packages-shared-logger`, `packages-web-i18n`
+(the account Language tab's switch), and `packages-web-ui`.
 
 ## Exports
 
@@ -32,8 +33,8 @@ Root `.` barrel:
 
 Subpath-only exports (not in the root barrel): `./persist-locale` (`usePersistLocale`),
 `./marketing-nudge` (`MarketingNudgeMount`), `./session-log` (`logSession`), `./account`
-(`AccountButton`, `AccountPage` — Clerk's account UI plus our Privacy & consent, Emails and
-Your data pages; Clerk's own "Delete account" is hidden, so "Your data" is the one way to delete).
+(`AccountButton`, `AccountPage` — Clerk's account UI plus our Privacy & consent, Emails, Language and
+Your data pages; Language (`AccountLanguageTab`) sets the site and email language, like the header switcher; Clerk's own "Delete account" is hidden, so "Your data" is the one way to delete).
 
 ## Usage example
 
