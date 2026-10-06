@@ -14,6 +14,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **No Clerk error on a stray path.** A request the proxy skips (seen live: the mobile shell's
+  `/favicon.ico`) reached the `(app)` layout as a fake locale, whose `auth()` threw "can't detect
+  clerkMiddleware()". The layout now 404s a non-locale path first.
 - **Cookie decisions are logged, like on the website.** The app saved the banner and Privacy-tab
   choices locally only — a signed-in user had no `consent_events` proof. New `/api/consent-log`
   (signed-in only; matched by the proxy so `auth()` has the session) + `reportConsent` on accept,

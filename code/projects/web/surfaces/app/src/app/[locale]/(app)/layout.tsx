@@ -4,8 +4,10 @@
  * @see docs/reference/projects/web/app/src/app/locale/(app)/layout.md
  */
 import type { ReactNode } from "react";
+import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "@/i18n/routing";
+import { hasLocale } from "next-intl";
+import { redirect, routing } from "@/i18n/routing";
 import { AppShell } from "@/user-interface/layout/AppShell";
 
 /**
@@ -23,6 +25,9 @@ export default async function AppGroupLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  // A stray path the proxy skips (e.g. `/favicon.ico` — a dot in it) lands here with a
+  // non-locale `locale`. 404 it before `auth()`, which would throw outside the proxy.
+  if (!hasLocale(routing.locales, locale)) notFound();
   if (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
     const { userId } = await auth();
     if (!userId) redirect({ href: "/sign-in", locale });
