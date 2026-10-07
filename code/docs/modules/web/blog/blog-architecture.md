@@ -60,9 +60,10 @@ Seven blog-specific blocks are frontpage-capable: `blog-hero`, `blog-featured`, 
 a category, or `getPopularPostIds`) plus an optional `pinned` array; pins take precedence in editor
 order, the rule fills the rest up to a shared `count`/`limit` cap. `blog-collection` has no rule — its
 `posts[]` is pin-only. `lib/popularity.ts` (`getPopularPostIds(locale, count)`) is the Trending
-popularity seam — returns `[]` today (no read-count source), so `blog-trending` falls back to
-most-recent; a future read-count pipeline (Analytics Engine / D1) replaces the function body only
-(`@debt MIGRATION`).
+popularity source: the most-viewed posts of the last 30 days, read from the shared api's anonymous
+per-post counter (`GET /v1/views/top`, EU D1). `PostViewBeacon` on the post page counts a view through
+the website's `/api/views` route (`recordPostView` → `POST /v1/views`); no cookie, no identity. The
+latest posts fill any gap (`popularThenLatest`), and an api failure falls back to them.
 | `/api/draft-mode/{enable,disable}` | `app/api/draft-mode/.../route.ts` | Preview toggles. Gated by `features.studio` (404 when off); `/enable` 503s when `SANITY_API_READ_TOKEN` is unset. |
 | `/studio/[[...tool]]` | `app/studio/[[...tool]]/page.tsx` | Embedded Sanity Studio. Gated by `features.studio`. Own root layout (`app/studio/layout.tsx`) — sits outside `[locale]/` because Studio owns its HTML shell. |
 

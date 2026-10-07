@@ -7,6 +7,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **Anonymous post-view counter for the blog's Trending block.** `POST /v1/views` (server bearer,
+  body `{ postId, locale }`) adds 1 to today's counter in a new `post_views` table (`main` D1,
+  migration `0015`); `GET /v1/views/top?locale=&limit=&days=` returns the most-viewed post ids.
+  **Why:** the website can rank posts by real reads. No personal data is stored: no IP, no user id,
+  no cookie — only a count per post, locale and day.
 - **`GET /v1/consent/history?userId=`** (admin bearer) — one user's consent decisions from
   `consent_events`: the latest per type + the last 100, newest first. Data-minimized (no IP hash, no
   fingerprint); `400` on a non-Clerk id. **Why:** the admin can show a user's consent state and its proof.

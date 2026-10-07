@@ -13,6 +13,9 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Added
 
+- **`main_purge` deletes `post_views` rows older than 90 days** (new `post_views` count). **Why:** the
+  blog's Trending window is at most 90 days, so older counters serve no read. The window is fixed,
+  not a setting: the rows hold no personal data.
 - **`audit_purge` drops Idempotency-Key results after 24 h** (the api's replay window).
 - **`pnpm dev` runs the cron locally** on the api's local state (`--persist-to <repo>/.wrangler/state`,
   `--test-scheduled`); `dev:remote` keeps the real dev bindings.

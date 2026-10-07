@@ -20,12 +20,15 @@ import {
 } from "@indiecrafts/modules-web-blog/sanity/queries";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { getPopularPostIds } from "@indiecrafts/modules-web-blog/lib/popularity";
-import { mergePinnedWithFallback } from "@indiecrafts/modules-web-blog/lib/pin-order";
+import {
+  mergePinnedWithFallback,
+  popularThenLatest,
+} from "@indiecrafts/modules-web-blog/lib/pin-order";
 
 /**
- * Frontpage "Trending" block — the most popular posts (`getPopularPostIds`),
- * falling back to most-recent while Project 1 has no read-count source (see
- * `lib/popularity.ts`). `count` is a shared cap (like the sibling blocks):
+ * Frontpage "Trending" block — the most-viewed posts of the last 30 days
+ * (`getPopularPostIds`, the api's anonymous view counter; see `lib/popularity.ts`),
+ * falling back to most-recent when there are no views yet or the api is down. `count` is a shared cap (like the sibling blocks):
  * the editor's `pinned` posts take precedence, and trending/recent posts
  * fill the rest up to `count`. The block always renders content once any
  * post exists — never blank. Maps onto the generic `SpotlightRow` primitive;
@@ -47,7 +50,7 @@ export async function BlogTrending({
     getTranslations({ locale, namespace: "pages.blog" }),
   ]);
 
-  const [pinnedPosts, fallbackPosts] = await Promise.all([
+  const [pinnedPosts, popularPosts, latestPosts] = await Promise.all([
     pinnedIds.length
       ? sanityFetchLive<PostListItem[]>({
           query: blogCollectionQuery,
@@ -59,26 +62,21 @@ export async function BlogTrending({
           query: blogCollectionQuery,
           params: { locale, ids: popularIds },
         })
-      : sanityFetchLive<PostListItem[]>({
-          query: moduleBlogPostListQuery,
-          params: {
-            locale,
-            categoryIds: [],
-            limit: count,
-            featuredOnly: false,
-          },
-        }),
+      : Promise.resolve([]),
+    sanityFetchLive<PostListItem[]>({
+      query: moduleBlogPostListQuery,
+      params: { locale, categoryIds: [], limit: count, featuredOnly: false },
+    }),
   ]);
 
-  // GROQ only filters by `_id in $ids` — respect the editor's/popularity's
-  // order here. Shared cap (mirrors blog-featured / blog-category-spotlight):
-  // pinned posts take precedence, trending/recent posts fill the rest up to
-  // `count`.
+  // Most viewed first, the latest posts filling any gap; then the shared cap (mirrors
+  // blog-featured / blog-category-spotlight): pinned posts take precedence.
+  const ranked = popularThenLatest(popularPosts, popularIds, latestPosts);
   const posts = mergePinnedWithFallback(
     pinnedPosts,
     pinnedIds,
-    fallbackPosts,
-    popularIds,
+    ranked,
+    ranked.map((post) => post._id),
     count,
   );
 

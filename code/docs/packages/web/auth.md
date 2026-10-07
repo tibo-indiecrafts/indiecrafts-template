@@ -32,14 +32,14 @@ Root `.` barrel:
 - **`isSafeRelativePath` / `resolveSignInRedirect`** — open-redirect guard and post-sign-in target.
 - Re-exported from `@clerk/nextjs`: **`SignInButton`**, **`SignOutButton`**, **`UserButton`**, **`Show`**.
 
-Subpath-only exports (not in the root barrel): `./persist-locale` (`usePersistLocale`),
+Subpath-only exports (not in the root barrel): `./persist-locale` (`persistLocale`), `./clerk-active` (`useClerkActive`),
 `./marketing-nudge` (`MarketingNudgeMount`), `./session-log` (`logSession`), `./account`
 (`AccountButton`, `AccountPage` — Clerk's account UI plus our Privacy & consent, Emails, Language and
 Your data pages; Language (`AccountLanguageTab`) sets the site and email language, like the header switcher; Clerk's own "Delete account" is hidden, so "Your data" is the one way to delete).
 
 ## Usage example
 
-Wrap the root layout, then mount the session logger once app-wide.
+Wrap the root layout, then mount the session logger once app-wide (admin, app). The website loads Clerk only for a signed-in visitor or on its sign-in / sign-up pages: its layout renders these through `next/dynamic` wrappers (`LazyClerk`), and client components check `useClerkActive()` before using Clerk UI.
 
 ```tsx
 // app/[locale]/layout.tsx

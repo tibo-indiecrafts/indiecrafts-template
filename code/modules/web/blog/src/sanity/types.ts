@@ -275,9 +275,9 @@ export type BlogCollectionModule = ModuleBase & {
 };
 
 /**
- * The frontpage "Trending" block — the most popular posts (`getPopularPostIds`,
- * `lib/popularity.ts`), falling back to most-recent while Project 1 has no
- * read-count source. `pinned` posts always show first.
+ * The frontpage "Trending" block — the most-viewed posts of the last 30 days
+ * (`getPopularPostIds`, `lib/popularity.ts`), falling back to most-recent when there
+ * are no views yet. `pinned` posts always show first.
  */
 export type BlogTrendingModule = ModuleBase & {
   _type: "module.blog-trending";

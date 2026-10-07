@@ -9,7 +9,9 @@ Consumed by the three Next surfaces (`website`, `admin`, `app`) — 3 consumers.
 
 - **`AppClerkProvider`** (`./provider`) — wraps `<ClerkProvider>` with `authAppearance()`.
   Wrap the **root** layout with it so `auth()` + the hosted `<SignIn>`/`<SignUp>` work
-  app-wide. Reads `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (public key — allowed under
+  app-wide (admin, app). The website loads it only when needed, through `next/dynamic` from a
+  client module. Its subtree reads `useClerkActive()` (`./clerk-active`) as true — the check a
+  client component makes before using Clerk UI, since Clerk's hooks throw without the provider. Reads `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (public key — allowed under
   `NEXT_PUBLIC_`) from the env. Server-component compatible.
   `signUpPath="/sign-up"` (website, app) makes Clerk's "Sign up" links open the app's own
   localized page; admin has no sign-up page and omits it.
@@ -20,11 +22,12 @@ Consumed by the three Next surfaces (`website`, `admin`, `app`) — 3 consumers.
   `@indiecrafts/packages-web-ui-tokens` CSS custom properties (`var(--primary)`, …),
   so sign-in UI is token-themed with **no hard-coded brand color**. A colocated test
   fails if a raw hex/oklch sneaks in.
-- **`usePersistLocale()`** (`./persist-locale`) — a `(locale) => void` a surface's locale
+- **`persistLocale(locale)`** (`./persist-locale`) — what a surface's locale
   switcher calls to mirror an explicit language change to the signed-in user's Clerk
   `unsafeMetadata.locale`. The api's `user.updated` webhook then updates `user_profiles.locale`,
   so transactional/auth emails follow the user's CURRENT language, not just the sign-up one.
-  Merges existing metadata, no-ops when signed out / unchanged, best-effort (logs on failure).
+  Reads `window.Clerk` (no hook, no Clerk import). Merges existing metadata, no-ops when Clerk
+  isn't loaded / signed out / unchanged, best-effort (logs on failure).
 
 **Not here:** the role contract (`Roles`, `isAdmin`, claims type) lives in the DOM-free
 `@indiecrafts/packages-shared-auth`. Middleware `clerkMiddleware` wrapping + the admin gate

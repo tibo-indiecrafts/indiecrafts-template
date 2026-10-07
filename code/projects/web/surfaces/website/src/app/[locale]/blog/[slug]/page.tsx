@@ -23,6 +23,7 @@ import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { DefaultPostLayout } from "@indiecrafts/modules-web-blog/user-interface/post/layout/DefaultPostLayout";
 import { Modules } from "@indiecrafts/modules-web-blog/user-interface/renderers/ModuleRenderer";
 import { Comments } from "@indiecrafts/modules-web-blog/user-interface/post/sections/Comments";
+import { PostViewBeacon } from "@indiecrafts/modules-web-blog/user-interface/post/components/PostViewBeacon";
 import { isCommentsEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
@@ -209,6 +210,8 @@ export default async function BlogPostPage({ params }: Props) {
           share={settings.share}
         />
       )}
+      {/* One anonymous view for the Trending block (no cookie, nothing stored). */}
+      <PostViewBeacon postId={post._id} locale={locale} />
       {/* Streamed: the article flushes first, the thread (its own read) follows. */}
       {isCommentsEnabled() ? (
         <Suspense fallback={null}>

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { mergePinnedWithFallback, reorderByIds } from "./pin-order";
+import {
+  mergePinnedWithFallback,
+  popularThenLatest,
+  reorderByIds,
+} from "./pin-order";
 
 type Item = { _id: string; label: string };
 
@@ -99,5 +103,23 @@ describe("mergePinnedWithFallback", () => {
 
   it("returns an empty array when both inputs are empty", () => {
     expect(mergePinnedWithFallback([], [], [], [], 4)).toEqual([]);
+  });
+});
+
+describe("popularThenLatest", () => {
+  it("keeps the counter's order, then fills with the latest posts not already listed", () => {
+    // GROQ returns the popular posts in its own order; the counter's order wins.
+    const popular = [item("b"), item("a")];
+    const latest = [item("new"), item("a"), item("old")];
+    const ranked = popularThenLatest(popular, ["a", "b"], latest);
+    expect(ranked.map((i) => i._id)).toEqual(["a", "b", "new", "old"]);
+  });
+
+  it("is just the latest posts while nothing has been viewed", () => {
+    const latest = [item("new"), item("old")];
+    expect(popularThenLatest([], [], latest).map((i) => i._id)).toEqual([
+      "new",
+      "old",
+    ]);
   });
 });

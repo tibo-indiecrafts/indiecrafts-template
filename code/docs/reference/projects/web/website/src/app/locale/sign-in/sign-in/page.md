@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Server route for `/<locale>/sign-in/*`. It renders Clerk's themed `SignInView` with the post-sign-in fallback set to home; a `redirect_url` query returns the user to where they were bounced from. Login is optional on the website (no gate). When Clerk is unconfigured (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` unset) the route 404s.
+Server route for `/<locale>/sign-in/*`. It renders Clerk's themed `SignInView` with the post-sign-in fallback set to home; a `redirect_url` query returns the user to where they were bounced from. Login is optional on the website (no gate). When Clerk is unconfigured (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` unset) the route 404s. This page is one of the two where the layout loads Clerk for a signed-out visitor (`shouldLoadClerk`); `RequireClerk` wraps the view, so a client-side arrival reloads once to get Clerk.
 
 ## Exports
 

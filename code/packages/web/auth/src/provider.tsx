@@ -10,6 +10,7 @@ import {
 } from "@indiecrafts/packages-shared-config";
 import { authAppearance } from "./appearance";
 import { clerkLocalization } from "./localization";
+import { ClerkActive } from "./clerk-active";
 
 /**
  * The app-themed Clerk provider. Wrap the layout with it so `auth()` and the
@@ -26,6 +27,10 @@ import { clerkLocalization } from "./localization";
  * modal signs up in place, with no `unsafeMetadata`: no locale (the welcome email
  * falls back to English) and no marketing decision. A surface with no sign-up page
  * (admin) omits it.
+ *
+ * Its subtree reads `useClerkActive()` as true. The website loads this provider only when
+ * needed, through `next/dynamic` from a client module (there `ClerkProvider` resolves to
+ * Clerk's client provider), so it has no `"use client"` of its own.
  */
 export function AppClerkProvider({
   children,
@@ -52,7 +57,7 @@ export function AppClerkProvider({
           : signUpPath
       }
     >
-      {children}
+      <ClerkActive>{children}</ClerkActive>
     </ClerkProvider>
   );
 }

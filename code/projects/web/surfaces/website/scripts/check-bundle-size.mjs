@@ -24,10 +24,10 @@ import path from "node:path";
 import vm from "node:vm";
 import { pathToFileURL } from "node:url";
 
-// Measured 2026-10-07 at ~370 kB: Clerk (~135, the provider wraps every page for the
-// header sign-in), React DOM (~65), next-intl, the consent banner, Turnstile, Radix.
+// Measured 2026-10-07 at ~292 kB: React DOM (~65), next-intl, Radix, the consent banner,
+// Turnstile. Clerk loads only for a signed-in visitor (`shouldLoadClerk`), so it is out.
 // The ceiling is that + ~15%. Ratchet it down when a dependency leaves the first load.
-export const BUDGET_KB = 425;
+export const BUDGET_KB = 335;
 
 /** The landing route — the page a first-time visitor most often hits. */
 export const LANDING_PAGE = "/[locale]/(home)/page";

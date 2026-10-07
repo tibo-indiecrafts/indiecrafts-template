@@ -48,6 +48,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`modules-web-blog` — Trending shows the most-viewed posts.** `getPopularPostIds` reads the shared
+  api's anonymous counter (`GET /v1/views/top`, last 30 days, uncached, 1.5 s timeout) and the
+  latest posts fill any gap (`popularThenLatest`); any failure falls back to the latest posts.
+  `recordPostView` + `PostViewBeacon` count a view (via the host app's `/api/views`). Closes the
+  `@debt MIGRATION` on the popularity seam. **Why:** the block promised "trending" but had no signal.
 - **blog — locale reads go through the shared `pickLocale`; a drift tripwire pins the GROQ default.**
   `lib/localize.ts` is now a thin adapter over `@indiecrafts/packages-shared-config` `pickLocale` (no
   behavior change), and a `queries.test.ts` test asserts the `coalesce(language, "en")` legacy-untagged-doc

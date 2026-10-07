@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { SignUpView } from "@indiecrafts/packages-web-auth/sign-up-view";
 import type { Locale } from "@/config";
+import { RequireClerk } from "@/user-interface/account/RequireClerk";
 
 /** A form, not content: keep it out of search. Titled so the tab and the history read right. */
 export async function generateMetadata({
@@ -38,7 +39,9 @@ export default async function SignUpPage({
   const t = await getTranslations("auth");
   return (
     <main id="main" tabIndex={-1} className="grid min-h-[70vh] place-items-center p-6">
-      <SignUpView home="/" locale={locale} marketingLabel={t("marketingOptIn")} />
+      <RequireClerk>
+        <SignUpView home="/" locale={locale} marketingLabel={t("marketingOptIn")} />
+      </RequireClerk>
     </main>
   );
 }

@@ -10,11 +10,12 @@ status: stable
 
 ## Purpose
 
-Supplies the popular post ids for the `blog-trending` block. The current project has no read-count source, so this returns `[]` and the renderer falls back to most-recent. A future read-count pipeline replaces the body only; the Trending block is unchanged.
+Reads and records post views for the `blog-trending` block, through the shared api's anonymous per-post counter (EU D1; no cookie, no identity). `getPopularPostIds` asks `GET /v1/views/top` for the most-viewed posts of the last 30 days in a locale, uncached (time-based revalidation needs an OpenNext queue the website doesn't run) with a 1.5 s timeout; on any failure, or without `API_URL` / `APP_API_TOKEN`, it returns `[]` and Trending shows the latest posts. `recordPostView` forwards one view (`POST /v1/views`) with the visitor's IP in `x-client-ip` for the api's rate limit; it is best-effort and logs failures (a `429` is expected, not logged). Server-only.
 
 ## Exports
 
-- `getPopularPostIds(locale, count)` — resolves to an array of post `_id`s (currently `[]`).
+- `getPopularPostIds(locale, count)` — the most-viewed post `_id`s, most viewed first; `[]` on failure.
+- `recordPostView({ postId, locale, clientIp })` — counts one view.
 
 ## Usage
 

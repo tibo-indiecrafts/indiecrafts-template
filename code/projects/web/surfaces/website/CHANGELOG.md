@@ -19,6 +19,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **Post views for the Trending block.** A post page sends one anonymous view to `/api/views`
+  (`PostViewBeacon`), which forwards it to the shared api's per-post daily counter (EU D1). No cookie,
+  nothing stored on the device, no identity; the IP only rate-limits (`security.views`). Link
+  prefetches and crawlers without JavaScript don't count. **Why:** Trending showed the latest posts —
+  there was no read count behind it.
 - **A root error page (`app/global-error.tsx`).** An error in the `[locale]` layout itself (Clerk, the
   Sanity settings reads) now shows the branded 500 page in the visitor's language, with Retry.
   **Why:** `[locale]/error.tsx` can't catch its own layout, so those errors fell through to Next's bare
@@ -26,6 +31,14 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **Clerk loads only for a signed-in visitor or on the sign-in / sign-up pages.** Everyone else's
+  pages carry no Clerk code: the header's "Sign in" is a plain link to `/sign-in?redirect_url=…`
+  (a full page load). The layout decides with `shouldLoadClerk` (`auth()` + the path) and renders the
+  Clerk pieces through `LazyClerk` (`next/dynamic`); `RequireClerk` reloads once when a client-side
+  navigation reaches an auth page without Clerk. Landing first-load JS 367 → 292 kB, plus ~300 KiB of
+  ClerkJS no longer fetched; Lighthouse mobile home 57 → 72, `/blog` 71 → 78, a post 63 → 74, best
+  practices 75 → 96. The bundle budget drops to 335 kB. **Why:** Clerk was the largest cost left on
+  every page, and most visitors never sign in.
 - **The page chrome's Sanity reads start with the page's own.** The locale layout calls
   `preloadChrome` (navigation, announcement bar + toast, locale suggestion); `DefaultLayout` reuses the
   same `cache()`d promises. The home page fetches its blocks, featured posts and labels in one

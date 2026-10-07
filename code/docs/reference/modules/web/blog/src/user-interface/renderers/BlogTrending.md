@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`BlogTrending` renders the frontpage "Trending" block. It reads the most popular post ids from `getPopularPostIds`, which returns most-recent while there is no read-count source (see `lib/popularity.ts`). The editor's `pinned` posts take precedence, and trending or recent posts fill the rest up to the shared `count` cap via `mergePinnedWithFallback`. The block always renders content once any post exists. It maps onto the generic `SpotlightRow` primitive with no "view all" link.
+`BlogTrending` renders the frontpage "Trending" block. It reads the most-viewed post ids of the last 30 days from `getPopularPostIds` (see `lib/popularity.ts`) and orders those posts first, with the latest posts filling any gap (`popularThenLatest`) — so the block stays full while few posts have views, and shows the latest posts if the counter is unreachable. The editor's `pinned` posts take precedence, up to the shared `count` cap (`mergePinnedWithFallback`). The block always renders content once any post exists. It maps onto the generic `SpotlightRow` primitive with no "view all" link.
 
 ## Exports
 

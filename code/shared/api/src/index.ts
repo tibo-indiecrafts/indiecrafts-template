@@ -77,6 +77,13 @@ import {
   USER_ID as CONSENT_USER_ID,
 } from "./consent/history";
 import { readChurnAggregate } from "./consent/churn-store";
+import {
+  isValidLocale,
+  isValidPostId,
+  recordView,
+  topPostIds,
+  utcDay,
+} from "./views/post-views";
 import { cronStatus, erasureRequests, forwardCronRun } from "./monitoring";
 import { handleErasureClose, handleErasureRetry } from "./erasure/admin";
 import { readSettings } from "./settings-cache";
@@ -112,7 +119,7 @@ export interface Env {
    *  Optional (503 until bound). */
   AUDIT_DB?: D1Database;
   /** EU D1 (binding MAIN_DB) — identity/rights/settings: user_profiles, consent_events,
-   *  data_requests, erasure_requests, export_requests, site_settings. */
+   *  data_requests, erasure_requests, export_requests, site_settings, post_views. */
   MAIN_DB?: D1Database;
   /** KV (`binding = "SECURITY_COUNTERS"`) — ephemeral TTL counters for failed-login rates,
    *  so they're counted at the edge, not written per-request to D1. Optional. */
@@ -880,6 +887,54 @@ async function route(
     if (denied) return denied;
     if (!env.MAIN_DB) return json({ error: "unavailable" }, 503, cors);
     return json(await readChurnAggregate(env.MAIN_DB), 200, cors);
+  }
+
+  // ── Post views — POST /v1/views (record one) · GET /v1/views/top (trending ids) ──
+  // Bearer-gated: the website server calls on a visitor's behalf (`x-client-ip` keys the
+  // rate limit). Anonymous counters only — no IP, no user id is stored.
+  if (url.pathname === "/v1/views" || url.pathname === "/v1/views/top") {
+    if (request.method === "OPTIONS")
+      return new Response(null, { status: 204, headers: cors });
+    const top = url.pathname === "/v1/views/top";
+    if (request.method !== (top ? "GET" : "POST"))
+      return json({ error: "method_not_allowed" }, 405, cors);
+    const denied =
+      requireAdminBearer(request, env, cors) ??
+      (await rateLimit(request, env, cors));
+    if (denied) return denied;
+    if (!env.MAIN_DB) return json({ error: "unavailable" }, 503, cors);
+    const now = new Date();
+    if (top) {
+      const locale = url.searchParams.get("locale");
+      if (!isValidLocale(locale)) return json({ error: "invalid" }, 400, cors);
+      const int = (key: string, fallback: number, max: number) => {
+        const n = Number.parseInt(url.searchParams.get(key) ?? "", 10);
+        return Math.max(1, Math.min(Number.isNaN(n) ? fallback : n, max));
+      };
+      const days = int("days", 30, 90);
+      const ids = await topPostIds(
+        env.MAIN_DB,
+        locale,
+        utcDay(now, days - 1),
+        int("limit", 10, 50),
+      );
+      return json({ ids }, 200, cors);
+    }
+    if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
+      return json({ error: "too_large" }, 413, cors);
+    let body: { postId?: unknown; locale?: unknown };
+    try {
+      const text = await request.text();
+      if (new TextEncoder().encode(text).length > BODY_MAX)
+        return json({ error: "too_large" }, 413, cors);
+      body = JSON.parse(text) as typeof body;
+    } catch {
+      return json({ error: "invalid" }, 400, cors);
+    }
+    if (!isValidPostId(body?.postId) || !isValidLocale(body?.locale))
+      return json({ error: "invalid" }, 400, cors);
+    await recordView(env.MAIN_DB, body.postId, body.locale, utcDay(now));
+    return new Response(null, { status: 204, headers: cors });
   }
 
   // ── Settings — GET (view) / PUT (edit) /v1/settings (bearer-gated; workers read these) ──

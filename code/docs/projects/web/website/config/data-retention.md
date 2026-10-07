@@ -11,7 +11,7 @@ across **two** Cloudflare D1 databases, both `--location weur`, both owned by th
 worker: **`audit`** (binding `AUDIT_DB`) — the append-only firehose (`admin_audit`,
 `session_events`, `security_events`, `csp_reports`, `backup_runs`); **`main`** (binding
 `MAIN_DB`) — identity/rights/settings (`user_profiles`, `consent_events`, `data_requests`,
-`erasure_requests`, `export_requests`, `site_settings`). The split isolates a firehose
+`erasure_requests`, `export_requests`, `site_settings`, `post_views`). The split isolates a firehose
 write-spike or schema change from identity data. This page is the record-of-processing and
 the **privacy-policy disclosure checklist** an operator must action. Design:
 `docs/superpowers/specs/2026-08-21-audit-sessions-d1-eu-design.md` (original) and
@@ -150,6 +150,14 @@ deleted" so a stalled cleanup is visible.
 Every hourly tick writes one `cron_runs` row (`audit` D1): timings, `ok`/`failed`, and each
 pass's counts plus an error **name** or skip reason — no personal data. Purged at
 `retention.audit_days` (90 days, about 2,160 rows).
+
+## Post views (post_views)
+
+The blog's Trending block counts page views in `post_views` (`main` D1): one row per post id,
+locale and UTC day, holding a view count. **No personal data** — no IP, no user id, no cookie, so
+it is out of scope for erasure and export. The website server writes it through
+`POST /v1/views`. The cron's `main_purge` deletes rows older than **90 days** (a fixed window, not a
+setting: the Trending window is at most 90 days).
 
 ## Idempotency keys
 

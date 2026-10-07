@@ -14,6 +14,9 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`packages-web-auth` — `useClerkActive()` (`./clerk-active`).** True under `AppClerkProvider`.
+  A client component checks it before using Clerk UI, since Clerk's hooks throw without the
+  provider. **Why:** the website now loads Clerk only when needed.
 - **`packages-web-ui-components` — `SkipLink` (`web/layout/SkipLink`).** The one skip-to-content
   link: website, admin and app pass their own label. **Why:** three surfaces each had a copy.
 - **`packages-web-ui-icons` — the `shield-check` glyph** in `GLYPHS` and the `Icon` map, for the
@@ -58,6 +61,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`packages-web-auth` — `usePersistLocale()` is now `persistLocale(locale)`.** It reads the loaded
+  `window.Clerk` instead of a Clerk hook, so the locale switchers (website, app, admin, the account
+  Language tab) carry no Clerk code and work with no provider. **Why:** a hook throws without
+  `ClerkProvider` and pulls Clerk into every page that renders the switcher.
 - **`packages-shared-compliance` — `CHURN_REASON_CODES` is the one list of churn reason codes.** The api
   (`normalizeReason`) and the admin churn page now import it from `./shared`, so the api's own
   `CHURN_REASONS` and the admin's `REASON_CODES` copies are gone. **Why:** three hand-kept copies could

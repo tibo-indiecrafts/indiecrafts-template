@@ -7,7 +7,7 @@ const persistLocale = vi.fn();
 vi.mock("@indiecrafts/packages-web-i18n", () => ({
   useLocaleSwitch: () => switchTo,
 }));
-vi.mock("../persist-locale", () => ({ usePersistLocale: () => persistLocale }));
+vi.mock("../persist-locale", () => ({ persistLocale }));
 
 const { AccountLanguageTab } = await import("./language-tab");
 

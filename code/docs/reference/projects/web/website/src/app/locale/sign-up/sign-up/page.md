@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Server route for `/<locale>/sign-up/*`. It renders Clerk's themed `SignUpView`, self-hosted rather than the Account Portal so it can carry the active `locale` in `unsafeMetadata`; the api webhook mirrors that to `user_profiles.locale`, localizing the user's auth emails including the first verification code. Clerk's links point here through the layout's `AppClerkProvider signUpPath="/sign-up"`. The marketing opt-in label comes from `messages.auth`. The route 404s when Clerk is unconfigured.
+Server route for `/<locale>/sign-up/*`. It renders Clerk's themed `SignUpView`, self-hosted rather than the Account Portal so it can carry the active `locale` in `unsafeMetadata`; the api webhook mirrors that to `user_profiles.locale`, localizing the user's auth emails including the first verification code. Clerk's links point here through the layout's `AppClerkProvider signUpPath="/sign-up"`. The marketing opt-in label comes from `messages.auth`. The route 404s when Clerk is unconfigured. The layout loads Clerk on this page for a signed-out visitor (`shouldLoadClerk`); `RequireClerk` wraps the view, so a client-side arrival reloads once to get Clerk.
 
 ## Exports
 

@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./provider": "./src/provider.tsx",
+    "./clerk-active": "./src/clerk-active.tsx",
     "./appearance": "./src/appearance.ts",
     "./sign-in-view": "./src/sign-in-view.tsx",
     "./sign-up-view": "./src/sign-up-view.tsx",

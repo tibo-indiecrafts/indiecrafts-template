@@ -233,6 +233,23 @@ describe("scheduled() — retention purge (data_requests + erasure_requests)", (
     ).not.toBeNull();
   });
 
+  it("purges post_views rows older than 90 days; keeps the 90-day window", async () => {
+    // NOW = 2026-01-15 → cutoff 2025-10-17; a row on the cutoff day stays.
+    for (const day of ["2025-10-16", "2025-10-17", "2026-01-14"])
+      await env.MAIN_DB.prepare(
+        "INSERT INTO post_views (post_id, locale, day, views) VALUES ('pv-purge', 'en', ?, 3)",
+      )
+        .bind(day)
+        .run();
+
+    await runTick();
+
+    const { results } = await env.MAIN_DB.prepare(
+      "SELECT day FROM post_views WHERE post_id = 'pv-purge' ORDER BY day",
+    ).all<{ day: string }>();
+    expect(results.map((r) => r.day)).toEqual(["2025-10-17", "2026-01-14"]);
+  });
+
   it("scrubs churn free-text past 365 days (keeps the aggregate); leaves recent rows intact", async () => {
     const oldAt = new Date(NOW - 400 * 86_400_000).toISOString(); // > 365d, < 730d
     const recentAt = new Date(NOW - 10 * 86_400_000).toISOString();

@@ -116,6 +116,8 @@ out in one click. Clerk's lockout and new-device events also reach the admin sec
 ## Web wiring
 
 Next-specific provider + middleware details: [Authentication (Clerk)](/projects/web/website/config/auth).
+The website loads Clerk only for a signed-in visitor or on its sign-in / sign-up pages (see there);
+admin and app always load it.
 
 **Clerk version — Core 3.** Sign-in theming uses the Core 3 appearance variables
 (`colorForeground`/`colorMutedForeground`/`colorNeutral`/…) in `authAppearance()` — the Core 2

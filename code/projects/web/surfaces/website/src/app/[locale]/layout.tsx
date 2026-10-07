@@ -28,10 +28,14 @@ import { GoogleAnalytics } from "@indiecrafts/packages-web-compliance/consent/Go
 import { CookieConsentConfig } from "@/user-interface/account/CookieConsentConfig";
 import { CookiePreferencesHost } from "@indiecrafts/packages-web-compliance/consent/CookiePreferencesHost";
 import { LegalNotice } from "@indiecrafts/packages-web-compliance/reacceptance/LegalNotice";
-import { SignedInLegalNotice } from "@/user-interface/legal/SignedInLegalNotice";
 import { routing } from "@/i18n/routing";
-import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
-import { MarketingNudgeMount } from "@indiecrafts/packages-web-auth/marketing-nudge";
+import {
+  LazyClerkProvider,
+  LazyMarketingNudgeMount,
+  LazySessionLogger,
+  LazySignedInLegalNotice,
+} from "@/user-interface/account/LazyClerk";
+import { shouldLoadClerk } from "@/lib/clerk-load";
 import { ThemeProvider } from "@/user-interface/shared/layout/ThemeProvider";
 import { preloadChrome } from "@/user-interface/shared/layout/DefaultLayout";
 import { LocaleSwitchBoundary } from "@/user-interface/shared/layout/LocaleSwitchBoundary";
@@ -162,39 +166,51 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   // Server-read the legal-acceptance cookie so the "policies updated" banner is
   // decided server-side (no flash) — shown only when the deposited version is stale.
   const legalAck = (await cookies()).get(LEGAL_ACK_COOKIE)?.value;
+  // Clerk mounts only for a signed-in visitor or on the sign-in / sign-up pages: everyone
+  // else skips its bundle and CDN scripts (`shouldLoadClerk`, `LazyClerk`).
+  const clerk = await shouldLoadClerk(requestHeaders.get("x-pathname"));
   // The two policy URLs woven into the re-acceptance banner message's [[…]] markers
   // (privacy, terms — the contract documents the update covers).
   const legalHrefs = ["/privacy-policy", "/terms"];
 
+  const withClerk = (app: React.ReactNode) =>
+    clerk ? (
+      <LazyClerkProvider locale={locale} nonce={nonce} signUpPath="/sign-up">
+        {app}
+      </LazyClerkProvider>
+    ) : (
+      app
+    );
+
   return (
-    <AppClerkProvider locale={locale} nonce={nonce} signUpPath="/sign-up">
-      <html
-        lang={locale}
-        dir={localeDir(locale)}
-        className={`${fontClassName} antialiased`}
-        style={{ colorScheme: "light dark", ...fontStyle }}
-        suppressHydrationWarning
-      >
-        <head>
-          {/* The logo preload is emitted by next/image itself — <LogoIcon> uses
+    <html
+      lang={locale}
+      dir={localeDir(locale)}
+      className={`${fontClassName} antialiased`}
+      style={{ colorScheme: "light dark", ...fontStyle }}
+      suppressHydrationWarning
+    >
+      <head>
+        {/* The logo preload is emitted by next/image itself — <LogoIcon> uses
             `priority`, which already produces a correctly-typed
             `<link rel="preload" as="image" type="image/svg+xml">`. Adding a
             second manual one here duplicates the hint: the browser consumes one
             for the <img> fetch and warns the other was "preloaded but not used". */}
 
-          {/* Discoverability hint for the LLM index — gated on `features.llms.index`
+        {/* Discoverability hint for the LLM index — gated on `features.llms.index`
             (the `/llms.txt` route it points at 404s when that flag is off).
             Locale-aware: default locale → `/llms.txt`, others → `/<locale>/llms.txt`. */}
-          {features.llms.index ? (
-            <link
-              rel="alternate"
-              type="text/plain"
-              title="llms.txt"
-              href={`${localePrefix(locale as Locale)}/llms.txt`}
-            />
-          ) : null}
-        </head>
-        <body className="bg-background text-foreground flex min-h-screen flex-col">
+        {features.llms.index ? (
+          <link
+            rel="alternate"
+            type="text/plain"
+            title="llms.txt"
+            href={`${localePrefix(locale as Locale)}/llms.txt`}
+          />
+        ) : null}
+      </head>
+      <body className="bg-background text-foreground flex min-h-screen flex-col">
+        {withClerk(
           <ThemeProvider
             nonce={nonce}
             {...themeProviderProps(resolveThemeConfig(settings.themeModes))}
@@ -248,11 +264,11 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
                 in Sanity (`legalConsent`); version = the tracked legal pages'
                 lastUpdated. Signed out: gated on the deposited cookie; no fallback. */}
                 {legal.version && legal.message && legal.acceptLabel ? (
-                  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+                  clerk ? (
                     // Signed-in visitors sync acceptance across surfaces (app · mobile)
                     // via the api Worker. Mounted even after a local accept (hidden,
                     // `acceptedHere`) so a lost server write is re-sent on the next load.
-                    <SignedInLegalNotice
+                    <LazySignedInLegalNotice
                       version={legal.version}
                       message={legal.message}
                       hrefs={legalHrefs}
@@ -283,10 +299,10 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
                   />
                 ) : null}
               </LocaleSwitchBoundary>
-              {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+              {clerk ? (
                 <>
-                  <SessionLogger surface={surface} />
-                  <MarketingNudgeMount
+                  <LazySessionLogger surface={surface} />
+                  <LazyMarketingNudgeMount
                     apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
                     surface="website"
                     snoozeKey={`${site.prefix}.mkt-nudge-snooze`}
@@ -301,20 +317,20 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
               ) : null}
               <Toaster position="top-center" />
             </NextIntlClientProvider>
-          </ThemeProvider>
-          {features.structuredData && settings.showStructuredData !== false ? (
-            <JsonLdScript
-              data={buildSiteSchemas(
-                settings,
-                { description: siteDescription },
-                buildGlobalSchemas(settings.globalSchemas),
-              )}
-            />
-          ) : null}
-          {features.blog ? <SanityLive /> : null}
-          <style>{`:root{--max-container:${theme.container.maxWidth};--gutter:${theme.container.gutter};}`}</style>
-        </body>
-      </html>
-    </AppClerkProvider>
+          </ThemeProvider>,
+        )}
+        {features.structuredData && settings.showStructuredData !== false ? (
+          <JsonLdScript
+            data={buildSiteSchemas(
+              settings,
+              { description: siteDescription },
+              buildGlobalSchemas(settings.globalSchemas),
+            )}
+          />
+        ) : null}
+        {features.blog ? <SanityLive /> : null}
+        <style>{`:root{--max-container:${theme.container.maxWidth};--gutter:${theme.container.gutter};}`}</style>
+      </body>
+    </html>
   );
 }

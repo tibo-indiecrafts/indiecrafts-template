@@ -16,6 +16,7 @@ GROQ filters by `_id in $ids` but does not keep the array's order, so the frontp
 
 - `reorderByIds(items, ids)` — re-sorts `items` by the order of `ids`.
 - `mergePinnedWithFallback(pinned, pinnedIds, fallback, fallbackIds, count)` — reorders both lists, drops fallback posts already pinned, concatenates pinned-first, and caps to `count`.
+- `popularThenLatest(popular, ids, latest)` — the Trending order: the popular posts in the counter's order (`ids`), then the latest posts not among them, so the block stays full while few posts have views.
 
 ## Usage
 

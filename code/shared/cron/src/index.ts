@@ -32,9 +32,9 @@ export interface Env {
    *  erasure-SLA flag pass also inserts a security_events row per due/breached request. */
   AUDIT_DB?: D1Database;
   /** The api's EU main D1 (binding `MAIN_DB`) — identity/rights/settings: consent_events,
-   *  data_requests, erasure_requests, export_requests, site_settings, churn_events. The
-   *  purge deletes rows past retention from consent_events, data_requests,
-   *  erasure_requests, churn_events; the SLA-flag pass reads/updates erasure_requests; the
+   *  data_requests, erasure_requests, export_requests, site_settings, churn_events,
+   *  post_views. The purge deletes rows past retention from consent_events, data_requests,
+   *  erasure_requests, churn_events, post_views; the SLA-flag pass reads/updates erasure_requests; the
    *  export-cleanup pass reads/deletes export_requests; loadSettings reads site_settings. */
   MAIN_DB?: D1Database;
   /** The api's export-bundle bucket (`[[r2_buckets]] binding = "EXPORT_BUCKET"`) — the
@@ -235,6 +235,7 @@ type MainCutoffs = {
   churnFreeText: string;
   churn: string;
   profile: string;
+  postViews: string;
 };
 
 /** Main D1 retention. consent_events + erasure_requests are proof records (3-year window);
@@ -242,7 +243,7 @@ type MainCutoffs = {
  *  legitimate-interest data excluded from erasure, so it has its own ceiling, with the
  *  user-typed free text scrubbed earlier; pseudonymised user_profiles are hard-deleted once
  *  past their window (drops the retained email_fingerprint — the 0001 "hard-deleted after 90
- *  days" promise). */
+ *  days" promise); post_views (anonymous counters, no personal data) keep 90 days. */
 async function mainPurge(db: D1Database, c: MainCutoffs) {
   const run = async (sql: string, at: string) =>
     changes(await db.prepare(sql).bind(at).run());
@@ -271,6 +272,7 @@ async function mainPurge(db: D1Database, c: MainCutoffs) {
       "DELETE FROM user_profiles WHERE anonymized = 1 AND deleted_at IS NOT NULL AND deleted_at < ?",
       c.profile,
     ),
+    post_views: await run("DELETE FROM post_views WHERE day < ?", c.postViews),
   };
 }
 
@@ -356,6 +358,9 @@ export async function runTick(
     scheduledTime,
     settings["retention.churn_freetext_days"],
   );
+  // Fixed, not a setting: post_views hold no personal data, and the Trending window
+  // (GET /v1/views/top `days`) never exceeds 90. `day` is YYYY-MM-DD, so compare dates.
+  const postViewsCutoff = retentionCutoff(scheduledTime, 90).slice(0, 10);
   const nowIso = new Date(scheduledTime).toISOString();
   const dueSoon = slaDueSoonCutoff(
     scheduledTime,
@@ -383,6 +388,7 @@ export async function runTick(
             churnFreeText: churnFreeTextCutoff,
             churn: churnCutoff,
             profile: profileCutoff,
+            postViews: postViewsCutoff,
           }),
         )
       : skipped("main_purge", "MAIN_DB unbound"),

@@ -32,3 +32,19 @@ export function mergePinnedWithFallback<T extends { _id: string }>(
     ...orderedFallback.filter((item) => !pinnedIdSet.has(item._id)),
   ].slice(0, count);
 }
+
+/**
+ * The Trending order: the most-viewed posts in the counter's order (`ids`), then the latest
+ * posts that aren't among them — so the block stays full while few posts have views.
+ */
+export function popularThenLatest<T extends { _id: string }>(
+  popular: T[],
+  ids: string[],
+  latest: T[],
+): T[] {
+  const seen = new Set(ids);
+  return [
+    ...reorderByIds(popular, ids),
+    ...latest.filter((item) => !seen.has(item._id)),
+  ];
+}

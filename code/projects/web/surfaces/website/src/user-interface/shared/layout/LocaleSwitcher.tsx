@@ -9,7 +9,7 @@
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useLocaleSwitch } from "@indiecrafts/packages-web-i18n";
-import { usePersistLocale } from "@indiecrafts/packages-web-auth/persist-locale";
+import { persistLocale } from "@indiecrafts/packages-web-auth/persist-locale";
 import { dismissLocaleSuggest } from "@indiecrafts/packages-web-locale-suggest/locale-suggest-store";
 import { localeMap, locales, type Locale } from "@/config";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
@@ -41,10 +41,6 @@ export function LocaleSwitcher({
   // `@indiecrafts/packages-web-i18n`; the app's content-route resolver is injected via
   // `LocaleSwitchProvider` (in `LocaleSwitchBoundary`), read from context here.
   const switchTo = useLocaleSwitch();
-  // Persist the choice to a signed-in user's Clerk metadata → `user_profiles.locale` (via
-  // the webhook), so their transactional/auth emails follow their current language. No-op
-  // when signed out.
-  const persistLocale = usePersistLocale();
 
   const isCode = shape === "code";
 
@@ -78,6 +74,8 @@ export function LocaleSwitcher({
             // An explicit choice answers the "available in your language" strip too.
             dismissLocaleSuggest();
             void switchTo(value);
+            // A signed-in user's emails follow the new language (`user_profiles.locale` via
+            // the webhook). No-op when signed out or when Clerk isn't loaded.
             persistLocale(value);
           }}
         >

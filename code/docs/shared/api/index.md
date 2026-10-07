@@ -45,6 +45,8 @@ server-side only). Clerk-JWT routes authenticate the caller's own session.
 | `GET /v1/security`                                                | `APP_API_TOKEN`     | Recent security incidents, newest first (`?limit=` 1–200, default 50). No IP hash in the response.                                      |
 | `GET /v1/csp-reports`                                             | `APP_API_TOKEN`     | Aggregated CSP violations.                                                                                                              |
 | `GET /v1/churn`                                                   | `APP_API_TOKEN`     | Churn-survey aggregate.                                                                                                                 |
+| `POST /v1/views`                                                  | `APP_API_TOKEN`     | Body `{ postId, locale }` → +1 on today's (UTC) `post_views` counter → `204`. Draft ids and bad locales → `400 invalid`.                |
+| `GET /v1/views/top?locale=&limit=&days=`                          | `APP_API_TOKEN`     | `{ ids }` — post ids by views over the last `days` (1–90, default 30), `limit` 1–50 (default 10). The blog's Trending block.            |
 | `GET/PUT /v1/settings`                                            | `APP_API_TOKEN`     | Read/edit `site_settings` (the `cron` worker reads these too).                                                                          |
 | `GET /v1/backups/status`                                          | `APP_API_TOKEN`     | Backup-run history + bucket/retention info.                                                                                             |
 | `GET /v1/cron/status`                                             | `APP_API_TOKEN`     | Last 24 `cron_runs`, a `stale` flag (no run in 2 h), live erasure/export counts — the admin Scheduled jobs page.                        |
@@ -78,6 +80,9 @@ server-side only). Clerk-JWT routes authenticate the caller's own session.
 - **Churn:** only `POST /v1/erasure/self` writes `churn_events`. The Clerk `user.deleted` webhook
   suppresses the Resend contact when a churn row exists, and pure-deletes it otherwise.
   → [Churn tracking](/projects/web/website/config/churn), [Email preferences](/projects/web/website/config/email-preferences).
+- **Post views hold no personal data.** `post_views` is one counter per post, locale and UTC day —
+  no IP, no user id, no cookie. The website server is the only caller; the cron deletes rows after
+  90 days.
 
 ## Production contract
 
@@ -118,7 +123,8 @@ The five rules every route meets (api brief, "Production-ready contract"; QA car
   mid-flight), when the retry takes it over. A 5xx, 429 or throw releases the key. The table holds
   hashes and the `{ ok }` answer only. `POST /v1/export` is **not** covered: its answer is a live
   single-use download link that must never be stored — a retried export makes a second bundle (1 h
-  TTL). The other writes are idempotent by key already (`ON CONFLICT` / `INSERT OR IGNORE`, the Svix
+  TTL). `POST /v1/views` is **not** covered either: it is an approximate counter, so a retried view
+  adds one more view. The other writes are idempotent by key already (`ON CONFLICT` / `INSERT OR IGNORE`, the Svix
   id). First-party callers use `apiFetch` (`@indiecrafts/packages-shared-utils/api-fetch`).
 - **Every outbound call has a timeout** — 5 s for Resend, Sanity, Turnstile and every Clerk call
   (`fetchWithTimeout` / `withTimeout` in `src/http.ts`); `apiFetch` gives callers 10 s. A guard test
@@ -131,14 +137,14 @@ Configured per env in `wrangler.toml` under `[env.<env>.*]` (wrangler does not i
 `[vars]`). The two D1s are EU-only (`--location weur`), split so a firehose write-spike can never
 threaten identity data.
 
-| Binding             | Kind                              | Holds                                                                                                                                                                             |
-| ------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AUDIT_DB`          | D1 (`audit`)                      | Append-only firehose: `session_events` · `security_events` · `admin_audit` · `csp_reports` · `backup_runs` · `cron_runs`.                                                         |
-| `MAIN_DB`           | D1 (`main`)                       | Identity/rights/settings: `user_profiles` · `consent_events` · `email_preferences` · `data_requests` · `erasure_requests` · `export_requests` · `site_settings` · `churn_events`. |
-| `SECURITY_COUNTERS` | KV                                | Ephemeral TTL failed-login counters (counted at the edge, never per-request in D1).                                                                                               |
-| `EXPORT_BUCKET`     | R2                                | GDPR export bundles (`POST /v1/export`; routes answer 503 until bound).                                                                                                           |
-| `RATELIMIT`         | ratelimit (`[[unsafe.bindings]]`) | Native rate limit on every bearer route, per-env `namespace_id`.                                                                                                                  |
-| `CRON`              | service (`[[services]]`)          | The cron Worker, reached privately for `POST /v1/cron/run`. The cron must exist first — `deploy:all` deploys it before the api.                                                   |
+| Binding             | Kind                              | Holds                                                                                                                                                                                            |
+| ------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `AUDIT_DB`          | D1 (`audit`)                      | Append-only firehose: `session_events` · `security_events` · `admin_audit` · `csp_reports` · `backup_runs` · `cron_runs`.                                                                        |
+| `MAIN_DB`           | D1 (`main`)                       | Identity/rights/settings: `user_profiles` · `consent_events` · `email_preferences` · `data_requests` · `erasure_requests` · `export_requests` · `site_settings` · `churn_events` · `post_views`. |
+| `SECURITY_COUNTERS` | KV                                | Ephemeral TTL failed-login counters (counted at the edge, never per-request in D1).                                                                                                              |
+| `EXPORT_BUCKET`     | R2                                | GDPR export bundles (`POST /v1/export`; routes answer 503 until bound).                                                                                                                          |
+| `RATELIMIT`         | ratelimit (`[[unsafe.bindings]]`) | Native rate limit on every bearer route, per-env `namespace_id`.                                                                                                                                 |
+| `CRON`              | service (`[[services]]`)          | The cron Worker, reached privately for `POST /v1/cron/run`. The cron must exist first — `deploy:all` deploys it before the api.                                                                  |
 
 **Vars** (`[env.<env>.vars]`, non-secret): `SANITY_PROJECT_ID` · `SANITY_DATASET` ·
 `SANITY_API_VERSION` · `EMAIL_FROM` · `BACKUP_BUCKET` · `BACKUP_RETENTION_DAYS`. Optional:

@@ -1,7 +1,12 @@
 /// <reference types="@cloudflare/vitest-pool-workers" />
-import { env, SELF } from "cloudflare:test";
+import {
+  createExecutionContext,
+  env,
+  SELF,
+  waitOnExecutionContext,
+} from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import { corsHeaders } from "./index";
+import worker, { corsHeaders, type Env } from "./index";
 
 // Integration-style: `SELF` runs the actual worker (wrangler.toml `main`) in workerd,
 // so this exercises the real runtime + (once bound) real KV/D1. AAA · one Act · assert
@@ -69,6 +74,8 @@ describe("/v1 auth contract — bearer-gated mutating routes reject anon", () =>
     ["GET", "/v1/security"],
     ["GET", "/v1/csp-reports"],
     ["GET", "/v1/churn"],
+    ["POST", "/v1/views"],
+    ["GET", "/v1/views/top"],
   ])("%s %s → 401 without a bearer", async (method, path) => {
     const res = await SELF.fetch(`https://api.test${path}`, {
       method,
@@ -248,6 +255,117 @@ describe("/v1/churn", () => {
     expect(Array.isArray(body.byDay)).toBe(true);
     expect(Array.isArray(body.byReason)).toBe(true);
     expect(Array.isArray(body.recentFeedback)).toBe(true);
+  });
+});
+
+describe("/v1/views + /v1/views/top", () => {
+  const auth = { authorization: "Bearer test-token" };
+  const record = (body: unknown, headers: Record<string, string> = auth) =>
+    SELF.fetch("https://api.test/v1/views", {
+      method: "POST",
+      headers: { ...headers, "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  const top = (query: string) =>
+    SELF.fetch(`https://api.test/v1/views/top?${query}`, { headers: auth });
+
+  it("401s both routes without the bearer", async () => {
+    expect((await record({ postId: "p1", locale: "en" }, {})).status).toBe(401);
+    expect(
+      (await SELF.fetch("https://api.test/v1/views/top?locale=en")).status,
+    ).toBe(401);
+  });
+
+  it("405s the wrong method", async () => {
+    expect(
+      (await SELF.fetch("https://api.test/v1/views", { headers: auth })).status,
+    ).toBe(405);
+    expect(
+      (
+        await SELF.fetch("https://api.test/v1/views/top?locale=en", {
+          method: "POST",
+          headers: auth,
+        })
+      ).status,
+    ).toBe(405);
+  });
+
+  it("400s an invalid body or locale", async () => {
+    for (const body of [
+      {},
+      { postId: "drafts.p1", locale: "en" },
+      { postId: "p1", locale: "EN" },
+      { postId: "a/b", locale: "en" },
+    ])
+      expect((await record(body)).status).toBe(400);
+    const bad = await SELF.fetch("https://api.test/v1/views", {
+      method: "POST",
+      headers: auth,
+      body: "not json",
+    });
+    expect(bad.status).toBe(400);
+    expect((await top("")).status).toBe(400);
+    expect((await top("locale=xx-yy")).status).toBe(400);
+  });
+
+  it("records a view (204) under today's UTC day; top returns the ids", async () => {
+    const today = new Date().toISOString().slice(0, 10);
+    expect((await record({ postId: "route-a", locale: "it" })).status).toBe(
+      204,
+    );
+    await record({ postId: "route-a", locale: "it" });
+    await record({ postId: "route-b", locale: "it" });
+    const row = await env
+      .MAIN_DB!.prepare(
+        "SELECT views FROM post_views WHERE post_id = 'route-a' AND locale = 'it' AND day = ?",
+      )
+      .bind(today)
+      .first<{ views: number }>();
+    expect(row?.views).toBe(2);
+
+    const res = await top("locale=it&limit=8&days=30");
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ids: ["route-a", "route-b"] });
+    // limit clamps to ≥ 1; junk falls back to the defaults.
+    expect(await (await top("locale=it&limit=0")).json()).toEqual({
+      ids: ["route-a"],
+    });
+    expect(await (await top("locale=it&limit=abc&days=abc")).json()).toEqual({
+      ids: ["route-a", "route-b"],
+    });
+  });
+
+  it("503s both routes while MAIN_DB is unbound", async () => {
+    const call = async (req: Request) => {
+      const ctx = createExecutionContext();
+      const res = await worker.fetch(
+        req,
+        { ...(env as unknown as Env), MAIN_DB: undefined },
+        ctx,
+      );
+      await waitOnExecutionContext(ctx);
+      return res;
+    };
+    expect(
+      (
+        await call(
+          new Request("https://api.test/v1/views", {
+            method: "POST",
+            headers: auth,
+            body: JSON.stringify({ postId: "p1", locale: "en" }),
+          }),
+        )
+      ).status,
+    ).toBe(503);
+    expect(
+      (
+        await call(
+          new Request("https://api.test/v1/views/top?locale=en", {
+            headers: auth,
+          }),
+        )
+      ).status,
+    ).toBe(503);
   });
 });
 

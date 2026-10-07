@@ -9,7 +9,7 @@ import { useTransition } from "react";
 import { Languages } from "lucide-react";
 import { useLocale } from "next-intl";
 import { routing, usePathname, useRouter } from "@/i18n/routing";
-import { usePersistLocale } from "@indiecrafts/packages-web-auth/persist-locale";
+import { persistLocale } from "@indiecrafts/packages-web-auth/persist-locale";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import {
   DropdownMenu,
@@ -23,7 +23,6 @@ export function LocaleSwitcher({ label }: { label: string }) {
   const active = useLocale();
   const pathname = usePathname();
   const router = useRouter();
-  const persistLocale = usePersistLocale();
   const [pending, startTransition] = useTransition();
 
   return (

@@ -43,7 +43,27 @@ export default function RootLayout({
 ```
 
 `AppClerkProvider` returns `children` unchanged when no publishable key is set, and wraps
-`<ClerkProvider>` (themed from the design tokens via `authAppearance()`) when it is.
+`<ClerkProvider>` (themed from the design tokens via `authAppearance()`) when it is. Admin and
+app mount it in their locale layout like this.
+
+### The website loads Clerk only when needed
+
+Clerk costs about 135 kB of JS plus ~300 KiB of ClerkJS from its CDN, and most website visitors
+never sign in. So the locale layout mounts it only when `shouldLoadClerk` (`src/lib/clerk-load.ts`)
+says so: a **signed-in visitor** (`auth()`) or the **sign-in / sign-up pages**.
+
+- Every Clerk piece the layout or header renders is code-split in `LazyClerk.tsx` (`next/dynamic`):
+  the provider, the header's account menu, the signed-in legal notice, the session logger, the
+  marketing nudge. Next bundles every client component a layout imports, so a static import would
+  put Clerk back on every page.
+- A signed-out visitor's header shows a plain **Sign in** link (`AuthMenu`) to
+  `/sign-in?redirect_url=<here>` — a full page load, so the sign-in page renders with Clerk.
+- Client components check `useClerkActive()` before using Clerk UI (its hooks throw without the
+  provider). The locale switcher saves the language through `window.Clerk` (`persistLocale`).
+- `RequireClerk` wraps the Clerk UI of the sign-in, sign-up and account pages: reached by a
+  client-side navigation from a page rendered without Clerk, it reloads once.
+- After sign-in Clerk navigates client-side and the layout keeps Clerk; after sign-out Clerk
+  refreshes the route and the layout drops it.
 
 ## Middleware
 
@@ -84,8 +104,8 @@ The admin app renders sign-in only — no open sign-up on the admin surface.
 Every web surface renders **one** sign-in surface — `<SignInView>` from
 `@indiecrafts/packages-web-auth`, which wraps Clerk's prebuilt `<SignIn>` (email OTP +
 social, themed from tokens) at `/[locale]/sign-in/[[...sign-in]]`. The website header
-also shows a **Sign in** button (Clerk modal) / **UserButton** via `AuthMenu`
-(opt-in on the publishable key).
+shows a **Sign in** link to that page for a signed-out visitor (Clerk isn't loaded yet), and the
+account menu once signed in, via `AuthMenu` (opt-in on the publishable key).
 
 **Redirects (precedence):** `forceRedirectUrl` → a validated `redirect_url` → the
 app's home (`fallbackRedirectUrl`, default `/`). A user bounced from a protected page

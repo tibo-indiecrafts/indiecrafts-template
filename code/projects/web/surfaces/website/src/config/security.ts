@@ -31,4 +31,6 @@ export const security = {
   confirm: { rateLimit: rateLimits.confirm, bodyMax: 2000 },
   /** One-click email moderation — `/api/comments/moderate`. Cross-site form POST, token-gated; rate-limit is defence-in-depth on the token. */
   moderate: { rateLimit: rateLimits.lenient },
+  /** Anonymous post-view beacon — `/api/views` (Trending). The cap also bounds how fast one visitor can inflate a count. */
+  views: { rateLimit: rateLimits.lenient, bodyMax: 1000 },
 } as const;

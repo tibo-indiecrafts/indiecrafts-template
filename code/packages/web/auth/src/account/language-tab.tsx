@@ -12,7 +12,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@indiecrafts/packages-web-ui/web/toggle-group";
-import { usePersistLocale } from "../persist-locale";
+import { persistLocale } from "../persist-locale";
 
 /**
  * One option per configured locale (native name), the active one pressed. A single-choice
@@ -33,7 +33,6 @@ export function AccountLanguageTab({
   label: string;
   onChange?: (locale: string) => void;
 }) {
-  const persistLocale = usePersistLocale();
   const switchTo = useLocaleSwitch();
   return (
     <ToggleGroup

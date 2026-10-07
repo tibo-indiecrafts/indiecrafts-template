@@ -12,6 +12,7 @@ import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { AccountControl } from "@/user-interface/account/AccountControl";
+import { RequireClerk } from "@/user-interface/account/RequireClerk";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
@@ -44,7 +45,9 @@ export default async function AccountPage({ params }: Props) {
       <PageSchemas page={pages.account} locale={locale} />
       {/* Clerk's <UserProfile> has a fixed max width — centre it in the page. */}
       <div className="flex justify-center px-(--gutter) py-8 md:py-12">
-        <AccountControl variant="page" />
+        <RequireClerk>
+          <AccountControl variant="page" />
+        </RequireClerk>
       </div>
     </DefaultLayout>
   );

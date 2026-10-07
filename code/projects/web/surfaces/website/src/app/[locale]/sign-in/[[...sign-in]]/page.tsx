@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SignInView } from "@indiecrafts/packages-web-auth/sign-in-view";
 import type { Locale } from "@/config";
+import { RequireClerk } from "@/user-interface/account/RequireClerk";
 
 /** A form, not content: keep it out of search. Titled so the tab and the history read right. */
 export async function generateMetadata({
@@ -36,7 +37,9 @@ export default async function SignInPage({
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) notFound();
   return (
     <main id="main" tabIndex={-1} className="grid min-h-[70vh] place-items-center p-6">
-      <SignInView home="/" />
+      <RequireClerk>
+        <SignInView home="/" />
+      </RequireClerk>
     </main>
   );
 }

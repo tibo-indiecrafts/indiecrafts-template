@@ -1,34 +1,37 @@
 "use client";
 
 /**
- * Render the header sign-in button or account menu, only when Clerk is configured.
+ * Render the header sign-in link, or Clerk's auth menu when Clerk is loaded.
  *
  * @see docs/reference/projects/web/website/src/user-interface/shared/layout/AuthMenu.md
  */
 
 import { useLocale, useTranslations } from "next-intl";
-import { Show, SignInModalButton } from "@indiecrafts/packages-web-auth";
-import { AccountControl } from "@/user-interface/account/AccountControl";
+import { usePathname } from "next/navigation";
+import type { Locale } from "@/config";
+import { localizedPathname } from "@/i18n/routing";
+import { useClerkActive } from "@indiecrafts/packages-web-auth/clerk-active";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { LazyClerkAuthMenu } from "@/user-interface/account/LazyClerk";
 
 /**
- * Header auth affordance — a "Sign in" button (opens Clerk's modal, carrying the locale
- * into an in-modal sign-up) when signed out,
- * the account menu when signed in. Only mounts when Clerk is configured (else the
- * provider isn't present and Clerk's components would throw). Auth is opt-in, so with
- * no key the header looks exactly as before.
+ * Header auth affordance. Clerk loads only for a signed-in visitor (and on the sign-in /
+ * sign-up pages), so a signed-out visitor gets a plain link to the sign-in page that
+ * returns them here. It is a full page load (`<a>`, not the routing `Link`): the locale
+ * layout then renders with Clerk. Once Clerk is loaded, `ClerkAuthMenu` takes over. With
+ * no Clerk key, auth is off and nothing renders.
  */
 export function AuthMenu() {
   const t = useTranslations("nav");
-  const locale = useLocale();
+  const locale = useLocale() as Locale;
+  const pathname = usePathname();
+  const clerkActive = useClerkActive();
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) return null;
+  if (clerkActive) return <LazyClerkAuthMenu />;
+  const href = `${localizedPathname("/sign-in", locale)}?redirect_url=${encodeURIComponent(pathname)}`;
   return (
-    <>
-      <Show when="signed-out">
-        <SignInModalButton locale={locale} label={t("signIn")} />
-      </Show>
-      <Show when="signed-in">
-        <AccountControl variant="button" />
-      </Show>
-    </>
+    <Button asChild variant="ghost" size="sm">
+      <a href={href}>{t("signIn")}</a>
+    </Button>
   );
 }
