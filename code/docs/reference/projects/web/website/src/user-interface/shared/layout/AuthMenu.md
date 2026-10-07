@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders a "Sign in" button (opens Clerk's modal) when signed out and the account menu when signed in. Only mounts when `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is set — otherwise the Clerk provider is absent and Clerk's components would throw. Auth is opt-in, so with no key the header looks exactly as before.
+Renders a "Sign in" button when signed out — `SignInModalButton`, which opens Clerk's modal with the active locale so a sign-up made inside the modal keeps the language — and the account menu when signed in. Only mounts when `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is set — otherwise the Clerk provider is absent and Clerk's components would throw. Auth is opt-in, so with no key the header looks exactly as before.
 
 ## Exports
 

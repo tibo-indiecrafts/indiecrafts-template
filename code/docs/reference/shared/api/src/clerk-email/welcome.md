@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Sends the post-signup welcome email, fired from the `user.created` webhook rather than a Clerk `email.created` take-over (Clerk has no welcome template). It is best-effort: a missing recipient or unconfigured mailer is a silent no-op and it never throws, so the webhook's profile sync is unaffected. Copy is the Studio `clerkEmails.welcome` override in the recipient's locale, else the template's hardcoded en/fr, with the support footer and global bcc applied. The send carries the Resend `Idempotency-Key` `welcome/<userId>`, so a webhook retry sends it once.
+Sends the post-signup welcome email, fired from the `user.created` webhook rather than a Clerk `email.created` take-over (Clerk has no welcome template). It is best-effort: a missing recipient or unconfigured mailer is a silent no-op, and a Resend failure (a non-2xx or a timeout) is logged as `welcome email failed` (error name only, no address) instead of rejecting, so the webhook's `waitUntil` and profile sync are unaffected. The HTML is wrapped in the recipient's language (`inLanguage`), so a screen reader reads a French email in French. Copy is the Studio `clerkEmails.welcome` override in the recipient's locale, else the template's hardcoded en/fr, with the support footer and global bcc applied. The send carries the Resend `Idempotency-Key` `welcome/<userId>`, so a webhook retry sends it once.
 
 ## Exports
 

@@ -139,8 +139,10 @@ webhook validates it (`isLocale`) and mirrors it to `user_profiles.locale`.
 **Emails** — the `localization` prop does **not** touch Clerk's emails. To localize them, the api
 takes over delivery via the `email.created` webhook. **Operator runbook:**
 
-1. Set `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up` on the web surfaces so sign-up uses the app's own
-   `<SignUp>` (not the English Account Portal).
+1. Nothing to set for sign-up: the website and app layouts pass `signUpPath="/sign-up"` to
+   `AppClerkProvider`, so every Clerk "Sign up" link (the sign-in modal's included) opens the app's
+   own localized `<SignUp>`, which carries the locale. The old `NEXT_PUBLIC_CLERK_SIGN_UP_URL` env var
+   never reached a CI deploy, so the modal signed up in place, with no locale.
 2. Set the api's `RESEND_API_KEY` + `EMAIL_FROM` — **required before step 3**, or the taken-over
    emails have no sender and fail (the webhook returns 502 so failures are visible, never silent).
    The `EMAIL_FROM` domain must be **verified in the Resend account of that key** (Resend → Domains,

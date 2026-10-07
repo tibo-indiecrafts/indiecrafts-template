@@ -19,7 +19,7 @@ import { authAppearance } from "./appearance";
  * mirrors it to the Resend audience). Clerk's prebuilt card can't host a custom field,
  * so the (unchecked, GDPR-required) checkbox renders beside it and feeds the metadata
  * prop. Mount on a catch-all route (`/sign-up/[[...sign-up]]`) and point Clerk at it
- * with `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up`.
+ * with `AppClerkProvider signUpPath="/sign-up"`.
  */
 export function SignUpView({
   home = "/",

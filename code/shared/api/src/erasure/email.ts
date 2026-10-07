@@ -90,6 +90,12 @@ export function supportFooter(
   };
 }
 
+/** Wrap an email's HTML fragment in the recipient's language. The worker sends fragments,
+ *  not a full document, so this `lang` is what tells a screen reader in a mail client to
+ *  read a French email with French pronunciation. */
+export const inLanguage = (html: string, locale: string): string =>
+  `<div lang="${escapeHtml(locale)}">${html}</div>`;
+
 /** The recipient's stored locale (`user_profiles.locale`) — by Clerk user id, else by
  *  email fingerprint, else the default. Never throws: a lookup miss must not stop a
  *  mandatory erasure email. Read it BEFORE the erasure runs, or the profile is gone. */

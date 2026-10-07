@@ -54,6 +54,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`packages-web-auth` — a sign-up from the header modal keeps its language.** Clerk's sign-in modal
+  signs up in place, without `unsafeMetadata`, so a French visitor got no stored locale and an English
+  welcome email (seen on the deployed dev website). New `SignInModalButton` opens the modal with
+  `{ locale }`; `AppClerkProvider` takes `signUpPath`, so Clerk's "Sign up" links open the app's own
+  localized page without the `NEXT_PUBLIC_CLERK_SIGN_UP_URL` env var (which never reached a CI deploy).
 - **`packages-web-sanity` — the shared client reads published documents only.** It carries a read
   token, and before API version 2025-02-19 a token read defaults to the `raw` perspective, which
   includes drafts. The sitemap, `generateStaticParams` and the blog settings read through it, so a

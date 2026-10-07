@@ -14,6 +14,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **Clerk's sign-up links open the app's own page without an env var.** The layout passes
+  `signUpPath="/sign-up"` to `AppClerkProvider`; `NEXT_PUBLIC_CLERK_SIGN_UP_URL` is gone from
+  `.env.example` (a CI deploy never had it).
 - **The consent sheet's link says where it goes.** "Learn more" → "Read the cookie policy" (fr: "Lire
   la politique cookies"), same as the website banner.
 - **A deploy without the Clerk key is refused.** The `(app)` gate is opt-in on the key, so a

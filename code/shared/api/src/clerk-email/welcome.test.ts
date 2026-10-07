@@ -29,6 +29,8 @@ describe("sendWelcomeEmail (post-signup welcome, user.created)", () => {
     expect(sent[0].text.length).toBeGreaterThan(0);
     // A webhook retry re-sends the same key → Resend sends once.
     expect(sent[0].idempotencyKey).toBe("welcome/user_1");
+    // A fragment, not a document: the wrapper tells a screen reader to read it in French.
+    expect(sent[0].html.startsWith('<div lang="fr">')).toBe(true);
   });
 
   it("applies the Studio override copy (clerkEmails.welcome) in the recipient locale", async () => {
@@ -74,6 +76,20 @@ describe("sendWelcomeEmail (post-signup welcome, user.created)", () => {
       ),
     ).resolves.toBeUndefined();
     expect(sent).toHaveLength(0);
+  });
+
+  it("never rejects when Resend fails (a 403 or a timeout) — the webhook's waitUntil stays clean", async () => {
+    const failing = async () => {
+      throw new Error("resend 403");
+    };
+    await expect(
+      sendWelcomeEmail(
+        baseEnv,
+        { to: "u@x.com", locale: "en", userId: "user_1" },
+        failing,
+        async () => null,
+      ),
+    ).resolves.toBeUndefined();
   });
 
   it("no-ops when there is no recipient", async () => {

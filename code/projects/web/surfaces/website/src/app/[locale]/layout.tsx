@@ -165,7 +165,7 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   const legalHrefs = ["/privacy-policy", "/terms"];
 
   return (
-    <AppClerkProvider locale={locale} nonce={nonce}>
+    <AppClerkProvider locale={locale} nonce={nonce} signUpPath="/sign-up">
       <html
         lang={locale}
         dir={localeDir(locale)}

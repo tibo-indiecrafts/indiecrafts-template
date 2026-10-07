@@ -68,6 +68,7 @@ describe("handleClerkEmail (Clerk email.created take-over)", () => {
     expect(sent[0].text).toContain("Votre code :"); // overridden intro
     expect(sent[0].text).toContain("123456"); // the code is still injected
     expect(sent[0].html).toContain("mailto:support@x.com"); // support footer
+    expect(sent[0].html.startsWith('<div lang="fr">')).toBe(true); // read in French
     expect(sent[0].text).toContain("support@x.com");
     expect(sent[0].bcc).toBe("copy@x.com"); // global blind copy passed to the mailer
   });

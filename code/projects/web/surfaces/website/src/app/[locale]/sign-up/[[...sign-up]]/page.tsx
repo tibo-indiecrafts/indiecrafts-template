@@ -12,7 +12,7 @@ import type { Locale } from "@/config";
  * Public sign-up. Clerk's themed `<SignUp>`, self-hosted (not the Account Portal) so
  * it can carry the active `locale` in `unsafeMetadata` — the api webhook mirrors that
  * to `user_profiles.locale`, localizing the user's auth emails incl. the first
- * verification code. Point Clerk here with `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up`.
+ * verification code. Clerk's links point here (`AppClerkProvider signUpPath`).
  * 404s when Clerk is unconfigured — no sign-up page without auth.
  */
 export default async function SignUpPage({

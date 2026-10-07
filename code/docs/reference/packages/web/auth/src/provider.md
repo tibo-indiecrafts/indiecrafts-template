@@ -14,7 +14,7 @@ Wraps `<ClerkProvider>` with `authAppearance()` and the resolved locale bundle s
 
 ## Exports
 
-- `AppClerkProvider({ children, nonce?, locale? })` — the themed provider. `nonce` forwards the per-request CSP nonce; `locale` selects the Clerk UI language bundle. Server-component compatible.
+- `AppClerkProvider({ children, nonce?, locale?, signUpPath? })` — the themed provider. `nonce` forwards the per-request CSP nonce; `locale` selects the Clerk UI language bundle; `signUpPath` (e.g. `"/sign-up"`) becomes Clerk's `signUpUrl`, localized, so Clerk's "Sign up" links open the app's own page. Admin, which has no sign-up page, omits it. Server-component compatible.
 
 ## Usage
 

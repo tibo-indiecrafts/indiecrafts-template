@@ -29,6 +29,12 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The welcome email never leaves an unhandled rejection.** `sendWelcomeEmail` promised never to
+  throw, but a Resend error (a non-2xx or a timeout) rejected inside the webhook's `waitUntil`, unlogged.
+  It now logs `welcome email failed` (error name only) and resolves. Tested.
+- **Auth and welcome emails declare their language.** The worker sends HTML fragments, so mail
+  clients' screen readers read a French email with English pronunciation. `inLanguage` wraps the
+  welcome email and the Clerk take-over in `<div lang="…">`.
 - **`POST /v1/data-request` checks the email format.** It used the forms' rule (`isValidEmail`),
   so a bearer caller can no longer store a malformed address as PII; a bad one is `400 invalid`.
 - **The bearer routes' CORS allowlist is config, not a hard-coded `localhost:3000`.** It reads the

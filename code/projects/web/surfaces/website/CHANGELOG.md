@@ -19,6 +19,10 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **A sign-up from the header keeps the visitor's language.** The header's sign-in modal signed up in
+  place with no locale, so French visitors got the English welcome email. The header now uses
+  `SignInModalButton`, and the layout passes `signUpPath="/sign-up"`; `NEXT_PUBLIC_CLERK_SIGN_UP_URL`
+  is gone from `.env.example`.
 - **French pages get French SEO on shared documents.** `/fr/blog`, `/fr/author`, `/fr/blog/category`,
   `/fr/blog/tag`, `/fr/contact` and `/fr/waitlist` showed the English title and description: their SEO
   lives on singletons that serve every locale. The SEO queries now read the locale's `seoTranslations`

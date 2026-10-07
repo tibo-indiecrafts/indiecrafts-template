@@ -65,6 +65,9 @@ The same singleton also holds a **`welcome`** group — the post-signup welcome 
 the kinds above it is **not** a Clerk template (Clerk has none): it fires on the `user.created`
 webhook (best-effort, in the sign-up locale) and is sent by `clerk-email/welcome.ts`, separate
 from the `email.created` take-over. Editable copy, same fallback + support footer as the rest.
+The custom copy applies only when the group's **Activer** box is ticked (it starts unticked).
+The sign-up locale comes from `unsafeMetadata.locale`: the `/sign-up` page sets it, and the
+header's sign-in modal passes it too (`SignInModalButton`), since Clerk signs up inside the modal.
 
 The support address is one global value — `emailStrings.supportEmail` (Studio → E-mails),
 seeded `support@indiecrafts.dev`. It shows in the footer of **every** transactional email

@@ -85,7 +85,7 @@ export default async function LocaleLayout({
   return (
     // suppressHydrationWarning: the inline THEME_SCRIPT sets `data-theme` on <html> before
     // hydration, so the server/client attributes differ by design (one level deep only).
-    <AppClerkProvider locale={locale} nonce={nonce}>
+    <AppClerkProvider locale={locale} nonce={nonce} signUpPath="/sign-up">
       <html
         lang={locale}
         dir={localeDir(locale as Locale)}

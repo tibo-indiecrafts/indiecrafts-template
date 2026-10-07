@@ -8,6 +8,7 @@ export { authAppearance } from "./appearance";
 export { clerkLocalization } from "./localization";
 export { SignInView } from "./sign-in-view";
 export { SignUpView } from "./sign-up-view";
+export { SignInModalButton } from "./sign-in-modal-button";
 export { SessionLogger } from "./session-logger";
 export { isSafeRelativePath, resolveSignInRedirect } from "./redirect";
 // Clerk auth UI, re-homed so app code imports it from one place.

@@ -9,6 +9,7 @@
     "./appearance": "./src/appearance.ts",
     "./sign-in-view": "./src/sign-in-view.tsx",
     "./sign-up-view": "./src/sign-up-view.tsx",
+    "./sign-in-modal-button": "./src/sign-in-modal-button.tsx",
     "./marketing-nudge": "./src/marketing-nudge.tsx",
     "./session-logger": "./src/session-logger.tsx",
     "./persist-locale": "./src/persist-locale.tsx",

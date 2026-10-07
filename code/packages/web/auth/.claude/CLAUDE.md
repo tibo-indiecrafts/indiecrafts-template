@@ -11,6 +11,11 @@ Consumed by the three Next surfaces (`website`, `admin`, `app`) — 3 consumers.
   Wrap the **root** layout with it so `auth()` + the hosted `<SignIn>`/`<SignUp>` work
   app-wide. Reads `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (public key — allowed under
   `NEXT_PUBLIC_`) from the env. Server-component compatible.
+  `signUpPath="/sign-up"` (website, app) makes Clerk's "Sign up" links open the app's own
+  localized page; admin has no sign-up page and omits it.
+- **`SignInModalButton`** (`./sign-in-modal-button`) — the header sign-in button. Clerk signs up
+  INSIDE its modal with no metadata, so this opens it with `unsafeMetadata.locale` (else the
+  welcome email falls back to English). `<SignInButton>` can't pass metadata.
 - **`authAppearance()`** (`./appearance`) — Clerk `appearance.variables` mapped to the
   `@indiecrafts/packages-web-ui-tokens` CSS custom properties (`var(--primary)`, …),
   so sign-in UI is token-themed with **no hard-coded brand color**. A colocated test

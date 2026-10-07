@@ -10,7 +10,7 @@ import { SignUpView } from "@indiecrafts/packages-web-auth/sign-up-view";
 /**
  * Public sign-up. Clerk's themed `<SignUp>`, self-hosted so it can carry the active
  * `locale` in `unsafeMetadata` (→ `user_profiles.locale` via the webhook → localized
- * auth emails). Point Clerk here with `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up`. 404s
+ * auth emails). Clerk's links point here (`AppClerkProvider signUpPath`). 404s
  * when Clerk is unconfigured.
  */
 export default async function SignUpPage({

@@ -3,7 +3,13 @@
  *
  * @see docs/reference/shared/api/src/clerk-email/welcome.md
  */
-import { resend, supportFooter, type MailEnv } from "../erasure/email";
+import { logger } from "@indiecrafts/packages-shared-logger";
+import {
+  inLanguage,
+  resend,
+  supportFooter,
+  type MailEnv,
+} from "../erasure/email";
 import { fetchAuthEmailStrings, resolveWelcomeCopy } from "./sanity";
 import { renderWelcome } from "./templates";
 
@@ -25,16 +31,22 @@ export async function sendWelcomeEmail(
 ): Promise<void> {
   if (!to) return;
   if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return;
-  const strings = await fetchStrings(env);
-  const copy = resolveWelcomeCopy(strings, locale);
-  const { subject, html, text } = renderWelcome(locale, copy);
-  const foot = supportFooter(strings?.supportEmail, locale);
-  await send(env, {
-    to,
-    subject,
-    html: html + foot.html,
-    text: text + foot.text,
-    bcc: strings?.bccAll,
-    idempotencyKey: `welcome/${userId}`,
-  });
+  try {
+    const strings = await fetchStrings(env);
+    const copy = resolveWelcomeCopy(strings, locale);
+    const { subject, html, text } = renderWelcome(locale, copy);
+    const foot = supportFooter(strings?.supportEmail, locale);
+    await send(env, {
+      to,
+      subject,
+      html: inLanguage(html + foot.html, locale),
+      text: text + foot.text,
+      bcc: strings?.bccAll,
+      idempotencyKey: `welcome/${userId}`,
+    });
+  } catch (error) {
+    // `resend` throws on a non-2xx or a timeout; log it (no address) instead of leaving
+    // an unhandled rejection in the webhook's `waitUntil`.
+    logger.error("welcome email failed", { name: (error as Error)?.name });
+  }
 }

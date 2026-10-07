@@ -7,6 +7,7 @@ import { logger } from "@indiecrafts/packages-shared-logger";
 import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
 import {
+  inLanguage,
   readProfileLocale,
   resend,
   supportFooter,
@@ -117,7 +118,7 @@ export async function handleClerkEmail(
     await send(env, {
       to,
       subject,
-      html: html + foot.html,
+      html: inLanguage(html + foot.html, locale),
       text: text + foot.text,
       bcc: strings?.bccAll,
     });
