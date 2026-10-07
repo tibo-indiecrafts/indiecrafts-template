@@ -39,6 +39,9 @@ Rationale + full tree → `code/docs/projects/web/website/config/project-organiz
   Per-page JSON-LD → `page.seo.structuredData[]` via `@/lib/seo/jsonld-factories` (FAQ first — the
   highest-ROI rich result). → `seo/seo-metadata.md`,
   `seo/structured-data-cookbook.md`, `seo/llms-endpoints.md` under `code/docs/projects/web/website/`.
+- **Clerk loads only when needed** (`src/lib/clerk-load.ts`: a signed-in visitor, or `/sign-in` · `/sign-up`).
+  Reach Clerk UI only through `@/user-interface/account/LazyClerk` (`next/dynamic`) from anything the layout or
+  header renders — a static import puts Clerk back on every page. Client code checks `useClerkActive()`.
 - **Flags:** `features.blog` (every blog route 404s and leaves sitemap, `llms.txt`, nav when off; gate in
   `@indiecrafts/modules-web-blog/lib/route-gate`) and `features.studio` (`/studio` + draft mode) are independent.
 - **Library sections:** copy, then adapt — strings → `messages/`, colors/nav → `@/config`, links →
