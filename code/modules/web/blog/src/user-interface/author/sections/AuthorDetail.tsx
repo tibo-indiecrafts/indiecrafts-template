@@ -74,7 +74,8 @@ export function AuthorDetail({
               width={160}
               height={160}
               className="h-28 w-28 rounded-full object-cover sm:h-32 sm:w-32 md:h-40 md:w-40"
-              priority
+              loading="eager"
+              fetchPriority="high"
             />
           ) : (
             <span

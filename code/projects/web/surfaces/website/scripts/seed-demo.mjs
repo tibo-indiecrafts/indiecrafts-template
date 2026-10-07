@@ -3167,6 +3167,11 @@ const buildCookieConsent = () => ({
       "Mémorise la langue choisie.",
     ),
     firstPartyCookie(
+      `${SITE_PREFIX}.consent-v`,
+      "Remembers which version of your cookie choices you made, so the banner doesn't ask again.",
+      "Mémorise la version de vos choix de cookies, pour que le bandeau ne vous les redemande pas.",
+    ),
+    firstPartyCookie(
       `${SITE_PREFIX}.legal-ack`,
       "Remembers that you acknowledged the latest legal/policy update.",
       "Mémorise que vous avez pris connaissance de la dernière mise à jour légale.",

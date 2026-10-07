@@ -22,6 +22,7 @@ import {
   signalsDeny,
 } from "./consent-store";
 import { usePreferencesDialog } from "./use-preferences-dialog";
+import { writeConsentCookie } from "./consent-cookie";
 
 type Props = {
   categories: ConsentCategory[];
@@ -39,6 +40,10 @@ type Props = {
    *  banner (default); `opt-out`/`none` never block — they auto-seed a default and rely on the
    *  preferences dialog (open via `?cookies=manage` / a Manage-preferences button). */
   mode?: ConsentMode;
+  /** Server-read: the consent cookie (`CONSENT_COOKIE`) holds the current `version`. Given,
+   *  the banner renders in the first HTML for an undecided visitor instead of after
+   *  hydration. Omitted, the banner decides on the client only. */
+  decided?: boolean;
 };
 
 const EMPTY_CHOICES: Record<string, boolean> = {};
@@ -63,6 +68,7 @@ export function CookieBanner({
   respectGpc = true,
   gpcSignal = false,
   mode = "opt-in",
+  decided,
 }: Props) {
   const t = useTranslations("cookies");
   const record = useSyncExternalStore(
@@ -102,7 +108,22 @@ export function CookieBanner({
     );
   }, [mode, respectGpc, gpcSignal, record, categories, version]);
 
-  const needsConsent = record === null || record.v !== version;
+  // On the server and during hydration the record is unknown: the consent cookie stands in
+  // for it (`decided`), so an undecided visitor gets the banner in the first HTML.
+  const needsConsent = useSyncExternalStore(
+    consentStore.subscribe,
+    () => {
+      const stored = consentStore.get();
+      return stored === null || stored.v !== version;
+    },
+    () => decided === false,
+  );
+
+  // A visitor who decided before the cookie existed: copy the version into it, so the
+  // server stops rendering a banner the client then hides.
+  useEffect(() => {
+    if (decided === false && record?.v === version) writeConsentCookie(version);
+  }, [decided, record, version]);
   // Only opt-in regions get the blocking banner; opt-out/none rely on the seed + preferences.
   // It is the first overlay in the queue: the others wait until the visitor decides.
   const showBar = useOverlayTurn(

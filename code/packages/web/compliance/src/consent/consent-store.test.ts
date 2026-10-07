@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { applyConsent, signalsDeny } from "./consent-store";
+import { CONSENT_COOKIE } from "./consent-cookie";
 
 describe("signalsDeny", () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -93,5 +94,25 @@ describe("applyConsent → Consent Mode", () => {
       (Array.from(entry as ArrayLike<unknown>)[2] as Record<string, string>)
         .analytics_storage,
     ).toBe("granted");
+  });
+});
+
+describe("applyConsent → consent cookie", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    localStorage.clear();
+  });
+
+  it("mirrors the decided version (never the choices) into a cookie the server can read", () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(new Response(null, { status: 204 })),
+    );
+    vi.stubGlobal("crypto", { randomUUID: () => "uuid-4" });
+
+    applyConsent([], { analytics: true }, "2026-02");
+
+    expect(document.cookie).toContain(`${CONSENT_COOKIE}=2026-02`);
+    expect(document.cookie).not.toContain("analytics");
   });
 });

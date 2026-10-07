@@ -10,7 +10,9 @@ import { sanityImageLoader } from "@indiecrafts/packages-web-sanity/image";
 type LogoImgProps = {
   src: string;
   className?: string;
-  priority?: boolean;
+  /** Load at once (the visible logo). The hidden dark-mode logo stays lazy, so a light
+   *  page never fetches it. */
+  eager?: boolean;
 };
 
 /**
@@ -24,7 +26,7 @@ type LogoImgProps = {
  * `alt=""`: the wordmark next to it always names the site, so the image is
  * decorative. Naming it too made screen readers say the name twice.
  */
-function LogoImg({ src, className, priority = true }: LogoImgProps) {
+function LogoImg({ src, className, eager = true }: LogoImgProps) {
   return (
     <Image
       src={sanityImageLoader({ src, width: 192, quality: 90 })}
@@ -32,7 +34,7 @@ function LogoImg({ src, className, priority = true }: LogoImgProps) {
       width={96}
       height={24}
       unoptimized
-      priority={priority}
+      loading={eager ? "eager" : "lazy"}
       className={cn("h-6 w-auto object-contain", className)}
     />
   );
@@ -66,10 +68,10 @@ export function Logo({ name, logo, logoDark, className, iconClassName }: LogoPro
         logoDark ? (
           <>
             <LogoImg src={logo} className={cn("block dark:hidden", iconClassName)} />
-            {/* Not `priority`: the dark logo preloads only when dark mode is active. */}
+            {/* Lazy: hidden in light mode, so it loads only when dark mode shows it. */}
             <LogoImg
               src={logoDark}
-              priority={false}
+              eager={false}
               className={cn("hidden dark:block", iconClassName)}
             />
           </>

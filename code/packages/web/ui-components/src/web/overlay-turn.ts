@@ -40,8 +40,9 @@ function subscribe(listener: () => void) {
 
 /**
  * `true` when this overlay wants to show and no higher-priority overlay is waiting.
- * Nothing shows on the server or during hydration; the wish registers in a layout
- * effect, so every overlay of one render queues before the first paint.
+ * The rest show only after hydration: the wish registers in a layout effect, so every
+ * overlay of one render queues before the first paint. The head of `OVERLAY_ORDER`
+ * (consent) skips the queue, so it can show from the server's first HTML.
  */
 export function useOverlayTurn(key: OverlayKey, wants: boolean): boolean {
   useLayoutEffect(() => {
@@ -54,5 +55,7 @@ export function useOverlayTurn(key: OverlayKey, wants: boolean): boolean {
     () => current,
     () => null,
   );
-  return wants && turn === key;
+  // The head of the queue never waits: it can render on the server (the consent banner
+  // for an undecided visitor), and every other overlay still waits for it.
+  return wants && (key === OVERLAY_ORDER[0] || turn === key);
 }

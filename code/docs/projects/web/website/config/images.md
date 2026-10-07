@@ -98,3 +98,11 @@ the **mechanism is shared**; the **value is per-app × per-env**.
   `code/projects/web/surfaces/website/src/lib/sanity-image-loader.ts`.
 - Asset CDN: `site.cdnUrl` (`@indiecrafts/packages-shared-config`) → `assetPrefix` (`next.config.ts`); env `NEXT_PUBLIC_CDN_URL`.
 - Blog gallery lqip detail: [gallery](/modules/web/blog/gallery).
+
+## The LCP image
+
+Mark the page's one largest image (a post or blog hero) with `loading="eager"` + `fetchPriority="high"` —
+`FeaturedMedia`'s `priority` prop does exactly that. Next 16 deprecated `<Image priority>`: it now only
+preloads, at default priority, so on a slow mobile link the hero queued behind ~300 kB of scripts and
+fonts. Give high priority to one image per page (the blog mosaic's first card, not both large ones);
+everything else stays lazy.

@@ -145,7 +145,7 @@ export function GalleryCarousel({
                       className="object-cover"
                       placeholder={im.lqip ? "blur" : undefined}
                       blurDataURL={im.lqip ?? undefined}
-                      priority={i === 0}
+                      loading={i === 0 ? "eager" : undefined}
                     />
                   ) : null}
                 </button>

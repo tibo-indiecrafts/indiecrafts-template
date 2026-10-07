@@ -63,7 +63,15 @@ describe("useOverlayTurn", () => {
     ).toBe("legal");
   });
 
-  it("renders no overlay on the server", () => {
+  it("renders only the head of the queue (consent) on the server", () => {
     expect(renderToString(<Overlay id="legal" wants />)).toBe("");
+    expect(
+      renderToString(
+        <>
+          <Overlay id="consent" wants />
+          <Overlay id="legal" wants />
+        </>,
+      ),
+    ).toBe("<p>consent</p>");
   });
 });

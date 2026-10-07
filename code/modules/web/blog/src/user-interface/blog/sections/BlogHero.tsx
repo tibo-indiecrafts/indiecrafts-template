@@ -47,6 +47,7 @@ export function BlogHero({
               span={i === 0 ? "md:col-span-2" : "md:col-span-1"}
               height={i < 2 ? "h-[400px]" : "h-[245px]"}
               size={i < 2 ? "lg" : "sm"}
+              lcp={i === 0}
             />
           ))}
         </div>
@@ -61,12 +62,15 @@ async function HeroCard({
   span,
   height,
   size,
+  lcp,
 }: {
   post: PostListItem;
   locale: Locale;
   span: string;
   height: string;
   size: "lg" | "sm";
+  /** The page's largest paint (the first card): fetched ahead of everything else. */
+  lcp: boolean;
 }) {
   const t = await getTranslations({ locale, namespace: "pages.blog" });
   const slug = post.slug ?? "";
@@ -99,7 +103,10 @@ async function HeroCard({
           placeholder={lqip ? "blur" : undefined}
           blurDataURL={lqip ?? undefined}
           className="absolute inset-0 z-0 object-cover"
-          priority={size === "lg"}
+          // Both large cards sit above the fold; only the first is the LCP, so only it
+          // jumps the queue (Next 16's `priority` only preloads, at default priority).
+          loading={size === "lg" ? "eager" : undefined}
+          fetchPriority={lcp ? "high" : undefined}
         />
       ) : (
         <div className="bg-muted absolute inset-0" aria-hidden="true" />

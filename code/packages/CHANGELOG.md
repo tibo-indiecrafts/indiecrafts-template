@@ -61,6 +61,15 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`packages-web-compliance` — the consent banner can render on the server.** `consentStore.save`
+  mirrors the decided version (never the choices) into `<site.prefix>.consent-v`
+  (`consent/consent-cookie`), and `CookieBanner` takes `decided` (server-read) as its server snapshot:
+  an undecided visitor gets the banner in the first HTML. A stored decision older than the cookie is
+  copied into it on the next visit. **`packages-web-ui-components`:** `useOverlayTurn` lets the head
+  of the queue (consent) render without waiting, so it can show from the server; `FeaturedMedia`'s
+  `priority` now means `loading="eager"` + `fetchPriority="high"` (Next 16's `priority` only
+  preloads); `GalleryCarousel`'s first slide loads eagerly. **Why:** the banner, painted after
+  hydration, was the home page's largest paint.
 - **`packages-web-auth` — `usePersistLocale()` is now `persistLocale(locale)`.** It reads the loaded
   `window.Clerk` instead of a Clerk hook, so the locale switchers (website, app, admin, the account
   Language tab) carry no Clerk code and work with no provider. **Why:** a hook throws without

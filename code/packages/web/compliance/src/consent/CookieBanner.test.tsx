@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { CookieBanner } from "./CookieBanner";
 import { STORAGE_KEY } from "./consent-store";
+import { CONSENT_COOKIE } from "./consent-cookie";
 import type { ConsentCategory } from "./consent-signals";
 
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
@@ -57,5 +59,44 @@ describe("CookieBanner — GPC (Brave sends it by default)", () => {
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).choices).toEqual({
       analytics: false,
     });
+  });
+});
+
+describe("CookieBanner — server render from the consent cookie", () => {
+  const html = (decided?: boolean) =>
+    renderToString(
+      <CookieBanner
+        categories={categories}
+        version="v1"
+        mode="opt-in"
+        decided={decided}
+      />,
+    );
+
+  it("renders the banner in the first HTML for an undecided visitor", () => {
+    expect(html(false)).toContain("rejectAll");
+  });
+
+  it("renders none for a visitor who decided this version, or with no cookie hint", () => {
+    expect(html(true)).not.toContain("rejectAll");
+    expect(html(undefined)).not.toContain("rejectAll");
+  });
+
+  it("copies an older visitor's stored decision into the cookie", () => {
+    document.cookie = `${CONSENT_COOKIE}=; max-age=0; path=/`;
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ v: "v1", t: 1, choices: {} }),
+    );
+    render(
+      <CookieBanner
+        categories={categories}
+        version="v1"
+        mode="opt-in"
+        decided={false}
+      />,
+    );
+    expect(document.cookie).toContain(`${CONSENT_COOKIE}=v1`);
+    expect(screen.queryByRole("button", { name: "rejectAll" })).toBeNull();
   });
 });

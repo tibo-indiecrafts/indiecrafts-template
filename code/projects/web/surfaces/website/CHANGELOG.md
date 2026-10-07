@@ -31,6 +31,16 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **First-load performance, from a Lighthouse pass.** (1) The cookie banner renders in the first HTML
+  for an undecided visitor: the layout reads the new `consent-v` cookie and passes `decided` to
+  `CookieBanner`. It used to appear only after hydration and was the home page's largest paint; now
+  largest paint = first paint (observed gap 216–630 ms → 0). (2) Hero images (post, blog mosaic's first
+  card, author photo) use `loading="eager"` + `fetchPriority="high"` instead of Next 16's deprecated
+  `priority`; only one per page. (3) Geist Mono isn't preloaded (code blocks only). (4) The header logo
+  loads eagerly at normal priority; the hidden dark logo stays lazy. Lighthouse mobile (dev cookie
+  set, median of 3): home 81 → 86, TBT 115 → 61 ms. **Content step:** declare the `consent-v` cookie
+  in the cookie inventory (the demo seed now does). **Why:** a late banner and a crowded first load
+  slowed every first visit.
 - **Clerk loads only for a signed-in visitor or on the sign-in / sign-up pages.** Everyone else's
   pages carry no Clerk code: the header's "Sign in" is a plain link to `/sign-in?redirect_url=…`
   (a full page load). The layout decides with `shouldLoadClerk` (`auth()` + the path) and renders the

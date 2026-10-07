@@ -101,7 +101,12 @@ The mapping is **data-driven** — edit a category's signals in Sanity, no code 
   Toggle with the banner's `respectGpc` prop (default on). GPC is enforceable under CCPA/CPRA.
 - Non-essential tags held until opt-in (`default: denied` + `wait_for_update: 500`).
 - Choices persist in `localStorage` (key `cookie-consent`) with the consent `version` + a
-  timestamp; changing `version` re-prompts.
+  timestamp; changing `version` re-prompts. The decided `version` (never the choices) is mirrored
+  into the first-party cookie `<site.prefix>.consent-v` (`consent/consent-cookie`, strictly
+  necessary, declared like `legal-ack`). The layout reads it and passes `decided` to the banner, so
+  an undecided visitor gets the banner in the **first HTML** instead of after hydration — the late
+  banner was the home page's largest paint (LCP). A visitor who decided before the cookie existed
+  gets it written on the next visit.
 - **Policy-linked re-consent** — the effective `version` = `cookieConsent.version` + the
   **cookie-policy** page's `lastUpdated` (composed in `getCookieConsent`). Publish a cookie-policy
   update → every visitor is re-prompted, no manual version bump.
@@ -193,7 +198,7 @@ banner (`LegalNotice`, `@indiecrafts/packages-web-compliance/reacceptance/LegalN
   `SameSite=Lax`, `Secure` on https, 1-year. **Server-read** in the layout so the banner is decided
   server-side — no flash; the client writes it on Accept. Unlike cookie consent (localStorage), this
   is a cookie precisely so the server can gate it.
-- **Declared** — the `legal-ack` cookie is a strictly-necessary row in the cookie declaration
+- **Declared** — the `legal-ack` cookie (like `consent-v`) is a strictly-necessary row in the cookie declaration
   (`cookieConsent.cookies[]`), so it appears on the cookie-policy page like every other cookie. **Any
   new client storage the app sets must be declared here** (ePrivacy).
 - **Mount** — `[locale]/layout.tsx`, next to `CookieBanner`; shown only when copy + version are set and

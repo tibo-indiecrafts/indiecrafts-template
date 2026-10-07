@@ -13,6 +13,7 @@ import {
   consentUpdate,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { type ConsentCategory } from "./consent-signals";
+import { writeConsentCookie } from "./consent-cookie";
 import { reportConsent } from "@indiecrafts/packages-shared-compliance/web";
 
 // The pure decision math (`grantedKeys`, `consentUpdate`) + the `ConsentRecord` shape
@@ -69,6 +70,7 @@ export const consentStore = {
   },
   save(record: ConsentRecord) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(record));
+    writeConsentCookie(record.v);
     window.dispatchEvent(new Event(CONSENT_EVENT));
   },
 };

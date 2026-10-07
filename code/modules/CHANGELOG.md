@@ -48,6 +48,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`modules-web-blog` — LCP images fetch first.** The blog mosaic's first card, the post-content
+  cover and the author photo use `loading="eager"` + `fetchPriority="high"` instead of Next 16's
+  deprecated `priority` (preload only); the mosaic's second large card loads eagerly at normal
+  priority. **Why:** one high-priority image per page gets the hero ahead of scripts and fonts.
 - **`modules-web-blog` — Trending shows the most-viewed posts.** `getPopularPostIds` reads the shared
   api's anonymous counter (`GET /v1/views/top`, last 30 days, uncached, 1.5 s timeout) and the
   latest posts fill any gap (`popularThenLatest`); any failure falls back to the latest posts.

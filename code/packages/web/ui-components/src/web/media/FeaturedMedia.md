@@ -4,20 +4,20 @@
 
 ## Props
 
-| Prop          | Type      | Default          | Notes                                                                    |
-| ------------- | --------- | ---------------- | ------------------------------------------------------------------------ |
-| `image`       | `string`  | —                | Cover URL, rendered with `next/image` (`fill`, `object-cover`).          |
-| `alt`         | `string`  | `""`             | Image alt text.                                                          |
-| `videoUrl`    | `string`  | —                | A file or YouTube/Vimeo/Dailymotion link → play affordance.              |
-| `lqip`        | `string`  | —                | Base64 blur placeholder.                                                 |
-| `aspect`      | `string`  | `"aspect-video"` | Any Tailwind aspect utility, e.g. `aspect-[4/3]`.                        |
-| `sizes`       | `string`  | `"100vw"`        | `next/image` `sizes`.                                                    |
-| `priority`    | `boolean` | —                | Eager-load the cover (above-the-fold heroes).                            |
-| `interactive` | `boolean` | `true`           | `false` → static marker only, never mounts a player (linked thumbnails). |
-| `autoplay`    | `boolean` | `false`          | Mounts muted + looping as an ambient backdrop, no button.                |
-| `controls`    | `boolean` | `true`           | Show the native/provider player chrome.                                  |
-| `playLabel`   | `string`  | —                | **Required.** Accessible label for the play button/marker.               |
-| `className`   | `string`  | —                | Extra classes on the outer box.                                          |
+| Prop          | Type      | Default          | Notes                                                                        |
+| ------------- | --------- | ---------------- | ---------------------------------------------------------------------------- |
+| `image`       | `string`  | —                | Cover URL, rendered with `next/image` (`fill`, `object-cover`).              |
+| `alt`         | `string`  | `""`             | Image alt text.                                                              |
+| `videoUrl`    | `string`  | —                | A file or YouTube/Vimeo/Dailymotion link → play affordance.                  |
+| `lqip`        | `string`  | —                | Base64 blur placeholder.                                                     |
+| `aspect`      | `string`  | `"aspect-video"` | Any Tailwind aspect utility, e.g. `aspect-[4/3]`.                            |
+| `sizes`       | `string`  | `"100vw"`        | `next/image` `sizes`.                                                        |
+| `priority`    | `boolean` | —                | The page's LCP image: eager, `fetchPriority="high"` (not Next's `priority`). |
+| `interactive` | `boolean` | `true`           | `false` → static marker only, never mounts a player (linked thumbnails).     |
+| `autoplay`    | `boolean` | `false`          | Mounts muted + looping as an ambient backdrop, no button.                    |
+| `controls`    | `boolean` | `true`           | Show the native/provider player chrome.                                      |
+| `playLabel`   | `string`  | —                | **Required.** Accessible label for the play button/marker.                   |
+| `className`   | `string`  | —                | Extra classes on the outer box.                                              |
 
 ## Notes
 

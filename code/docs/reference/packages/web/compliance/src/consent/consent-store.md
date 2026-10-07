@@ -17,7 +17,7 @@ The client-side consent store. It holds the visitor's per-category cookie choice
 - `STORAGE_KEY` — the `localStorage` key, namespaced by `site.prefix`.
 - `CONSENT_EVENT` — window event name fired after the stored record changes.
 - `OPEN_PREFERENCES_EVENT` — window event name that opens the preferences dialog.
-- `consentStore` — object with `get`, `subscribe`, and `save` for reactive reads.
+- `consentStore` — object with `get`, `subscribe`, and `save` for reactive reads; `save` also mirrors the decided version into the consent cookie (`writeConsentCookie`).
 - `openPreferences()` — dispatches the open-preferences event.
 - `browserSignalsDeny()` — true when the browser sends GPC or legacy Do-Not-Track.
 - `signalsDeny(gpcSignal)` — union of the server-detected GPC header and the browser signals.

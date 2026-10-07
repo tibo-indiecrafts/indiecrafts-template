@@ -115,7 +115,8 @@ export async function BlogPostContent({
             alt={post.metadata?.image?.alt ?? title}
             fill
             sizes="(min-width: 768px) 768px, 100vw"
-            priority
+            loading="eager"
+            fetchPriority="high"
             className="object-cover"
           />
         </div>

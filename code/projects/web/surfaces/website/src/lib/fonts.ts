@@ -33,10 +33,13 @@ import { fonts, type FontKey } from "@/config";
 
 const geist = Geist({ subsets: ["latin"], display: "swap", variable: "--f-geist" });
 
+// Not preloaded: the mono face only shows in code blocks, so most pages never use it —
+// a preload would spend first-load bandwidth on every page. It loads when first used.
 const geistMono = Geist_Mono({
   subsets: ["latin"],
   display: "swap",
   variable: "--f-geist-mono",
+  preload: false,
 });
 
 // Local (self-hosted) variable font — the showcase for the local pipeline.

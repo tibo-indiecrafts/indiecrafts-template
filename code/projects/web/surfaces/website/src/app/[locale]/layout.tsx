@@ -48,6 +48,7 @@ import { getVersionPrompt } from "@/lib/system-pages";
 import { getCookieConsent } from "@indiecrafts/packages-web-compliance/sanity/cookies";
 import { getLegalAcceptance } from "@indiecrafts/packages-web-compliance/sanity/legal";
 import { LEGAL_ACK_COOKIE } from "@indiecrafts/packages-web-compliance/reacceptance/legal-store";
+import { CONSENT_COOKIE } from "@indiecrafts/packages-web-compliance/consent/consent-cookie";
 import { SanityLive } from "@indiecrafts/packages-web-sanity/live";
 import { UpdatePrompt } from "@indiecrafts/packages-web-version/update-prompt";
 import { buildInfo } from "@/lib/build-info";
@@ -165,7 +166,10 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   const gpcSignal = requestHeaders.get("sec-gpc") === "1";
   // Server-read the legal-acceptance cookie so the "policies updated" banner is
   // decided server-side (no flash) — shown only when the deposited version is stale.
-  const legalAck = (await cookies()).get(LEGAL_ACK_COOKIE)?.value;
+  const jar = await cookies();
+  const legalAck = jar.get(LEGAL_ACK_COOKIE)?.value;
+  // Same for cookie consent: an undecided visitor gets the banner in the first HTML.
+  const consentDecided = jar.get(CONSENT_COOKIE)?.value === cookieConsent.version;
   // Clerk mounts only for a signed-in visitor or on the sign-in / sign-up pages: everyone
   // else skips its bundle and CDN scripts (`shouldLoadClerk`, `LazyClerk`).
   const clerk = await shouldLoadClerk(requestHeaders.get("x-pathname"));
@@ -247,6 +251,7 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
                     body={cookieConsent.banner.body}
                     mode={consentMode}
                     gpcSignal={gpcSignal}
+                    decided={consentDecided}
                   />
                 ) : (
                   // `requireCookieConsent` is off, so `CookieBanner` (which also mounts

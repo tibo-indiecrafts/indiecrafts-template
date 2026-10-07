@@ -54,6 +54,7 @@ export function FeaturedMedia({
   /** Tailwind aspect utility, e.g. `aspect-video` or `aspect-[4/3]`. */
   aspect?: string;
   sizes?: string;
+  /** The page's LCP image (a hero): load it at once, ahead of scripts and fonts. */
   priority?: boolean;
   interactive?: boolean;
   /** Auto-play muted + looping as an ambient backdrop (no play button). */
@@ -102,7 +103,10 @@ export function FeaturedMedia({
               alt={alt}
               fill
               sizes={sizes}
-              priority={priority}
+              // Next 16's `priority` only preloads; an eager, high-priority fetch is what
+              // gets a hero ahead of the scripts and fonts on a slow connection.
+              loading={priority ? "eager" : undefined}
+              fetchPriority={priority ? "high" : undefined}
               placeholder={lqip ? "blur" : undefined}
               blurDataURL={lqip ?? undefined}
               className="object-cover"

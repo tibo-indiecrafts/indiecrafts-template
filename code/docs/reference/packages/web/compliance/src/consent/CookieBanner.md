@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The GDPR cookie banner plus preferences dialog. It shows on first visit, or when the consent `version` changes, offering Reject all / Customize / Accept all on equal terms. Choices persist in `localStorage` and push a Consent-Mode update. Mounted by `[locale]/layout.tsx` when Sanity `requireCookieConsent` is on.
+The GDPR cookie banner plus preferences dialog. It shows on first visit, or when the consent `version` changes, offering Reject all / Customize / Accept all on equal terms. Choices persist in `localStorage` and push a Consent-Mode update. With `decided` (server-read from the consent cookie), an undecided visitor gets the banner in the first HTML rather than after hydration; without it the banner decides on the client only. A visitor whose stored decision predates the cookie gets the cookie written. Mounted by `[locale]/layout.tsx` when Sanity `requireCookieConsent` is on.
 
 ## Exports
 
