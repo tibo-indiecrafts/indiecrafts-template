@@ -1,14 +1,13 @@
 ---
 title: "Marketing sections"
-description: "Sections are the reusable marketing blocks a home (or landing) page is built from: Features, Pricing, Testimonials, Cta, Faq, FeaturedArticles, IconShowcase,…"
+description: "Sections are the reusable marketing blocks a home (or landing) page is built from: Features, Pricing, Testimonials, Cta, Faq, FeaturedArticles."
 status: stable
 ---
 
 # Marketing sections
 
 Sections are the reusable marketing blocks a home (or landing) page is built from:
-`Features`, `Pricing`, `Testimonials`, `Cta`, `Faq`, `FeaturedArticles`,
-`IconShowcase`, `MorphiconsShowcase`. They live in
+`Features`, `Pricing`, `Testimonials`, `Cta`, `Faq`, `FeaturedArticles`. They live in
 `src/user-interface/homepage/sections/` and import via the
 `@/user-interface/homepage/sections/*` alias. UI primitives come from the
 `@indiecrafts/packages-web-ui` package (e.g. `@indiecrafts/packages-web-ui/web/card`).

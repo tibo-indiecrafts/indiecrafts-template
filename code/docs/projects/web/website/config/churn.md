@@ -40,7 +40,8 @@ overwrites, never duplicates):
 | `feedback`   | TEXT | Optional free text, capped at 4000 chars.                                                |
 | `competitor` | TEXT | Optional free text, capped at 200 chars.                                                 |
 
-Preset reason codes (`CHURN_REASONS` in `code/shared/api/src/consent/churn-store.ts`):
+Preset reason codes (`CHURN_REASON_CODES` in `@indiecrafts/packages-shared-compliance/shared` —
+the single source for the survey UI, the api and the admin churn page):
 `too_expensive`, `not_using`, `missing_feature`, `found_alternative`, `too_hard`,
 `privacy`, `other`.
 

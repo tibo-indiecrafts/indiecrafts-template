@@ -1,6 +1,6 @@
 ---
 title: "Custom SVG registry"
-description: "Registry of project-specific SVG marks that are not in lucide or reicon, as pure path data."
+description: "Registry of project-specific SVG marks that are not in lucide, as pure path data."
 status: stable
 ---
 
@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Holds project-specific marks that lucide and reicon do not cover, such as a logo mark or a bespoke glyph. Each entry is pure path data (`viewBox` plus `path`, tinted with `currentColor`), so the web and native renderers draw from one source. Drop your own `{ viewBox, path }` here.
+Holds project-specific marks that lucide does not cover, such as a logo mark or a bespoke glyph. Each entry is pure path data (`viewBox` plus `path`, tinted with `currentColor`), so the web and native renderers draw from one source. Drop your own `{ viewBox, path }` here.
 
 ## Exports
 

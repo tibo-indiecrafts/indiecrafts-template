@@ -1,6 +1,13 @@
 {
   "admin": {
     "title": "Admin",
+    "skipToContent": "Skip to main content",
+    "loading": "Loading…",
+    "error": {
+      "title": "Something went wrong",
+      "description": "This page failed to load. Try again, or choose another page in the menu.",
+      "retry": "Try again"
+    },
     "welcome": "Welcome to the admin dashboard.",
     "authNotConfigured": "Authentication is not configured. Set the Clerk keys to enable sign-in.",
     "nav": {

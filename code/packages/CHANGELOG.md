@@ -14,6 +14,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`packages-web-ui-components` — `SkipLink` (`web/layout/SkipLink`).** The one skip-to-content
+  link: website, admin and app pass their own label. **Why:** three surfaces each had a copy.
+- **`packages-web-ui-icons` — the `shield-check` glyph** in `GLYPHS` and the `Icon` map, for the
+  website nav (it replaces the Reicon `ShieldCheck`).
 - **`packages-web-schema` — `seoTranslationsField()`.** Per-locale SEO text for a document every locale
   shares: one entry per non-default locale with the text fields of `seoMeta`; visibility, canonical and
   images stay on the base. The brick gets its first tests (`pnpm test`).
@@ -51,6 +55,24 @@ Changed · Deprecated · Removed · Fixed**.
   `emailPreferencesIo` (reads in the page `locale`). `AccountModalProps` gains `locale`;
   `AccountCopy` gains the Emails copy. **Why:** a shared package can't import a website
   component, so the centre lived only on the website's `/account`, below the widget.
+
+### Changed
+
+- **`packages-shared-compliance` — `CHURN_REASON_CODES` is the one list of churn reason codes.** The api
+  (`normalizeReason`) and the admin churn page now import it from `./shared`, so the api's own
+  `CHURN_REASONS` and the admin's `REASON_CODES` copies are gone. **Why:** three hand-kept copies could
+  drift, and a new code would then read as "unknown" on the dashboard or be dropped by the api.
+
+### Removed
+
+- **`packages-web-ui-icons` — `ReiconIcon` and the `reicon-react` dependency.** It resolved a name
+  with `import * as ReiconReact`, so any client that rendered it — or imported the `./web` barrel —
+  shipped all 2,670 Reicon icons (~2 MB gzipped). Name lookups now go through the curated `GLYPHS`.
+- **`packages-web-page-builder` / `packages-web-ui-components` — the `alreadyMessage` field.** The
+  newsletter, waitlist and lead-magnet blocks lose the hidden schema field and the `alreadyMessage?`
+  prop. **Why:** since the membership oracle closed, new and existing sign-ups both answer `201`, so no
+  form shows an "already" state. Documents that still hold the value show an "unknown field" warning in
+  Studio; the [page-builder docs](../docs/packages/web/page-builder.md) have the one-off cleanup.
 
 ### Fixed
 

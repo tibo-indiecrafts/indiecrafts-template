@@ -83,7 +83,7 @@ const nextConfig: NextConfig = {
   reactCompiler: process.env.NODE_ENV === "production",
   experimental: {
     // Tighter bundle: only import icons you actually reference.
-    optimizePackageImports: ["lucide-react", "lucide"],
+    optimizePackageImports: ["lucide-react"],
   },
   async redirects() {
     // When the Studio is NOT embedded (production/CF), send `/studio` to the hosted

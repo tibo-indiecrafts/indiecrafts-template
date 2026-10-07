@@ -1737,7 +1737,6 @@ const showcaseBody = ({ quoteLocale, copy }) => [
     buttonLabel: copy.newsletterButton,
     consentText: copy.newsletterConsent,
     successMessage: copy.newsletterSuccess,
-    alreadyMessage: copy.newsletterAlready,
     errorMessage: copy.newsletterError,
   }),
   p(copy.afterNewsletter),
@@ -1890,7 +1889,6 @@ const showcaseCopyEn = {
   newsletterConsent:
     "I agree to receive the newsletter and to my email being stored for that purpose.",
   newsletterSuccess: "Thanks! Your signup is saved.",
-  newsletterAlready: "You're already on the list — thanks!",
   newsletterError: "Something went wrong. Please try again.",
   afterNewsletter:
     "Every submission lands in the Studio under Abonnés, or forwards to your email provider — your choice, set once in config.",
@@ -2045,7 +2043,6 @@ const showcaseCopyFr = {
   newsletterConsent:
     "J'accepte de recevoir l'infolettre et que mon adresse e-mail soit conservée à cette fin.",
   newsletterSuccess: "Merci ! Votre inscription est bien enregistrée.",
-  newsletterAlready: "Vous êtes déjà inscrit·e — merci !",
   newsletterError: "Une erreur s'est produite. Merci de réessayer.",
   afterNewsletter:
     "Chaque inscription arrive dans le Studio sous Abonnés, ou est transmise à votre fournisseur d'e-mails — au choix, réglé une fois dans la config.",
@@ -3021,8 +3018,8 @@ const navInternal = (route, en, fr) => ({
   route,
   newTab: false,
 });
-// Rich external link for a header dropdown — carries an icon (free-text Reicon
-// name) + a per-language description.
+// Rich external link for a header dropdown — carries an icon (a curated glyph
+// name from `GLYPHS`) + a per-language description.
 const navExternal = (url, en, fr, icon, descEn, descFr) => ({
   _key: key("nav"),
   _type: "navItem",
@@ -3054,7 +3051,7 @@ const buildNavigation = () => ({
         "https://indiecrafts.dev",
         "Get started",
         "Commencer",
-        "Rocket",
+        "rocket",
         "Fork the template and ship in a weekend.",
         "Forkez le template et livrez en un week-end.",
       ),
@@ -3062,7 +3059,7 @@ const buildNavigation = () => ({
         "https://indiecrafts.dev",
         "Security",
         "Sécurité",
-        "ShieldCheck",
+        "shield-check",
         "How the template handles data and headers.",
         "Comment le template gère les données et les en-têtes.",
       ),

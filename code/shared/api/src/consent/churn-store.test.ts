@@ -1,5 +1,6 @@
 import { env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
+import { CHURN_REASON_CODES } from "@indiecrafts/packages-shared-compliance/shared";
 import {
   writeChurnEvent,
   readChurnEvent,
@@ -11,8 +12,11 @@ const db = () => env.MAIN_DB!;
 
 describe("churn-store", () => {
   it("normalizeReason keeps preset codes, nulls the rest", () => {
-    expect(normalizeReason("too_expensive")).toBe("too_expensive");
+    for (const code of CHURN_REASON_CODES) {
+      expect(normalizeReason(code)).toBe(code);
+    }
     expect(normalizeReason("nonsense")).toBeNull();
+    expect(normalizeReason("TOO_EXPENSIVE")).toBeNull();
     expect(normalizeReason(undefined)).toBeNull();
   });
 

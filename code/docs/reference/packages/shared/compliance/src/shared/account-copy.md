@@ -14,7 +14,7 @@ Defines the copy contracts for the shared account sections and pure builders tha
 
 ## Exports
 
-- `CHURN_REASON_CODES` / `ChurnReasonCode` — the preset churn reason codes; they must mirror `CHURN_REASONS` in the API's `consent/churn-store`.
+- `CHURN_REASON_CODES` / `ChurnReasonCode` — the preset churn reason codes. This is the single source: the survey UI, the api's `normalizeReason` and the admin churn page all import it.
 - `DeleteAccountSurveyCopy` — the churn exit-survey copy shape.
 - `DeleteAccountCopy` — the delete-account section copy shape (includes `survey`).
 - `ExportCopy` — the export section copy shape.

@@ -1,25 +1,21 @@
-"use client";
-
 /**
- * Resolve a free-text Reicon name to its navigation glyph.
+ * Resolve a navigation icon name to its curated glyph.
  *
  * @see docs/reference/projects/web/website/src/user-interface/shared/components/NavIcon.md
  */
 
-import { ReiconIcon } from "@indiecrafts/packages-web-ui-icons/web";
+import { Icon, isGlyph } from "@indiecrafts/packages-web-ui-icons/web";
 
 /**
- * Resolve a free-text Reicon name (as typed by an editor in the `navigation`
- * doc, e.g. "ShieldCheck") to its glyph, via the shared `ui-icons` brick. Unknown/
- * empty names render nothing — the link just shows its label.
- *
- * Icon names: https://reicon.dev (use the exact export name shown for each icon).
+ * Draw the glyph an editor picked for a header link (the `navigation` doc's `icon`,
+ * chosen from the curated `GLYPHS` list in Studio). Unknown or empty names render
+ * nothing — the link just shows its label. Decorative: hidden from screen readers.
  */
 export function NavIcon({ name, size = 16 }: { name?: string; size?: number }) {
-  if (!name) return null;
+  if (!name || !isGlyph(name)) return null;
   return (
     <span aria-hidden="true" className="inline-flex shrink-0">
-      <ReiconIcon name={name} size={size} />
+      <Icon name={name} size={size} />
     </span>
   );
 }

@@ -1,5 +1,5 @@
 /**
- * Render the production home page from editor-composed blocks and template showcases.
+ * Render the production home page from editor-composed blocks and featured posts.
  *
  * @see docs/reference/projects/web/website/src/app/locale/(home)/page.md
  */
@@ -12,9 +12,6 @@ import { getHomePage } from "@/lib/home";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { FeaturedArticles } from "@/user-interface/homepage/sections/FeaturedArticles";
-import { IconShowcase } from "@/user-interface/homepage/sections/IconShowcase";
-import { MorphiconsShowcase } from "@/user-interface/homepage/sections/MorphiconsShowcase";
-import { BlocksShowcase } from "@/user-interface/homepage/sections/BlocksShowcase";
 import { renderBlock } from "@indiecrafts/packages-web-ui-components/web/registry";
 import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
@@ -28,9 +25,8 @@ import type { PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
  * blocks every page uses. One page model everywhere. Add / reorder / hide
  * sections from Studio → Accueil, no code change.
  *
- * The dynamic `FeaturedArticles` (live blog posts) and the template's icon /
- * motion / blocks showcases stay in code — they demo template capabilities and
- * a real client removes them.
+ * The dynamic `FeaturedArticles` (live blog posts) stays in code: it follows the
+ * blog, not the page builder.
  */
 
 type Props = { params: Promise<{ locale: Locale }> };
@@ -45,22 +41,17 @@ export default async function HomePage({ params }: Props) {
   if (!isPageVisible(pages.home)) notFound();
   setRequestLocale(locale);
 
-  // The editor-composed page body — an ordered list of page-builder blocks.
-  const { pageModules } = await getHomePage(locale);
-
-  // Featured articles — only when the blog feature is on. `sanityFetchLive` so
-  // the home page live-updates via `<SanityLive>` when a post changes (opts the
-  // page into dynamic rendering — the deliberate trade for freshness).
-  // `tf` is resolved unconditionally so the hooks-free render stays simple.
-  const tf = await getTranslations("pages.home.blocks.featured");
-  const featured: PostListItem[] = features.blog
-    ? (
-        await sanityFetchLive<PostListItem[]>({
-          query: featuredPostsQuery,
-          params: { locale },
-        })
-      ).slice(0, 4)
-    : [];
+  // One round trip: the editor-composed body (ordered page-builder blocks), the
+  // featured posts (only with the blog on; `sanityFetchLive` so `<SanityLive>`
+  // refreshes the strip when a post changes) and their labels.
+  const [{ pageModules }, featuredPosts, tf] = await Promise.all([
+    getHomePage(locale),
+    features.blog
+      ? sanityFetchLive<PostListItem[]>({ query: featuredPostsQuery, params: { locale } })
+      : [],
+    getTranslations("pages.home.blocks.featured"),
+  ]);
+  const featured = featuredPosts.slice(0, 4);
 
   return (
     <DefaultLayout>
@@ -69,11 +60,6 @@ export default async function HomePage({ params }: Props) {
       {pageModules.map((block) => (
         <div key={block._key}>{renderBlock(block, portableComponents)}</div>
       ))}
-
-      {/* Template showcases — code, not CMS (their content is code). */}
-      <IconShowcase id="home-icons" namespace="pages.home.blocks.icons" />
-      <MorphiconsShowcase id="home-morphicons" namespace="pages.home.blocks.morphicons" />
-      <BlocksShowcase id="home-blocks" namespace="pages.home.blocks.blocks" />
 
       {featured.length > 0 ? (
         <FeaturedArticles

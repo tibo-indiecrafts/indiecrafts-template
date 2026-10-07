@@ -13,20 +13,8 @@ import {
   TableBody,
   TableCell,
 } from "@indiecrafts/packages-web-ui/web/table";
+import { CHURN_REASON_CODES } from "@indiecrafts/packages-shared-compliance/shared";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
-
-// Preset reason codes the self-service deletion survey accepts (mirrors
-// CHURN_REASONS in the shared api's churn-store.ts — duplicated here since apps
-// never cross-import a service). Any other value (including null) reads as "unknown".
-const REASON_CODES = [
-  "too_expensive",
-  "not_using",
-  "missing_feature",
-  "found_alternative",
-  "too_hard",
-  "privacy",
-  "other",
-] as const;
 
 type ChurnData = {
   total: number;
@@ -70,7 +58,7 @@ export default async function ChurnPage({
 
   const reasonLabel = (reason: string | null) =>
     t(
-      `reasons.${reason && (REASON_CODES as readonly string[]).includes(reason) ? reason : "unknown"}`,
+      `reasons.${reason && (CHURN_REASON_CODES as readonly string[]).includes(reason) ? reason : "unknown"}`,
     );
 
   return (

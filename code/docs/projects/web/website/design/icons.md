@@ -14,14 +14,13 @@ code; the marks are edited in Sanity.
 
 Icons come from **one brick** — [`@indiecrafts/packages-web-ui-icons`](/packages/web/ui-icons)
 — so the app and blog draw from a single source. Import the renderers from
-`/web`; all are demoed in `src/user-interface/homepage/sections/IconShowcase.tsx`.
+`/web`; each has a story in Storybook (UI Icons).
 
-| Renderer     | Family         | Use for                                                                      |
-| ------------ | -------------- | ---------------------------------------------------------------------------- |
-| `Icon`       | Lucide         | The default outline UI glyph set — buttons, list bullets, nav.               |
-| `ReiconIcon` | Reicon         | The same shapes in Outline **and** Filled weights (`weight="Filled"`).       |
-| `SvgIcon`    | Custom SVGs    | Project-specific marks (a logo glyph) — add path data to the brick's `SVGS`. |
-| `BrandIcon`  | Brand / social | Social logos painted in their official brand colors (`brandColor`).          |
+| Renderer    | Family         | Use for                                                                      |
+| ----------- | -------------- | ---------------------------------------------------------------------------- |
+| `Icon`      | Lucide         | The default outline UI glyph set — buttons, list bullets, nav.               |
+| `SvgIcon`   | Custom SVGs    | Project-specific marks (a logo glyph) — add path data to the brick's `SVGS`. |
+| `BrandIcon` | Brand / social | Social logos painted in their official brand colors (`brandColor`).          |
 
 ```tsx
 import { Icon, BrandIcon } from "@indiecrafts/packages-web-ui-icons/web";

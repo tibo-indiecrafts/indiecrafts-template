@@ -8,7 +8,8 @@ status: stable
 
 The app deploys to **Cloudflare Workers** via [OpenNext](https://opennext.js.org/cloudflare)
 (`@opennextjs/cloudflare`), across three environments — **dev · staging · prod** — with an
-**R2-backed incremental cache** (so ISR / `revalidate` survive the stateless isolates).
+**R2-backed incremental cache** (so ISR / `revalidate` survive the stateless isolates) and a
+**Durable Object tag cache** (so `revalidateTag` works).
 GitHub Actions builds + deploys. Deploy scripts are **app-namespaced**: run
 `pnpm deploy:web:website:<env>` from the workspace root — it delegates to the app, whose real
 `deploy:<env>` scripts live in `code/projects/web/surfaces/website`. A second app gets its own `deploy:<app>:<env>`,
@@ -98,7 +99,7 @@ origin (from the domain registry via `domains:url`); no custom domain yet ⇒ sk
 > **Deploy is gated on CI.** `deploy.yml` triggers on `workflow_run` after the
 > `CI` workflow succeeds on `main` — a red CI (failing `verify`, `browser-stories`,
 > `browser-e2e-app`, or `csp`) blocks the prod deploy. (`browser-e2e-visual` stays advisory until
-> linux visual baselines are committed.) The auth E2E needs two repo Secrets —
+> linux visual baselines are committed — see [Testing](/projects/web/website/setup/testing).) The auth E2E needs two repo Secrets —
 > `E2E_CLERK_PUBLISHABLE_KEY` + `E2E_CLERK_SECRET_KEY` (a Clerk **test** instance); without them
 > the sign-in journey self-skips. Setup → [testing](/projects/web/website/setup/testing) § Auth E2E.
 
@@ -194,6 +195,14 @@ notes on WASM modules.
   (`next.config.ts` `images.loaderFile`), so every image is CDN-sized, not run through Next's
   optimizer. See [Images](/projects/web/website/config/images).
 - **ISR cache** is R2 (`NEXT_INC_CACHE_R2_BUCKET`). Clearing a bucket forces a cold rebuild of cached pages.
+- **Rendering + caching.** Every page renders per request: the proxy's CSP nonce is read in the
+  locale layout, so there is no ISR or static HTML (`next build` lists the routes as `ƒ`). The
+  Sanity reads through `sanityFetchLive` are cached in R2 with their sync tags, and
+  `<SanityLive>` revalidates those tags when content changes. That needs the **tag cache**: the
+  `DOShardedTagCache` Durable Object, bound as `NEXT_TAG_CACHE_DO_SHARDED` in every env of
+  `wrangler.toml` and created by the `v1` migration on deploy (nothing to provision). Without it
+  OpenNext falls back to a no-op tag cache, and a published edit stays hidden until the next
+  deploy. `open-next.config.test.ts` checks both halves.
 - **Prod deploys prompt + gate** — a hand-run `pnpm deploy:web:website:prod` runs `pnpm verify` first, then asks for confirmation. CI (GitHub sets `CI`) skips both; a bare `--yes` no longer skips the prompt — use `--yes-prod` for an intentional non-interactive prod deploy, `--skip-gate` to skip the verify (logged), `--dry-run` to build without publishing.
 - **Build stamp** — `build:cf` regenerates `src/lib/build-info.ts` (version · git sha · build time). Import `buildInfo` from `@/lib/build-info` to surface it in a footer or debug panel.
 - **Docs site** (`docs/`) is static VitePress — deploy it separately (Cloudflare Pages or any static host).

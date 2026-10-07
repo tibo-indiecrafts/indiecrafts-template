@@ -13,7 +13,6 @@ Early-access signup block. Server `<Waitlist>` wrapper (feature gate) → client
 | `buttonLabel`      | `string`                         | Submit button text.                                                  |
 | `consentText`      | `string`                         | Required GDPR checkbox label; submit disabled until ticked.          |
 | `successMessage`   | `string`                         | Shown on `201`.                                                      |
-| `alreadyMessage`   | `string`                         | Shown on `200` (already on the list).                                |
 | `errorMessage`     | `string`                         | Shown on any failure.                                                |
 | `variant`          | `"card" \| "inline" \| "banner"` | Layout. Default `card`.                                              |
 | `anchor`           | `string`                         | Section `id` for in-page links.                                      |

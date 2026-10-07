@@ -14,6 +14,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Loading and error states inside the shell, and a skip link.** A dashboard page now shows a
+  status spinner while it loads (`(dashboard)/loading.tsx`). A failed page shows a short message
+  and a Retry button (`(dashboard)/error.tsx`), with the sidebar still usable; before, Next's
+  bare error screen replaced the whole dashboard. A "Skip to main content" link is the first tab
+  stop on every page (the shared `SkipLink` from `packages-web-ui-components`, targets `#main`). Copy in en/fr.
 - **Language switcher in the header.** The first visit follows the browser language; an operator
   can now correct it next to the theme toggle (`LocaleSwitcher`, as in the app). The choice is
   kept in the locale cookie and the operator's Clerk profile.
@@ -27,6 +32,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 - **A test user to sign out.** `code/shared/scripts/data/qa-session-user.mjs` creates a
   development-only Clerk user with live sessions and feed rows, so the Sessions revoke actions can be
   tested on demand. `--delete` removes it.
+
+### Changed
+
+- **The churn page reads the reason codes from `@indiecrafts/packages-shared-compliance/shared`.** Its
+  own `REASON_CODES` copy is gone; the admin now depends on the package (`transpilePackages` too).
+  **Why:** a code added to `CHURN_REASON_CODES` now gets its label here instead of reading as "unknown".
 
 ### Removed
 

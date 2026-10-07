@@ -23,6 +23,7 @@ import { routing } from "@/i18n/routing";
 import { ShellOverlays } from "@/user-interface/ShellOverlays";
 import { buildInfo } from "@/lib/build-info";
 import { THEME_SCRIPT } from "@/user-interface/layout/theme-script";
+import { SkipLink } from "@indiecrafts/packages-web-ui-components/web/layout/SkipLink";
 import { NativeBridge } from "@/user-interface/shell/NativeBridge";
 import { BrandProvider } from "@/user-interface/BrandProvider";
 import { getBrand } from "@/lib/brand";
@@ -76,7 +77,8 @@ export default async function LocaleLayout({
   // under the strict nonce CSP.
   const nonce = requestHeaders.get("x-nonce") ?? undefined;
   // Copy + the configured logo (Sanity, live + fail-open, for the client error screen).
-  const [tOffline, nudge, brand] = await Promise.all([
+  const [t, tOffline, nudge, brand] = await Promise.all([
+    getTranslations("app"),
     getTranslations("offline"),
     getTranslations("auth.nudge"),
     getBrand(),
@@ -100,6 +102,8 @@ export default async function LocaleLayout({
             dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }}
           />
           <NextIntlClientProvider>
+            {/* First focusable element: every page renders a `<main id="main">`. */}
+            <SkipLink label={t("skipToContent")} />
             {/* Capacitor shell native events — a no-op in a browser. */}
             <NativeBridge />
             <OfflineBanner message={tOffline("banner")} />

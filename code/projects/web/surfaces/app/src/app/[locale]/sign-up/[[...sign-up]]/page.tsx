@@ -23,7 +23,11 @@ export default async function SignUpPage({
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) notFound();
   const t = await getTranslations("auth");
   return (
-    <main className="grid min-h-[70vh] place-items-center p-6">
+    <main
+      id="main"
+      tabIndex={-1}
+      className="grid min-h-[70vh] place-items-center p-6 outline-none"
+    >
       <SignUpView home="/" locale={locale} marketingLabel={t("marketingOptIn")} />
     </main>
   );

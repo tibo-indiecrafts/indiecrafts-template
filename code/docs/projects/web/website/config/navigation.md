@@ -31,7 +31,7 @@ Every link (`navItem`) is:
 | `route`       | Internal target — a dropdown of the site's pages (the `pages` map keys). |
 | `external`    | External target — a full URL.                                            |
 | `newTab`      | Open in a new tab (recommended for external links).                      |
-| `icon`        | _Header dropdowns only._ A free-text [Reicon](https://reicon.dev) name.  |
+| `icon`        | _Header dropdowns only._ A curated glyph (`GLYPHS`), from a dropdown.    |
 | `description` | _Header dropdowns only._ A short line under the label (`localeString`).  |
 | `children`    | _Header only._ A submenu — turns this item into a dropdown.              |
 
@@ -70,9 +70,9 @@ becomes the trigger. A group with no live child (all its links flag-gated away) 
 entirely. Each child link can carry an **icon** and a **description**, rendered as a rich link
 in the dropdown panel (shadcn `NavigationMenu`).
 
-- **Icons** are free-text Reicon names (e.g. `ShieldCheck`, `Rocket`) — see
-  [reicon.dev](https://reicon.dev) for the exact export name. An unknown or empty name simply
-  renders no icon.
+- **Icons** come from the curated `GLYPHS` list (`@indiecrafts/packages-web-ui-icons`), picked
+  from a dropdown in Studio — the same set as the feature grid. An unknown or empty name renders
+  no icon. Add an icon by extending `GLYPHS` and its `Icon` map; the picker follows.
 - Icons + descriptions only show in header dropdowns; the footer stays flat text.
 
 ## How it renders

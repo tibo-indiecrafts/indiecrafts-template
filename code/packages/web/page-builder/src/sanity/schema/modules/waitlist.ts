@@ -63,16 +63,6 @@ export default defineModule({
       initialValue:
         "Vous êtes sur la liste — merci ! Nous vous tiendrons au courant.",
     }),
-    // @debt VESTIGIAL - unused since the waitlist membership oracle was closed
-    // (new + already both answer 201; the form no longer shows an "already" state).
-    // Hidden so editors don't fill dead copy; drop the field in a page-builder cleanup.
-    defineField({
-      name: "alreadyMessage",
-      title: "Message « déjà inscrit·e »",
-      type: "string",
-      initialValue: "Vous êtes déjà sur la liste — merci !",
-      hidden: true,
-    }),
     defineField({
       name: "errorMessage",
       title: "Message d'erreur",

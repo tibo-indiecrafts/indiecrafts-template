@@ -28,6 +28,7 @@ import {
   Search,
   Settings2,
   Shield,
+  ShieldCheck,
   Sparkles,
   Star,
   Sun,
@@ -67,6 +68,7 @@ const GLYPH_COMPONENTS: Record<GlyphName, LucideIcon> = {
   info: Info,
   "file-text": FileText,
   rocket: Rocket,
+  "shield-check": ShieldCheck,
 };
 
 export type IconProps = ComponentProps<LucideIcon> & {

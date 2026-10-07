@@ -6,6 +6,7 @@
 
 import { defineField, defineType } from "sanity";
 import { LinkIcon } from "@sanity/icons/Link";
+import { glyphOptions } from "@indiecrafts/packages-web-ui-icons/shared";
 import { pages, defaultLocale } from "@/config";
 
 /**
@@ -21,8 +22,8 @@ import { pages, defaultLocale } from "@/config";
  * Sanity's navigation guidance: an internal/external toggle + an internal
  * *reference* (here, the typed route key) so links survive slug changes.
  *
- * Header extras (ignored in the footer): an optional `icon` (free-text Reicon
- * name) + `description` for rich dropdown links, and an optional `children`
+ * Header extras (ignored in the footer): an optional `icon` (a curated glyph
+ * from `GLYPHS`) + `description` for rich dropdown links, and an optional `children`
  * submenu — a header item with children renders as a dropdown (its own link is
  * ignored; the label becomes the trigger). Only one level of submenu is shown.
  */
@@ -113,8 +114,8 @@ export default defineType({
       name: "icon",
       title: "Icône (optionnel)",
       type: "string",
-      description:
-        "Nom d'icône Reicon, ex. « ShieldCheck ». Visible dans les menus déroulants de l'en-tête. Liste des noms : reicon.dev. Vide = pas d'icône.",
+      options: { list: glyphOptions() },
+      description: "Visible dans les menus déroulants de l'en-tête. Vide = pas d'icône.",
     }),
     defineField({
       name: "description",

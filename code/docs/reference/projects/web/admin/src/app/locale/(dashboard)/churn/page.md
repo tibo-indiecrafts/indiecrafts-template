@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The admin churn route. It reads the churn aggregate (total, by-day, by-reason, and recent free-text feedback) from the shared api, which holds the API token server-side. It renders the total plus reason, day, and recent-feedback tables. Reason codes are mapped to localized labels; any unknown or unlisted code (including `null`) reads as "unknown". When the aggregate cannot be loaded (unconfigured or the api errored), it shows an alert instead.
+The admin churn route. It reads the churn aggregate (total, by-day, by-reason, and recent free-text feedback) from the shared api, which holds the API token server-side. It renders the total plus reason, day, and recent-feedback tables. Reason codes (`CHURN_REASON_CODES` from `@indiecrafts/packages-shared-compliance/shared`) are mapped to localized labels; any unknown or unlisted code (including `null`) reads as "unknown". When the aggregate cannot be loaded (unconfigured or the api errored), it shows an alert instead.
 
 ## Exports
 

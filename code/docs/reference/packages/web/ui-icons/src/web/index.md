@@ -10,24 +10,19 @@ status: stable
 
 ## Purpose
 
-The `./web` barrel of `@indiecrafts/packages-web-ui-icons`. It gathers the DOM renderers — `Icon` (via `lucide-react`), `BrandIcon`, `SvgIcon`, and `ReiconIcon` — and re-exports the shared contract for one-import ergonomics.
+The `./web` barrel of `@indiecrafts/packages-web-ui-icons`. It gathers the DOM renderers — `Icon` (via `lucide-react`), `BrandIcon`, and `SvgIcon` — and re-exports the shared contract for one-import ergonomics.
 
 ## Exports
 
 - `Icon`, `GLYPH_COMPONENTS`, `IconProps` — the glyph renderer and its map.
 - `BrandIcon`, `BrandIconProps` — the brand-mark renderer.
 - `SvgIcon`, `SvgIconProps` — the custom-SVG renderer.
-- `ReiconIcon`, `ReiconIconProps` — the reicon renderer (web only).
 - `* from "../shared"` — the platform-agnostic contract (`GLYPHS`, `GlyphName`, `glyphOptions`, `SVGS`, `BRANDS`, and their helpers).
 
 ## Usage
 
 ```tsx
-import {
-  Icon,
-  BrandIcon,
-  ReiconIcon,
-} from "@indiecrafts/packages-web-ui-icons/web";
+import { Icon, BrandIcon } from "@indiecrafts/packages-web-ui-icons/web";
 
 <Icon name="rocket" className="size-5" />;
 ```

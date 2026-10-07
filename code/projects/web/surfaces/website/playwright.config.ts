@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { STORYBOOK_STATIC } from "./e2e/storybook-static";
 
 /**
  * Two flavours of browser test, selected by `E2E_TARGET` (a webServer can't be
@@ -83,7 +84,7 @@ export default defineConfig({
     ...(runVisual
       ? [
           {
-            command: `python3 -m http.server ${STORYBOOK_PORT} --directory ../../packages/storybook/storybook-static`,
+            command: `python3 -m http.server ${STORYBOOK_PORT} --directory ${STORYBOOK_STATIC}`,
             url: `http://localhost:${STORYBOOK_PORT}/index.json`,
             reuseExistingServer: !process.env.CI,
             timeout: 60_000,

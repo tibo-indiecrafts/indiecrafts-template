@@ -3,10 +3,22 @@
  *
  * @see docs/reference/projects/web/website/src/app/locale/sign-in/sign-in/page.md
  */
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SignInView } from "@indiecrafts/packages-web-auth/sign-in-view";
 import type { Locale } from "@/config";
+
+/** A form, not content: keep it out of search. Titled so the tab and the history read right. */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: "auth" });
+  return { title: t("signInTitle"), robots: { index: false, follow: false } };
+}
 
 /**
  * Public sign-in. Clerk's themed `<SignIn>` with the post-sign-in fallback = home;

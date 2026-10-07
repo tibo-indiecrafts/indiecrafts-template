@@ -3,16 +3,7 @@
  *
  * @see docs/reference/shared/api/src/consent/churn-store.md
  */
-export const CHURN_REASONS = [
-  "too_expensive",
-  "not_using",
-  "missing_feature",
-  "found_alternative",
-  "too_hard",
-  "privacy",
-  "other",
-] as const;
-export type ChurnReason = (typeof CHURN_REASONS)[number];
+import { CHURN_REASON_CODES } from "@indiecrafts/packages-shared-compliance/shared";
 
 export type ChurnSurvey = {
   reason?: string | null;
@@ -23,7 +14,7 @@ export type ChurnSurvey = {
 /** A value iff it is a known preset reason code; anything else → null (never trust the client). */
 export function normalizeReason(value: unknown): string | null {
   return typeof value === "string" &&
-    (CHURN_REASONS as readonly string[]).includes(value)
+    (CHURN_REASON_CODES as readonly string[]).includes(value)
     ? value
     : null;
 }

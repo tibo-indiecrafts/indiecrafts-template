@@ -4,6 +4,8 @@
   },
   "app": {
     "title": "indiecrafts",
+    "skipToContent": "Skip to main content",
+    "loading": "Loading…",
     "subtitle": "App shell — i18n, consent and version prompts wired.",
     "legalLink": "Legal",
     "nav": {

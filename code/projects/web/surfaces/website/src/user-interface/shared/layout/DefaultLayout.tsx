@@ -9,6 +9,7 @@ import { cookies, headers } from "next/headers";
 import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import { consent, features, localeCodes, localeMap, site, type Locale } from "@/config";
 import { ShareButtons } from "@indiecrafts/packages-web-ui-components/web/layout/ShareButtons";
+import { SkipLink } from "@indiecrafts/packages-web-ui-components/web/layout/SkipLink";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { resolveThemeConfig, showThemeToggle, themeModes } from "@/lib/theme";
 import { getNavigation } from "@/lib/navigation";
@@ -26,7 +27,6 @@ import { LocaleSuggest } from "@indiecrafts/packages-web-locale-suggest/LocaleSu
 import { getLocaleSuggest } from "@indiecrafts/packages-web-locale-suggest/sanity/reader";
 import { detectPreferredLocale } from "@indiecrafts/packages-web-locale-suggest/detect";
 import { LOCALE_SUGGEST_COOKIE } from "@indiecrafts/packages-web-locale-suggest/locale-suggest-store";
-import { SkipLink } from "./SkipLink";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { OfflineBanner } from "@indiecrafts/packages-web-system-pages/web";
@@ -49,6 +49,18 @@ type Props = {
    *  category nav) and above the page content. */
   subnav?: ReactNode;
 };
+
+/**
+ * Start the chrome reads now. The locale layout calls this, so they run beside the
+ * page's own data instead of after it (a page renders `DefaultLayout` only once its
+ * data is in). Every getter is `cache()`d, so `DefaultLayout` reuses these promises.
+ */
+export function preloadChrome(locale: Locale): void {
+  void getNavigation(locale);
+  void getAnnouncement(locale, "website");
+  void getAnnouncementToast(locale, "website");
+  void getLocaleSuggest(locale);
+}
 
 export async function DefaultLayout({
   children,
@@ -123,7 +135,7 @@ export async function DefaultLayout({
 
   return (
     <>
-      <SkipLink />
+      <SkipLink label={t("skipToContent")} />
       {resolveSlot(
         header,
         <Header

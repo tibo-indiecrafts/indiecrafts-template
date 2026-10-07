@@ -30,6 +30,18 @@ binding = "ASSETS"
 binding = "NEXT_INC_CACHE_R2_BUCKET"
 bucket_name = "indiecrafts-dev-web-surfaces-website-isr"
 
+# OpenNext tag cache (`open-next.config.ts`) — makes `revalidateTag` work, so a Sanity
+# publish reaches the cached reads. The class ships in `.open-next/worker.js`; wrangler
+# creates it on deploy (the migration below), so there is nothing to provision. Durable
+# Object bindings are not inherited: repeat this block under each [env.*].
+[[durable_objects.bindings]]
+name = "NEXT_TAG_CACHE_DO_SHARDED"
+class_name = "DOShardedTagCache"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DOShardedTagCache"]
+
 # ── Optional: Cloudflare D1 (relational data) + KV (cache) ───
 # The template's content lives in Sanity — add D1 only for data that ISN'T
 # content (orders, accounts, logs). `wrangler d1 create <name>` → paste the id,
@@ -130,6 +142,10 @@ ADMIN_URL = "https://indiecrafts-dev-web-surfaces-admin.thibault-montaufray.work
 binding = "NEXT_INC_CACHE_R2_BUCKET"
 bucket_name = "indiecrafts-dev-web-surfaces-website-isr"
 
+[[env.dev.durable_objects.bindings]]
+name = "NEXT_TAG_CACHE_DO_SHARDED"
+class_name = "DOShardedTagCache"
+
 # RATE_LIMIT_KV (dev) — uncommented + filled by `pnpm setup:kv`.
 [[env.dev.kv_namespaces]]
 binding = "RATE_LIMIT_KV"
@@ -150,6 +166,10 @@ ADMIN_URL = "https://indiecrafts-staging-web-surfaces-admin.thibault-montaufray.
 [[env.staging.r2_buckets]]
 binding = "NEXT_INC_CACHE_R2_BUCKET"
 bucket_name = "indiecrafts-staging-web-surfaces-website-isr"
+
+[[env.staging.durable_objects.bindings]]
+name = "NEXT_TAG_CACHE_DO_SHARDED"
+class_name = "DOShardedTagCache"
 
 # RATE_LIMIT_KV (staging) — uncommented + filled by `pnpm setup:kv`.
 [[env.staging.kv_namespaces]]
@@ -176,6 +196,10 @@ NEXT_PUBLIC_ENVIRONMENT = "production"
 [[env.prod.r2_buckets]]
 binding = "NEXT_INC_CACHE_R2_BUCKET"
 bucket_name = "indiecrafts-prod-web-surfaces-website-isr"
+
+[[env.prod.durable_objects.bindings]]
+name = "NEXT_TAG_CACHE_DO_SHARDED"
+class_name = "DOShardedTagCache"
 
 # RATE_LIMIT_KV (prod) — uncommented + filled by `pnpm setup:kv`.
 [[env.prod.kv_namespaces]]

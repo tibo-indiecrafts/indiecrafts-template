@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Defines the `navItem` object — a single reusable menu link used in the header bar and every footer column. Two kinds toggle by `linkType`: internal points at one of the site's own pages via the `route` dropdown built from the `pages` map, and external is a full URL. Only activated routes are offered, so a link cannot target a disabled route. Header extras add an optional icon and description for rich dropdown links, plus one level of `children` submenu.
+Defines the `navItem` object — a single reusable menu link used in the header bar and every footer column. Two kinds toggle by `linkType`: internal points at one of the site's own pages via the `route` dropdown built from the `pages` map, and external is a full URL. Only activated routes are offered, so a link cannot target a disabled route. Header extras add an optional icon (a curated glyph from `GLYPHS`, picked from a dropdown) and description for rich dropdown links, plus one level of `children` submenu.
 
 ## Exports
 

@@ -67,17 +67,6 @@ export default defineModule({
       type: "string",
       initialValue: "Merci ! Votre document arrive dans votre boîte e-mail.",
     }),
-    // @debt VESTIGIAL - unused since the newsletter membership oracle was closed
-    // (new + already both answer 201; the form no longer shows an "already" state).
-    // Hidden so editors don't fill dead copy; drop the field in a page-builder cleanup.
-    defineField({
-      name: "alreadyMessage",
-      title: "Message « déjà inscrit·e »",
-      type: "string",
-      initialValue:
-        "Vous avez déjà reçu ce document — vérifiez votre boîte e-mail.",
-      hidden: true,
-    }),
     defineField({
       name: "errorMessage",
       title: "Message d'erreur",

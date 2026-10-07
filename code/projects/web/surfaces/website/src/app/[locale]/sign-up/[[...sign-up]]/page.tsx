@@ -3,10 +3,22 @@
  *
  * @see docs/reference/projects/web/website/src/app/locale/sign-up/sign-up/page.md
  */
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { SignUpView } from "@indiecrafts/packages-web-auth/sign-up-view";
 import type { Locale } from "@/config";
+
+/** A form, not content: keep it out of search. Titled so the tab and the history read right. */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as Locale, namespace: "auth" });
+  return { title: t("signUpTitle"), robots: { index: false, follow: false } };
+}
 
 /**
  * Public sign-up. Clerk's themed `<SignUp>`, self-hosted (not the Account Portal) so

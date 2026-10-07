@@ -27,6 +27,12 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   duplicate. Every security write now goes through one helper, `recordIncident`
   (`src/security/record.ts`).
 
+### Changed
+
+- **Churn reason codes come from `@indiecrafts/packages-shared-compliance/shared`.** `normalizeReason`
+  checks `CHURN_REASON_CODES`; the local `CHURN_REASONS` / `ChurnReason` are removed. Behaviour is the
+  same. **Why:** one list for the survey, the api and the admin dashboard, so they cannot drift.
+
 ### Fixed
 
 - **The welcome email never leaves an unhandled rejection.** `sendWelcomeEmail` promised never to

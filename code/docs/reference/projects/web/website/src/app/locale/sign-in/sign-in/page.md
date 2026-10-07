@@ -14,6 +14,7 @@ Server route for `/<locale>/sign-in/*`. It renders Clerk's themed `SignInView` w
 
 ## Exports
 
+- `generateMetadata` — the localized title (`auth.signInTitle`) and `robots: noindex, nofollow`: a form has nothing to index.
 - `SignInPage` (default) — the async server component; calls `notFound()` when Clerk is off.
 
 ## Source

@@ -14,6 +14,7 @@ Assembles the production page chrome and wraps page content. It fetches layout d
 
 ## Exports
 
+- `preloadChrome(locale)` — starts the chrome reads (navigation, announcement bar and toast, locale suggestion) without waiting. The locale layout calls it, so they run beside the page's own data instead of after it; the getters are `cache()`d, so `DefaultLayout` reuses the same promises.
 - `DefaultLayout` — async server component; accepts `children`, optional `header` / `footer` slots (boolean or node), and an optional `subnav` node.
 
 ## Usage

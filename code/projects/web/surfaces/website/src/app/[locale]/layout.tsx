@@ -33,6 +33,7 @@ import { routing } from "@/i18n/routing";
 import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
 import { MarketingNudgeMount } from "@indiecrafts/packages-web-auth/marketing-nudge";
 import { ThemeProvider } from "@/user-interface/shared/layout/ThemeProvider";
+import { preloadChrome } from "@/user-interface/shared/layout/DefaultLayout";
 import { LocaleSwitchBoundary } from "@/user-interface/shared/layout/LocaleSwitchBoundary";
 import { resolveThemeConfig, themeProviderProps } from "@/lib/theme";
 import { JsonLdScript } from "@/lib/seo/jsonld";
@@ -134,6 +135,7 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
+  preloadChrome(locale as Locale);
 
   const [messages, nudge, siteSeo, settings, cookieConsent, versionPrompt, legal] =
     await Promise.all([

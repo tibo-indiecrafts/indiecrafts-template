@@ -36,6 +36,7 @@ export const GLYPHS = [
   "info",
   "file-text",
   "rocket",
+  "shield-check",
 ] as const;
 
 /** A valid icon name — the union the whole product types against. */

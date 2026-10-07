@@ -6,7 +6,7 @@
  * resolves the right string regardless of its i18n runtime (next-intl / react-intl).
  */
 
-/** Preset reason codes — MUST mirror `CHURN_REASONS` in the api's `consent/churn-store`. */
+/** Preset churn reason codes — the single source: the survey UI, the api's `normalizeReason` and the admin churn page all read it. */
 export const CHURN_REASON_CODES = [
   "too_expensive",
   "not_using",

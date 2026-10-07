@@ -432,33 +432,6 @@
           "title": "Notes from the studio",
           "body": "Guides, teardowns, and field notes on shipping client sites faster.",
           "viewAll": "All articles"
-        },
-        "icons": {
-          "eyebrow": "Icons",
-          "title": "One interface, three icon sets",
-          "body": "Lucide for UI glyphs, Reicon for outline and filled weights, and Reicon Brands for logos in their official colors.",
-          "lucide": "Lucide — UI glyphs",
-          "reicon": "Reicon — outline + filled",
-          "brands": "Reicon Brands — official colors"
-        },
-        "morphicons": {
-          "eyebrow": "Motion",
-          "title": "Icons that morph, not swap",
-          "body": "Morphicons animates the transition between any two icons — the shape flows from one shape to the next instead of cutting.",
-          "hint": "Tap any icon to morph it. Honors reduced-motion.",
-          "icons": {
-            "menu": "Menu / close",
-            "play": "Play / pause",
-            "theme": "Light / dark",
-            "volume": "Volume / muted",
-            "bell": "Notifications on / off",
-            "copy": "Copy / copied"
-          }
-        },
-        "blocks": {
-          "eyebrow": "Page builder",
-          "title": "The same blocks, everywhere",
-          "body": "Marketing pages and blog posts render one shared set of components — author in Sanity, and it looks identical wherever it lands."
         }
       }
     }
@@ -480,6 +453,8 @@
     }
   },
   "auth": {
+    "signInTitle": "Sign in",
+    "signUpTitle": "Create an account",
     "marketingOptIn": "Send me occasional product news and offers. You can unsubscribe anytime.",
     "nudge": {
       "title": "Want occasional product news and offers by email?",

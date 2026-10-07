@@ -55,16 +55,6 @@ export default defineModule({
       type: "string",
       initialValue: "Merci ! Votre inscription est bien enregistrée.",
     }),
-    // @debt VESTIGIAL - unused since the newsletter membership oracle was closed
-    // (new + already both answer 201; the form no longer shows an "already" state).
-    // Hidden so editors don't fill dead copy; drop the field in a page-builder cleanup.
-    defineField({
-      name: "alreadyMessage",
-      title: "Message « déjà inscrit·e »",
-      type: "string",
-      initialValue: "Vous êtes déjà inscrit·e — merci !",
-      hidden: true,
-    }),
     defineField({
       name: "errorMessage",
       title: "Message d'erreur",

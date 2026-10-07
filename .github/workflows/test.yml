@@ -69,9 +69,10 @@ jobs:
           fetch-depth: 0 # full history so `turbo --affected` can diff against main
       - uses: ./.github/actions/setup
       - run: pnpm exec turbo run build:cf --affected
-      # Marketing First-Load JS budget (excludes the Studio). Report-only until
-      # BUDGET_KB in scripts/check-bundle-size.mjs is calibrated — then add `--enforce`.
-      - run: pnpm --filter @indiecrafts/web-surfaces-website size
+      # Landing-route First-Load JS budget (BUDGET_KB in scripts/check-bundle-size.mjs).
+      # Enforced: over budget, or a build it can't read, fails the job. No website build
+      # (`--affected` skipped it) is a skip.
+      - run: pnpm --filter @indiecrafts/web-surfaces-website size --enforce
 
   # Storybook stories-as-tests: every colocated story runs as a component + a11y test in headless chromium, and the
   # gallery must build. BLOCKING — these are deterministic (no image baselines).
@@ -118,8 +119,10 @@ jobs:
           CLERK_SECRET_KEY: ${{ secrets.E2E_CLERK_SECRET_KEY }}
 
   # Playwright visual regression against the built Storybook. ADVISORY (`continue-on-error`)
-  # until linux visual baselines are committed (`e2e:update` on CI) — then drop
-  # `continue-on-error` to graduate this gate too.
+  # until the linux baselines are committed — then drop `continue-on-error` to graduate it.
+  # A missing baseline is written on the run (Playwright's default `updateSnapshots:
+  # "missing"`) and uploaded as the `visual-baselines-linux` artifact: download it, commit
+  # it to `e2e/visual.spec.ts-snapshots/`.
   browser-e2e-visual:
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -129,6 +132,12 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm --filter @indiecrafts/web-tools-storybook storybook:build
       - run: pnpm --filter @indiecrafts/web-surfaces-website e2e:visual
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-baselines-linux
+          path: code/projects/web/surfaces/website/e2e/visual.spec.ts-snapshots/
+          if-no-files-found: ignore
 
   # The CSP-enforcement gate. BLOCKING (unlike the advisory `browser` job): CSP now
   # defaults to enforce, so a broken nonce pipeline would silently break the live site.

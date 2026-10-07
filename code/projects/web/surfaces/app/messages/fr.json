@@ -4,6 +4,8 @@
   },
   "app": {
     "title": "indiecrafts",
+    "skipToContent": "Aller au contenu principal",
+    "loading": "Chargement…",
     "subtitle": "Coquille applicative — i18n, consentement et mises à jour câblés.",
     "legalLink": "Mentions légales",
     "nav": {

@@ -169,7 +169,6 @@ export type NewsletterModule = ModuleBase & {
   buttonLabel?: string;
   consentText?: string;
   successMessage?: string;
-  alreadyMessage?: string;
   errorMessage?: string;
   variant?: "card" | "inline" | "banner";
 };
@@ -183,7 +182,6 @@ export type WaitlistModule = ModuleBase & {
   buttonLabel?: string;
   consentText?: string;
   successMessage?: string;
-  alreadyMessage?: string;
   errorMessage?: string;
   variant?: "card" | "inline" | "banner";
 };
@@ -211,7 +209,6 @@ export type LeadMagnetModule = ModuleBase & {
   buttonLabel?: string;
   consentText?: string;
   successMessage?: string;
-  alreadyMessage?: string;
   errorMessage?: string;
   variant?: "card" | "inline" | "banner";
   magnet?: { id?: string };

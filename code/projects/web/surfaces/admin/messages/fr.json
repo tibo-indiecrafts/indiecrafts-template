@@ -1,6 +1,13 @@
 {
   "admin": {
     "title": "Admin",
+    "skipToContent": "Aller au contenu principal",
+    "loading": "Chargement…",
+    "error": {
+      "title": "Une erreur est survenue",
+      "description": "Cette page n'a pas pu se charger. Réessayez, ou choisissez une autre page dans le menu.",
+      "retry": "Réessayer"
+    },
     "welcome": "Bienvenue sur le tableau de bord d'administration.",
     "authNotConfigured": "L'authentification n'est pas configurée. Renseignez les clés Clerk pour activer la connexion.",
     "nav": {

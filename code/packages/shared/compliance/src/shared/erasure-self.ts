@@ -17,8 +17,8 @@ export type ErasureFetchOutcome = { status: number } | { clerk_error: unknown };
 
 /**
  * The optional churn exit-survey fields, sent alongside the erasure POST. Reason
- * values MUST equal the `CHURN_REASONS` preset codes in the api — the server
- * normalizes anything else to null. Shared by `rawErasureFetch`/`submitAccountErasure`
+ * values are the `CHURN_REASON_CODES` preset codes — the server normalizes
+ * anything else to null. Shared by `rawErasureFetch`/`submitAccountErasure`
  * and the `AccountAuth.submitErasure` seam so a surface's step-up wrapper carries them too.
  */
 export interface ChurnSurveyInput {

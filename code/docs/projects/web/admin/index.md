@@ -21,7 +21,8 @@ re-authorized, audited server actions.
 It shares the `website` stack — Next.js 16 (App Router) · React 19 · Tailwind v4 ·
 shadcn/ui — and ships on platform class `next-cf` (Next → OpenNext → Cloudflare Workers).
 It composes shared bricks (`packages-web-ui`, `packages-web-sanity`,
-`packages-shared-security`, `packages-shared-auth`) and never reaches into a sibling app.
+`packages-shared-security`, `packages-shared-auth`, `packages-shared-compliance`) and never
+reaches into a sibling app.
 
 ## Architecture
 
@@ -137,6 +138,10 @@ Cloudflare Access gate on the subdomain as defense-in-depth before the app goes 
   no-flash light/dark `ThemeToggle`. Every page uses the same `PageHeader` + `Card`
   treatment with shadcn `Table`/`Badge`/`Input` and `sonner` toasts. These are app-owned
   components — no Storybook (its globs cover the design-system packages only).
+- **Boundaries + skip link** — `(dashboard)/loading.tsx` and `(dashboard)/error.tsx` render
+  inside the shell, so the sidebar stays while a page loads or after it fails (Retry calls
+  `reset`). `[locale]/layout.tsx` renders the shared `SkipLink` (`@indiecrafts/packages-web-ui-components`) as the first focusable element; it
+  targets the `<main id="main">` of the shell or of `/sign-in`.
 
 ## Deploy
 

@@ -14,6 +14,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **A skip link and a loading state.** A "Skip to main content" link is now the first tab stop on
+  every page (the shared `SkipLink` from `packages-web-ui-components`, targets `#main`); the sign-in and sign-up pages gained the `#main`
+  target they lacked. An `(app)` page shows a status spinner inside the shell while it loads
+  (`(app)/loading.tsx`). Copy in en/fr. The existing `[locale]/error.tsx` stays the error boundary.
 - **The shell's status bar reads on a dark app.** `NativeBridge` set the system style, so a dark app
   theme on a light phone got dark icons on the dark header (iOS, Android WebView 140+, where the page
   draws under the bar). The icons now follow `data-theme` and the theme toggle; an older Android

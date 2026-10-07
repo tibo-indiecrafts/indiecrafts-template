@@ -9,17 +9,18 @@ status: stable
 One centralized icon brick. A shared **contract** (glyph names, custom-SVG registry, brand SVG data)
 with DOM **renderers** — the same data→renderer split as [`ui-tokens`](/packages/web/ui-tokens).
 Replaces the previous scattered, DOM-locked icon usage (lucide + reicon + inline SVGs across the app
-and blog). **Four icon families:** lucide (base), reicon, custom SVGs, and brand/social marks.
+and blog). **Three icon families:** lucide (base), custom SVGs, and brand/social marks. Reicon was
+dropped: its by-name renderer had to import the whole set (about 2 MB gzipped) into every page.
 
-|               |                                                                                                                                                                                                                                                                   |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Exports**   | `./shared` (contract — `GLYPHS` + `GlyphName` · `glyphOptions()` for Sanity pickers · `SVGS` custom-SVG registry + `SvgName` · `BRANDS` SVG-path data + `BrandName`) · `./web` (`Icon` lucide-react · `ReiconIcon` reicon-react · `SvgIcon` custom · `BrandIcon`) |
-| **Deps**      | `lucide-react`, `reicon-react`. **Peer:** `react`/`react-dom`                                                                                                                                                                                                     |
-| **Consumers** | `ui-components` `FeatureGrid` (`Icon`) · `page-builder` picker (`glyphOptions()`) · website nav (`ReiconIcon`), footer + blog share/author (`BrandIcon`), homepage showcase                                                                                       |
+|               |                                                                                                                                                                                                                                       |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Exports**   | `./shared` (contract — `GLYPHS` + `GlyphName` · `glyphOptions()` for Sanity pickers · `SVGS` custom-SVG registry + `SvgName` · `BRANDS` SVG-path data + `BrandName`) · `./web` (`Icon` lucide-react · `SvgIcon` custom · `BrandIcon`) |
+| **Deps**      | `lucide-react`. **Peer:** `react`/`react-dom`                                                                                                                                                                                         |
+| **Consumers** | `ui-components` `FeatureGrid` (`Icon`) · `page-builder` picker (`glyphOptions()`) · website nav (`Icon`), footer + blog share/author (`BrandIcon`)                                                                                    |
 
 ## Renderers
 
-- **`/web` (DOM: React 19)** — `Icon` (lucide) · `ReiconIcon` (reicon) · `SvgIcon` (custom) · `BrandIcon`.
+- **`/web` (DOM: React 19)** — `Icon` (lucide) · `SvgIcon` (custom) · `BrandIcon`.
   Serves the web surfaces (DOM).
 
 ## The single source

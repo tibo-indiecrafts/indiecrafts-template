@@ -17,7 +17,57 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **A root error page (`app/global-error.tsx`).** An error in the `[locale]` layout itself (Clerk, the
+  Sanity settings reads) now shows the branded 500 page in the visitor's language, with Retry.
+  **Why:** `[locale]/error.tsx` can't catch its own layout, so those errors fell through to Next's bare
+  screen. The copy is the same `pages.error` block, loaded on demand: this module ships with every page.
+
+### Changed
+
+- **The page chrome's Sanity reads start with the page's own.** The locale layout calls
+  `preloadChrome` (navigation, announcement bar + toast, locale suggestion); `DefaultLayout` reuses the
+  same `cache()`d promises. The home page fetches its blocks, featured posts and labels in one
+  `Promise.all`, and a post's comment thread streams in `<Suspense>` after the article. Warm local
+  TTFB: home ~240 → ~95 ms, `/blog` ~200 → ~135 ms, a post ~270 → ~210 ms. **Why:** the chrome waited
+  for the page's data, one extra Sanity round trip (~65 ms) per page view.
+- **The skip link is the shared `SkipLink`** from `@indiecrafts/packages-web-ui-components` (admin and
+  app use it too); the app-local copy is gone.
+
+### Removed
+
+- **The three template showcases on the home page** (`IconShowcase`, `MorphiconsShowcase`,
+  `BlocksShowcase`), their `pages.home.blocks.{icons,morphicons,blocks}` copy and the `lucide` and
+  `morphicons` dependencies. **Why:** demo content a client deletes on day one; the icon and block
+  galleries live in Storybook.
+- **The demo seed no longer writes `alreadyMessage`.** The newsletter block in `seed-demo.mjs` and its
+  `newsletterAlready` copy (en + fr) are gone, and `schema.json` drops the field on the three sign-up
+  blocks. **Why:** the field left the page-builder schema; no form shows an "already" state.
+
 ### Fixed
+
+- **Every page shipped ~2.4 MB of gzipped JavaScript; now ~370 kB.** `NavIcon` resolved editor-typed
+  Reicon names at runtime (`import * as ReiconReact`), which bundles all 2,670 icons, and the header
+  renders on every page. Nav icons now use the curated `GLYPHS` set (`Icon`, lucide), picked from a
+  dropdown in Studio. Lighthouse (mobile, production build): `/blog` 45 → 71, a post 53 → 63.
+  **Why:** the main cause of the low performance scores. **Content step:** the navigation doc still
+  holds `Rocket` / `ShieldCheck`; re-pick them (`rocket`, `shield-check`) or the two icons stay hidden.
+- **Published Sanity edits stayed hidden on Cloudflare until the next deploy.** OpenNext had no tag
+  cache, so the `revalidateTag` calls from `<SanityLive>` did nothing and the R2-cached
+  `sanityFetchLive` reads (blog list, posts, featured) never refreshed. `open-next.config.ts` now sets
+  the Durable Object tag cache; `wrangler.toml` binds `NEXT_TAG_CACHE_DO_SHARDED` in every env, and
+  the `v1` migration creates the class on deploy (nothing to provision).
+- **Sign-in and sign-up were indexable and untitled.** Both now set `noindex, nofollow` and a
+  localized title (`auth.signInTitle` / `auth.signUpTitle`).
+- **The bundle-size budget never measured anything.** It read `app-build-manifest.json`, which Next 16
+  no longer writes, and skipped every run. It now reads `build-manifest.json` + the route's
+  client-reference manifest (what Next itself uses to pick the scripts), and CI runs it `--enforce`d
+  at 425 kB (measured 367 kB). A build it can't read fails the gate instead of skipping it.
+- **The visual regression job could never start.** Its web server served the old
+  `packages/storybook` path. It now serves `web/tools/storybook` (`e2e/storybook-static.ts`), runs
+  one test per story, and uploads the linux baselines it writes as the `visual-baselines-linux`
+  artifact — commit them, then drop `continue-on-error` (`setup/testing.md`).
 
 - **A sign-up from the header keeps the visitor's language.** The header's sign-in modal signed up in
   place with no locale, so French visitors got the English welcome email. The header now uses

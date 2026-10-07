@@ -21,7 +21,11 @@ export default async function SignInPage({
   setRequestLocale(locale);
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) notFound();
   return (
-    <main className="grid min-h-[70vh] place-items-center p-6">
+    <main
+      id="main"
+      tabIndex={-1}
+      className="grid min-h-[70vh] place-items-center p-6 outline-none"
+    >
       <SignInView home="/" />
     </main>
   );

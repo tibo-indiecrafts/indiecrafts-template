@@ -7,7 +7,7 @@ import docs from "./Newsletter.md?raw";
  * Stories target the client `<NewsletterForm>` (the visual half). The registered
  * `<Newsletter>` wrapper only adds the `features.newsletter` gate. The submit
  * `fetch("/api/newsletter")` is inert in Storybook — pick a variant to compare
- * layouts; the success/already/error states show against the live route.
+ * layouts; the success/error states show against the live route.
  */
 const meta = {
   title: "UI Components/Newsletter",

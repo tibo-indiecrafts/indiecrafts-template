@@ -10,17 +10,20 @@ status: stable
 
 ## Purpose
 
-Runs after a production build, reads `.next/app-build-manifest.json`, picks the landing route, and sums its gzipped JS chunks — excluding the embedded Sanity Studio, whose client bundle would make an all-chunks budget meaningless. Reports the number against `BUDGET_KB` (220 kB default). Report-only by default so the first CI runs establish the real size; pass `--enforce` (or `BUNDLE_ENFORCE=1`) to make it a hard gate once the budget is calibrated. Never blocks on a missing or dev build.
+Runs after a production build and sums the gzipped JS a first-time visitor downloads on the landing route (`/[locale]/(home)/page`). Next 16 picks a page's scripts from two manifests, and the script reads the same ones: `build-manifest.json` (`rootMainFilesTree[page]`, else `rootMainFiles`) and the route's `page_client-reference-manifest.js` (`entryJSFiles` for each layer). The `nomodule` polyfills are left out: modern browsers skip them. The total is compared with `BUDGET_KB` (425 kB; measured ~367 kB on 2026-10-07).
+
+`--enforce` (or `BUNDLE_ENFORCE=1`) fails over budget, and also when a build exists but its manifests can't be read, so a Next manifest change cannot switch the gate off. (Before Next 16 support, the script looked for the removed `app-build-manifest.json` and skipped every run.) No build at all is a skip: CI's `turbo --affected` may not build the website. CI runs it enforced.
 
 ## Exports
 
-No public exports (CLI script).
+- `BUDGET_KB`, `LANDING_PAGE` — the ceiling and the measured route.
+- `firstLoadFiles({ buildManifest, clientManifest, page })` — the `.js` files a first load downloads (unit-tested).
 
 ## Usage
 
 ```bash
 pnpm size             # report the number, exit 0
-pnpm size --enforce   # fail the build when over budget
+pnpm size --enforce   # fail over budget or on an unreadable build (CI)
 ```
 
 ## Source

@@ -52,6 +52,15 @@ A `module.<name>` block is easy to half-wire — a miss breaks the Studio picker
 5. **Story + doc** — colocated `<Name>.stories.tsx` + `<Name>.md`.
 6. **Docs + changelog** — this page's block table + the packages `CHANGELOG.md`.
 
+## Removing a field
+
+Drop it from the schema, the `<Name>Module` type, the block `.md`, `seed-demo.mjs`, and the
+website `schema.json`. Documents that still hold the value show an "unknown field" warning in
+Studio. Clear them once with `client.patch(id).unset([path])` from a `sanity exec` script
+(`--with-user-token`). Walk `page.sections`, `post.body` and `blog.postModules` /
+`frontpageModules` recursively, because blocks nest inside `blockContent`. Example: the
+`alreadyMessage` field left the newsletter, waitlist and lead-magnet blocks.
+
 ## Ceiling
 
 `custom-html` renders raw HTML (`dangerouslySetInnerHTML`) — a trusted-editor escape hatch, not

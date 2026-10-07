@@ -4,77 +4,101 @@
  * @see docs/reference/projects/web/website/scripts/check-bundle-size.md
  */
 // Marketing bundle-size budget — the First-Load JS a real visitor downloads on the
-// landing route, EXCLUDING the embedded Sanity Studio (whose client bundle dwarfs the
-// marketing pages and would make an all-chunks budget meaningless). Runs after a
-// PRODUCTION build (`next build`, via `build:cf`), reading `.next/app-build-manifest.json`.
+// landing route. Runs after a PRODUCTION build (`next build`, via `build:cf`).
 //
-// Report-first: by default it PRINTS the number and exits 0, so the first CI runs
-// establish the real size. Flip to a hard gate with `--enforce` (or BUNDLE_ENFORCE=1)
-// once BUDGET_KB is calibrated. Usage: `pnpm size` (report) · `pnpm size --enforce` (gate).
+// Next 16 (Turbopack) picks a page's scripts the way `getRequiredScripts` and
+// `getLayerAssets` do at render time: the bootstrap files (`build-manifest.json`
+// `rootMainFilesTree[page]`, else `rootMainFiles`) plus every layer's `entryJSFiles`
+// in the route's client-reference manifest. The `nomodule` polyfills are left out: a
+// modern browser never downloads them. The embedded Studio is its own route, so it
+// never counts.
+//
+// `pnpm size` reports the number. `--enforce` (or BUNDLE_ENFORCE=1) fails over budget —
+// and fails when a build exists but can't be read, so a manifest change can't silently
+// switch the gate off (the old `app-build-manifest.json` is gone in Next 16). No build at
+// all (CI's `turbo --affected` skipped the website) is a skip, not a failure.
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 import path from "node:path";
+import vm from "node:vm";
+import { pathToFileURL } from "node:url";
 
-// Default budget for the landing route's First-Load JS (gzipped). Anchored to the
-// recognized First-Load-JS budgets — Next's "green" threshold ~130 kB and web.dev's
-// ~170 kB target — plus headroom for this stack's framework baseline (Next 16 + React 19
-// + next-intl + shadcn), which sits above a bare app. 220 kB is a realistic ceiling that
-// still catches genuine bloat (a heavy un-code-split dep). Ratchet toward ~170 kB as you
-// optimize: each CI run prints the live number, so once you've confirmed a baseline set
-// this to `measured + ~15%` and add `--enforce` to the CI step to make it a hard gate.
-const BUDGET_KB = 220;
+// Measured 2026-10-07 at ~370 kB: Clerk (~135, the provider wraps every page for the
+// header sign-in), React DOM (~65), next-intl, the consent banner, Turnstile, Radix.
+// The ceiling is that + ~15%. Ratchet it down when a dependency leaves the first load.
+export const BUDGET_KB = 425;
 
-const NEXT = ".next";
-const enforce = process.env.BUNDLE_ENFORCE === "1" || process.argv.includes("--enforce");
+/** The landing route — the page a first-time visitor most often hits. */
+export const LANDING_PAGE = "/[locale]/(home)/page";
 
-let manifest;
-try {
-  manifest = JSON.parse(
-    readFileSync(path.join(NEXT, "app-build-manifest.json"), "utf8"),
-  ).pages;
-} catch {
-  console.log(
-    "[bundle-size] no production build manifest (.next/app-build-manifest.json) — run a production build first; skipping.",
+/** The `.js` files (relative to `.next/`) a visitor downloads on first load of `page`. */
+export function firstLoadFiles({ buildManifest, clientManifest, page }) {
+  const root =
+    buildManifest.rootMainFilesTree?.[page] ?? buildManifest.rootMainFiles ?? [];
+  const entries = Object.values(clientManifest.entryJSFiles ?? {}).flat();
+  return [...new Set([...root, ...entries])].filter((f) => f.endsWith(".js"));
+}
+
+/** `page`'s client-reference manifest: a script that assigns `globalThis.__RSC_MANIFEST[page]`. */
+function readClientManifest(nextDir, page) {
+  const file = path.join(
+    nextDir,
+    "server",
+    "app",
+    `${page}_client-reference-manifest.js`,
   );
-  process.exit(0); // never block on a missing/dev build
+  const sandbox = { globalThis: {} };
+  sandbox.globalThis = sandbox;
+  vm.runInNewContext(readFileSync(file, "utf8"), sandbox);
+  const manifest = sandbox.__RSC_MANIFEST?.[page];
+  if (!manifest) throw new Error(`no client-reference manifest for ${page}`);
+  return manifest;
 }
 
-const gz = (f) => {
+function main() {
+  const NEXT = ".next";
+  const enforce =
+    process.env.BUNDLE_ENFORCE === "1" || process.argv.includes("--enforce");
+
+  if (!existsSync(path.join(NEXT, "build-manifest.json"))) {
+    console.log("[bundle-size] no production build here — skipping.");
+    process.exit(0);
+  }
+
+  let files;
   try {
-    return gzipSync(readFileSync(path.join(NEXT, f))).length;
-  } catch {
-    return 0;
+    const buildManifest = JSON.parse(
+      readFileSync(path.join(NEXT, "build-manifest.json"), "utf8"),
+    );
+    const clientManifest = readClientManifest(NEXT, LANDING_PAGE);
+    files = firstLoadFiles({ buildManifest, clientManifest, page: LANDING_PAGE });
+  } catch (error) {
+    const msg = `[bundle-size] can't read the production build (${error.message}).`;
+    if (enforce) {
+      console.error(msg);
+      process.exit(1);
+    }
+    console.log(`${msg} Skipping (report-only).`);
+    process.exit(0);
   }
-};
 
-// Marketing = app routes, minus the Studio, API, and Next internals.
-const marketing = Object.keys(manifest).filter(
-  (r) => !/studio/i.test(r) && !/\/(api|_not-found)/.test(r),
-);
-if (!marketing.length) {
-  console.log("[bundle-size] no marketing routes in manifest — skipping.");
-  process.exit(0);
+  const bytes = files.reduce(
+    (sum, f) => sum + gzipSync(readFileSync(path.join(NEXT, f))).length,
+    0,
+  );
+  const kb = Math.round(bytes / 1024);
+  console.log(
+    `[bundle-size] landing first-load (${LANDING_PAGE}): ${kb} kB gz across ${files.length} chunks · budget ${BUDGET_KB} kB${enforce ? " (enforced)" : " (report-only)"}`,
+  );
+  if (kb > BUDGET_KB) {
+    const msg = `[bundle-size] OVER budget by ${kb - BUDGET_KB} kB.`;
+    if (enforce) {
+      console.error(msg);
+      process.exit(1);
+    }
+    console.log(`${msg} (report-only — CI runs it with --enforce.)`);
+  }
 }
 
-// The landing route's total First-Load JS = the most visitor-relevant single number.
-const home =
-  marketing.find((r) => /\(home\)|\[locale\]\/page$|\[locale\]$/.test(r)) ||
-  marketing.sort((a, b) => a.length - b.length)[0];
-const jsFiles = (manifest[home] || []).filter((f) => f.endsWith(".js"));
-const bytes = jsFiles.reduce((a, f) => a + gz(f), 0);
-const kb = Math.round(bytes / 1024);
-
-console.log(
-  `[bundle-size] landing first-load (${home}): ${kb} kB gz across ${jsFiles.length} chunks · budget ${BUDGET_KB} kB${enforce ? " (enforced)" : " (report-only)"}`,
-);
-
-if (kb > BUDGET_KB) {
-  const msg = `[bundle-size] OVER budget by ${kb - BUDGET_KB} kB.`;
-  if (enforce) {
-    console.error(msg);
-    process.exit(1);
-  }
-  console.log(`${msg} (report-only — add --enforce once calibrated.)`);
-}
-process.exit(0);
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) main();

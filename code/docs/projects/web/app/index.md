@@ -82,6 +82,12 @@ read and write the shared `consentStore` / `legalStore` (`localStorage`, over
 `compliance/web`). `sign-in` and `sign-up` sit **outside** the `(app)` group, so they render
 unshelled — no sidebar, no header.
 
+**Boundaries + skip link.** `(app)/loading.tsx` shows a status spinner inside the shell while
+a page streams in. `[locale]/error.tsx` and `[locale]/not-found.tsx` are full-screen and
+branded. `[locale]/layout.tsx` renders the shared `SkipLink` (`@indiecrafts/packages-web-ui-components`) as the first focusable element; every page
+has a `<main id="main" tabIndex={-1}>` for it (the shell's `SidebarInset`, the auth pages, and
+the error and 404 screens).
+
 ## Routes / pages
 
 Everything lives under `src/app/[locale]`. Locale prefixes are `as-needed` (`/` and `/fr`).

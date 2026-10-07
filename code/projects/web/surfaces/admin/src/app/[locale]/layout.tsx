@@ -14,6 +14,7 @@ import { localeDir, type Locale } from "@/config";
 import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
 import { routing } from "@/i18n/routing";
 import { THEME_SCRIPT } from "@/user-interface/layout/theme-script";
+import { SkipLink } from "@indiecrafts/packages-web-ui-components/web/layout/SkipLink";
 
 /** Every page is titled "<page> · Admin"; a page without its own title is "Admin". */
 export async function generateMetadata({
@@ -45,6 +46,7 @@ export default async function LocaleLayout({
   // Set by src/proxy.ts on every matched request — carries the per-request CSP nonce so
   // this inline script is allowed to run under the strict nonce CSP.
   const nonce = (await headers()).get("x-nonce") ?? undefined;
+  const t = await getTranslations("admin");
 
   return (
     // suppressHydrationWarning: the inline THEME_SCRIPT sets `data-theme` on <html> before
@@ -57,6 +59,8 @@ export default async function LocaleLayout({
       <body suppressHydrationWarning>
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <NextIntlClientProvider>
+          {/* First focusable element: every page renders a `<main id="main">`. */}
+          <SkipLink label={t("skipToContent")} />
           {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
             <SessionLogger surface="admin" />
           ) : null}

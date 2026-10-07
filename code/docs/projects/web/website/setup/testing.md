@@ -65,9 +65,19 @@ live in the `app` surface and are tested there.
 ### Visual baselines are platform-specific
 
 Playwright screenshots differ across OS/font-rendering, so a baseline made on macOS won't match
-a linux CI runner. Generate baselines **on the platform that will compare them** (`pnpm e2e:update`
-locally; a linux job — or container — for CI) and commit those. Until then, keep the `e2e` CI job
-**advisory** (it is by default in `.github/workflows/test.yml`).
+a linux CI runner (the file names carry the platform: `<story-id>-visual-linux.png`). CI makes the
+linux set for you: the `browser-e2e-visual` job writes every missing baseline and uploads them as
+the **`visual-baselines-linux`** artifact. To graduate the gate:
+
+1. Let the job run once on a pushed branch.
+2. Download the artifact and commit its files to
+   `code/projects/web/surfaces/website/e2e/visual.spec.ts-snapshots/`.
+3. Remove `continue-on-error: true` from `browser-e2e-visual` in `.github/workflows/test.yml`.
+
+After an intended visual change, download the job's artifact the same way (delete the stale
+`.png` first so the job rewrites it), or run `pnpm e2e:update` in a linux container. The suite
+runs **one test per story**, read from `storybook-static/index.json` (`e2e/storybook-static.ts`
+holds the path), so every changed story is reported, not only the first.
 
 ### End-to-end journeys (Playwright vs the running app)
 

@@ -3,6 +3,7 @@
  *
  * @see docs/reference/projects/web/website/src/app/locale/blog/slug/page.md
  */
+import { Suspense } from "react";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { features, pages, site, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
@@ -208,8 +209,11 @@ export default async function BlogPostPage({ params }: Props) {
           share={settings.share}
         />
       )}
+      {/* Streamed: the article flushes first, the thread (its own read) follows. */}
       {isCommentsEnabled() ? (
-        <Comments postId={post._id} locale={locale} copy={blog?.comments} />
+        <Suspense fallback={null}>
+          <Comments postId={post._id} locale={locale} copy={blog?.comments} />
+        </Suspense>
       ) : null}
     </DefaultLayout>
   );

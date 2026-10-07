@@ -10,18 +10,18 @@ status: stable
 
 ## Purpose
 
-`NavIcon` maps a free-text Reicon name (typed by an editor, e.g. `"ShieldCheck"`) to its glyph via the shared `ui-icons` brick. It is a small client component used to decorate navigation links. An unknown or empty name renders nothing, so the link falls back to its label alone. The rendered glyph is `aria-hidden`.
+`NavIcon` draws the glyph an editor picked for a header link (the `navigation` doc's `icon`, from the curated `GLYPHS` list) with the shared `ui-icons` `Icon`. It decorates navigation links in the client `Header`. It imports only the curated lucide glyphs; the earlier by-name Reicon lookup pulled the whole Reicon set into every page. An unknown or empty name renders nothing, so the link falls back to its label alone. The rendered glyph is `aria-hidden`.
 
 ## Exports
 
-- `NavIcon` — a client component taking `{ name?: string; size?: number }` (default `size` 16).
+- `NavIcon` — a component taking `{ name?: string; size?: number }` (default `size` 16).
 
 ## Usage
 
 ```tsx
 import { NavIcon } from "@/user-interface/shared/components/NavIcon";
 
-<NavIcon name="ShieldCheck" size={16} />;
+<NavIcon name="shield-check" size={16} />;
 ```
 
 ## Source

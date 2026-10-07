@@ -6,5 +6,4 @@
 export { Icon, GLYPH_COMPONENTS, type IconProps } from "./Icon";
 export { BrandIcon, type BrandIconProps } from "./BrandIcon";
 export { SvgIcon, type SvgIconProps } from "./SvgIcon";
-export { ReiconIcon, type ReiconIconProps } from "./ReiconIcon";
 export * from "../shared";

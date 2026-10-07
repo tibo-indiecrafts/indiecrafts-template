@@ -12,11 +12,13 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const nextConfig: NextConfig = {
   transpilePackages: [
     "@indiecrafts/packages-shared-auth",
+    "@indiecrafts/packages-shared-compliance",
     "@indiecrafts/packages-shared-config",
     "@indiecrafts/packages-web-auth",
     "@indiecrafts/packages-web-sanity",
     "@indiecrafts/packages-shared-security",
     "@indiecrafts/packages-web-ui",
+    "@indiecrafts/packages-web-ui-components",
     "@indiecrafts/packages-web-ui-tokens",
     "@indiecrafts/packages-shared-utils",
     "@indiecrafts/packages-web-security-reports",

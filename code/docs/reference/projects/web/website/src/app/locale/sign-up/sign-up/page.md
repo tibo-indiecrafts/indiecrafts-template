@@ -14,6 +14,7 @@ Server route for `/<locale>/sign-up/*`. It renders Clerk's themed `SignUpView`, 
 
 ## Exports
 
+- `generateMetadata` — the localized title (`auth.signUpTitle`) and `robots: noindex, nofollow`: a form has nothing to index.
 - `SignUpPage` (default) — the async server component; calls `notFound()` when Clerk is off.
 
 ## Source

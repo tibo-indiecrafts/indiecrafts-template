@@ -7,7 +7,7 @@ import docs from "./LeadMagnet.md?raw";
  * Stories target the client `<LeadMagnetForm>` (the visual half). The registered
  * `<LeadMagnet>` wrapper only adds the `features.newsletter` gate. The submit
  * `fetch("/api/newsletter")` is inert in Storybook — pick a variant to compare
- * layouts; the success/already/error states show against the live route.
+ * layouts; the success/error states show against the live route.
  */
 const meta = {
   title: "UI Components/LeadMagnet",

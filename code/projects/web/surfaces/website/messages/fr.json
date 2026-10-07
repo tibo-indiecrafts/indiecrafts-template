@@ -432,33 +432,6 @@
           "title": "Notes de l'atelier",
           "body": "Guides, analyses et retours de terrain pour livrer des sites clients plus vite.",
           "viewAll": "Tous les articles"
-        },
-        "icons": {
-          "eyebrow": "Icônes",
-          "title": "Une interface, trois jeux d'icônes",
-          "body": "Lucide pour l'UI, Reicon pour les graisses outline et filled, et Reicon Brands pour les logos dans leurs couleurs officielles.",
-          "lucide": "Lucide — icônes d'interface",
-          "reicon": "Reicon — outline + filled",
-          "brands": "Reicon Brands — couleurs officielles"
-        },
-        "morphicons": {
-          "eyebrow": "Animation",
-          "title": "Des icônes qui se transforment",
-          "body": "Morphicons anime la transition entre deux icônes — la forme s'écoule de l'une à l'autre au lieu de sauter.",
-          "hint": "Touchez une icône pour la transformer. Respecte reduced-motion.",
-          "icons": {
-            "menu": "Menu / fermer",
-            "play": "Lecture / pause",
-            "theme": "Clair / sombre",
-            "volume": "Volume / muet",
-            "bell": "Notifications activées / désactivées",
-            "copy": "Copier / copié"
-          }
-        },
-        "blocks": {
-          "eyebrow": "Constructeur de pages",
-          "title": "Les mêmes blocs, partout",
-          "body": "Les pages marketing et les articles de blog utilisent un seul jeu de composants partagés — rédigez dans Sanity, le rendu est identique partout."
         }
       }
     }
@@ -480,6 +453,8 @@
     }
   },
   "auth": {
+    "signInTitle": "Se connecter",
+    "signUpTitle": "Créer un compte",
     "marketingOptIn": "Envoyez-moi occasionnellement des nouveautés et des offres. Vous pouvez vous désabonner à tout moment.",
     "nudge": {
       "title": "Souhaitez-vous recevoir nos nouveautés et offres par e-mail ?",
