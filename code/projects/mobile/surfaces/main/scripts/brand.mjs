@@ -62,6 +62,20 @@ export async function download(url, file, f = fetch) {
   return true;
 }
 
+/** `url` (a PNG) as a `data:` URI; undefined — never throws — when the fetch fails. The
+ *  offline page needs its images inline: with `server.url` set, Capacitor serves only the
+ *  error page itself from the bundle, and every other local path goes to the (unreachable) server. */
+export async function pngDataUri(url, f = fetch) {
+  try {
+    const res = await f(url, { signal: AbortSignal.timeout(30_000) });
+    if (!res.ok) return undefined;
+    const png = Buffer.from(await res.arrayBuffer());
+    return `data:image/png;base64,${png.toString("base64")}`;
+  } catch {
+    return undefined;
+  }
+}
+
 /** Re-render every native splash image at its own size from `asset`. */
 export async function renderSplashes(asset, files, f = fetch) {
   for (const file of files) {

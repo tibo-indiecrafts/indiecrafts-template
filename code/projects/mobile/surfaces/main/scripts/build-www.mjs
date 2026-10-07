@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
 import { renderOfflinePage } from "./offline-page.mjs";
 import {
   SPLASH_LOGO_SHARE,
-  download,
+  pngDataUri,
   fetchBrand,
   logoUrl,
   renderSplashes,
@@ -39,23 +39,16 @@ const appEnv = existsSync(here("../../../../web/surfaces/app/.env.local"))
 const publicEnv = (key) =>
   process.env[key] ||
   appEnv.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1]?.trim();
-mkdirSync(here("../www/brand/"), { recursive: true });
+mkdirSync(here("../www/"), { recursive: true });
 const brand = await fetchBrand({
   projectId: publicEnv("NEXT_PUBLIC_SANITY_PROJECT_ID"),
   dataset: publicEnv("NEXT_PUBLIC_SANITY_DATASET"),
 });
 let logo, logoDark;
 if (brand) {
-  if (await download(logoUrl(brand.logo), here("../www/brand/logo.png")))
-    logo = "brand/logo.png";
-  if (
-    brand.logoDark &&
-    (await download(
-      logoUrl(brand.logoDark),
-      here("../www/brand/logo-dark.png"),
-    ))
-  )
-    logoDark = "brand/logo-dark.png";
+  // Inline (data: URIs), never a file next to the page — see pngDataUri.
+  logo = await pngDataUri(logoUrl(brand.logo));
+  if (brand.logoDark) logoDark = await pngDataUri(logoUrl(brand.logoDark));
   await brandSplashes(brand.logo);
 } else {
   console.warn(

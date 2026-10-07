@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fetchBrand, pngSize, splashUrl } from "./brand.mjs";
+import { fetchBrand, pngDataUri, pngSize, splashUrl } from "./brand.mjs";
 
 const ok = (body) => async () => ({ ok: true, json: async () => body });
 const cfg = { projectId: "p", dataset: "production" };
@@ -60,4 +60,20 @@ test("pngSize reads the header; refuses a non-PNG", () => {
   png.writeUInt32BE(480, 20);
   assert.deepEqual(pngSize(png), { w: 320, h: 480 });
   assert.throws(() => pngSize(Buffer.alloc(24)), /not a PNG/);
+});
+
+test("pngDataUri inlines the logo for the offline page; undefined — never throws — on failure", async () => {
+  const png = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
+  const res = { ok: true, arrayBuffer: async () => png };
+  assert.equal(
+    await pngDataUri("u", async () => res),
+    "data:image/png;base64,iVBORw==",
+  );
+  assert.equal(await pngDataUri("u", async () => ({ ok: false })), undefined);
+  assert.equal(
+    await pngDataUri("u", async () => {
+      throw new Error("offline");
+    }),
+    undefined,
+  );
 });

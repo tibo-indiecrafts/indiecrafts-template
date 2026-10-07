@@ -104,13 +104,13 @@ test("shows the configured logo (dark variant in dark mode), named after the app
     appName: "Acme",
     messages,
     serverUrl: SERVER,
-    logo: "brand/logo.png",
-    logoDark: "brand/logo-dark.png",
+    logo: "data:image/png;base64,TElHSFQ=",
+    logoDark: "data:image/png;base64,REFSSw==",
   });
-  assert.match(html, /<img src="brand\/logo.png" alt="Acme"/);
+  assert.match(html, /<img src="data:image\/png;base64,TElHSFQ=" alt="Acme"/);
   assert.match(
     html,
-    /<source srcset="brand\/logo-dark.png" media="\(prefers-color-scheme: dark\)">/,
+    /<source srcset="data:image\/png;base64,REFSSw==" media="\(prefers-color-scheme: dark\)">/,
   );
 });
 

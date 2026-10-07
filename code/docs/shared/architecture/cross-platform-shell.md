@@ -45,7 +45,8 @@ The shell adds no scope. It runs the `app` surface, so it uses the `web/` bricks
 ## Consequences
 
 - One deploy of `app` updates the mobile content. The shell rebuilds only for native changes.
-- Sign-in is password or an email one-time code. Social OAuth does not run in a web view.
+- Sign-in is password or an email one-time code. Social OAuth does not run in a web view, so the
+  shell hides the social buttons even when a provider is on.
 - Compliance, announcements, and the update prompt come from `app` — no second implementation.
 
 ## Read next

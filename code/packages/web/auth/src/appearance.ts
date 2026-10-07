@@ -8,6 +8,8 @@
  * Returned untyped (a plain literal): the `<ClerkProvider appearance={...}>`
  * call site type-checks the shape, so the brick carries no `@clerk/types` dep.
  */
+const NATIVE_SHELL = "html[data-native-shell] &";
+
 export function authAppearance() {
   return {
     variables: {
@@ -42,6 +44,11 @@ export function authAppearance() {
       // data" page: the step-up re-check, the exit survey and the erasure engine. (A Clerk
       // deletion would still be fully erased by the webhook — this removes the second door.)
       profileSection__danger: { display: "none" },
+      // Inside the Capacitor shell (`data-native-shell`, set by the app's NativeBridge) social
+      // sign-in leaves for the system browser and the session lands there, not in the shell.
+      // Google also refuses OAuth in an embedded web view. The shell keeps email + password.
+      socialButtonsRoot: { [NATIVE_SHELL]: { display: "none" } },
+      dividerRow: { [NATIVE_SHELL]: { display: "none" } },
       // Page titles ("Profile details", "Security", the sign-in card title) on the type
       // scale — the account widget's own pages use the same size (`account-modal.tsx`).
       headerTitle: {

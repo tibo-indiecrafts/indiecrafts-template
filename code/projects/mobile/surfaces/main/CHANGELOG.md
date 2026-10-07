@@ -13,6 +13,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The offline page shows the logo.** It showed a broken image: with `server.url` set, Capacitor
+  serves only the error page itself from the bundle, and `brand/logo.png` went to the unreachable
+  server. `pnpm www` now inlines the logo as a `data:` URI (`pngDataUri`); `www/brand/` is gone.
 - **The splash screen and the offline page show your logo.** The splash was Capacitor's default
   logo and the offline page had none. `pnpm www` now reads the logo configured in Sanity
   (`siteSettings`) and puts it on the offline page (dark variant in dark mode), and re-renders the

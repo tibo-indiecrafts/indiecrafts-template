@@ -107,6 +107,9 @@ Connect it over USB, then run the Android steps with `ANDROID_SERIAL=<serial>`
   splash images when it changes (`brand.lock.json` records which logo they came from). The app's
   404 and error screens show the same logo. Change the logo in Sanity, run `pnpm www`, commit the
   splash images.
-- Sign-in is password or an email code — social OAuth does not run inside a web view.
+- Sign-in is password or an email code — social OAuth does not run inside a web view. The shell
+  hides the social buttons (the website keeps them), so Clerk's Google connection can stay on.
+- The status bar follows the app theme where the page draws under it (iOS, Android WebView 140+).
+  An older Android WebView is padded below the bars, which then show the system colour.
 - A public App Store release needs one real native feature (Apple Guideline 4.2) and a
   release pipeline. Both belong to a later spec.

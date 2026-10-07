@@ -28,6 +28,13 @@ describe("authAppearance", () => {
     });
   });
 
+  it("hides social sign-in only inside the native shell", () => {
+    const { socialButtonsRoot, dividerRow } = authAppearance().elements;
+    const hidden = { "html[data-native-shell] &": { display: "none" } };
+    expect(socialButtonsRoot).toEqual(hidden);
+    expect(dividerRow).toEqual(hidden);
+  });
+
   it("gives Clerk's badges readable token text (Lighthouse color-contrast)", () => {
     expect(authAppearance().elements.badge).toEqual({
       color: "var(--muted-foreground)",

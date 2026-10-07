@@ -54,6 +54,9 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`packages-web-auth` — no social sign-in in the Capacitor shell.** `authAppearance` hides
+  `socialButtonsRoot` and its divider under `html[data-native-shell]` (set by the app's `NativeBridge`).
+  In the shell, a social button opened the system browser and the session landed there. The website keeps them.
 - **`packages-web-auth` — a sign-up from the header modal keeps its language.** Clerk's sign-in modal
   signs up in place, without `unsafeMetadata`, so a French visitor got no stored locale and an English
   welcome email (seen on the deployed dev website). New `SignInModalButton` opens the modal with

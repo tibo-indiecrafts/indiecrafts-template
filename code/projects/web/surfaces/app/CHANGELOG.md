@@ -14,6 +14,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The shell's status bar reads on a dark app.** `NativeBridge` set the system style, so a dark app
+  theme on a light phone got dark icons on the dark header (iOS, Android WebView 140+, where the page
+  draws under the bar). The icons now follow `data-theme` and the theme toggle; an older Android
+  WebView, padded below the bars, keeps the system style.
+- **No Google button in the shell.** `NativeBridge` marks `<html>` with `data-native-shell`, and the
+  Clerk appearance hides social sign-in there: the button opened Chrome, and the session landed there.
 - **Clerk's sign-up links open the app's own page without an env var.** The layout passes
   `signUpPath="/sign-up"` to `AppClerkProvider`; `NEXT_PUBLIC_CLERK_SIGN_UP_URL` is gone from
   `.env.example` (a CI deploy never had it).

@@ -98,8 +98,10 @@ Apply these on the dev instance, then on prod:
 2. **User & Authentication → Email:** enable **Password** and **Email verification code**.
 3. **SSO connections:** disable every social provider.
 
-Nothing in the code enforces this — the hosted `<SignIn>`/`<SignUp>` render whatever the
-dashboard enables, so the dashboard is the one home for the method set.
+The hosted `<SignIn>`/`<SignUp>` render whatever the dashboard enables, so the dashboard is
+the one home for the method set. One guard lives in code: inside the Capacitor shell,
+`authAppearance` hides the social buttons (`html[data-native-shell]`), so a provider left on
+never sends a shell user to the system browser.
 
 ## Suspicious logins
 

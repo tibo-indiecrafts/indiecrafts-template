@@ -15,10 +15,13 @@ import { deepLinkPath, isExternalUrl } from "@/lib/shell-links";
 
 /** Inside the Capacitor shell: Android back → history (exit at the root), deep links →
  *  the matching route, cross-origin links (legal pages, external sites) → the system
- *  browser, then the status bar is set and the splash screen hidden. */
+ *  browser, then the status bar is set and the splash screen hidden. Marks `<html>` with
+ *  `data-native-shell` (the Clerk appearance hides social sign-in there). */
 export function NativeBridge() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
+    const root = document.documentElement;
+    root.dataset.nativeShell = "";
 
     const onClick = (event: MouseEvent) => {
       if (!(event.target instanceof Element)) return;
@@ -37,10 +40,27 @@ export function NativeBridge() {
       window.location.assign(deepLinkPath(url));
     });
 
-    void StatusBar.setStyle({ style: Style.Default });
+    // Status-bar icons must read on whatever sits behind them. When the page draws under
+    // the bar (iOS; Android WebView 140+, where Capacitor sets `--safe-area-inset-top` on
+    // <html> to the bar height) that is the APP theme (`data-theme`, the toggle). An older
+    // Android WebView is padded below the bar, so the system-themed window shows → Default.
+    const syncStatusBar = () => {
+      const underBar =
+        Capacitor.getPlatform() === "ios" ||
+        parseFloat(root.style.getPropertyValue("--safe-area-inset-top")) > 0;
+      const dark = root.dataset.theme === "dark";
+      void StatusBar.setStyle({
+        style: !underBar ? Style.Default : dark ? Style.Dark : Style.Light,
+      });
+    };
+    syncStatusBar();
+    // `style`: Capacitor injects the inset variables after the page loads.
+    const themeWatch = new MutationObserver(syncStatusBar);
+    themeWatch.observe(root, { attributeFilter: ["data-theme", "style"] });
     void SplashScreen.hide();
 
     return () => {
+      themeWatch.disconnect();
       document.removeEventListener("click", onClick, true);
       void back.then((h) => h.remove());
       void open.then((h) => h.remove());

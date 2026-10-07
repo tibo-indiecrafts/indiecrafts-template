@@ -21,8 +21,8 @@ const scriptJson = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
  * would only reload this page). It also hides the native splash screen — the app's
  * NativeBridge never runs here. Every locale ships inline (set as text, never HTML); the
  * device language picks one, English as fallback. The colors are neutral error-screen
- * defaults, not brand tokens — no app is loaded. `logo` / `logoDark` are paths in www/
- * (the configured Sanity logo, pulled by build-www) — omitted when none is configured.
+ * defaults, not brand tokens — no app is loaded. `logo` / `logoDark` are `data:` URIs (the
+ * configured Sanity logo, inlined by build-www) — omitted when none is configured.
  */
 export function renderOfflinePage({
   appName,
