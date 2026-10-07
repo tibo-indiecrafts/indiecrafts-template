@@ -20,10 +20,13 @@ export type Incident = {
   country: string | null;
   ipHash: string | null;
   description: string | null;
+  /** Set by a retried source (a webhook's message id): a second insert with it is a no-op. */
+  dedupKey?: string;
 };
 
 /** Insert the incident, then alert the owner on high/critical via `waitUntil` — the
  *  alert never delays the caller and never fails it (the row is already stored).
+ *  A `dedupKey` already stored → no row and no alert (a retry of the same event).
  *  Throws only when the insert fails; a no-op when the audit D1 is unbound. */
 export async function recordIncident(
   env: RecordEnv,
@@ -32,8 +35,8 @@ export async function recordIncident(
   ts = new Date().toISOString(),
 ): Promise<void> {
   if (!env.AUDIT_DB) return;
-  await env.AUDIT_DB.prepare(
-    "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+  const res = await env.AUDIT_DB.prepare(
+    "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description, dedup_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (dedup_key) DO NOTHING",
   )
     .bind(
       ts,
@@ -44,8 +47,10 @@ export async function recordIncident(
       i.country,
       i.ipHash,
       i.description,
+      i.dedupKey ?? null,
     )
     .run();
+  if (!res.meta.changes) return;
   if (shouldAlert(i.severity))
     ctx.waitUntil(
       sendSecurityAlertEmail(env, {

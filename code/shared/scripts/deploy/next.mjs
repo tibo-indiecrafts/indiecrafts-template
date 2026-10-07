@@ -16,8 +16,9 @@ import {
   envVars,
   buildEnv,
   loopbackPublicVars,
+  missingEnv,
 } from "../lib/deploy-shared.mjs";
-import { ENVS } from "../lib/apps.mjs";
+import { APPS, ENVS } from "../lib/apps.mjs";
 import { originFor } from "../lib/domains.mjs";
 
 const [app, env] = process.argv.slice(2);
@@ -73,11 +74,24 @@ const envFiles = Object.fromEntries(
     .filter((f) => existsSync(f))
     .map((f) => [f, readFileSync(f, "utf8")]),
 );
-const local = loopbackPublicVars(buildEnv(envFiles, process.env));
+const built = buildEnv(envFiles, process.env);
+const local = loopbackPublicVars(built);
 if (local.length) {
   console.error(
     `✗ ${local.join(", ")} point at localhost — the ${env} build would ship them to every visitor.\n` +
       `  Set them for ${env}: an \`API_URL\` in wrangler.toml [env.${env}.vars], or export the value before deploying.`,
+  );
+  process.exit(1);
+}
+// Fail closed: the app's auth gate is opt-in on the Clerk key, so a keyless deploy is public.
+const missing = missingEnv(
+  APPS.find((a) => a.slug === app)?.requiredEnv,
+  built,
+);
+if (missing.length) {
+  console.error(
+    `✗ ${missing.join(", ")} not set — refusing to deploy ${app} to ${env}.\n` +
+      `  Set it in the app's .env.local, or (CI) as a GitHub Environment variable.`,
   );
   process.exit(1);
 }

@@ -29,6 +29,13 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **A Clerk-webhook retry no longer repeats the welcome email or the admin-grant alert.** A
+  later step's 502 makes Clerk re-send the same message. The `privilege_escalation` incident now
+  carries `dedup_key = clerk:<svix-id>` (audit migration `0006`, unique), so the retry stores and
+  alerts nothing more; the Clerk sign-in incidents use the same key. The welcome email sends the
+  Resend `Idempotency-Key` `welcome/<userId>`. **Why:** the owner got two alerts and the user two
+  welcomes. Apply `pnpm db:migrate:audit:<env>` before deploying the api.
+
 - **Security alerts have a recipient.** `SECURITY_ALERT_EMAIL = "support@indiecrafts.dev"` in dev,
   staging and prod `[vars]` — without it, high/critical incidents (lockouts, admin grants) emailed
   no one.

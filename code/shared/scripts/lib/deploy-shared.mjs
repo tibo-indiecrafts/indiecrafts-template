@@ -107,3 +107,8 @@ export const loopbackPublicVars = (env) =>
   Object.keys(env).filter(
     (k) => k.startsWith("NEXT_PUBLIC_") && LOOPBACK.test(String(env[k])),
   );
+
+/** The `keys` the build env leaves unset or blank — a deploy without them ships broken
+ *  or open (the app's auth gate is off without the Clerk key). */
+export const missingEnv = (keys = [], env) =>
+  keys.filter((k) => !String(env[k] ?? "").trim());

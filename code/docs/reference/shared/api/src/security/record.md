@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Every api write of a security incident goes through `recordIncident`: the `/v1/events` `kind:"security"` route, the Clerk webhook's role→admin grant, and Clerk's own sign-in detections. It inserts the row into the audit D1, then alerts the owner on a high or critical incident through `ctx.waitUntil`, so the alert never delays or fails the caller. An IP only ever arrives hashed.
+Every api write of a security incident goes through `recordIncident`: the `/v1/events` `kind:"security"` route, the Clerk webhook's role→admin grant, and Clerk's own sign-in detections. It inserts the row into the audit D1, then alerts the owner on a high or critical incident through `ctx.waitUntil`, so the alert never delays or fails the caller. An IP only ever arrives hashed. The Clerk webhook passes `dedupKey: clerk:<svix-id>`: a retry of the same message stores and alerts nothing more.
 
 Clerk detects suspicious sign-ins itself and emails only the user. `clerkEmailIncident` turns two of those emails into incidents for the owner:
 
@@ -23,8 +23,8 @@ The api sees these emails only when the template's **Delivered by Clerk** is off
 
 ## Exports
 
-- `Incident` — the row: type, severity, surface, user id, country, IP hash, description.
-- `recordIncident(env, ctx, incident, ts?)` — insert, then alert on high/critical. Throws only when the insert fails; a no-op when the audit D1 is unbound.
+- `Incident` — the row: type, severity, surface, user id, country, IP hash, description, and an optional `dedupKey`.
+- `recordIncident(env, ctx, incident, ts?)` — insert, then alert on high/critical. A `dedupKey` already stored → no row, no alert. Throws only when the insert fails; a no-op when the audit D1 is unbound.
 - `clerkEmailIncident(slug)` — the incident a Clerk `email.created` slug stands for, or `null`. Matches Clerk's slug variants.
 
 ## Usage

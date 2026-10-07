@@ -7,6 +7,7 @@ import {
   envVars,
   buildEnv,
   loopbackPublicVars,
+  missingEnv,
 } from "./deploy-shared.mjs";
 
 // The verify gate is tiered: dev + CI skip; staging/prod run it; --skip-gate opts out.
@@ -92,4 +93,18 @@ test("loopbackPublicVars — flags a public URL that points at this machine", ()
     }),
     ["NEXT_PUBLIC_API_URL", "NEXT_PUBLIC_SITE_URL", "NEXT_PUBLIC_CDN"],
   );
+});
+
+test("missingEnv — a required key unset or blank is missing", () => {
+  const keys = ["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
+  assert.deepEqual(missingEnv(keys, {}), keys);
+  assert.deepEqual(
+    missingEnv(keys, { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: " " }),
+    keys,
+  );
+  assert.deepEqual(
+    missingEnv(keys, { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_x" }),
+    [],
+  );
+  assert.deepEqual(missingEnv(undefined, {}), []);
 });

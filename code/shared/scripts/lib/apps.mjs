@@ -34,6 +34,8 @@ export const ENVS = ["dev", "staging", "prod"];
  *   fails if the body does not contain `contains` — proving the runtime + the freshly
  *   deployed build actually serve the expected payload, not just that the edge returns 200.
  *   Omit for an app with no health/version route (root reachability only).
+ * @property {string[]} [requiredEnv]  build env a deploy refuses to ship without (e.g. the
+ *   Clerk key: without it the app's auth gate is off and every route is public).
  */
 
 /** @type {AppEntry[]} */
@@ -87,6 +89,7 @@ export const APPS = [
     kind: "surface",
     dir: "code/projects/web/surfaces/admin",
     order: 40,
+    requiredEnv: ["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"],
   },
   {
     slug: "app",
@@ -97,6 +100,7 @@ export const APPS = [
     dir: "code/projects/web/surfaces/app",
     order: 45,
     smoke: { path: "/api/version", contains: "version" },
+    requiredEnv: ["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"],
   },
   {
     // Storybook is a Cloudflare Worker serving STATIC ASSETS (Workers Static Assets, no

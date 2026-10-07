@@ -19,11 +19,11 @@ the **privacy-policy disclosure checklist** an operator must action. Design:
 
 ## What is processed
 
-| Table             | Written when                                                                     | Fields                                                                                                                     |
-| ----------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `admin_audit`     | an admin grants/revokes the `admin` role                                         | timestamp, event, actor userId, target userId, country (`cf-ipcountry`) — **no IP**                                        |
-| `session_events`  | a user signs in on a surface                                                     | timestamp, surface, userId, country, **hashed IP** (salted SHA-256, never raw)                                             |
-| `security_events` | an app-level security incident (failed-login threshold, privilege escalation, …) | timestamp, event type, severity, surface, userId (when known), country, **hashed IP**, a short label — never PII free-text |
+| Table             | Written when                                                                     | Fields                                                                                                                                                                     |
+| ----------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `admin_audit`     | an admin grants/revokes the `admin` role                                         | timestamp, event, actor userId, target userId, country (`cf-ipcountry`) — **no IP**                                                                                        |
+| `session_events`  | a user signs in on a surface                                                     | timestamp, surface, userId, country, **hashed IP** (salted SHA-256, never raw)                                                                                             |
+| `security_events` | an app-level security incident (failed-login threshold, privilege escalation, …) | timestamp, event type, severity, surface, userId (when known), country, **hashed IP**, a short label — never PII free-text; a webhook's message id when the source retries |
 
 All three tables above live in the **`audit`** D1 (binding `AUDIT_DB`).
 

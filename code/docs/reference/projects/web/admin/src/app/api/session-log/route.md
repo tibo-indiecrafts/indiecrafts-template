@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-This route handler is the same-origin sign-in logger. The browser's `SessionLogger` POSTs here with no secret; the handler requires a signed-in Clerk caller (401 otherwise), then forwards to the audit api server-side (holding `APP_API_TOKEN`) with the surface and the user's country. It returns 204 on success.
+This route handler is the same-origin sign-in logger. The browser's `SessionLogger` POSTs here with no secret; the handler requires a signed-in Clerk caller (401 otherwise), then forwards to the audit api server-side (holding `APP_API_TOKEN`) with the surface, the user's country and the visitor IP (the api rate-limits per visitor, not per admin server). It returns 204 on success.
 
 ## Exports
 

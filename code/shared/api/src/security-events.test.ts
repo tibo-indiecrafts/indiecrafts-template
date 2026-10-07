@@ -253,6 +253,39 @@ describe("Clerk webhook → privilege_escalation", () => {
     await userUpdated("admin");
     expect(await rows()).toHaveLength(2);
   });
+  // The profile write failed (→ 502), so the retry still sees no admin role. The same
+  // svix-id must not store or alert the grant a second time.
+  it("a retry of the same message records and alerts the grant once", async () => {
+    const alerts: string[] = [];
+    vi.stubGlobal("fetch", async (url: string) => {
+      if (String(url).includes("api.resend.com")) alerts.push(String(url));
+      return new Response("{}", { status: 200 });
+    });
+    const body = JSON.stringify({
+      type: "user.updated",
+      data: { id: "user_adm", public_metadata: { role: "admin" } },
+    });
+    const ts = String(Math.floor(Date.now() / 1000));
+    const send = async () =>
+      call(
+        new Request("https://example.com/v1/clerk-webhook", {
+          method: "POST",
+          body,
+          headers: await svixHeaders("msg_retry", ts, body),
+        }),
+        {
+          CLERK_WEBHOOK_SECRET: SECRET,
+          MAIN_DB: undefined,
+          RESEND_API_KEY: "re_test",
+          EMAIL_FROM: "auth@example.com",
+          SECURITY_ALERT_EMAIL: "owner@example.com",
+        },
+      );
+    expect((await send()).status).toBe(200);
+    expect((await send()).status).toBe(200);
+    expect(await rows()).toHaveLength(1);
+    expect(alerts).toHaveLength(1);
+  });
 });
 
 describe("Clerk email.created → Clerk's own sign-in detections", () => {

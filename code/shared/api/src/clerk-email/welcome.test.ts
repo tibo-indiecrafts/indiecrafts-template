@@ -7,6 +7,7 @@ type Sent = {
   html: string;
   text: string;
   bcc?: string;
+  idempotencyKey?: string;
 };
 
 const baseEnv = { RESEND_API_KEY: "k", EMAIL_FROM: "no-reply@x.com" };
@@ -18,7 +19,7 @@ describe("sendWelcomeEmail (post-signup welcome, user.created)", () => {
     const sent: Sent[] = [];
     await sendWelcomeEmail(
       baseEnv,
-      { to: "u@x.com", locale: "fr" },
+      { to: "u@x.com", locale: "fr", userId: "user_1" },
       record(sent),
       async () => null, // no Sanity copy → hardcoded fr fallback
     );
@@ -26,6 +27,8 @@ describe("sendWelcomeEmail (post-signup welcome, user.created)", () => {
     expect(sent[0].to).toBe("u@x.com");
     expect(sent[0].subject).toBe("Bienvenue — votre compte est prêt");
     expect(sent[0].text.length).toBeGreaterThan(0);
+    // A webhook retry re-sends the same key → Resend sends once.
+    expect(sent[0].idempotencyKey).toBe("welcome/user_1");
   });
 
   it("applies the Studio override copy (clerkEmails.welcome) in the recipient locale", async () => {
@@ -39,7 +42,7 @@ describe("sendWelcomeEmail (post-signup welcome, user.created)", () => {
     });
     await sendWelcomeEmail(
       baseEnv,
-      { to: "u@x.com", locale: "fr" },
+      { to: "u@x.com", locale: "fr", userId: "user_1" },
       record(sent),
       fetchStrings,
     );
@@ -53,7 +56,7 @@ describe("sendWelcomeEmail (post-signup welcome, user.created)", () => {
     const sent: Sent[] = [];
     await sendWelcomeEmail(
       baseEnv,
-      { to: "u@x.com", locale: "zz" },
+      { to: "u@x.com", locale: "zz", userId: "user_1" },
       record(sent),
       async () => null,
     );
@@ -65,7 +68,7 @@ describe("sendWelcomeEmail (post-signup welcome, user.created)", () => {
     await expect(
       sendWelcomeEmail(
         { RESEND_API_KEY: undefined, EMAIL_FROM: "no-reply@x.com" },
-        { to: "u@x.com", locale: "en" },
+        { to: "u@x.com", locale: "en", userId: "user_1" },
         record(sent),
         async () => null,
       ),
@@ -77,7 +80,7 @@ describe("sendWelcomeEmail (post-signup welcome, user.created)", () => {
     const sent: Sent[] = [];
     await sendWelcomeEmail(
       baseEnv,
-      { to: "", locale: "en" },
+      { to: "", locale: "en", userId: "user_1" },
       record(sent),
       async () => null,
     );

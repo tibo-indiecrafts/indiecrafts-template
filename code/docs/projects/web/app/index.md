@@ -18,7 +18,9 @@ baseline (i18n, compliance, version prompt) from the shared bricks.
 It runs the same stack as `website` — Next.js 16 (App Router) · React 19 · Tailwind v4 ·
 shadcn/ui · next-intl — on the `next-cf` platform class (Next → OpenNext → Cloudflare
 Workers). Auth is **opt-in on the Clerk key**: set a key and every `(app)` route requires
-a session; leave it unset and the surface runs as a public scaffold.
+a session; leave it unset and the surface runs as a public scaffold. That fail-open mode
+is for local dev and keyless e2e only: the deploy refuses to ship `app` or `admin` without
+the key (registry `requiredEnv`).
 
 It is **not** a content surface — there is no CMS wired in. Add a content brick
 (`@indiecrafts/packages-web-sanity` for reads, `@indiecrafts/packages-shared-security` for

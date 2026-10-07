@@ -28,6 +28,8 @@ built on three ideas:
 - **`pkg`** — the workspace package (`pnpm --filter` target).
 - **`class`** — the platform class (below) → picks the deploy recipe.
 - **`order`** — deploy order (low first: services before their consumers).
+- **`requiredEnv`** (optional) — build env the deploy refuses to ship without. `admin` and `app`
+  list `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`: without it the app's auth gate is off.
 
 Helpers: `deployable({ only })`, `byClass()`, `isCloudflare()`. CLI for the CI matrix:
 `node code/shared/scripts/lib/apps.mjs --json [--cloudflare] [--class <class>] [--kind <kind>]`. An `apps.test.mjs` guard asserts

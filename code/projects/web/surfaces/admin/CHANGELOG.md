@@ -36,6 +36,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **`/api/session-log` sends the visitor IP.** The api rate-limits per visitor; without the IP
+  every admin shared the admin server's limit. The app and website routes already sent it. The
+  `session-log` and `csp-report` routes now have tests.
+
 - **Admin pages have a document title.** No admin page set a `<title>`: the browser tab showed
   the URL and Lighthouse accessibility scored 96. The locale layout now titles every page
   `<page> · Admin` (`Admin` when a page sets none); the security page sets its own.

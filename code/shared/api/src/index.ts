@@ -1181,6 +1181,8 @@ async function route(
           country: request.headers.get("cf-ipcountry") ?? null,
           ipHash: null,
           description: "role→admin granted",
+          // A retry after a later 502 re-sends this message: store + alert once.
+          dedupKey: `clerk:${svixId}`,
         });
       } catch (error) {
         logger.error("clerk webhook write failed", {
@@ -1278,12 +1280,14 @@ async function route(
               .run();
             // Post-signup welcome email — best-effort, only on create, in the sign-up
             // locale. `waitUntil` + the sender's own never-throw contract keep it from
-            // ever blocking or failing the webhook's profile sync.
+            // ever blocking or failing the webhook's profile sync. Resend dedups a retry
+            // (a later step's 502) by the user id.
             if (evt.type === "user.created" && email) {
               ctx.waitUntil(
                 sendWelcomeEmail(env, {
                   to: email,
                   locale: locale ?? defaultLocale,
+                  userId,
                 }),
               );
             }
@@ -1409,6 +1413,7 @@ async function route(
                 : null,
             country: null, // the request comes from Clerk, not the user
             ipHash: null,
+            dedupKey: `clerk:${svixId}`,
           });
         } catch (error) {
           logger.error("clerk incident write failed", {

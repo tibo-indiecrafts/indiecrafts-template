@@ -42,6 +42,9 @@ jobs:
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
           NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
           NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
+          # Clerk's publishable key (public) — baked at build. Without it the app's auth gate
+          # is off (every route public) and admin is locked, so next.mjs refuses the deploy.
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
           # Worker runtime secrets → auto-synced to Cloudflare AFTER deploy by
           # scripts/data/secrets.mjs (each app syncs only the keys its OWN

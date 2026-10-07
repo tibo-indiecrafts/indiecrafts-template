@@ -165,6 +165,7 @@ export async function resend(
     html,
     text,
     bcc,
+    idempotencyKey,
   }: {
     to: string;
     subject: string;
@@ -172,6 +173,8 @@ export async function resend(
     text: string;
     /** Extra blind copy (the Studio-editable global `bccAll`), merged with `EMAIL_ADMIN_BCC`. */
     bcc?: string;
+    /** Resend sends one email per key for 24 h — for a send a retry may repeat. */
+    idempotencyKey?: string;
   },
 ): Promise<void> {
   const key = env.RESEND_API_KEY;
@@ -190,6 +193,7 @@ export async function resend(
     headers: {
       Authorization: `Bearer ${key}`,
       "content-type": "application/json",
+      ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
     },
     body: JSON.stringify({
       from,

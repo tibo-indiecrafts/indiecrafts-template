@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/admin/src/app/api/session-log/route.md
  */
 import { auth } from "@clerk/nextjs/server";
+import { clientIp } from "@indiecrafts/packages-shared-security/guard";
 import { logSession } from "@indiecrafts/packages-web-auth/session-log";
 
 /**
@@ -21,6 +22,7 @@ export async function POST(request: Request) {
     userId,
     sessionId,
     country: request.headers.get("cf-ipcountry"),
+    clientIp: clientIp(request),
   });
   return new Response(null, { status: 204 });
 }

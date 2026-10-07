@@ -16,6 +16,9 @@ import { AppShell } from "@/user-interface/layout/AppShell";
  * proxy, which is coarse routing and bypassable; Next.js CVE-2025-29927). Auth is opt-in on
  * the Clerk key: with a key set, no session → redirect to sign-in; without a key the app
  * runs as a public scaffold (no session to check). `sign-in` lives outside this group.
+ * Fail-open on purpose, for local dev and keyless e2e: the deploy is the closed side — it
+ * refuses to ship without the key (registry `requiredEnv`). A page that must never be
+ * public without Clerk 404s on its own, like `account`.
  */
 export default async function AppGroupLayout({
   children,

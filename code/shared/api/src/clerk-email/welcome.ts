@@ -14,11 +14,12 @@ import { renderWelcome } from "./templates";
  * silent no-op and this NEVER throws — the webhook's profile sync must not be affected.
  * Copy is the Studio `clerkEmails.welcome` override in the recipient's locale, else the
  * template's hardcoded en/fr. The support-address footer + global bcc apply as they do to
- * the take-over emails (the bcc is gated inside `resend`). `send`/`fetchStrings` injectable.
+ * the take-over emails (the bcc is gated inside `resend`). Keyed by `userId` so a webhook
+ * retry sends it once (Resend keeps the key 24 h). `send`/`fetchStrings` injectable.
  */
 export async function sendWelcomeEmail(
   env: MailEnv,
-  { to, locale }: { to: string; locale: string },
+  { to, locale, userId }: { to: string; locale: string; userId: string },
   send: typeof resend = resend,
   fetchStrings: typeof fetchAuthEmailStrings = fetchAuthEmailStrings,
 ): Promise<void> {
@@ -34,5 +35,6 @@ export async function sendWelcomeEmail(
     html: html + foot.html,
     text: text + foot.text,
     bcc: strings?.bccAll,
+    idempotencyKey: `welcome/${userId}`,
   });
 }

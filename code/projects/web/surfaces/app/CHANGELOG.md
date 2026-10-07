@@ -14,6 +14,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **A deploy without the Clerk key is refused.** The `(app)` gate is opt-in on the key, so a
+  keyless build is public. That stays for local dev and keyless e2e; the deploy is the closed
+  side: registry `requiredEnv` makes `deploy/next.mjs` refuse `app` and `admin` without
+  `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`. CI's `deploy-app.yml` now passes it from the GitHub
+  Environment variable. **Why:** CI never passed the key, so a CI deploy shipped an open app
+  (and a locked admin).
+
 - **No Clerk error on a stray path.** A request the proxy skips (seen live: the mobile shell's
   `/favicon.ico`) reached the `(app)` layout as a fake locale, whose `auth()` threw "can't detect
   clerkMiddleware()". The layout now 404s a non-locale path first.
