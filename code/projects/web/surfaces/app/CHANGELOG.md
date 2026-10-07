@@ -14,6 +14,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The consent sheet's link says where it goes.** "Learn more" → "Read the cookie policy" (fr: "Lire
+  la politique cookies"), same as the website banner.
 - **A deploy without the Clerk key is refused.** The `(app)` gate is opt-in on the key, so a
   keyless build is public. That stays for local dev and keyless e2e; the deploy is the closed
   side: registry `requiredEnv` makes `deploy/next.mjs` refuse `app` and `admin` without

@@ -4,6 +4,7 @@
  *
  *   - Documents missing required language field (post, category, tag, quote,
  *     author, person)
+ *   - Published posts with no slug (unreachable: every read skips them)
  *   - Posts whose author / category / tag refs no longer resolve
  *   - Drafts older than 30 days (drift indicator)
  *   - Orphan documents of types that have been removed from the schema
@@ -113,7 +114,18 @@ report(
   brokenTags.map((p) => `${p._id} (${p.broken} broken, "${p.title ?? "?"}")`),
 );
 
-// 6. Drafts older than 30 days — possible drift.
+// 6. Published posts with no slug — the Studio requires one, so these came in
+// through the API (scripts, probes) and no page, feed or sitemap can reach them.
+const noSlug = await client.fetch(`*[
+  _type == "post" && !(_id in path("drafts.**")) && !(_id in path("versions.**"))
+    && !defined(media.slug.current)
+]{ _id, title }`);
+report(
+  "Posts with no slug (unreachable)",
+  noSlug.map((p) => `${p._id} (${p.title ?? "untitled"})`),
+);
+
+// 7. Drafts older than 30 days — possible drift.
 const threshold = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 const staleDrafts = await client.fetch(
   `*[_id in path("drafts.**") && _updatedAt < $threshold]{ _id, _updatedAt, _type }`,

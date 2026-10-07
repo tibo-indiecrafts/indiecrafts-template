@@ -112,3 +112,14 @@ export const loopbackPublicVars = (env) =>
  *  or open (the app's auth gate is off without the Clerk key). */
 export const missingEnv = (keys = [], env) =>
   keys.filter((k) => !String(env[k] ?? "").trim());
+
+/** The registry `requiredEnv` an app's local `.env` / `.env.local` leave unset — the
+ *  `dev:doctor` pre-flight. `read(path)` returns the file's text, or `null` when absent. */
+export function missingLocalEnv(app, read) {
+  const files = {};
+  for (const f of [".env", ".env.local"]) {
+    const text = read(`${app.dir}/${f}`);
+    if (text != null) files[f] = text;
+  }
+  return missingEnv(app.requiredEnv, buildEnv(files, {}));
+}

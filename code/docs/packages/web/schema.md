@@ -11,7 +11,7 @@ needs, so a module never reaches into the app (or a sibling module) for a field 
 
 |               |                                                                                                                                                         |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Exports**   | `.` → `sharedSanity` (the contribution) + `localeString` · `localeText` · `seoMeta`; `./*` → the raw schema files                                       |
+| **Exports**   | `.` → `sharedSanity` (the contribution) + `localeString` · `localeText` · `seoMeta` + `seoTranslationsField()`; `./*` → the raw schema files            |
 | **Deps**      | `@indiecrafts/packages-shared-config` (locale set for `localeString`), `@indiecrafts/packages-web-sanity` (the `SanityModule` type). **Peer:** `sanity` |
 | **Consumers** | app + blog (every future module that needs SEO or per-locale copy)                                                                                      |
 
@@ -22,6 +22,8 @@ needs, so a module never reaches into the app (or a sibling module) for a field 
   copy: email bodies, longer descriptions. Same generation + read path.
 - **`seoMeta`** — slug-less SEO + visibility toggles (`noIndex` · `hideFromDiscovery` ·
   `unpublished` · `llmsSummary` · `llmsFull`), for documents that already own a slug.
+- **`seoTranslationsField(fields?)`** — per-locale SEO text (title, description, keywords, llms text) for a document every locale shares
+  (`blog`, `contactSettings`, `waitlistSettings`). A field helper, not a registered type → [reference](/reference/packages/web/schema/src/seo-translations).
 - **`sharedSanity`** — the [contribution](/packages/web/sanity#composing-the-studio-config) that
   registers those objects once; every schema references them **by type name**.
 

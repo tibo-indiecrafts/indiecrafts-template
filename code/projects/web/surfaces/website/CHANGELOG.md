@@ -19,6 +19,21 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **French pages get French SEO on shared documents.** `/fr/blog`, `/fr/author`, `/fr/blog/category`,
+  `/fr/blog/tag`, `/fr/contact` and `/fr/waitlist` showed the English title and description: their SEO
+  lives on singletons that serve every locale. The SEO queries now read the locale's `seoTranslations`
+  entry first, and the seed fills the French ones (plus the missing contact SEO). A language with no
+  entry keeps the default-language SEO, as before.
+- **The cookie banner link says where it goes.** "Learn more" → "Read the cookie policy" (fr: "Lire la
+  politique cookies"). Lighthouse flagged the vague link text.
+- **Screen readers say the site name once.** The header and footer logo image had `alt` = the site
+  name, right next to the same name as text. The image is now decorative (`alt=""`).
+- **The comment moderation page follows the default locale.** Its copy was hard-coded French while
+  the email that links to it uses the default locale; it now comes from the bundled
+  `messages.moderation`, read without a Sanity call so a rate-limited request stays cheap.
+- **The demo post's headings follow the outline.** The seeded showcase post jumped H2 → H4 and H2 → H5;
+  those headings are now H3 and H4.
+
 - **A shared English blog link opens in French for a French visitor.** The locale cookie redirects
   `/blog/<en-slug>` to `/fr/blog/<en-slug>`, which no French doc has, so every English post, category,
   tag and series link was a 404 for anyone who had picked French. The detail pages now redirect to the
@@ -111,6 +126,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   and `is_robots_txt_managed = false`: Cloudflare's AI-bot block also stops Googlebot and Bingbot,
   and new domains block training crawlers on ad pages by default since 2026-09-15. A test keeps
   the four stacks in step.
+
+### Added
+
+- **`audit-dataset` flags posts with no slug.** The Studio requires one, so these come in through the
+  API and no page, feed or sitemap can reach them. Five such probe posts sit in the dataset today.
 
 ### Changed
 

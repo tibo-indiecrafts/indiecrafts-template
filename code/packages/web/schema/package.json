@@ -13,5 +13,13 @@
   },
   "peerDependencies": {
     "sanity": "*"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "sanity": "^6.16.0"
   }
 }

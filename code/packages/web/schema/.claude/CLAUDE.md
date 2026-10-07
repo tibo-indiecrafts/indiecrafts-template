@@ -1,7 +1,7 @@
 # `@indiecrafts/packages-web-schema` — shared Sanity object primitives
 
 Auto-loads under `code/packages/web/schema/**`. The reusable, doc-agnostic field types more than one
-owner needs: `localeString · localeText · seoMeta` + the `sharedSanity` barrel. Area rules →
+owner needs: `localeString · localeText · seoMeta` + the `seoTranslationsField()` helper + the `sharedSanity` barrel. Area rules →
 `../../../.claude/CLAUDE.md`.
 
 **Stack:** Sanity v6 · TypeScript. Shared Sanity object primitives, registered once, referenced by type name.
@@ -10,6 +10,9 @@ owner needs: `localeString · localeText · seoMeta` + the `sharedSanity` barrel
   **generated from `@indiecrafts/packages-shared-config` `locales`** so the language set can never drift. Add a
   locale there and each object grows a field automatically. Read path: `value[locale] ?? value[default]`.
 - **`seoMeta`** — the ONE per-page SEO + LLMs + visibility model, carried as `.seo` on every document a route renders.
+- **`seoTranslationsField()`** — per-locale SEO text (`seoTranslations[]`, visibility stays on the base) for a document every locale
+  shares (`blog`, `contactSettings`, `waitlistSettings`). Import it from the `.` root; the website's
+  `seo-queries.ts` reads it with `localizedSeo`. Tested in `src/seo-translations.test.ts` (`pnpm test`).
 - **`sharedSanity`** (the `.` barrel, `src/index.ts`) — the `SanityModule` contribution that registers
   the three primitives; app + blog wire it into a `composeStudio` group. Also re-exports each primitive by name.
 - Each primitive is the `./*` wildcard export (so it needs a tsconfig `paths` entry).

@@ -55,6 +55,7 @@ commands keep that flawless:
 pnpm dev:setup        # ONE-SHOT bootstrap: verify login → scaffold each worker's .dev.vars from
                       # .dev.vars.example (you fill the secrets) → migrate + deploy + sync secrets to dev
 pnpm dev:doctor       # preflight: logged in? each worker has .dev.vars? no PASTE_…_HERE ids?
+                      # each surface's .env.local sets its registry requiredEnv (app/admin Clerk key)?
                       # (also runs automatically as `predev` before every `pnpm dev`)
 pnpm dev:doctor:deep  # + a remote D1 migration-drift check (network)
 pnpm dev:refresh:dev  # re-align remote dev — migrations + WORKER secrets only (no code redeploy,

@@ -7,6 +7,14 @@ import { defineField, defineType } from "sanity";
 import { BlockContentIcon } from "@sanity/icons/BlockContent";
 import { MODULE_TYPES } from "@indiecrafts/packages-web-page-builder/sanity/schema/modules";
 import { BLOG_MODULE_TYPES } from "../modules";
+import { seoTranslationsField } from "@indiecrafts/packages-web-schema";
+
+/** The taxonomy index pages `indexSeo` covers — also their per-locale overrides. */
+const INDEX_PAGES = [
+  { name: "author", title: "Page « Auteur·rice·s »" },
+  { name: "category", title: "Page « Catégories »" },
+  { name: "tag", title: "Page « Tags »" },
+];
 
 // The per-post layout can compose the generic blocks + the blog's own blocks.
 const moduleFieldRefs = [...MODULE_TYPES, ...BLOG_MODULE_TYPES].map((type) => ({
@@ -73,6 +81,7 @@ export default defineType({
       of: moduleFieldRefs,
     }),
     defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),
+    seoTranslationsField(),
     defineField({
       name: "indexSeo",
       title: "SEO des pages de listing",
@@ -81,17 +90,8 @@ export default defineType({
         "SEO des pages qui listent les auteur·rice·s, catégories et tags (/author, /blog/category, /blog/tag). Vide = titre + description par défaut.",
       options: { collapsible: true, collapsed: true },
       fields: [
-        defineField({
-          name: "author",
-          title: "Page « Auteur·rice·s »",
-          type: "seoMeta",
-        }),
-        defineField({
-          name: "category",
-          title: "Page « Catégories »",
-          type: "seoMeta",
-        }),
-        defineField({ name: "tag", title: "Page « Tags »", type: "seoMeta" }),
+        ...INDEX_PAGES.map((page) => defineField({ ...page, type: "seoMeta" })),
+        seoTranslationsField(INDEX_PAGES),
       ],
     }),
     defineField({

@@ -17,6 +17,7 @@ It surfaces:
 - Documents missing a required `language` field (`post`, `category`, `tag`, `quote`, `author`, `person`).
 - Documents and post body blocks of removed types (`logo`, `form`, and their `module.*` equivalents).
 - Posts with a missing or broken author, category, or tag reference.
+- Published posts with no slug: the Studio requires one, so these came in through the API, and no page, feed, or sitemap can reach them.
 - Drafts older than 30 days (a drift indicator).
 
 ## Exports

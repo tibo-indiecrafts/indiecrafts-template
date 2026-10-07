@@ -5,6 +5,7 @@
  */
 import { defineField, defineType } from "sanity";
 import { UsersIcon } from "@sanity/icons/Users";
+import { seoTranslationsField } from "@indiecrafts/packages-web-schema";
 
 /**
  * Waitlist settings (singleton). The code flag `features.waitlist` is the hard
@@ -53,6 +54,7 @@ export default defineType({
       type: "localeString",
     }),
     defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),
+    seoTranslationsField(),
   ],
   preview: { prepare: () => ({ title: "Liste d'attente — réglages" }) },
 });

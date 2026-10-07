@@ -18,11 +18,12 @@ import fallback from "../../../messages/en.json";
  * The schema's fields are **generated from the message shape** (`en.json`) so it
  * can't drift from the keys the app reads. `typography` is excluded — it's
  * machine i18n/format config (quote style, date format, oxford comma), not
- * editorial copy, and stays in the bundled file.
+ * editorial copy, and stays in the bundled file. `moderation` is excluded too:
+ * the owner-only moderation page reads the bundled file directly (no Sanity call).
  */
 
 // Top-level namespaces that are NOT editorial UI copy → never in the CMS.
-const SKIP_TOP = new Set(["typography"]);
+const SKIP_TOP = new Set(["typography", "moderation"]);
 
 // Sanity field names must match this (letters/digits/underscore, letter-first). A few
 // message keys are kebab-case ids reused as keys — e.g. the GDPR request type

@@ -17,6 +17,9 @@ import seoMeta from "./seo-meta";
  *   - `localeText`   — per-locale multi-line text (email bodies, …)
  *   - `seoMeta`      — the ONE per-page SEO + LLMs + visibility model (`.seo` on every rendering doc)
  *
+ * Plus `seoTranslationsField()`: per-locale SEO for a document every locale shares
+ * (a field helper, not a registered type).
+ *
  * They're registered once via this contribution; every schema references them by
  * type name. Only genuinely decoupled primitives live here — `link`/`cta` stay
  * in the blog for now because their internal target is a `post` (they graduate
@@ -28,3 +31,4 @@ export const sharedSanity: SanityModule = {
 };
 
 export { localeString, localeText, seoMeta };
+export { seoTranslationsField } from "./seo-translations";

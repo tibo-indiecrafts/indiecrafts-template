@@ -8,9 +8,9 @@ status: stable
 
 Everything you can insert into a post body in the Studio.
 
-The body editor is Sanity's Portable Text canvas, configured by `code/modules/web/blog/src/sanity/schema/blockContent.ts`. On the live site the body renders inside a `.prose prose-neutral dark:prose-invert` wrapper — the visual styling of paragraphs, headings, lists, marks, and blockquotes comes from `@tailwindcss/typography` (via `@indiecrafts/packages-web-ui-tokens/globals.css`). `code/modules/web/blog/src/user-interface/renderers/portable-text-components.tsx` overrides only what the plugin can't infer from markup: deterministic heading `id`s (so the TOC can anchor), the external-link `target`, inline images, and inline modules.
+The body editor is Sanity's Portable Text canvas, configured by `code/packages/web/page-builder/src/sanity/schema/blockContent.ts`. On the live site the body renders inside a `.prose prose-neutral dark:prose-invert` wrapper — the visual styling of paragraphs, headings, lists, marks, and blockquotes comes from `@tailwindcss/typography` (via `@indiecrafts/packages-web-ui-tokens/globals.css`). `code/packages/web/ui-components/src/web/portable-text-components.tsx` overrides only what the plugin can't infer from markup: deterministic heading `id`s (so the TOC can anchor), the external-link `target`, inline images, and inline modules.
 
-To see every primitive in one place, open the seeded showcase post at `/en/blog/<slug>` (or its `/fr/...` twin).
+To see every primitive in one place, open the seeded showcase post at `/en/blog/<slug>` (or its `/fr/...` twin). Its headings follow the outline, so it shows H2–H4; H5 and H6 render with the same `prose` scale, one step below.
 
 ---
 
@@ -29,7 +29,9 @@ Click the **"Normal"** dropdown in the toolbar to change the current block's sty
 | **H6**       | `h6`         | Metadata labels. **Not** in the TOC.                                                                                |
 | **Citation** | `blockquote` | Long editorial pull quotes (left border + italic).                                                                  |
 
-**TOC behaviour:** the right-rail sidebar auto-collects H2 / H3 / H4 with deterministic slug `id`s for click-to-scroll. Hide a section from the TOC by promoting it to H5 / H6.
+**TOC behaviour:** the right-rail sidebar auto-collects H2 / H3 / H4 with deterministic slug `id`s for click-to-scroll. H5 / H6 stay out of the TOC, but use them only under an H4.
+
+**Heading order:** a heading goes at most one level deeper than the one before it (H2 → H3, not H2 → H4). Screen readers and search engines read the headings as the page outline, so a gap reads as a missing section. The Studio shows a warning on the body when a heading skips a level (`headingSkip` in `blockContent.ts`); it does not block publishing.
 
 ---
 

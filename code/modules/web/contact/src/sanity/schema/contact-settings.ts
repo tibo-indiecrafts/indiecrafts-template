@@ -5,6 +5,7 @@
  */
 import { defineField, defineType } from "sanity";
 import { EnvelopeIcon } from "@sanity/icons/Envelope";
+import { seoTranslationsField } from "@indiecrafts/packages-web-schema";
 
 /**
  * Contact settings (singleton). The code flag `features.contact` is the hard
@@ -64,6 +65,7 @@ export default defineType({
       type: "localeString",
     }),
     defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),
+    seoTranslationsField(),
   ],
   preview: { prepare: () => ({ title: "Contact — réglages" }) },
 });

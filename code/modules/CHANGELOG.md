@@ -15,6 +15,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **blog / contact / waitlist — SEO per language on the shared settings.** `blog` (its `seo` and the
+  `indexSeo` pages), `contactSettings` and `waitlistSettings` gain `seoTranslations`
+  (`seoTranslationsField`, `@indiecrafts/packages-web-schema`, now a dependency of the three modules), so
+  a French title and description can exist next to the default one.
+
 - **blog — the feature flags apply.** `configureBlog` stored the app's flags in a module variable,
   but Next bundles `instrumentation.ts` apart from the routes, so the routes kept the defaults:
   `rss`, `blogComments`, `blogSearch`, `blogSeries` and `blogTaxonomy` could not be switched off, and

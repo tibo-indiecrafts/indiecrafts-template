@@ -8,6 +8,7 @@ import {
   buildEnv,
   loopbackPublicVars,
   missingEnv,
+  missingLocalEnv,
 } from "./deploy-shared.mjs";
 
 // The verify gate is tiered: dev + CI skip; staging/prod run it; --skip-gate opts out.
@@ -107,4 +108,34 @@ test("missingEnv — a required key unset or blank is missing", () => {
     [],
   );
   assert.deepEqual(missingEnv(undefined, {}), []);
+});
+
+test("missingLocalEnv — the requiredEnv an app's local .env / .env.local leave unset", () => {
+  const app = {
+    dir: "/app",
+    requiredEnv: ["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"],
+  };
+  const disk = (files) => (p) => files[p] ?? null;
+  assert.deepEqual(missingLocalEnv(app, disk({})), app.requiredEnv);
+  assert.deepEqual(
+    missingLocalEnv(
+      app,
+      disk({
+        "/app/.env.local": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_x\n",
+      }),
+    ),
+    [],
+  );
+  // `.env.local` overrides `.env`, so a blank local value still counts as missing.
+  assert.deepEqual(
+    missingLocalEnv(
+      app,
+      disk({
+        "/app/.env": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_x\n",
+        "/app/.env.local": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=\n",
+      }),
+    ),
+    app.requiredEnv,
+  );
+  assert.deepEqual(missingLocalEnv({ dir: "/x" }, disk({})), []);
 });

@@ -36,6 +36,19 @@ export const siteSeoQuery = defineQuery(`
 `);
 
 /**
+ * `field` in the current `$locale` on a document every locale shares: the
+ * default-locale `seoMeta`, with the locale's `seoTranslations` text fields
+ * (`seoTranslationsField`, `@indiecrafts/packages-web-schema`) merged over it field
+ * by field. Visibility, canonical and images stay on the base. `null` when
+ * neither exists. `base` prefixes both paths (`"indexSeo."`).
+ */
+const localizedSeo = (field: string, base = "") => {
+  const own = `${base}${field}`;
+  const tr = `${base}seoTranslations[language == $locale][0].${field}`;
+  return `select(defined(${own}) || defined(${tr}) => { ...${own}, ...${tr} }, null)`;
+};
+
+/**
  * The shared `seoMeta` shape — the ONE per-page SEO model, projected from any
  * doc's `.seo`. Kept in sync with the `seoMeta` schema (`@indiecrafts/packages-web-schema`).
  */
@@ -72,14 +85,15 @@ export const homeSeoQuery = defineQuery(`
 /**
  * Blog singleton SEO — the `/blog` frontpage (`seo`) plus the taxonomy
  * list-page overrides (`indexSeo.{author,category,tag}`). The blog singleton is
- * shared across locales, so no `$locale` param.
+ * shared across locales: each field reads the `$locale` entry of its
+ * `seoTranslations`, else the default-locale value (`localizedSeo`).
  */
 export const blogSeoQuery = defineQuery(`
   *[_type == "blog"][0]{
-    "seo": seo{ ${SEO_META_PROJECTION} },
-    "author": indexSeo.author{ ${SEO_META_PROJECTION} },
-    "category": indexSeo.category{ ${SEO_META_PROJECTION} },
-    "tag": indexSeo.tag{ ${SEO_META_PROJECTION} }
+    "seo": ${localizedSeo("seo")}{ ${SEO_META_PROJECTION} },
+    "author": ${localizedSeo("author", "indexSeo.")}{ ${SEO_META_PROJECTION} },
+    "category": ${localizedSeo("category", "indexSeo.")}{ ${SEO_META_PROJECTION} },
+    "tag": ${localizedSeo("tag", "indexSeo.")}{ ${SEO_META_PROJECTION} }
   }
 `);
 
@@ -90,18 +104,18 @@ export const legalSeoQuery = defineQuery(`
   }
 `);
 
-/** Contact page SEO — the `contactSettings` singleton's `.seo`. */
+/** Contact page SEO — the `contactSettings` singleton's `.seo` for `$locale` (its `seoTranslations` entry, else the default). */
 export const contactSeoQuery = defineQuery(`
-  *[_type == "contactSettings"][0].seo{
-    ${SEO_META_PROJECTION}
-  }
+  *[_type == "contactSettings"][0]{
+    "seo": ${localizedSeo("seo")}{ ${SEO_META_PROJECTION} }
+  }.seo
 `);
 
-/** Waitlist landing SEO — the `waitlistSettings` singleton's `.seo`. */
+/** Waitlist landing SEO — the `waitlistSettings` singleton's `.seo` for `$locale` (its `seoTranslations` entry, else the default). */
 export const waitlistSeoQuery = defineQuery(`
-  *[_type == "waitlistSettings"][0].seo{
-    ${SEO_META_PROJECTION}
-  }
+  *[_type == "waitlistSettings"][0]{
+    "seo": ${localizedSeo("seo")}{ ${SEO_META_PROJECTION} }
+  }.seo
 `);
 
 /**

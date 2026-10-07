@@ -26,7 +26,7 @@ Doc title in the desk: **SEO par langue**. Fixed-id singletons (`siteMeta.en`, `
 | **Pages système** (`systemPages`)          | maintenance + 404 page copy. Falls back to `messages` per field — see below                                                                                                                                                                         |
 | **Résumé pour les assistants IA** (`llms`) | `/llms.txt` one-line summary + paragraph + external resources + a **last-reviewed date** (`reviewedAt`) shown in the header + the **section order** (`sectionOrder`) for the page list, and a site-level `full` intro prepended to `/llms-full.txt` |
 
-**Per-page SEO — on the document, not here.** Each document a route renders carries its own SEO under a collapsible **SEO & visibilité** section (the shared `seoMeta` object): the home `page`, each `legalPage`, each post, and the `waitlistSettings` singleton. The taxonomy list pages (author / category / tag) are edited on the **Blog** singleton under **SEO des pages de listing** (`indexSeo`). Every SEO section exposes the same fields:
+**Per-page SEO — on the document, not here.** Each document a route renders carries its own SEO under a collapsible **SEO & visibilité** section (the shared `seoMeta` object): the home `page`, each `legalPage`, each post, and the `waitlistSettings` and `contactSettings` singletons. The taxonomy list pages (author / category / tag) are edited on the **Blog** singleton under **SEO des pages de listing** (`indexSeo`). Every SEO section exposes the same fields:
 
 | Field                                                | Drives                                                                                                                                                           |
 | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -42,7 +42,7 @@ Doc title in the desk: **SEO par langue**. Fixed-id singletons (`siteMeta.en`, `
 | **Résumé pour les IA** (`llmsSummary`)               | the page's `/llms.txt` line (newlines flattened)                                                                                                                 |
 | **Contenu complet pour les IA** (`llmsFull`)         | the Markdown body for `/llms-full.txt` + `/llms/<page>`                                                                                                          |
 
-> **Single-value SEO on shared singletons.** The `blog` and `waitlistSettings` singletons are locale-independent, so `/blog`, `/author`, `/blog/category`, `/blog/tag`, and `/waitlist` have **one** SEO value, not one per locale — a deliberate "as few models as possible" trade. The `home` page and legal pages keep **per-locale** SEO (their documents are translated).
+> **Shared singletons get one SEO per language.** The `blog`, `contactSettings`, and `waitlistSettings` singletons serve every locale, so their **SEO & visibilité** holds the default language. Under it, **SEO dans les autres langues** (`seoTranslations`) takes one entry per other language, with its own title, description, keywords, and AI summaries; visibility, canonical, and images stay those of the default language. An empty field keeps the default-language text. The Blog's **SEO des pages de listing** has the same list for the author / category / tag pages. A language with no entry keeps the default-language SEO. The `home` page and legal pages need none of this: their documents are translated.
 
 ### `siteSettings` — language-independent (one, shared)
 
@@ -63,7 +63,7 @@ Doc title in the desk: **Paramètres du site (SEO)**. Read by `getSiteSettings()
 
 ## How it reaches the page
 
-`getSiteSeo(locale)`, `getSiteSettings()`, and `getPageSeo(pageId, locale)` (`src/lib/seo/site-seo.ts`) are the readers — all wrapped in React `cache()`, so `generateMetadata`, `<PageSchemas>`, the layout, and the `/llms*` routes share **one fetch per request**. `getPageSeo` dispatches each static route to its owning document's `.seo` (home → the home `page`; `/blog` + the taxonomy list pages → the `blog` singleton; legal pages → the matching `legalPage`; `/waitlist` → `waitlistSettings`). On any Sanity error they return the empty shape (never throw), so the site still renders.
+`getSiteSeo(locale)`, `getSiteSettings()`, and `getPageSeo(pageId, locale)` (`src/lib/seo/site-seo.ts`) are the readers — all wrapped in React `cache()`, so `generateMetadata`, `<PageSchemas>`, the layout, and the `/llms*` routes share **one fetch per request**. `getPageSeo` dispatches each static route to its owning document's `.seo` (home → the home `page`; `/blog` + the taxonomy list pages → the `blog` singleton; legal pages → the matching `legalPage`; `/waitlist` → `waitlistSettings`; `/contact` → `contactSettings`). On the three singletons it reads the locale's `seoTranslations` entry first. On any Sanity error they return the empty shape (never throw), so the site still renders.
 
 - **Per-page `<head>`** — `buildMetadata` (`src/lib/metadata.ts`)
 - **JSON-LD** — `buildSiteSchemas` (layout) + `buildGlobalSchemas` + `<PageSchemas>` (`src/lib/seo/jsonld*`)

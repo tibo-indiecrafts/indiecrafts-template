@@ -17,7 +17,7 @@ import { APPS, ENVS } from "../lib/apps.mjs";
 import { byKind } from "../lib/databases.mjs";
 import { declaredKeys } from "../data/secrets.mjs";
 import { wranglerEnvSection } from "../lib/project.mjs";
-import { buildEnv, missingEnv } from "../lib/deploy-shared.mjs";
+import { missingLocalEnv } from "../lib/deploy-shared.mjs";
 
 if (process.env.SKIP_DEV_DOCTOR) {
   console.log("dev:doctor skipped (SKIP_DEV_DOCTOR set).");
@@ -88,13 +88,9 @@ for (const w of workers) {
 // 4. Each web surface's `.env.local` sets its registry `requiredEnv` (the website pre-flights
 // the rest with its own doctor:env). Warn-only: keyless local dev is a deliberate mode.
 for (const a of APPS.filter((a) => a.requiredEnv?.length)) {
-  const files = Object.fromEntries(
-    [".env", ".env.local"]
-      .map((f) => [f, resolve(a.dir, f)])
-      .filter(([, p]) => existsSync(p))
-      .map(([f, p]) => [f, readFileSync(p, "utf8")]),
+  const missing = missingLocalEnv(a, (p) =>
+    existsSync(p) ? readFileSync(p, "utf8") : null,
   );
-  const missing = missingEnv(a.requiredEnv, buildEnv(files, {}));
   if (missing.length)
     warnings.push(
       `${a.slug}: ${missing.join(", ")} not set in .env.local — fine for a keyless local run, but a deploy refuses it. See ${a.dir}/.env.example.`,

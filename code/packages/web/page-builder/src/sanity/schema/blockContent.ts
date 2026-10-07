@@ -39,6 +39,33 @@ const INLINE_MODULES = [
   "module.contact",
 ];
 
+type Block = { _type?: string; style?: string; children?: { text?: string }[] };
+
+/**
+ * The first heading that skips a level (H2 → H4), or `null`. Screen readers and
+ * search engines read headings as an outline, so a gap reads as a missing
+ * section. The first heading may start at any level.
+ */
+export function headingSkip(blocks: Block[] = []): string | null {
+  let previous = 0;
+  for (const block of blocks) {
+    const level =
+      block._type === "block"
+        ? /^h([1-6])$/.exec(block.style ?? "")?.[1]
+        : undefined;
+    if (!level) continue;
+    if (previous && Number(level) > previous + 1) {
+      const text = (block.children ?? [])
+        .map((c) => c.text ?? "")
+        .join("")
+        .trim();
+      return `« ${text || "Titre"} » passe de H${previous} à H${level}. Utilisez H${previous + 1}, sinon le plan de la page saute un niveau.`;
+    }
+    previous = Number(level);
+  }
+  return null;
+}
+
 export default defineType({
   title: "Contenu enrichi",
   name: "blockContent",
@@ -125,4 +152,7 @@ export default defineType({
     // `src/sanity/schema/modules/`.
     ...INLINE_MODULES.map((type) => ({ type })),
   ],
+  // A warning, not an error: it flags the gap without blocking a publish.
+  validation: (Rule) =>
+    Rule.custom((blocks?: Block[]) => headingSkip(blocks) ?? true).warning(),
 });

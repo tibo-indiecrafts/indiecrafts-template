@@ -15,6 +15,7 @@ Defines the reusable rich-text field referenced as `type: "blockContent"` from p
 ## Exports
 
 - `default` — the `defineType` array schema for `blockContent`, registered through the schema barrel.
+- `headingSkip(blocks)` — the first heading that skips a level (H2 → H4) as an editor message, or `null`. The array's validation shows it as a Studio warning.
 
 ## Usage
 

@@ -11,8 +11,8 @@ beforeEach(() => fetch.mockReset());
 describe("getPageSeo", () => {
   it("reads the contact page SEO from the contactSettings singleton", async () => {
     fetch.mockResolvedValue({ title: "Contact us", description: "Write to us" });
-    const seo = await getPageSeo("contact", "en");
-    expect(fetch).toHaveBeenCalledWith(contactSeoQuery);
+    const seo = await getPageSeo("contact", "fr");
+    expect(fetch).toHaveBeenCalledWith(contactSeoQuery, { locale: "fr" });
     expect(seo).toMatchObject({ title: "Contact us", description: "Write to us" });
   });
 });

@@ -14,6 +14,12 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`packages-web-schema` — `seoTranslationsField()`.** Per-locale SEO text for a document every locale
+  shares: one entry per non-default locale with the text fields of `seoMeta`; visibility, canonical and
+  images stay on the base. The brick gets its first tests (`pnpm test`).
+- **`packages-web-page-builder` — a heading-order warning on `blockContent`.** `headingSkip` names the
+  first heading that skips a level (H2 → H4); the Studio shows it as a warning, so a publish is not
+  blocked. Screen readers and search engines read headings as the page outline.
 - **A "Language" tab in account management** (`packages-web-auth/account`, `AccountLanguageTab`), on the
   website and the app (and so the mobile shell), after "Emails". One option per locale by native name.
   Picking one saves it to the Clerk profile (the email language), then switches the page, like the

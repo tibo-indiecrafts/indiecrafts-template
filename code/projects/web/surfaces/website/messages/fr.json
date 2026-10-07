@@ -185,7 +185,7 @@
     }
   },
   "cookies": {
-    "learnMore": "En savoir plus",
+    "learnMore": "Lire la politique cookies",
     "acceptAll": "Tout accepter",
     "rejectAll": "Tout refuser",
     "customize": "Personnaliser",
@@ -203,6 +203,23 @@
       "first": "Première partie",
       "third": "Tierce partie"
     }
+  },
+  "moderation": {
+    "approve": "Approuver ce commentaire",
+    "spam": "Marquer comme spam",
+    "delete": "Supprimer définitivement",
+    "approveDone": "Commentaire approuvé — il est maintenant visible sur le site.",
+    "spamDone": "Commentaire marqué comme spam — il reste masqué.",
+    "deleteDone": "Commentaire supprimé.",
+    "confirmTitle": "{action} ?",
+    "deleteWarning": "Cette action est définitive.",
+    "doneTitle": "C'est fait",
+    "openStudio": "Ouvrir le Studio",
+    "expiredTitle": "Lien expiré",
+    "expiredBody": "Ce lien de modération n'est plus valide : le commentaire a déjà été traité, ou le lien a expiré.",
+    "unknownAction": "Action inconnue.",
+    "tooManyTitle": "Trop de requêtes",
+    "tooManyBody": "Trop de requêtes — réessayez dans quelques minutes."
   },
   "typography": {
     "titleCase": "sentence",

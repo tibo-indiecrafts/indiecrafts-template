@@ -56,14 +56,17 @@ const MESSAGES_DIR = path.join(
 /**
  * Seed the per-locale UI dictionary (`uiMessages.<locale>`) from the bundled
  * `messages/<locale>.json` fallback — Sanity becomes the edit surface; the file
- * stays the resilience net. `typography` is dropped (technical i18n/format rules
- * that stay in the file, never in the CMS — matches the schema's exclusion).
+ * stays the resilience net. `typography` (technical i18n/format rules) and
+ * `moderation` (read from the file by the moderation page) are dropped — matches
+ * the schema's exclusion.
  */
 const buildUiMessages = () =>
   ["en", "fr"].map((lang) => {
-    const { typography: _typography, ...copy } = JSON.parse(
-      readFileSync(path.join(MESSAGES_DIR, `${lang}.json`), "utf8"),
-    );
+    const {
+      typography: _typography,
+      moderation: _moderation,
+      ...copy
+    } = JSON.parse(readFileSync(path.join(MESSAGES_DIR, `${lang}.json`), "utf8"));
     return { _id: `uiMessages.${lang}`, _type: "uiMessages", language: lang, ...copy };
   });
 
@@ -461,9 +464,9 @@ const buildSiteMeta = () => [
 
 // ─── Per-page SEO (`.seo`), now on each rendering doc ──────────
 // Replaces the old central `siteMeta.pageSeo[]`. Home + legal pages are
-// per-locale (their docs are translated); the blog + waitlist singletons are
-// locale-independent, so their index/landing SEO is single-value (a deliberate
-// "fewest models" trade — see the app CHANGELOG). `data-request` owns no doc, so
+// per-locale (their docs are translated); the blog, waitlist and contact singletons
+// are locale-independent: `.seo` holds the default locale and `seoTranslations` the
+// text for each other locale. `data-request` owns no doc, so
 // it has no override → the layout defaults + site-wide OG apply.
 const HOME_SEO = {
   en: seoMeta(
@@ -502,6 +505,63 @@ const WAITLIST_SEO = seoMeta(
   undefined,
   "Join the early-access waitlist.",
 );
+// Singletons serve every locale: their `.seo` holds the default locale, and
+// `seoTranslations` one entry per other locale (`seoTranslationsField`).
+const seoTranslations = (byLocale) =>
+  Object.entries(byLocale).map(([language, fields]) => ({
+    _key: language,
+    language,
+    ...fields,
+  }));
+const BLOG_SEO_TRANSLATIONS = seoTranslations({
+  fr: {
+    seo: seoMeta(
+      "Blog — construire vite avec Next.js",
+      "Notes sur la livraison de sites clients : outillage, architecture config-first et les compromis qui gardent les sites légers.",
+      "Next.js, Sanity, freelance, DX",
+    ),
+  },
+});
+const INDEX_SEO_TRANSLATIONS = seoTranslations({
+  fr: {
+    author: seoMeta(
+      "Auteurs",
+      "Découvrez les auteurs et contributeurs derrière chaque article.",
+      "auteurs, contributeurs, rédacteurs",
+    ),
+    category: seoMeta(
+      "Catégories",
+      "Parcourez les articles par thème.",
+      "catégories, thèmes",
+    ),
+    tag: seoMeta("Tags", "Parcourez les articles par tag.", "tags, thèmes"),
+  },
+});
+const WAITLIST_SEO_TRANSLATIONS = seoTranslations({
+  fr: {
+    seo: seoMeta(
+      "Rejoindre la liste d'attente — accès anticipé",
+      "Inscrivez-vous à l'accès anticipé : nous vous prévenons dès le lancement.",
+      "liste d'attente, accès anticipé, inscription",
+      undefined,
+      "Rejoindre la liste d'attente de l'accès anticipé.",
+    ),
+  },
+});
+const CONTACT_SEO = seoMeta(
+  "Contact",
+  "Tell us about your project — we reply within two working days.",
+  "contact, project, quote",
+);
+const CONTACT_SEO_TRANSLATIONS = seoTranslations({
+  fr: {
+    seo: seoMeta(
+      "Contact",
+      "Parlez-nous de votre projet — nous répondons sous deux jours ouvrés.",
+      "contact, projet, devis",
+    ),
+  },
+});
 // Keyed by `legalPage.pageKey` → per-locale `.seo`.
 const LEGAL_SEO = {
   "mentions-legales": {
@@ -1661,7 +1721,7 @@ const showcaseBody = ({ quoteLocale, copy }) => [
     `person.${quoteLocale}.yuki`,
   ]),
   p(copy.afterTeam),
-  h(4, copy.guardrailsHeading),
+  h(3, copy.guardrailsHeading),
   p(copy.guardrailsIntro),
   inline.callout("success", [p(copy.calloutSuccess)]),
   p(copy.afterCalloutSuccess),
@@ -1689,13 +1749,13 @@ const showcaseBody = ({ quoteLocale, copy }) => [
     "https://indiecrafts.dev",
     copy.closingTail,
   ),
-  h(5, copy.editorNoteHeading),
+  h(3, copy.editorNoteHeading),
   pMixed([
     [copy.editorNoteLead, []],
     [copy.editorNoteEm, ["em"]],
     [copy.editorNoteTail, []],
   ]),
-  h(6, copy.updatedHeading),
+  h(4, copy.updatedHeading),
   p(copy.updatedBody),
 ];
 
@@ -2356,10 +2416,11 @@ const blog = {
     { _type: "module.blog-post-list", _key: key("m"), limit: 6, featuredOnly: false },
     { _type: "module.blog-explore", _key: key("m"), variant: "categories" },
   ],
-  // The blog singleton is locale-independent, so its /blog SEO + the taxonomy
-  // list-page SEO (author / category / tag) are single-value.
+  // The blog singleton is locale-independent: its /blog SEO + the taxonomy list-page
+  // SEO (author / category / tag) hold the default locale, `seoTranslations` the rest.
   seo: BLOG_SEO,
-  indexSeo: INDEX_SEO,
+  seoTranslations: BLOG_SEO_TRANSLATIONS,
+  indexSeo: { ...INDEX_SEO, seoTranslations: INDEX_SEO_TRANSLATIONS },
   // Display toggles — every element ON by default (an unset toggle also reads
   // as shown). Editors hide taxonomy chips + their routes, post meta, the
   // frontpage mosaic, or card excerpts from Studio → no code deploy.
@@ -2550,8 +2611,9 @@ const waitlistSettings = {
   _id: "waitlistSettings",
   _type: "waitlistSettings",
   enabled: true,
-  // Singleton → single-value SEO for the /waitlist landing.
+  // Singleton → the default-locale SEO + one translation per other locale.
   seo: WAITLIST_SEO,
+  seoTranslations: WAITLIST_SEO_TRANSLATIONS,
   heading: { en: "Join the early access", fr: "Rejoignez l'accès anticipé" },
   description: {
     en: "Be the first to know when we launch.",
@@ -3263,6 +3325,8 @@ const buildContactSettings = () => ({
   _id: "contactSettings",
   _type: "contactSettings",
   enabled: true,
+  seo: CONTACT_SEO,
+  seoTranslations: CONTACT_SEO_TRANSLATIONS,
   heading: navLabel("Get in touch", "Contactez-nous"),
   description: navLabel(
     "Tell us about your project. We reply within two working days.",

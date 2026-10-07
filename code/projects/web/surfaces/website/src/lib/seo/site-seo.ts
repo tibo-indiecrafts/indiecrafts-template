@@ -254,14 +254,13 @@ const LEGAL_PAGE_KEY: Record<string, string> = {
   "terms-of-sale": "cgv",
 };
 
-/** Blog singleton SEO (frontpage + taxonomy list pages) — one fetch per request. */
+/** Blog singleton SEO (frontpage + taxonomy list pages) — one fetch per request and locale. */
 const getBlogSeo = cache(
-  async (): Promise<Record<
-    "seo" | "author" | "category" | "tag",
-    RawSeoMeta | null
-  > | null> => {
+  async (
+    locale: Locale,
+  ): Promise<Record<"seo" | "author" | "category" | "tag", RawSeoMeta | null> | null> => {
     try {
-      return await client.fetch(blogSeoQuery);
+      return await client.fetch(blogSeoQuery, { locale });
     } catch {
       return null;
     }
@@ -286,15 +285,15 @@ export const getPageSeo = cache(
       if (pageId === "home") {
         return normalizeSeoMeta(await client.fetch(homeSeoQuery, { locale }));
       }
-      if (pageId === "blog") return normalizeSeoMeta((await getBlogSeo())?.seo);
+      if (pageId === "blog") return normalizeSeoMeta((await getBlogSeo(locale))?.seo);
       if (pageId === "author" || pageId === "category" || pageId === "tag") {
-        return normalizeSeoMeta((await getBlogSeo())?.[pageId]);
+        return normalizeSeoMeta((await getBlogSeo(locale))?.[pageId]);
       }
       if (pageId === "waitlist") {
-        return normalizeSeoMeta(await client.fetch(waitlistSeoQuery));
+        return normalizeSeoMeta(await client.fetch(waitlistSeoQuery, { locale }));
       }
       if (pageId === "contact") {
-        return normalizeSeoMeta(await client.fetch(contactSeoQuery));
+        return normalizeSeoMeta(await client.fetch(contactSeoQuery, { locale }));
       }
       const pageKey = LEGAL_PAGE_KEY[pageId];
       if (pageKey) {

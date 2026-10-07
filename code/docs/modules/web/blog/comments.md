@@ -109,6 +109,10 @@ Studio. Toggle them on the entity (`commentNotification.moderationButtons`, defa
   Delete → removes the doc. After the action the token is cleared, so the link expires.
 - Requires `features.blogComments` + `SANITY_API_WRITE_TOKEN` (the route writes). The token is an
   opaque nonce, not PII.
+- **Its copy** (action names, confirmations, the expired-link page) is the bundled
+  `messages.<locale>.moderation`, in the default locale — the same language as the email that links
+  to it. It is not in the Studio: the page reads the file directly, so a rate-limited or junk request
+  costs no Sanity call.
 
 ## Exporting comments
 

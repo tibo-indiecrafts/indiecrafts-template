@@ -9,7 +9,6 @@ import { sanityImageLoader } from "@indiecrafts/packages-web-sanity/image";
 
 type LogoImgProps = {
   src: string;
-  alt: string;
   className?: string;
   priority?: boolean;
 };
@@ -21,12 +20,15 @@ type LogoImgProps = {
  *
  * Raster logos still get CDN-sized here (2× the ~96px slot for retina); the
  * loader leaves SVG untouched, so the `unoptimized` SVG path is preserved.
+ *
+ * `alt=""`: the wordmark next to it always names the site, so the image is
+ * decorative. Naming it too made screen readers say the name twice.
  */
-function LogoImg({ src, alt, className, priority = true }: LogoImgProps) {
+function LogoImg({ src, className, priority = true }: LogoImgProps) {
   return (
     <Image
       src={sanityImageLoader({ src, width: 192, quality: 90 })}
-      alt={alt}
+      alt=""
       width={96}
       height={24}
       unoptimized
@@ -37,7 +39,7 @@ function LogoImg({ src, alt, className, priority = true }: LogoImgProps) {
 }
 
 type LogoProps = {
-  /** Site name — the wordmark + image alt. Resolved from Sanity, passed in. */
+  /** Site name — the wordmark (the image is decorative). Resolved from Sanity, passed in. */
   name: string;
   /** Main logo URL (Sanity). Absent → wordmark only. */
   logo?: string;
@@ -63,21 +65,16 @@ export function Logo({ name, logo, logoDark, className, iconClassName }: LogoPro
       {logo ? (
         logoDark ? (
           <>
-            <LogoImg
-              src={logo}
-              alt={name}
-              className={cn("block dark:hidden", iconClassName)}
-            />
+            <LogoImg src={logo} className={cn("block dark:hidden", iconClassName)} />
             {/* Not `priority`: the dark logo preloads only when dark mode is active. */}
             <LogoImg
               src={logoDark}
-              alt={name}
               priority={false}
               className={cn("hidden dark:block", iconClassName)}
             />
           </>
         ) : (
-          <LogoImg src={logo} alt={name} className={iconClassName} />
+          <LogoImg src={logo} className={iconClassName} />
         )
       ) : null}
       <span className="min-w-0 truncate font-semibold">{name}</span>

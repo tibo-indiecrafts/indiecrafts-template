@@ -12,6 +12,7 @@
     "@indiecrafts/packages-shared-utils": "workspace:*",
     "@indiecrafts/packages-web-email": "workspace:*",
     "@indiecrafts/packages-web-sanity": "workspace:*",
+    "@indiecrafts/packages-web-schema": "workspace:*",
     "@indiecrafts/packages-web-ui-components": "workspace:*",
     "@sanity/icons": "^5.2.2",
     "next-sanity": "^13.3.4"

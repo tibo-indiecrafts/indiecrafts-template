@@ -185,7 +185,7 @@
     }
   },
   "cookies": {
-    "learnMore": "Learn more",
+    "learnMore": "Read the cookie policy",
     "acceptAll": "Accept all",
     "rejectAll": "Reject all",
     "customize": "Customize",
@@ -203,6 +203,23 @@
       "first": "First-party",
       "third": "Third-party"
     }
+  },
+  "moderation": {
+    "approve": "Approve this comment",
+    "spam": "Mark as spam",
+    "delete": "Delete permanently",
+    "approveDone": "Comment approved — it is now visible on the site.",
+    "spamDone": "Comment marked as spam — it stays hidden.",
+    "deleteDone": "Comment deleted.",
+    "confirmTitle": "{action}?",
+    "deleteWarning": "This action cannot be undone.",
+    "doneTitle": "Done",
+    "openStudio": "Open the Studio",
+    "expiredTitle": "Link expired",
+    "expiredBody": "This moderation link is no longer valid: the comment was already handled, or the link expired.",
+    "unknownAction": "Unknown action.",
+    "tooManyTitle": "Too many requests",
+    "tooManyBody": "Too many requests — try again in a few minutes."
   },
   "typography": {
     "titleCase": "title",

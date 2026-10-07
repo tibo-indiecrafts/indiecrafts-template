@@ -4,7 +4,8 @@
  * @see docs/reference/projects/web/website/src/app/api/comments/moderate/route.md
  */
 import { NextResponse } from "next/server";
-import { security, site } from "@/config";
+import { createTranslator } from "next-intl";
+import { defaultLocale, security, site } from "@/config";
 import { escapeHtml } from "@indiecrafts/packages-web-email";
 import { clientIp } from "@indiecrafts/packages-shared-security/guard";
 import { rateLimit } from "@indiecrafts/packages-shared-security/rate-limit";
@@ -21,23 +22,22 @@ import {
  * confirm page** (read-only) — the mutation happens only on the confirm **POST**,
  * so a link-scanner / prefetcher (Outlook SafeLinks, etc.) can't auto-moderate.
  * Authorized by the one-time `moderationToken` (secret, single-use). Owner tool →
- * a self-contained HTML handler, not a localized page.
+ * a self-contained HTML handler, not a localized page: its copy is the bundled
+ * `messages.moderation` in the default locale, like the email that links here. No
+ * Sanity overlay: a rate-limited or junk request must not cost an API call.
  */
 
-const ACTION_VERB: Record<ModerationAction, string> = {
-  approve: "Approuver ce commentaire",
-  spam: "Marquer comme spam",
-  delete: "Supprimer définitivement",
-};
+const copy = async () =>
+  createTranslator({
+    locale: defaultLocale,
+    messages: (await import(`../../../../../messages/${defaultLocale}.json`)).default,
+    namespace: "moderation",
+  });
+
 const ACTION_COLOR: Record<ModerationAction, string> = {
   approve: "#16a34a",
   spam: "#6b7280",
   delete: "#dc2626",
-};
-const DONE_MSG: Record<ModerationAction, string> = {
-  approve: "Commentaire approuvé — il est maintenant visible sur le site.",
-  spam: "Commentaire marqué comme spam — il reste masqué.",
-  delete: "Commentaire supprimé.",
 };
 
 const brand = (() => {
@@ -50,7 +50,7 @@ const brand = (() => {
 
 function page(title: string, inner: string, status = 200): Response {
   const html = `<!doctype html>
-<html lang="fr"><head>
+<html lang="${defaultLocale}"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex"><title>${escapeHtml(title)} · ${escapeHtml(brand)}</title>
 </head>
@@ -66,12 +66,26 @@ function page(title: string, inner: string, status = 200): Response {
   });
 }
 
-const expired = () =>
-  page(
-    "Lien expiré",
-    `<h1 style="margin:0 0 12px;font-size:20px;color:#111827">Lien expiré</h1><p style="margin:0;font-size:15px;line-height:1.6">Ce lien de modération n'est plus valide — le commentaire a déjà été traité, ou le lien a expiré. Ouvrez le <a href="${escapeHtml(site.url)}/studio" style="color:#4f46e5">Studio</a> pour modérer.</p>`,
+const studioLink = (label: string) =>
+  `<a href="${escapeHtml(site.url)}/studio" style="color:#4f46e5;font-size:14px">${escapeHtml(label)}</a>`;
+
+const expired = async () => {
+  const t = await copy();
+  return page(
+    t("expiredTitle"),
+    `<h1 style="margin:0 0 12px;font-size:20px;color:#111827">${escapeHtml(t("expiredTitle"))}</h1><p style="margin:0 0 20px;font-size:15px;line-height:1.6">${escapeHtml(t("expiredBody"))}</p>${studioLink(t("openStudio"))}`,
     410,
   );
+};
+
+const unknownAction = async () => {
+  const t = await copy();
+  return page(
+    t("unknownAction"),
+    `<p style="margin:0">${escapeHtml(t("unknownAction"))}</p>`,
+    400,
+  );
+};
 
 export async function GET(request: Request) {
   if (!isCommentsEnabled())
@@ -80,24 +94,25 @@ export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const token = params.get("token") ?? "";
   const action = params.get("action");
-  if (!isModerationAction(action))
-    return page("Action inconnue", `<p style="margin:0">Action inconnue.</p>`, 400);
+  if (!isModerationAction(action)) return unknownAction();
 
   const comment = await getModerationComment(token);
   if (!comment) return expired();
 
+  const t = await copy();
+  const verb = t(action);
   const excerpt = (comment.body ?? "").slice(0, 400);
   const inner = `
-<h1 style="margin:0 0 20px;font-size:20px;color:#111827">${escapeHtml(ACTION_VERB[action])} ?</h1>
+<h1 style="margin:0 0 20px;font-size:20px;color:#111827">${escapeHtml(t("confirmTitle", { action: verb }))}</h1>
 <p style="margin:0 0 4px;color:#6b7280;font-size:12px;text-transform:uppercase;letter-spacing:.04em">${escapeHtml(comment.authorName ?? "?")}${comment.post ? ` — ${escapeHtml(comment.post)}` : ""}</p>
 <blockquote style="margin:8px 0 24px;padding:14px 18px;background:#f4f5f7;border-left:3px solid #e6e8eb;border-radius:6px;font-size:15px;line-height:1.6">${escapeHtml(excerpt).replaceAll("\n", "<br>")}</blockquote>
-${action === "delete" ? `<p style="margin:0 0 20px;font-size:14px;color:#dc2626">Cette action est définitive.</p>` : ""}
+${action === "delete" ? `<p style="margin:0 0 20px;font-size:14px;color:#dc2626">${escapeHtml(t("deleteWarning"))}</p>` : ""}
 <form method="post" action="/api/comments/moderate">
 <input type="hidden" name="token" value="${escapeHtml(token)}">
 <input type="hidden" name="action" value="${action}">
-<button type="submit" style="border:0;cursor:pointer;display:inline-block;padding:12px 22px;background:${ACTION_COLOR[action]};color:#ffffff;border-radius:8px;font-weight:600;font-size:15px">${escapeHtml(ACTION_VERB[action])}</button>
+<button type="submit" style="border:0;cursor:pointer;display:inline-block;padding:12px 22px;background:${ACTION_COLOR[action]};color:#ffffff;border-radius:8px;font-weight:600;font-size:15px">${escapeHtml(verb)}</button>
 </form>`;
-  return page(ACTION_VERB[action], inner);
+  return page(verb, inner);
 }
 
 export async function POST(request: Request) {
@@ -112,24 +127,26 @@ export async function POST(request: Request) {
     security.moderate.rateLimit.limit,
     security.moderate.rateLimit.windowSec,
   );
-  if (!ok)
+  if (!ok) {
+    const t = await copy();
     return page(
-      "Trop de requêtes",
-      `<p style="margin:0">Trop de requêtes — réessayez dans quelques minutes.</p>`,
+      t("tooManyTitle"),
+      `<p style="margin:0">${escapeHtml(t("tooManyBody"))}</p>`,
       429,
     );
+  }
 
   const form = await request.formData().catch(() => null);
   const token = String(form?.get("token") ?? "");
   const action = form?.get("action");
-  if (!isModerationAction(action))
-    return page("Action inconnue", `<p style="margin:0">Action inconnue.</p>`, 400);
+  if (!isModerationAction(action)) return unknownAction();
 
   const result = await moderateComment(token, action);
   if (result === "invalid") return expired();
 
+  const t = await copy();
   return page(
-    "C'est fait",
-    `<h1 style="margin:0 0 12px;font-size:20px;color:#111827">✓ C'est fait</h1><p style="margin:0 0 20px;font-size:15px;line-height:1.6">${escapeHtml(DONE_MSG[action])}</p><a href="${escapeHtml(site.url)}/studio" style="color:#4f46e5;font-size:14px">Ouvrir le Studio</a>`,
+    t("doneTitle"),
+    `<h1 style="margin:0 0 12px;font-size:20px;color:#111827">✓ ${escapeHtml(t("doneTitle"))}</h1><p style="margin:0 0 20px;font-size:15px;line-height:1.6">${escapeHtml(t(`${action}Done`))}</p>${studioLink(t("openStudio"))}`,
   );
 }
