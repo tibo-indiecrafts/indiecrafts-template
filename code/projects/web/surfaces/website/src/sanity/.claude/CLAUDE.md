@@ -15,7 +15,8 @@ Auto-loads under `code/projects/web/surfaces/website/src/sanity/**`. Core, featu
   `siteMeta.<locale>` (per-locale **site-wide defaults** — tagline / description /
   keywords / default OG card / llms.txt). `structure.ts` → the "SEO & métadonnées"
   desk section. `seo-queries.ts` → `siteSettingsQuery` / `siteSeoQuery` + the per-doc
-  `seoMeta` queries (`homeSeoQuery` / `blogSeoQuery` / `legalSeoQuery` / `waitlistSeoQuery`).
+  `seoMeta` queries (`homeSeoQuery` / `blogSeoQuery` / `legalSeoQuery` / `waitlistSeoQuery` /
+  `contactSeoQuery`). The three singletons merge their `$locale` `seoTranslations` over the base (`localizedSeo`).
 - **Per-page SEO** is NOT a central array — each doc a route renders carries its own
   `.seo` (the shared `seoMeta`, `@indiecrafts/packages-web-schema`). `getPageSeo(pageId, locale)`
   (`src/lib/seo/site-seo.ts`) dispatches each static route to its owning doc's `.seo`.

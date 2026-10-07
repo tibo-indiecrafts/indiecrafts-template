@@ -23,10 +23,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   Environment variable. **Why:** CI never passed the key, so a CI deploy shipped an open app
   (and a locked admin).
 
-- **`pnpm dev:doctor` warns before a keyless deploy does.** It now checks each surface's registry
-  `requiredEnv` in its `.env.local` (`app` and `admin`), next to the workers' `.dev.vars`.
-  **Why:** only `website` had an env pre-flight; the others found a missing key at deploy.
-
 - **No Clerk error on a stray path.** A request the proxy skips (seen live: the mobile shell's
   `/favicon.ico`) reached the `(app)` layout as a fake locale, whose `auth()` threw "can't detect
   clerkMiddleware()". The layout now 404s a non-locale path first.

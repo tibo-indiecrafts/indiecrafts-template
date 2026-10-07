@@ -18,6 +18,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 
 ## [Unreleased]
 
+- **`pnpm dev:doctor` warns before a keyless deploy does.** It now checks each surface's registry
+  `requiredEnv` in its `.env.local` (`app` and `admin`), next to the workers' `.dev.vars`
+  (`missingLocalEnv`, `lib/deploy-shared.mjs`, tested). **Why:** only `website` had an env
+  pre-flight; the others found a missing key at deploy.
 - **A deploy never ships a `localhost` api URL.** `deploy/next.mjs` let Next bake
   `.env.local` into the browser bundle, so the deployed dev website and app called
   `http://localhost:8787` from every visitor's browser: email preferences, the marketing toggle and
