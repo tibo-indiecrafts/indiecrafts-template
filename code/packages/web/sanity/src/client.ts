@@ -12,6 +12,10 @@ import { apiVersion, dataset, projectId, studioBasePath } from "./env";
  * predictable. Flip to `true` if you serve a lot of public read traffic
  * and don't need instant previews.
  *
+ * `perspective: "published"` is pinned: with a token, an API version before
+ * 2025-02-19 defaults to `raw`, which returns drafts too. Draft preview goes
+ * through `sanityFetchLive`, which sets its own perspective.
+ *
  * `stega.studioUrl` enables visual-editing pings: when draft mode is on,
  * the Studio Presentation tool can click straight from a rendered field
  * to the source field in the editor. No-op when draft mode is off.
@@ -33,6 +37,7 @@ export const client = createClient({
   dataset,
   apiVersion,
   useCdn: false,
+  perspective: "published",
   token: process.env.SANITY_API_READ_TOKEN,
   stega: { studioUrl: studioBasePath },
 });

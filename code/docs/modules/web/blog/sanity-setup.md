@@ -204,7 +204,7 @@ Each localized type expands to `English` / `Français` leaves plus a `Toutes les
 | `/sitemap.xml`                         | static  | —                                           | `pages` map                                        |
 | `/robots.txt`, `/manifest.webmanifest` | static  | —                                           | `site` config + Sanity `siteSettings.icon`         |
 
-Every GROQ query filters `coalesce(language, "en") == $locale`, so a post whose language doesn't match the requested locale 404s — and legacy un-tagged docs default to `en`. `proxy.ts` matcher excludes `/studio` and `/api`; it explicitly includes `/llms.txt`, `/llms-full.txt`, `/llms/:path*`, `/blog/rss.xml`, `/blog/:slug/md`.
+Every GROQ query filters `coalesce(language, "en") == $locale`, so a post whose language doesn't match the requested locale 404s — and legacy un-tagged docs default to `en`. `proxy.ts` matcher excludes `/studio` and `/api`; it explicitly includes `/llms.txt`, `/llms-full.txt`, `/llms/:path*`, `/blog/rss.xml`, `/blog/atom.xml`, `/blog/:slug/md`.
 
 ---
 

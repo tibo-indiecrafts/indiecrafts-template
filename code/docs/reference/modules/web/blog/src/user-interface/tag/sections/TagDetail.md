@@ -14,7 +14,7 @@ status: stable
 
 ## Exports
 
-- `TagDetail` — component taking `{ tag, posts, locale, breadcrumbs, breadcrumbsLabel, postsLabel?, noPostsLabel, page, pageCount, basePath, pagerLabels }`.
+- `TagDetail` — component taking `{ tag, posts, locale, breadcrumbs, breadcrumbsLabel, postsLabel? ((count) => string), noPostsLabel, page, pageCount, basePath, pagerLabels }`.
 
 ## Usage
 

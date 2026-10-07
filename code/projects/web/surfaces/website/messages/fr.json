@@ -329,7 +329,7 @@
         "partOf": "Partie {n} sur {total}",
         "breadcrumb": "Série",
         "noPosts": "Aucun article dans cette série pour l'instant.",
-        "parts": "{count} parties"
+        "parts": "{count, plural, one {# partie} other {# parties}}"
       },
       "gallery": {
         "regionLabel": "Galerie d'images",
@@ -366,7 +366,7 @@
         "heading": "Explorer les auteurs",
         "subheading": "Découvrez les autrices et auteurs qui façonnent chaque histoire.",
         "viewAll": "Voir tous les auteurs",
-        "posts": "{count} articles"
+        "posts": "{count, plural, one {# article} other {# articles}}"
       },
       "category": {
         "subheading": "Tous les articles classés dans cette catégorie.",
@@ -378,14 +378,14 @@
       "title": "Catégories",
       "description": "Parcourez les articles par thème.",
       "keywords": "catégories, thèmes, articles par thème",
-      "posts": "{count} articles",
+      "posts": "{count, plural, one {# article} other {# articles}}",
       "breadcrumbs": "Fil d'ariane"
     },
     "tag": {
       "title": "Tags",
       "description": "Parcourez les articles par tag.",
       "keywords": "tags, thèmes, articles par tag",
-      "posts": "{count} articles",
+      "posts": "{count, plural, one {# article} other {# articles}}",
       "noPosts": "Aucun article avec ce tag pour le moment.",
       "breadcrumbs": "Fil d'ariane"
     },
@@ -393,7 +393,7 @@
       "title": "Auteurs",
       "description": "Découvrez les autrices et auteurs qui signent chaque article.",
       "keywords": "auteurs, contributeurs, rédacteurs",
-      "posts": "{count} articles",
+      "posts": "{count, plural, one {# article} other {# articles}}",
       "noPosts": "Cet auteur n'a encore rien publié.",
       "breadcrumbs": "Fil d'ariane",
       "social": {

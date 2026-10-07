@@ -14,14 +14,14 @@ Renders one author as a card: portrait (or an initial fallback), name, position,
 
 ## Exports
 
-- `AuthorCard` — server component. Props: `author` (`AuthorRef | Author`) and optional `postsLabel` (a template string where `{count}` is replaced by the post count).
+- `AuthorCard` — server component. Props: `author` (`AuthorRef | Author`) and optional `postsLabel` (`(count) => string`, e.g. an ICU plural through next-intl).
 
 ## Usage
 
 ```tsx
 import { AuthorCard } from "@indiecrafts/modules-web-blog/user-interface/author/components/AuthorCard";
 
-<AuthorCard author={author} postsLabel="{count} posts" />;
+<AuthorCard author={author} postsLabel={(count) => t("posts", { count })} />;
 ```
 
 ## Source

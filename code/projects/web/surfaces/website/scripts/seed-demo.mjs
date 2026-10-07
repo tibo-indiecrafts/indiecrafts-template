@@ -1148,6 +1148,7 @@ const buildTranslationMeta = () => [
     "seo",
     "tailwind",
   ]),
+  ...translationMeta("series", "series", ["ship-mvp"]),
   ...translationMeta("quote", "quote", ["lovelace", "hopper"]),
   ...translationMeta("author", "author", ["ada", "grace", "tim"]),
   ...translationMeta("person", "person", ["maya", "luis", "yuki"]),

@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/website/src/app/locale/blog/series/slug/page.md
  */
 import { notFound } from "next/navigation";
+import { redirectToTranslation } from "@/lib/seo/translations";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages, site, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
@@ -89,7 +90,8 @@ export default async function SeriesDetailPage({ params, searchParams }: Props) 
     getTranslations("pages.blog.pagination"),
     getCategoryNav(locale),
   ]);
-  if (!series) notFound();
+  if (!series) return redirectToTranslation("series", slug, locale as Locale);
+  if (page > pageCount(total)) notFound();
 
   const path = localizedPathname(`/blog/series/${slug}`, locale);
   const breadcrumbItems = [
@@ -117,7 +119,7 @@ export default async function SeriesDetailPage({ params, searchParams }: Props) 
           { label: series.title ?? slug },
         ]}
         breadcrumbsLabel={t("breadcrumb")}
-        partsLabel={t.raw("parts")}
+        partsLabel={(count) => t("parts", { count })}
         noPostsLabel={t("noPosts")}
         page={page}
         pageCount={pageCount(total)}
@@ -126,7 +128,7 @@ export default async function SeriesDetailPage({ params, searchParams }: Props) 
           label: pagerT("label"),
           previous: pagerT("previous"),
           next: pagerT("next"),
-          status: pagerT("status"),
+          status: pagerT.raw("status") as string,
         }}
       />
     </DefaultLayout>

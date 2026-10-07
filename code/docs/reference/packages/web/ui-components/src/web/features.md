@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The `module.newsletter`, `module.waitlist`, and `module.contact` renderers self-hide when their feature is off. The flags live in the app (`@/config`), but this package stays app-agnostic, so the app injects the booleans once via `configureBlocks()` (from its `instrumentation.ts`). Defaults ship all-on, so a single app renders correctly before configure runs.
+The `module.newsletter`, `module.waitlist`, and `module.contact` renderers self-hide when their feature is off. The flags live in the app (`@/config`), but this package stays app-agnostic, so the app injects the booleans once via `configureBlocks()` (from its `instrumentation.ts`). Defaults ship all-on, so a single app renders correctly before configure runs. The gates live on `globalThis`, because `instrumentation.ts` and the routes load separate copies of this module.
 
 ## Exports
 

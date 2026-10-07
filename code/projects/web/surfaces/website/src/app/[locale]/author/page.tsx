@@ -48,7 +48,7 @@ export default async function AuthorIndexPage({ params }: Props) {
         heading={c?.heading ?? ""}
         subheading={c?.subheading ?? ""}
         emptyLabel={c?.empty ?? ""}
-        postsLabel={t.raw("posts")}
+        postsLabel={(count) => t("posts", { count })}
       />
     </DefaultLayout>
   );

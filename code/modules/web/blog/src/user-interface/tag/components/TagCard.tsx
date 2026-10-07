@@ -11,13 +11,17 @@ import type { Tag } from "@indiecrafts/modules-web-blog/sanity/types";
  * category card (tags are finer-grained labels) but built on the same
  * primitives so they fit on the same surface.
  */
-export function TagCard({ tag, postsLabel }: { tag: Tag; postsLabel: string }) {
+export function TagCard({
+  tag,
+  postsLabel,
+}: {
+  tag: Tag;
+  postsLabel: (count: number) => string;
+}) {
   const slug = tag.slug ?? "";
   if (!slug) return null;
   const count = tag.postCount ?? 0;
-  const label = postsLabel
-    ? postsLabel.replace("{count}", String(count))
-    : String(count);
+  const label = postsLabel(count);
 
   return (
     <article className="bg-card ring-border/60 group flex h-full flex-col gap-3 rounded-xl p-5 shadow-sm ring-1 transition hover:scale-[1.01] hover:shadow-md">

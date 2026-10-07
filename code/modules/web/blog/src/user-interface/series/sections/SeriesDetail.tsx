@@ -40,7 +40,7 @@ export function SeriesDetail({
   locale: Locale;
   breadcrumbs: Crumb[];
   breadcrumbsLabel: string;
-  partsLabel?: string;
+  partsLabel?: (count: number) => string;
   noPostsLabel: string;
   page: number;
   pageCount: number;
@@ -52,9 +52,7 @@ export function SeriesDetail({
     status: string;
   };
 }) {
-  const countLabel = partsLabel
-    ? partsLabel.replace("{count}", String(total))
-    : String(total);
+  const countLabel = partsLabel ? partsLabel(total) : String(total);
 
   return (
     <section

@@ -4,10 +4,12 @@ import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import {
   allPostSlugsQuery,
   allPostsQuery,
+  authorsForLocaleQuery,
   blogCategorySpotlightQuery,
   blogCollectionQuery,
   blogFeaturedQuery,
   blogHeroQuery,
+  categoriesForLocaleQuery,
   featuredPostsQuery,
   moduleBlogPostListQuery,
   postBySlugQuery,
@@ -22,6 +24,7 @@ import {
   relatedPostsQuery,
   rssPostsQuery,
   searchPostsQuery,
+  tagsForLocaleQuery,
   taxonomyForLlmsQuery,
 } from "./queries";
 
@@ -249,5 +252,75 @@ describe("public post/taxonomy queries — public-filter clause drift guard", ()
 
   it("postBySlugQuery is gated by unpublished only (intentional — direct-URL access, see query docstring)", () => {
     expect(postBySlugQuery).toContain("unpublished");
+  });
+});
+
+/**
+ * Leak check beyond the listings: the on-post series nav and the taxonomy
+ * indexes' post counts must apply the same filter as the listings, or a hidden
+ * or scheduled post surfaces as a "Part N" link or a phantom "1 post".
+ */
+describe("series nav + taxonomy counts — same filter as the listings", () => {
+  const ref = (id: string) => ({ _ref: id });
+  const tax = (_type: string, _id: string, extra = {}) => ({
+    _id,
+    _type,
+    language: "en",
+    slug: { current: _id },
+    ...extra,
+  });
+  const linked = posts.map((p) => ({
+    ...p,
+    series: ref("series.s"),
+    categories: [ref(p._id === "post.public" ? "cat.public" : "cat.ghost")],
+    tags: [ref(p._id === "post.public" ? "tag.public" : "tag.ghost")],
+    authors: [ref(p._id === "post.public" ? "author.public" : "author.ghost")],
+  }));
+  const dataset = [
+    ...linked,
+    {
+      _id: "series.s",
+      _type: "series",
+      language: "en",
+      slug: { current: "s" },
+    },
+    tax("category", "cat.public", { title: "Public" }),
+    tax("category", "cat.ghost", { title: "Ghost" }),
+    tax("tag", "tag.public", { title: "Public" }),
+    tax("tag", "tag.ghost", { title: "Ghost" }),
+    tax("author", "author.public", { name: "Public" }),
+    tax("author", "author.ghost", { name: "Ghost" }),
+  ];
+  // Every non-public post points at the "ghost" taxonomy; only the
+  // createdAt-only post (public too) also does, so ghost counts 1, not 5.
+  const listed = ["public", "createdonly"];
+
+  it("series parts list only listed posts", async () => {
+    const post = await run<{ series: { parts: { slug: string }[] } }>(
+      postBySlugQuery,
+      dataset,
+      { locale: "en", slug: "public" },
+    );
+    expect(post.series.parts.map((p) => p.slug).sort()).toEqual(
+      [...listed].sort(),
+    );
+  });
+
+  it.each([
+    ["cat", categoriesForLocaleQuery],
+    ["tag", tagsForLocaleQuery],
+    ["author", authorsForLocaleQuery],
+  ])("the %s index counts only listed posts", async (prefix, query) => {
+    const rows = await run<{ _id: string; postCount: number }[]>(
+      query,
+      dataset,
+      {
+        locale: "en",
+      },
+    );
+    expect(Object.fromEntries(rows.map((r) => [r._id, r.postCount]))).toEqual({
+      [`${prefix}.public`]: 1,
+      [`${prefix}.ghost`]: 1,
+    });
   });
 });

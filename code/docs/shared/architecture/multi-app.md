@@ -74,7 +74,8 @@ Intl format, env/CSP, logging, `PageConfig`/`isPageVisible`); the app owns its i
   routes gate on `features` directly. The app wires all of it once at boot in
   `src/instrumentation.ts` → `@/lib/islands` (`configureIslands`), so an island recombines across apps
   without assuming one app's flag shape. Each holder defaults to the template's set, so a single app is
-  correct even before `configureIslands` runs. (See [`packages/shared/config`](/packages/shared/config).)
+  correct even before `configureIslands` runs. Each holder keeps its value on `globalThis` (`Symbol.for` key):
+  Next bundles `instrumentation.ts` apart from the routes, so a plain module variable never reaches them. (See [`packages/shared/config`](/packages/shared/config).)
 
 ## Brick & module tiers — what a surface pulls in
 

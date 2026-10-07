@@ -34,7 +34,7 @@ export function CategoryListing({
   heading: string;
   subheading: string;
   emptyLabel: string;
-  postsLabel: string;
+  postsLabel: (count: number) => string;
   pills?: PageHeroPill[];
 }) {
   const sorted = [...categories].sort(

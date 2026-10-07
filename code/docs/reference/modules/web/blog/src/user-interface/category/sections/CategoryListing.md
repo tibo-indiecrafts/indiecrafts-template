@@ -14,7 +14,7 @@ Renders the `/blog/category` index page: breadcrumbs, a `PageHero`, and a grid o
 
 ## Exports
 
-- `CategoryListing` — server component. Props: `categories` (`Category[]`), `breadcrumbs`, `breadcrumbsLabel`, `heading`, `subheading`, `emptyLabel`, `postsLabel`, and optional `pills`.
+- `CategoryListing` — server component. Props: `categories` (`Category[]`), `breadcrumbs`, `breadcrumbsLabel`, `heading`, `subheading`, `emptyLabel`, `postsLabel` (`(count) => string`, the post-count label), and optional `pills`.
 
 ## Usage
 
@@ -28,7 +28,7 @@ import { CategoryListing } from "@indiecrafts/modules-web-blog/user-interface/ca
   heading={t("heading")}
   subheading={t("subheading")}
   emptyLabel={t("empty")}
-  postsLabel="{count} posts"
+  postsLabel={(count) => t("posts", { count })}
 />;
 ```
 

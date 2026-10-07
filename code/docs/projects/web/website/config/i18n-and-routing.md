@@ -99,6 +99,11 @@ helper used for manual URL building:
 also after the browser or the mobile shell restarts. `false` = always serve the default
 locale until the user picks one.
 
+The cookie also redirects deep links: with `fr` chosen, `/blog/<en-slug>` goes to
+`/fr/blog/<en-slug>`. A post, category, tag or series slug has no French doc there, so the detail
+page redirects to the French translation (`redirectToTranslation`, `@/lib/seo/translations`). A
+document with no translation in that locale still 404s.
+
 ## The routing definition
 
 `src/i18n/routing.ts` assembles the next-intl routing from `i18n` plus the `PATHNAMES`
@@ -206,8 +211,8 @@ export default function proxy(request: NextRequest) {
 Its `matcher` excludes Next internals, the metadata routes (`manifest`, `robots`,
 `sitemap`), `/studio`, and `/maintenance`, then explicitly re-adds the locale-aware route
 handlers whose paths carry a file extension (otherwise excluded by the dot rule): `/llms.txt`,
-`/llms-full.txt`, `/llms/:path*`, `/blog/rss.xml`, `/blog/:slug/md`. Add any new
-per-locale endpoint path to that list.
+`/llms-full.txt`, `/llms/:path*`, `/blog/rss.xml`, `/blog/atom.xml`, `/blog/:slug/md`. Add any new
+per-locale endpoint path to that list; `src/proxy.test.ts` fails when a dotted route under `[locale]/` is missing.
 
 ## Per-request messages
 

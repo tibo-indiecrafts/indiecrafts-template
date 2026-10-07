@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Defines the blog's GROQ queries with `defineQuery` (typegen-ready). Every post / category / tag read filters by `$locale` with no cross-locale fallback, and every public listing filters out noindex, unpublished, and future-dated posts. It also exports the shared post-card and module projections that the listings and renderers reuse.
+Defines the blog's GROQ queries with `defineQuery` (typegen-ready). Every post / category / tag read filters by `$locale` with no cross-locale fallback, and every public listing filters out noindex, hidden, unpublished, and future-dated posts. The nested reads (the on-post series parts and the category, tag and author post counts) use the same `LISTED_POST` filter, so a count always matches its listing. It also exports the shared post-card and module projections that the listings and renderers reuse.
 
 ## Exports
 

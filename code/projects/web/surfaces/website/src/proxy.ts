@@ -121,6 +121,7 @@ export const config = {
     "/llms-full.txt",
     "/llms/:path*",
     "/blog/rss.xml",
+    "/blog/atom.xml",
     "/blog/:slug/md",
     // Clerk-authenticated API routes: matched ONLY so `clerkMiddleware` attaches the
     // session for `auth()` (the pipeline passes them straight through — no intl/CSP).

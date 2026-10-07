@@ -3,7 +3,6 @@
  *
  * @see docs/reference/projects/web/website/src/app/locale/blog/slug/page.md
  */
-import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { features, pages, site, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
@@ -13,7 +12,7 @@ import {
 } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { buildMetadata } from "@/lib/metadata";
-import { translationAlternates } from "@/lib/seo/translations";
+import { redirectToTranslation, translationAlternates } from "@/lib/seo/translations";
 import { articleOpenGraph } from "@/lib/seo/article-og";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildArticleSchema, buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
@@ -124,7 +123,7 @@ export default async function BlogPostPage({ params }: Props) {
     getSiteSettings(),
     getCategoryNav(locale),
   ]);
-  if (!post) notFound();
+  if (!post) return redirectToTranslation("post", slug, locale as Locale);
 
   const title = post.metadata?.title ?? post.title ?? "";
   // Display teaser — prefer the editorial excerpt, fall back to the SEO description.

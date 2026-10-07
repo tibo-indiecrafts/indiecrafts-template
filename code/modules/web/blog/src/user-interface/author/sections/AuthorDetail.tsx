@@ -45,7 +45,7 @@ export function AuthorDetail({
   locale: Locale;
   breadcrumbs: Crumb[];
   breadcrumbsLabel: string;
-  postsLabel?: string;
+  postsLabel?: (count: number) => string;
   noPostsLabel: string;
   socialLabels: Record<string, string>;
   page: number;
@@ -58,9 +58,7 @@ export function AuthorDetail({
     status: string;
   };
 }) {
-  const postCountLabel = postsLabel
-    ? postsLabel.replace("{count}", String(total))
-    : String(total);
+  const postCountLabel = postsLabel ? postsLabel(total) : String(total);
   return (
     <section
       aria-labelledby="author-detail-title"

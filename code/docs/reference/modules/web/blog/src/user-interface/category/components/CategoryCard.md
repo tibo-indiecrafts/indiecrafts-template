@@ -14,14 +14,17 @@ Renders one category as a card for the `/blog/category` index: title, a post-cou
 
 ## Exports
 
-- `CategoryCard` — server component. Props: `category` (`Category`) and `postsLabel` (a template string where `{count}` is replaced by the post count).
+- `CategoryCard` — server component. Props: `category` (`Category`) and `postsLabel` (`(count) => string`, e.g. an ICU plural through next-intl).
 
 ## Usage
 
 ```tsx
 import { CategoryCard } from "@indiecrafts/modules-web-blog/user-interface/category/components/CategoryCard";
 
-<CategoryCard category={category} postsLabel="{count} posts" />;
+<CategoryCard
+  category={category}
+  postsLabel={(count) => t("posts", { count })}
+/>;
 ```
 
 ## Source

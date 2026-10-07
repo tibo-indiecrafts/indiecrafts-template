@@ -14,7 +14,7 @@ status: stable
 
 ## Exports
 
-- `TagListing` — component taking `{ tags, breadcrumbs, breadcrumbsLabel, heading, subheading, emptyLabel, postsLabel, pills? }`.
+- `TagListing` — component taking `{ tags, breadcrumbs, breadcrumbsLabel, heading, subheading, emptyLabel, postsLabel, pills? }`; `postsLabel` is `(count) => string`.
 
 ## Usage
 
@@ -28,7 +28,7 @@ import { TagListing } from "@indiecrafts/modules-web-blog/user-interface/tag/sec
   heading={t("tags.heading")}
   subheading={t("tags.subheading")}
   emptyLabel={t("tags.empty")}
-  postsLabel={t("postsCount")}
+  postsLabel={(count) => t("posts", { count })}
 />;
 ```
 

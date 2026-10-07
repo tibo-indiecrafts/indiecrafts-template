@@ -48,6 +48,15 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`packages-web-sanity` — the shared client reads published documents only.** It carries a read
+  token, and before API version 2025-02-19 a token read defaults to the `raw` perspective, which
+  includes drafts. The sitemap, `generateStaticParams` and the blog settings read through it, so a
+  draft's slug or a draft `blog` singleton could go live. `perspective: "published"` is now pinned;
+  draft preview keeps its own perspective through `sanityFetchLive`.
+- **`packages-web-ui-components` — `configureBlocks` reaches the routes.** Same flaw as the blog
+  config: the newsletter, waitlist and contact gates lived in a module variable that
+  `instrumentation.ts` set on its own copy. They now live on `globalThis`.
+
 - **Version-prompt docs match the code** (`packages-web-version`). The dev placeholder id is `"dev"`, not
   `"unknown"`. The app's banner copy comes from `messages` (`version.*`); only the website reads it from Sanity.
 - **`ContactForm` takes `headingAs`** (`h1`/`h2`/`h3`, default `h3`), so a full-page form can own the

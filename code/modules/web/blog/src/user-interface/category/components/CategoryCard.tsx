@@ -16,7 +16,7 @@ export function CategoryCard({
   postsLabel,
 }: {
   category: Category;
-  postsLabel: string;
+  postsLabel: (count: number) => string;
 }) {
   const slug = category.slug ?? "";
   if (!slug) return null;
@@ -31,7 +31,7 @@ export function CategoryCard({
         <header className="flex items-start justify-between gap-3">
           <h2 className="text-lg font-semibold capitalize">{category.title}</h2>
           <span className="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs font-medium">
-            {postsLabel.replace("{count}", String(count))}
+            {postsLabel(count)}
           </span>
         </header>
         {category.description ? (

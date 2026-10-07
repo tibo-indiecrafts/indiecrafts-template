@@ -105,7 +105,7 @@ export default async function AuthorDetailPage({ params, searchParams }: Props) 
     getTranslations("pages.blog.pagination"),
     getCategoryNav(locale),
   ]);
-  if (!author) notFound();
+  if (!author || page > pageCount(total)) notFound();
 
   const path = localizedPathname(`/author/${slug}`, locale);
   const breadcrumbItems = [
@@ -147,7 +147,7 @@ export default async function AuthorDetailPage({ params, searchParams }: Props) 
           { label: author.name ?? slug },
         ]}
         breadcrumbsLabel={t("breadcrumbs")}
-        postsLabel={t.raw("posts")}
+        postsLabel={(count) => t("posts", { count })}
         noPostsLabel={t("noPosts")}
         socialLabels={{
           x: t("social.x"),
@@ -164,7 +164,7 @@ export default async function AuthorDetailPage({ params, searchParams }: Props) 
           label: pagerT("label"),
           previous: pagerT("previous"),
           next: pagerT("next"),
-          status: pagerT("status"),
+          status: pagerT.raw("status") as string,
         }}
       />
     </DefaultLayout>

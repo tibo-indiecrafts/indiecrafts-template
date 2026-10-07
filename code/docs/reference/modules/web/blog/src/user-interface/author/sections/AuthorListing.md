@@ -14,7 +14,7 @@ Renders the `/author` index page. Shows breadcrumbs, a `PageHero`, and a grid of
 
 ## Exports
 
-- `AuthorListing` — server component. Props: `authors` (`Author[]`), `breadcrumbs`, `breadcrumbsLabel`, `heading`, `subheading`, `emptyLabel`, `postsLabel`, and optional `pills`.
+- `AuthorListing` — server component. Props: `authors` (`Author[]`), `breadcrumbs`, `breadcrumbsLabel`, `heading`, `subheading`, `emptyLabel`, `postsLabel` (`(count) => string`, the post-count label), and optional `pills`.
 
 ## Usage
 
@@ -28,7 +28,7 @@ import { AuthorListing } from "@indiecrafts/modules-web-blog/user-interface/auth
   heading={t("heading")}
   subheading={t("subheading")}
   emptyLabel={t("empty")}
-  postsLabel="{count} posts"
+  postsLabel={(count) => t("posts", { count })}
 />;
 ```
 

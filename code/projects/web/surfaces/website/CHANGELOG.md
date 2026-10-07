@@ -19,6 +19,27 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **A shared English blog link opens in French for a French visitor.** The locale cookie redirects
+  `/blog/<en-slug>` to `/fr/blog/<en-slug>`, which no French doc has, so every English post, category,
+  tag and series link was a 404 for anyone who had picked French. The detail pages now redirect to the
+  translation (`redirectToTranslation`); a document with no translation still 404s. The demo seed
+  also links the EN↔FR series (it was the one translated type left unlinked), so the series gets the
+  locale switcher, hreflang and this redirect.
+- **`/blog/atom.xml` works on the default locale.** The proxy matcher listed `/blog/rss.xml` but not
+  the Atom feed, so `/blog/atom.xml` was a 404 while every post advertised it. Added; `src/proxy.test.ts`
+  now fails when a dotted route under `[locale]/` (`.xml`, `.txt`) is missing from the matcher.
+- **Post counts say "1 post", not "1 posts".** The category, tag and author counts and the series
+  "parts" are ICU plurals (`{count, plural, one {# post} other {# posts}}`) formatted by next-intl;
+  the blog components take a `(count) => string` instead of a `{count}` template. The live Sanity
+  `uiMessages` still hold the old strings until they are updated.
+- **A page past the end 404s.** `?page=9` on a category, tag, author or series page rendered "3 posts"
+  above "No posts yet" as an indexable 200. It is now a 404.
+- **The pager label no longer throws.** The four detail pages formatted `Page {page} of {total}` with
+  no values, which logged a `FORMATTING_ERROR` on every request; they pass the raw template the
+  `Pager` fills in.
+- **The Markdown export's canonical matches the page.** `/blog/<slug>/md` said
+  `https://…/en/blog/<slug>`; the default locale has no prefix, so it is now `https://…/blog/<slug>`.
+
 - **The cookie table names the real cookies.** The seed declared `NEXT_LOCALE` and `legal-ack`; the
   browser stores `<prefix>_NEXT_LOCALE` and `<prefix>.legal-ack`. The seed now uses `site.prefix` and
   adds the three undeclared necessary cookies (`.locale-suggest`, `.announcement-ack`,

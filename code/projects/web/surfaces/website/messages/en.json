@@ -329,7 +329,7 @@
         "partOf": "Part {n} of {total}",
         "breadcrumb": "Series",
         "noPosts": "No posts in this series yet.",
-        "parts": "{count} parts"
+        "parts": "{count, plural, one {# part} other {# parts}}"
       },
       "gallery": {
         "regionLabel": "Image gallery",
@@ -366,7 +366,7 @@
         "heading": "Explore authors",
         "subheading": "Meet the writers and contributors shaping every story.",
         "viewAll": "View all authors",
-        "posts": "{count} posts"
+        "posts": "{count, plural, one {# post} other {# posts}}"
       },
       "category": {
         "subheading": "Every article filed under this category.",
@@ -378,14 +378,14 @@
       "title": "Categories",
       "description": "Browse articles by topic.",
       "keywords": "categories, topics, articles by topic",
-      "posts": "{count} posts",
+      "posts": "{count, plural, one {# post} other {# posts}}",
       "breadcrumbs": "Breadcrumb"
     },
     "tag": {
       "title": "Tags",
       "description": "Browse articles by tag.",
       "keywords": "tags, topics, articles by tag",
-      "posts": "{count} posts",
+      "posts": "{count, plural, one {# post} other {# posts}}",
       "noPosts": "No posts with this tag yet.",
       "breadcrumbs": "Breadcrumb"
     },
@@ -393,7 +393,7 @@
       "title": "Authors",
       "description": "Meet the writers and contributors behind every article.",
       "keywords": "authors, contributors, writers",
-      "posts": "{count} posts",
+      "posts": "{count, plural, one {# post} other {# posts}}",
       "noPosts": "This author hasn't published anything yet.",
       "breadcrumbs": "Breadcrumb",
       "social": {

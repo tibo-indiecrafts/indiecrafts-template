@@ -4,6 +4,8 @@
  * @see docs/reference/projects/web/website/src/app/locale/blog/slug/md/route.md
  */
 import { pages, site } from "@/config";
+import type { Locale } from "@/config";
+import { localizedPathname } from "@/i18n/routing";
 import { isBlogRouteEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import { portableTextToMarkdown } from "@indiecrafts/modules-web-blog/sanity/portable-to-markdown";
@@ -43,7 +45,8 @@ export async function GET(_req: Request, { params }: Props) {
   const published = post.publishedAt
     ? new Date(post.publishedAt).toISOString().slice(0, 10)
     : "";
-  const canonical = `${site.url}/${locale}/blog/${slug}`;
+  // Same URL as the page canonical — the default locale has no prefix.
+  const canonical = `${site.url}${localizedPathname(`/blog/${slug}`, locale as Locale)}`;
 
   const frontmatter = [
     "---",

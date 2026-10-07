@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The module cannot import an app, so the app injects its `@/config` values once at boot via `configureBlog()`. The route-gate, settings, and llms helpers read these instead of a central registry, so a second app can mount the same blog island with a different feature set. The defaults match the template's shipped set, so a single app is correct even before `configureBlog` runs.
+The module cannot import an app, so the app injects its `@/config` values once at boot via `configureBlog()`. The route-gate, settings, and llms helpers read these instead of a central registry, so a second app can mount the same blog island with a different feature set. The defaults match the template's shipped set, so a single app is correct even before `configureBlog` runs. The config lives on `globalThis`: Next bundles `instrumentation.ts` apart from the routes, so a module variable set at boot never reached them.
 
 ## Exports
 

@@ -14,7 +14,7 @@ Renders the `/blog/category/[slug]` page. The header shows the post count, categ
 
 ## Exports
 
-- `CategoryDetail` — server component. Props: `category` (`Category`), `posts` (`PostListItem[]`), `locale`, `breadcrumbs`, `breadcrumbsLabel`, optional `postsLabel`, `noPostsLabel`, `page`, `pageCount`, `basePath`, and `pagerLabels`.
+- `CategoryDetail` — server component. Props: `category` (`Category`), `posts` (`PostListItem[]`), `locale`, `breadcrumbs`, `breadcrumbsLabel`, optional `postsLabel` (`(count) => string`), `noPostsLabel`, `page`, `pageCount`, `basePath`, and `pagerLabels`.
 
 ## Usage
 

@@ -19,7 +19,7 @@ export function AuthorCard({
   postsLabel,
 }: {
   author: AuthorRef | Author;
-  postsLabel?: string;
+  postsLabel?: (count: number) => string;
 }) {
   const slug = author.slug ?? "";
   const url = slug ? `/author/${slug}` : "/author";
@@ -65,7 +65,7 @@ export function AuthorCard({
         ) : null}
         {postCount != null && postsLabel ? (
           <p className="text-muted-foreground mt-2 text-xs">
-            {postsLabel.replace("{count}", String(postCount))}
+            {postsLabel(postCount)}
           </p>
         ) : null}
       </div>

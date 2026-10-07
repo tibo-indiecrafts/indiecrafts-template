@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/website/src/app/locale/blog/category/slug/page.md
  */
 import { notFound } from "next/navigation";
+import { redirectToTranslation } from "@/lib/seo/translations";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages, site, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
@@ -101,7 +102,8 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
     getTranslations("pages.blog.pagination"),
     getCategoryNav(locale),
   ]);
-  if (!category) notFound();
+  if (!category) return redirectToTranslation("category", slug, locale as Locale);
+  if (page > pageCount(total)) notFound();
 
   const breadcrumbItems = [
     { name: nav("blog"), url: `${site.url}${localizedPathname("/blog", locale)}` },
@@ -135,7 +137,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
           { label: category.title ?? slug },
         ]}
         breadcrumbsLabel={catT("breadcrumbs")}
-        postsLabel={catT.raw("posts")}
+        postsLabel={(count) => catT("posts", { count })}
         noPostsLabel={t("noPosts")}
         page={page}
         pageCount={pageCount(total)}
@@ -144,7 +146,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
           label: pagerT("label"),
           previous: pagerT("previous"),
           next: pagerT("next"),
-          status: pagerT("status"),
+          status: pagerT.raw("status") as string,
         }}
       />
     </DefaultLayout>

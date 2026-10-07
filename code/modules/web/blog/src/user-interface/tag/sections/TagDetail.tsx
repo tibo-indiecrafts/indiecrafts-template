@@ -38,7 +38,7 @@ export function TagDetail({
   locale: Locale;
   breadcrumbs: Crumb[];
   breadcrumbsLabel: string;
-  postsLabel?: string;
+  postsLabel?: (count: number) => string;
   noPostsLabel: string;
   page: number;
   pageCount: number;
@@ -51,9 +51,7 @@ export function TagDetail({
   };
 }) {
   const count = tag.postCount ?? posts.length;
-  const countLabel = postsLabel
-    ? postsLabel.replace("{count}", String(count))
-    : String(count);
+  const countLabel = postsLabel ? postsLabel(count) : String(count);
 
   return (
     <section

@@ -15,6 +15,19 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **blog — the feature flags apply.** `configureBlog` stored the app's flags in a module variable,
+  but Next bundles `instrumentation.ts` apart from the routes, so the routes kept the defaults:
+  `rss`, `blogComments`, `blogSearch`, `blogSeries` and `blogTaxonomy` could not be switched off, and
+  `blog: false` left the feeds, search, series, Markdown export and `llms.txt` entries on. The config
+  now lives on `globalThis` (`Symbol.for("indiecrafts.blog.config")`); a test loads two copies of the
+  module.
+- **blog — hidden and scheduled posts stay out of the series nav and taxonomy counts.** The on-post
+  "Part N of M" list skipped the `hideFromDiscovery` check, and the category, tag and author indexes
+  counted hidden and scheduled posts (a category could show "1 post" and list none). These nested
+  reads now share the listings' filter (`LISTED_POST`).
+- **blog — count labels are plural-aware.** `CategoryCard`, `TagCard`, `AuthorCard` and the four
+  detail sections take `postsLabel` / `partsLabel` as `(count) => string`.
+
 - **`/contact` has a page heading.** `ContactLanding` renders the `contactSettings` heading as the
   page's `<h1>` (`ContactForm` `headingAs`); it was an `<h3>`, so the page had no `<h1>`.
 - **blog — the `llms.txt` section headings follow the locale.** `## Blog` / `## Categories` /

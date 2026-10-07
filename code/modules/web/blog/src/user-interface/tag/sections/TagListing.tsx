@@ -35,7 +35,7 @@ export function TagListing({
   heading: string;
   subheading: string;
   emptyLabel: string;
-  postsLabel: string;
+  postsLabel: (count: number) => string;
   pills?: PageHeroPill[];
 }) {
   const sorted = [...tags].sort(

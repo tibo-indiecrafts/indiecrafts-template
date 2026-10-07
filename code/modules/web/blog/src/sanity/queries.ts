@@ -113,6 +113,17 @@ export const MODULES_FRAGMENT = `
   }
 `;
 
+/**
+ * A post a visitor may find through the site — has a slug, is not noindex /
+ * hidden / unpublished, and its date has passed. Nested post reads (series
+ * parts, taxonomy counts) use it so they match the listings exactly.
+ */
+const LISTED_POST = `defined(media.slug.current)
+  && seo.noIndex != true
+  && seo.hideFromDiscovery != true
+  && seo.unpublished != true
+  && coalesce(publishedAt, _createdAt) <= now()`;
+
 // ─── Queries ───────────────────────────────────────────────────
 
 /**
@@ -193,10 +204,7 @@ export const postBySlugQuery = defineQuery(`
       // public filter as the listings so unpublished/scheduled parts drop out.
       "parts": *[_type == "post"
         && references(^._id)
-        && defined(media.slug.current)
-        && seo.noIndex != true
-        && seo.unpublished != true
-        && coalesce(publishedAt, _createdAt) <= now()
+        && ${LISTED_POST}
         && coalesce(language, "en") == $locale]
         | order(coalesce(seriesOrder, 9999) asc, coalesce(publishedAt, _createdAt) asc){
           _id, title, "slug": media.slug.current
@@ -411,8 +419,7 @@ export const categoriesForLocaleQuery = defineQuery(`
     && count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && seo.noIndex != true
-      && seo.unpublished != true]) > 0
+      && ${LISTED_POST}]) > 0
   ] | order(title asc) {
     _id,
     title,
@@ -421,8 +428,7 @@ export const categoriesForLocaleQuery = defineQuery(`
     "postCount": count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && seo.noIndex != true
-      && seo.unpublished != true])
+      && ${LISTED_POST}])
   }
 `);
 
@@ -469,8 +475,7 @@ export const categoryBySlugQuery = defineQuery(`
     "postCount": count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && seo.noIndex != true
-      && seo.unpublished != true]),
+      && ${LISTED_POST}]),
     ${SEO_FRAGMENT}
   }
 `);
@@ -522,8 +527,7 @@ const TAG_FRAGMENT = `
   "postCount": count(*[_type == "post"
     && references(^._id)
     && coalesce(language, "en") == $locale
-    && seo.noIndex != true
-    && seo.unpublished != true]),
+    && ${LISTED_POST}]),
   ${SEO_FRAGMENT}
 `;
 
@@ -536,8 +540,7 @@ export const tagsForLocaleQuery = defineQuery(`
     && count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && seo.noIndex != true
-      && seo.unpublished != true]) > 0
+      && ${LISTED_POST}]) > 0
   ] | order(title asc) {
     ${TAG_FRAGMENT}
   }
@@ -604,15 +607,13 @@ export const authorsForLocaleQuery = defineQuery(`
     && count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && seo.noIndex != true
-      && seo.unpublished != true]) > 0
+      && ${LISTED_POST}]) > 0
   ] | order(name asc) {
     ${AUTHOR_FRAGMENT},
     "postCount": count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && seo.noIndex != true
-      && seo.unpublished != true])
+      && ${LISTED_POST}])
   }
 `);
 

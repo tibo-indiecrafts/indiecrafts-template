@@ -14,14 +14,14 @@ status: stable
 
 ## Exports
 
-- `TagCard` — component taking `{ tag, postsLabel }`; `postsLabel` supports a `{count}` placeholder.
+- `TagCard` — component taking `{ tag, postsLabel }`; `postsLabel` is `(count) => string`, e.g. an ICU plural through next-intl.
 
 ## Usage
 
 ```tsx
 import { TagCard } from "@indiecrafts/modules-web-blog/user-interface/tag/components/TagCard";
 
-<TagCard tag={tag} postsLabel={t("postsCount")} />;
+<TagCard tag={tag} postsLabel={(count) => t("posts", { count })} />;
 ```
 
 ## Source

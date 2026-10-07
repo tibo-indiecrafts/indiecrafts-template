@@ -6,6 +6,7 @@
 
 import "server-only";
 
+import { notFound, redirect } from "next/navigation";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 import { localeCodes, localizedPathname, site, isLocale, type Locale } from "@/config";
 
@@ -66,6 +67,35 @@ export async function translatedSlugPath(
     { id: current._id, to },
   );
   return target?.slug ? pathFor(type, target.slug) : null;
+}
+
+/**
+ * The `locale` URL path of a detail slug that only exists in another locale, or
+ * `null`. A locale cookie redirects `/blog/<en-slug>` to `/fr/blog/<en-slug>`, where
+ * no French doc has that slug; the detail pages redirect here instead of a 404.
+ */
+export async function translationFallbackPath(
+  type: string,
+  slug: string,
+  locale: Locale,
+): Promise<string | null> {
+  for (const from of localeCodes) {
+    if (from === locale) continue;
+    const path = await translatedSlugPath(type, slug, from, locale);
+    if (path) return localizedPathname(path as `/${string}`, locale);
+  }
+  return null;
+}
+
+/** A detail page's not-found branch: redirect to the translation when there is one, else 404. */
+export async function redirectToTranslation(
+  type: string,
+  slug: string,
+  locale: Locale,
+): Promise<never> {
+  const path = await translationFallbackPath(type, slug, locale);
+  if (path) redirect(path);
+  notFound();
 }
 
 /**
