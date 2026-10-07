@@ -160,13 +160,12 @@ A store release has no pipeline yet. Setup + run → [Mobile shell (Capacitor)](
 ## Pre-flight checklist
 
 - `pnpm verify` green (tsc + tests + checks) before each deploy.
-- `pnpm --filter @indiecrafts/web-surfaces-website doctor:env` clean. (Gap: only `website` has a
-  `doctor:env` today — `api` / `admin` / `app` have no equivalent pre-flight.)
+- `pnpm --filter @indiecrafts/web-surfaces-website doctor:env` clean, and `pnpm dev:doctor` with no
+  warnings: it checks the workers' `.dev.vars` and each surface's registry `requiredEnv` (`admin` / `app`).
 - Never commit `.env*` (only `.env.example`); no server token under `NEXT_PUBLIC_`.
 
 ## Issue tags
 
-- `@debt TESTING` — no cross-surface `doctor:env`; only `website` pre-flights its config.
 - `@debt MIGRATION` — next-cf deploy relies on `@opennextjs/cloudflare` 1.20.6's **experimental** Node
   middleware (both Next + OpenNext pinned exact). Ceiling: revisit the exact pin when
   `cloudflare/workers-sdk#13755` makes it stable.

@@ -6,11 +6,11 @@ status: stable
 
 # Background worker entrypoint
 
-> The background-jobs deploy shell — a health probe plus an empty scheduled hook.
+> The background-jobs deploy shell — a health probe plus an intentional scheduled stub.
 
 ## Purpose
 
-The entrypoint of a standalone Cloudflare Worker for work that is not a request in the Next app: cron jobs, queue consumers, and background tasks. It is deployed separately from the web app, with its own Worker and `wrangler.toml`. This is a compilable skeleton: `fetch` answers a `/health` probe and 404s everything else, and `scheduled` logs a tick but has no real job yet. Add the job logic in a `code/packages` or `code/modules` brick.
+The entrypoint of a standalone Cloudflare Worker for work that is not a request in the Next app: cron jobs, queue consumers, and background tasks. It is deployed separately from the web app, with its own Worker and `wrangler.toml`. This is a compilable skeleton: `fetch` answers a `/health` probe and 404s everything else, and `scheduled` is an intentional stub: it logs a tick through `@indiecrafts/packages-shared-logger`, which proves the trigger is wired. The platform's jobs live in `cron`; this slot is for a client's own background work. Add the job logic in a `code/packages` or `code/modules` brick.
 
 ## Exports
 

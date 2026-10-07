@@ -9,6 +9,7 @@
 // origin, and body-cap already enforced there — this route re-checks only what a bearer
 // caller could still get wrong). `handleDataRequestList` backs the admin screen.
 import { logger } from "@indiecrafts/packages-shared-logger";
+import { isValidEmail } from "@indiecrafts/packages-shared-utils/form";
 import { type Env, corsHeaders, safeEqual } from "../index";
 import { sendDataRequestReceipt } from "./email";
 import { bearerOf, decField, dueAt, encField, json } from "./shared";
@@ -38,7 +39,7 @@ export async function handleDataRequestWrite(
     sendReceipt: sendDataRequestReceipt,
   },
 ): Promise<Response> {
-  const cors = corsHeaders(request.headers.get("origin"));
+  const cors = corsHeaders(request.headers.get("origin"), env.ALLOWED_ORIGINS);
   if (request.method === "OPTIONS")
     return new Response(null, { status: 204, headers: cors });
   if (request.method !== "POST")
@@ -65,7 +66,7 @@ export async function handleDataRequestWrite(
   const requestType =
     typeof body.requestType === "string" ? body.requestType : "";
   const email = typeof body.email === "string" ? body.email.trim() : "";
-  if (!DATA_REQUEST_TYPES.has(requestType) || !email)
+  if (!DATA_REQUEST_TYPES.has(requestType) || !isValidEmail(email))
     return json({ error: "invalid" }, 400, cors);
 
   const message =
@@ -141,7 +142,7 @@ export async function handleDataRequestList(
   request: Request,
   env: Env,
 ): Promise<Response> {
-  const cors = corsHeaders(request.headers.get("origin"));
+  const cors = corsHeaders(request.headers.get("origin"), env.ALLOWED_ORIGINS);
   if (request.method !== "GET")
     return json({ error: "method_not_allowed" }, 405, cors);
 

@@ -4,7 +4,8 @@
 // `.dev.vars` (its --remote session then has no secrets), or the `[env.<env>]` ids are
 // still placeholders. This checks those and FAILS LOUD with the fix instead. Wired as
 // `predev` so `pnpm dev` runs it first. Warn-only by default (never blocks the loop);
-// HARD-fails only when you're not logged in (the loop cannot work at all then).
+// HARD-fails only when you're not logged in (the loop cannot work at all then). It also
+// checks each web surface's `.env.local` for its registry `requiredEnv` (cross-surface).
 // `--deep` adds a remote D1 migration-drift check (network). `SKIP_DEV_DOCTOR=1` bypasses.
 //
 //   node code/shared/scripts/dev/doctor.mjs [dev|staging|prod] [--deep]
@@ -16,6 +17,7 @@ import { APPS, ENVS } from "../lib/apps.mjs";
 import { byKind } from "../lib/databases.mjs";
 import { declaredKeys } from "../data/secrets.mjs";
 import { wranglerEnvSection } from "../lib/project.mjs";
+import { buildEnv, missingEnv } from "../lib/deploy-shared.mjs";
 
 if (process.env.SKIP_DEV_DOCTOR) {
   console.log("dev:doctor skipped (SKIP_DEV_DOCTOR set).");
@@ -83,7 +85,23 @@ for (const w of workers) {
     );
 }
 
-// 4. --deep: remote D1 migration drift (network; advisory — only ever warns).
+// 4. Each web surface's `.env.local` sets its registry `requiredEnv` (the website pre-flights
+// the rest with its own doctor:env). Warn-only: keyless local dev is a deliberate mode.
+for (const a of APPS.filter((a) => a.requiredEnv?.length)) {
+  const files = Object.fromEntries(
+    [".env", ".env.local"]
+      .map((f) => [f, resolve(a.dir, f)])
+      .filter(([, p]) => existsSync(p))
+      .map(([f, p]) => [f, readFileSync(p, "utf8")]),
+  );
+  const missing = missingEnv(a.requiredEnv, buildEnv(files, {}));
+  if (missing.length)
+    warnings.push(
+      `${a.slug}: ${missing.join(", ")} not set in .env.local — fine for a keyless local run, but a deploy refuses it. See ${a.dir}/.env.example.`,
+    );
+}
+
+// 5. --deep: remote D1 migration drift (network; advisory — only ever warns).
 if (deep) {
   for (const db of byKind("d1")) {
     const owner = workers.find((w) => w.slug === db.owner);

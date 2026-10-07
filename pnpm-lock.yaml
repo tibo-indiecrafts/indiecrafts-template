@@ -1483,6 +1483,9 @@ importers:
       '@indiecrafts/packages-shared-security-events':
         specifier: workspace:*
         version: link:../../packages/shared/security-events
+      '@indiecrafts/packages-shared-utils':
+        specifier: workspace:*
+        version: link:../../packages/shared/utils
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20250321.0
@@ -1526,6 +1529,10 @@ importers:
         version: 4.143.0(@cloudflare/workers-types@4.20260702.1)(@types/node@20.19.43)(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   code/shared/workers:
+    dependencies:
+      '@indiecrafts/packages-shared-logger':
+        specifier: workspace:*
+        version: link:../../packages/shared/logger
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4
@@ -1533,6 +1540,9 @@ importers:
       '@total-typescript/ts-reset':
         specifier: ^0.6.1
         version: 0.6.1
+      '@types/node':
+        specifier: ^20
+        version: 20.19.43
       typescript:
         specifier: ^5
         version: 5.9.3

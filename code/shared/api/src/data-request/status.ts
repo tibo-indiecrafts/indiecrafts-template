@@ -43,7 +43,7 @@ export async function handleDataRequestDetail(
   env: Env,
   id: number,
 ): Promise<Response> {
-  const cors = corsHeaders(request.headers.get("origin"));
+  const cors = corsHeaders(request.headers.get("origin"), env.ALLOWED_ORIGINS);
   if (request.method !== "GET")
     return json({ error: "method_not_allowed" }, 405, cors);
   if (!authed(request, env)) return json({ error: "unauthorized" }, 401, cors);
@@ -101,7 +101,7 @@ export async function handleDataRequestStatus(
   id: number,
   deps: StatusDeps = { sendClosed: sendDataRequestClosedEmail },
 ): Promise<Response> {
-  const cors = corsHeaders(request.headers.get("origin"));
+  const cors = corsHeaders(request.headers.get("origin"), env.ALLOWED_ORIGINS);
   if (request.method === "OPTIONS")
     return new Response(null, { status: 204, headers: cors });
   if (request.method !== "POST")

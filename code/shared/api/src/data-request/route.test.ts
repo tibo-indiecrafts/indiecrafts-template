@@ -90,6 +90,21 @@ describe("POST /v1/data-request", () => {
     expect(res.status).toBe(400);
   });
 
+  it("400s a malformed email, so a bearer caller can't store garbage PII", async () => {
+    for (const email of [
+      "not-an-email",
+      "a@b",
+      "x y@example.com",
+      `${"a".repeat(250)}@example.com`,
+    ]) {
+      const res = await postDataRequest(
+        { requestType: "access", email },
+        "test-token",
+      );
+      expect(res.status).toBe(400);
+    }
+  });
+
   it("503s when MAIN_DB is unbound", async () => {
     const noDbEnv = { ...(env as unknown as Env), MAIN_DB: undefined };
     const res = await handleDataRequestWrite(

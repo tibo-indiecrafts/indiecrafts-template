@@ -16,7 +16,7 @@ Next/OpenNext) at `code/shared/api`. It serves the `app` and `admin` surfaces an
 website keeps its own co-located `/api` routes; this is the shared backend those clients call. The
 entrypoint `src/index.ts` is a thin shell — the real logic lives in `@indiecrafts/*` bricks
 imported `workspace:*`. `withGuard` is Next-only, so the worker re-implements a small inline guard:
-a bearer token, the Cloudflare native rate-limit binding, a body cap, and a CORS allowlist. The Clerk-JWT routes the browser calls directly (`/v1/export`, `/v1/erasure/self`, the consent routes) allow the `authorization` header in their preflight — without it the browser (and the mobile WebView) drops the request.
+a bearer token, the Cloudflare native rate-limit binding, a body cap, and a CORS allowlist (the optional `ALLOWED_ORIGINS` var; unset → no browser origin, since first-party servers send none). The Clerk-JWT routes the browser calls directly (`/v1/export`, `/v1/erasure/self`, the consent routes) allow the `authorization` header in their preflight — without it the browser (and the mobile WebView) drops the request.
 
 ## Routes
 
@@ -142,7 +142,7 @@ threaten identity data.
 
 **Vars** (`[env.<env>.vars]`, non-secret): `SANITY_PROJECT_ID` · `SANITY_DATASET` ·
 `SANITY_API_VERSION` · `EMAIL_FROM` · `BACKUP_BUCKET` · `BACKUP_RETENTION_DAYS`. Optional:
-`WEBSITE_URL` · `EMAIL_ADMIN_BCC` · `SECURITY_ALERT_EMAIL` · `EMAIL_BCC_ALL_ENABLED` (dev only).
+`WEBSITE_URL` · `EMAIL_ADMIN_BCC` · `SECURITY_ALERT_EMAIL` · `ALLOWED_ORIGINS` · `EMAIL_BCC_ALL_ENABLED` (dev only).
 
 **Secrets** (`wrangler secret put <NAME> --env <env>`, never in `wrangler.toml`): `APP_API_TOKEN` ·
 `IP_HASH_SALT` · `GDPR_FINGERPRINT_SALT` · `CLERK_WEBHOOK_SECRET` ·

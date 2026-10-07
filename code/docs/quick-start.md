@@ -38,9 +38,9 @@ serves what → [Installation](/projects/web/website/setup/environment).
 pnpm dev
 ```
 
-`pnpm dev` first runs `dev:doctor`, a preflight. It warns about missing secrets or
-placeholder resource ids but never blocks — except when you are not logged in to
-Cloudflare, because nothing can work then. It then starts:
+`pnpm dev` first runs `dev:doctor`, a preflight. It warns about missing secrets, an
+`admin` / `app` `.env.local` without its required keys, or placeholder resource ids, but
+never blocks — except when you are not logged in to Cloudflare, because nothing can work then. It then starts:
 
 | Service   | Port    | Check                        |
 | --------- | ------- | ---------------------------- |

@@ -14,7 +14,7 @@ Handles the GDPR Art. 15–21 request form, migrated off Sanity into the `main` 
 
 ## Exports
 
-- `handleDataRequestWrite(request, env)` — bearer-gated POST; validates the request type and email, then inserts a `data_requests` row (encrypting the PII fields when a key is set). An unparseable `submittedAt` is replaced by now. Returns `201 { ok, id }` on success, then sends the receipt email (best-effort; `deps.sendReceipt` is injectable).
+- `handleDataRequestWrite(request, env)` — bearer-gated POST; validates the request type and the email format (`isValidEmail` from `@indiecrafts/packages-shared-utils/form`, the forms' rule), then inserts a `data_requests` row (encrypting the PII fields when a key is set). An unparseable `submittedAt` is replaced by now. Returns `201 { ok, id }` on success, then sends the receipt email (best-effort; `deps.sendReceipt` is injectable).
 - `handleDataRequestList(request, env)` — bearer-gated GET; lists rows newest-first (limit clamped 1–200), decrypting the PII fields for the operator view; each row carries `due_at`.
 
 ## Usage

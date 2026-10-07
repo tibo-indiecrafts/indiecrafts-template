@@ -28,7 +28,8 @@
     "@indiecrafts/packages-shared-gated-delivery": "workspace:*",
     "@indiecrafts/packages-shared-logger": "workspace:*",
     "@indiecrafts/packages-shared-security": "workspace:*",
-    "@indiecrafts/packages-shared-security-events": "workspace:*"
+    "@indiecrafts/packages-shared-security-events": "workspace:*",
+    "@indiecrafts/packages-shared-utils": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250321.0",

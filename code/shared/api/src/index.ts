@@ -184,11 +184,11 @@ export interface Env {
   /** `[vars]` — backup retention window in days (informational, surfaced by
    *  `GET /v1/backups/status`). Optional — defaults to 30. */
   BACKUP_RETENTION_DAYS?: string;
+  /** `[vars]` — comma-separated browser origins allowed to READ the bearer routes' responses
+   *  (e.g. a local tool). Optional — unset → no CORS: first-party servers send no Origin. */
+  ALLOWED_ORIGINS?: string;
 }
 
-// Browser-context origins allowed to READ the response (dev). Server-to-server callers
-// send no Origin and need no CORS.
-const ALLOWED_ORIGINS = new Set(["http://localhost:3000"]);
 /** Per-isolate settings cache for the monitoring routes (the SLA warning window). */
 const monitoringSettings: Parameters<typeof readSettings>[1] = { value: null };
 const BODY_MAX = 4000;
@@ -196,8 +196,11 @@ const BODY_MAX = 4000;
  *  (~12 KB for a verification code), so the 4 KB route cap would drop every auth email. */
 const WEBHOOK_BODY_MAX = 64 * 1024;
 
-export function corsHeaders(origin: string | null): Record<string, string> {
-  if (origin && ALLOWED_ORIGINS.has(origin))
+export function corsHeaders(
+  origin: string | null,
+  allowed = "",
+): Record<string, string> {
+  if (origin && allowed.split(",").some((o) => o.trim() === origin))
     return {
       "access-control-allow-origin": origin,
       "access-control-allow-headers": "authorization, content-type",
@@ -427,7 +430,7 @@ async function route(
     });
   }
 
-  const cors = corsHeaders(request.headers.get("origin"));
+  const cors = corsHeaders(request.headers.get("origin"), env.ALLOWED_ORIGINS);
 
   // ── Audit + session events — POST /v1/events (bearer-gated; writes the EU D1) ──
   if (url.pathname === "/v1/events") {

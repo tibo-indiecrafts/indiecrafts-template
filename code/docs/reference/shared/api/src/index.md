@@ -15,7 +15,7 @@ The entrypoint for the standalone API — a bare Cloudflare Worker (no Next/Open
 ## Exports
 
 - `Env` — the worker's bindings and secrets interface (D1s, KV, R2, Clerk, Sanity, Resend, salts, and more).
-- `corsHeaders(origin)` — builds CORS headers for a browser origin in the dev allowlist.
+- `corsHeaders(origin, allowed)` — CORS headers for a browser origin listed in `allowed` (the `ALLOWED_ORIGINS` var, comma-separated); none when unset.
 - `safeEqual(a, b)` — constant-time string compare, so timing does not leak a mismatch.
 - `clientIp(req)` — the `cf-connecting-ip` value, or `"unknown"`.
 - `PUBLIC_CORS`, `PUBLIC_CORS_POST` — CORS header constants for the public routes.

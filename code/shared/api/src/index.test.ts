@@ -1,6 +1,7 @@
 /// <reference types="@cloudflare/vitest-pool-workers" />
 import { env, SELF } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
+import { corsHeaders } from "./index";
 
 // Integration-style: `SELF` runs the actual worker (wrangler.toml `main`) in workerd,
 // so this exercises the real runtime + (once bound) real KV/D1. AAA · one Act · assert
@@ -256,5 +257,20 @@ describe("GET /v1/announcements — surface validation", () => {
       "https://api.test/v1/announcements?surface=mobile&locale=en",
     );
     expect(res.status).toBe(400);
+  });
+});
+
+describe("corsHeaders (bearer routes)", () => {
+  it("allows no browser origin unless ALLOWED_ORIGINS lists it", () => {
+    expect(corsHeaders("http://localhost:3000")).toEqual({});
+    expect(
+      corsHeaders("https://evil.example", "http://localhost:3000"),
+    ).toEqual({});
+    expect(
+      corsHeaders(
+        "http://localhost:3000",
+        "https://a.example, http://localhost:3000",
+      )["access-control-allow-origin"],
+    ).toBe("http://localhost:3000");
   });
 });

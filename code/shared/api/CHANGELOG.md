@@ -29,6 +29,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **`POST /v1/data-request` checks the email format.** It used the forms' rule (`isValidEmail`),
+  so a bearer caller can no longer store a malformed address as PII; a bad one is `400 invalid`.
+- **The bearer routes' CORS allowlist is config, not a hard-coded `localhost:3000`.** It reads the
+  optional `ALLOWED_ORIGINS` var (comma-separated); unset → no browser origin. **Why:** these routes
+  are server-to-server, and no deployed env should answer a localhost page.
 - **A Clerk-webhook retry no longer repeats the welcome email or the admin-grant alert.** A
   later step's 502 makes Clerk re-send the same message. The `privilege_escalation` incident now
   carries `dedup_key = clerk:<svix-id>` (audit migration `0006`, unique), so the retry stores and

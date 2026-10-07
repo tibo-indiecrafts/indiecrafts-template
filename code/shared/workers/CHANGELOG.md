@@ -17,6 +17,9 @@ _Activated bare-Worker scaffold for queue/event consumers + background jobs (sha
 
 ### Changed
 
+- **The scheduled tick logs through the shared logger and is a documented stub.** The `TODO`
+  is gone: the platform's jobs live in `cron`, and this slot waits for a client's own job.
+  **Why:** one structured logger everywhere; a no-op tick is now intentional, not forgotten.
 - **Cloudflare observability is fully on.** Traces (10% sampled) and Issues (grouped production
   errors) join the Workers Logs in the top-level `wrangler.toml` `[observability]` block, which every
   env inherits. Wrangler is pinned to 4.143.0 (Issues needs ≥ 4.134). A test fails if a part is off.
