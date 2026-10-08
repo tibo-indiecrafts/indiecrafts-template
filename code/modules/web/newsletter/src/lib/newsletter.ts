@@ -284,6 +284,7 @@ async function notifyOwner(
       return;
     }
     const message = renderNewsletterNotificationEmail({
+      locale: defaultLocale,
       subscriberEmail: email,
       source,
       studioUrl: `${site.url}/studio`,

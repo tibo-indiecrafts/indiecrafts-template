@@ -42,6 +42,7 @@ describe("renderNewsletterNotificationEmail", () => {
       source: "/blog/x",
       studioUrl: "https://x.com/studio",
       subjectTemplate: "Nouvel abonné : {{email}}",
+      locale: "fr",
     });
     expect(subject).toBe("Nouvel abonné : a@b.com");
     expect(text).toContain("Source : /blog/x");
@@ -52,8 +53,26 @@ describe("renderNewsletterNotificationEmail", () => {
     const { subject, text } = renderNewsletterNotificationEmail({
       subscriberEmail: "a@b.com",
       studioUrl: "https://x.com/studio",
+      locale: "fr",
     });
     expect(subject).toBe("Nouvel abonné à l'infolettre : a@b.com");
     expect(text).not.toContain("Source :");
+  });
+
+  it("follows the locale, English when it has no copy", () => {
+    const base = {
+      subscriberEmail: "a@b.com",
+      studioUrl: "https://x.com/studio",
+    };
+    const fr = renderNewsletterNotificationEmail({ ...base, locale: "fr" });
+    expect(fr.html).toContain("Nouvel abonné");
+    expect(fr.text).toContain("E-mail : a@b.com");
+    expect(fr.html).toContain('lang="fr"');
+    for (const locale of ["en", "de"]) {
+      const en = renderNewsletterNotificationEmail({ ...base, locale });
+      expect(en.subject).toBe("New newsletter subscriber: a@b.com");
+      expect(en.text).toContain("Email: a@b.com");
+      expect(en.html).toContain('lang="en"');
+    }
   });
 });

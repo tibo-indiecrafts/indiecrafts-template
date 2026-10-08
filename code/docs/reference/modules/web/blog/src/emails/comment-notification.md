@@ -10,12 +10,12 @@ status: stable
 
 ## Purpose
 
-Builds the transactional email sent to the site team when a reader submits a comment. It owns the subject, the plain-text body, and the branded HTML body. With `actions`, it adds Approve / Spam / Delete buttons that each open a confirm page — the mutation runs on that page's POST, so a link scanner cannot auto-moderate.
+Builds the transactional email sent to the site team when a reader submits a comment. It owns the subject, the plain-text body, and the branded HTML body. It follows the operator's locale: the caller passes the site's `defaultLocale` as `locale`. The defaults exist in English and French; any other locale gets English. With `actions`, it adds Approve / Spam / Delete buttons that each open a confirm page — the mutation runs on that page's POST, so a link scanner cannot auto-moderate.
 
 ## Exports
 
 - `renderCommentNotificationEmail(input)` — returns a `RenderedEmail` (`subject`, `text`, `html`).
-- `CommentNotificationInput` — the plain-data input type (author, post, excerpt, optional copy overrides, optional `actions`).
+- `CommentNotificationInput` — the plain-data input type (author, post, excerpt, optional `locale`, optional copy overrides, optional `actions`).
 
 ## Usage
 

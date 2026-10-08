@@ -12,12 +12,14 @@ import {
 } from "@indiecrafts/packages-web-email";
 
 /**
- * Owner alert on a new GDPR data-subject request — operational (one team, not
- * translated). The caller (`@indiecrafts/packages-web-compliance`) resolves the request-type
+ * Owner alert on a new GDPR data-subject request — follows the site's default
+ * locale. The caller (`@indiecrafts/packages-web-compliance`) resolves the request-type
  * label and passes it as a plain string, so this template stays free of any
  * Sanity/compliance types.
  */
 export type DataRequestNotificationInput = {
+  /** The operator's locale — the site's `defaultLocale`; any locale without copy gets English. */
+  locale?: string;
   /** The right the visitor asked to exercise, already resolved to a label. */
   requestTypeLabel: string;
   /** The visitor's email — the address a reply/action is owed to. */
@@ -39,56 +41,89 @@ export type DataRequestNotificationInput = {
 };
 
 const C = EMAIL_COLORS;
-const DEFAULT_HEADING = "Nouvelle demande RGPD";
-const DEFAULT_INTRO =
-  "Une nouvelle demande d'exercice de droits (RGPD) a été reçue. Elle doit être traitée sous un mois.";
+
+/** Last-resort copy when a Studio field is empty, per locale; any other locale gets English. */
+const EN = {
+  heading: "New GDPR request",
+  intro:
+    "A new data-subject rights request (GDPR) arrived. It must be handled within one month.",
+  subject: "New GDPR request: {{type}}",
+  colon: ":",
+  type: "Request type",
+  email: "Requester email",
+  source: "Source",
+  message: "Message",
+  deadline: "Handle within one month (GDPR legal deadline).",
+  view: "View the request",
+  viewInAdmin: "View the request in the admin, “Data requests” screen.",
+};
+
+const COPY: Record<string, typeof EN> = {
+  en: EN,
+  fr: {
+    heading: "Nouvelle demande RGPD",
+    intro:
+      "Une nouvelle demande d'exercice de droits (RGPD) a été reçue. Elle doit être traitée sous un mois.",
+    subject: "Nouvelle demande RGPD : {{type}}",
+    colon: " :",
+    type: "Type de demande",
+    email: "E-mail du demandeur",
+    source: "Source",
+    message: "Message",
+    deadline: "À traiter sous un mois (délai légal RGPD).",
+    view: "Voir la demande",
+    viewInAdmin: "Voir la demande dans l'admin, écran « Data requests ».",
+  },
+};
 
 export function renderDataRequestNotificationEmail(
   input: DataRequestNotificationInput,
 ): RenderedEmail {
-  const subject = (
-    input.subjectTemplate?.trim() || "Nouvelle demande RGPD : {{type}}"
-  )
+  const lang = input.locale && COPY[input.locale] ? input.locale : "en";
+  const copy = COPY[lang] ?? EN;
+  const subject = (input.subjectTemplate?.trim() || copy.subject)
     .replaceAll("{{type}}", input.requestTypeLabel)
     .replaceAll("{{email}}", input.email);
 
-  const heading = input.heading?.trim() || DEFAULT_HEADING;
-  const intro = input.intro?.trim() || DEFAULT_INTRO;
+  const heading = input.heading?.trim() || copy.heading;
+  const intro = input.intro?.trim() || copy.intro;
   const outro = input.outro?.trim();
 
   const text = [
     intro,
     "",
-    `Type de demande : ${input.requestTypeLabel}`,
-    `E-mail du demandeur : ${input.email}`,
-    ...(input.source ? [`Source : ${input.source}`] : []),
-    ...(input.message ? ["", "Message :", input.message] : []),
+    `${copy.type}${copy.colon} ${input.requestTypeLabel}`,
+    `${copy.email}${copy.colon} ${input.email}`,
+    ...(input.source ? [`${copy.source}${copy.colon} ${input.source}`] : []),
+    ...(input.message
+      ? ["", `${copy.message}${copy.colon}`, input.message]
+      : []),
     "",
-    "À traiter sous un mois (délai légal RGPD).",
+    copy.deadline,
     input.reviewUrl
-      ? `Voir la demande : ${input.reviewUrl}`
-      : "Voir la demande dans l'admin, écran « Data requests ».",
+      ? `${copy.view}${copy.colon} ${input.reviewUrl}`
+      : copy.viewInAdmin,
     ...(outro ? ["", outro] : []),
   ].join("\n");
 
   const messageHtml = input.message
-    ? `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">Message</p>` +
+    ? `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">${copy.message}</p>` +
       `<blockquote style="margin:0 0 20px;padding:14px 18px;background:${C.panel};border-left:3px solid ${C.border};border-radius:6px;color:${C.body};font-size:15px;line-height:1.6">${escapeHtml(input.message).replaceAll("\n", "<br>")}</blockquote>`
     : "";
 
   const contentHtml = [
     `<p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:${C.body}">${escapeHtml(intro).replaceAll("\n", "<br>")}</p>`,
-    `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">Type de demande</p>`,
+    `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">${copy.type}</p>`,
     `<p style="margin:0 0 16px;font-size:15px">${escapeHtml(input.requestTypeLabel)}</p>`,
-    `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">E-mail du demandeur</p>`,
+    `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">${copy.email}</p>`,
     `<p style="margin:0 0 20px;font-size:15px">${escapeHtml(input.email)}</p>`,
     input.source
-      ? `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">Source</p><p style="margin:0 0 20px;font-size:15px">${escapeHtml(input.source)}</p>`
+      ? `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">${copy.source}</p><p style="margin:0 0 20px;font-size:15px">${escapeHtml(input.source)}</p>`
       : "",
     messageHtml,
     input.reviewUrl
-      ? `<a href="${escapeHtml(input.reviewUrl)}" style="display:inline-block;padding:11px 20px;background:${C.heading};color:${C.card};border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Voir la demande</a>`
-      : `<p style="margin:0;font-size:14px;color:${C.muted}">Voir la demande dans l'admin, écran « Data requests ».</p>`,
+      ? `<a href="${escapeHtml(input.reviewUrl)}" style="display:inline-block;padding:11px 20px;background:${C.heading};color:${C.card};border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">${copy.view}</a>`
+      : `<p style="margin:0;font-size:14px;color:${C.muted}">${copy.viewInAdmin}</p>`,
     outro
       ? `<p style="margin:24px 0 0;font-size:13px;line-height:1.6;color:${C.muted}">${escapeHtml(outro).replaceAll("\n", "<br>")}</p>`
       : "",
@@ -98,7 +133,7 @@ export function renderDataRequestNotificationEmail(
     title: heading,
     preheader: `${input.requestTypeLabel} — ${input.email}`,
     contentHtml,
-    lang: "fr",
+    lang,
     supportEmail: input.supportEmail,
   });
 

@@ -15,7 +15,7 @@ import {
   type OwnerAlertConfig,
 } from "@indiecrafts/packages-web-email/strings";
 import { renderDataRequestNotificationEmail } from "../emails/data-request-notification";
-import { REQUEST_TYPE_LABELS_FR, type DataRequestType } from "./request-types";
+import { requestTypeLabel, type DataRequestType } from "./request-types";
 import {
   validateDataRequest,
   type DataRequestInput,
@@ -138,7 +138,8 @@ async function notifyOwner(
       return;
     }
     const rendered = renderDataRequestNotificationEmail({
-      requestTypeLabel: REQUEST_TYPE_LABELS_FR[requestType],
+      locale: defaultLocale,
+      requestTypeLabel: requestTypeLabel(requestType, defaultLocale),
       email,
       message,
       source,

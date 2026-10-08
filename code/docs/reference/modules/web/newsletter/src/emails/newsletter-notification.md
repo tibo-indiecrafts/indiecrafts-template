@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-Renders the new-subscriber owner alert. This email is operational — it goes to one team and is not translated, so it defaults to French copy that editor overrides can replace. The subject may use a `{{email}}` placeholder, which is substituted with the subscriber's address. A `studioUrl` button links to the subscriber list in Studio.
+Renders the new-subscriber owner alert. It follows the operator's locale: the caller passes the site's `defaultLocale` as `locale`. The defaults exist in English and French; any other locale gets English. Editor overrides replace the defaults. The subject may use a `{{email}}` placeholder, which is substituted with the subscriber's address. A `studioUrl` button links to the subscriber list in Studio.
 
 ## Exports
 
-- `NewsletterNotificationInput` — the render input: `subscriberEmail`, `studioUrl`, plus optional `source`, `subjectTemplate`, `heading`, `intro`, `outro`, and `supportEmail`.
+- `NewsletterNotificationInput` — the render input: `subscriberEmail`, `studioUrl`, plus optional `locale`, `source`, `subjectTemplate`, `heading`, `intro`, `outro`, and `supportEmail`.
 - `renderNewsletterNotificationEmail(input)` — returns a `RenderedEmail` (`subject`, `text`, `html`).
 
 ## Usage

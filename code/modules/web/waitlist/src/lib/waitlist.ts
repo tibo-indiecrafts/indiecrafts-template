@@ -194,6 +194,7 @@ async function notifyOwner(
       return;
     }
     const message = renderWaitlistNotificationEmail({
+      locale: defaultLocale,
       email,
       name,
       source,

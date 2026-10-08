@@ -51,4 +51,17 @@ describe("renderDataRequestNotificationEmail", () => {
     expect(html + text).not.toContain("Studio");
     expect(text).toContain("Data requests");
   });
+
+  it("follows the locale, English when it has no copy", () => {
+    const fr = renderDataRequestNotificationEmail({ ...base, locale: "fr" });
+    expect(fr.html).toContain("Nouvelle demande RGPD");
+    expect(fr.text).toContain("Type de demande : Effacement");
+    expect(fr.html).toContain('lang="fr"');
+    for (const locale of ["en", "de"]) {
+      const en = renderDataRequestNotificationEmail({ ...base, locale });
+      expect(en.subject).toBe("New GDPR request: Effacement");
+      expect(en.text).toContain("Request type: Effacement");
+      expect(en.html).toContain('lang="en"');
+    }
+  });
 });

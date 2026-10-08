@@ -55,7 +55,6 @@ export async function notifyNewComment(
       title?: string | null;
       slug?: string | null;
     } | null;
-    const postTitle = post?.title ?? "un article";
     const postUrl = post?.slug ? `${site.url}/blog/${post.slug}` : site.url;
 
     const body = input.body.trim();
@@ -73,9 +72,10 @@ export async function notifyNewComment(
         : undefined;
 
     const message = renderCommentNotificationEmail({
+      locale: defaultLocale,
       author: input.authorName.trim(),
       authorEmail,
-      postTitle,
+      postTitle: post?.title ?? undefined,
       postUrl,
       studioUrl: `${site.url}/studio`,
       excerpt,

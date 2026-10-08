@@ -143,6 +143,7 @@ async function buildSamples(to: string): Promise<Sample[]> {
       label: "commentNotification",
       from: comment.from.trim(),
       message: renderCommentNotificationEmail({
+        locale,
         author: "Jean Test",
         authorEmail: to,
         postTitle: "Article de démonstration",
@@ -182,6 +183,7 @@ async function buildSamples(to: string): Promise<Sample[]> {
       label: "newsletterOwner",
       from: nlOwner.from.trim(),
       message: renderNewsletterNotificationEmail({
+        locale,
         subscriberEmail: to,
         source: "test",
         studioUrl,
@@ -232,6 +234,7 @@ async function buildSamples(to: string): Promise<Sample[]> {
       label: "waitlistOwner",
       from: wlOwner.from.trim(),
       message: renderWaitlistNotificationEmail({
+        locale,
         email: to,
         name: "Test",
         source: "test",
@@ -264,6 +267,7 @@ async function buildSamples(to: string): Promise<Sample[]> {
       label: "contactOwner",
       from: ctOwner.from.trim(),
       message: renderContactNotificationEmail({
+        locale,
         email: to,
         name: "Test",
         subject: "Message de démonstration",
@@ -284,6 +288,7 @@ async function buildSamples(to: string): Promise<Sample[]> {
       label: "dataRequestOwner",
       from: drOwner.from.trim(),
       message: renderDataRequestNotificationEmail({
+        locale,
         requestTypeLabel: "Effacement",
         email: to,
         message: "Ceci est un e-mail de test.",

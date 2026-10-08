@@ -15,6 +15,12 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **contact / waitlist / blog / newsletter — owner alerts were French-only.** The default heading,
+  intro, subject and field labels of the four owner alerts were French for every site.
+  `renderContactNotificationEmail`, `renderWaitlistNotificationEmail`, `renderCommentNotificationEmail`
+  and `renderNewsletterNotificationEmail` take a `locale` (the site's `defaultLocale`) and use English
+  or French copy, English for any other locale. `<html lang>` follows it. A post with no title reads
+  "a post" / "un article". **Why:** the owner reads the site's default language, not always French.
 - **`modules-web-newsletter` — a repeat sign-up kept the old language.** A pending or unsubscribed
   address that signed up again from another language got the confirm email in the new language, but
   `subscriber.language` kept the old one, so the lead-magnet email and the Resend sync after confirm

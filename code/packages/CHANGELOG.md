@@ -92,6 +92,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`packages-web-compliance` — the data-request owner alert was French-only.** Its default
+  heading, intro, subject and labels were French for every site. `renderDataRequestNotificationEmail`
+  takes a `locale` (the site's `defaultLocale`) and uses English or French copy, English for any other
+  locale. `<html lang>` follows it. The request type uses `requestTypeLabel(type, locale)`; the
+  Studio keeps its French labels. **Why:** the owner reads the site's default language.
 - **`packages-web-ui-components` — form copy and consent.** `ContactForm`, `NewsletterForm`,
   `WaitlistForm` and `LeadMagnetForm` fell back to French when an editor left a label empty; they now
   read the host app's `forms.*` messages (page language). The consent checkbox always shows: without

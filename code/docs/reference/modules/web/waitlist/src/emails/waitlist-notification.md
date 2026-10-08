@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-Renders the new-entry owner alert. This email is operational — it goes to one team and is not translated, so it defaults to French copy that editor overrides can replace. The subject may use `{{email}}` and `{{name}}` placeholders, substituted with the entry's values. A `studioUrl` button links to the waitlist in Studio.
+Renders the new-entry owner alert. It follows the operator's locale: the caller passes the site's `defaultLocale` as `locale`. The defaults exist in English and French; any other locale gets English. Editor overrides replace the defaults. The subject may use `{{email}}` and `{{name}}` placeholders, substituted with the entry's values. A `studioUrl` button links to the waitlist in Studio.
 
 ## Exports
 
-- `WaitlistNotificationInput` — the render input: `email`, `studioUrl`, plus optional `name`, `source`, `subjectTemplate`, `heading`, `intro`, `outro`, and `supportEmail`.
+- `WaitlistNotificationInput` — the render input: `email`, `studioUrl`, plus optional `locale`, `name`, `source`, `subjectTemplate`, `heading`, `intro`, `outro`, and `supportEmail`.
 - `renderWaitlistNotificationEmail(input)` — returns a `RenderedEmail` (`subject`, `text`, `html`).
 
 ## Usage

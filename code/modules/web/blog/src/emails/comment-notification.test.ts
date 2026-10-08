@@ -23,7 +23,10 @@ describe("renderCommentNotificationEmail", () => {
   });
 
   it("uses the default subject and omits the email line when no author email", () => {
-    const { subject, text } = renderCommentNotificationEmail(base);
+    const { subject, text } = renderCommentNotificationEmail({
+      ...base,
+      locale: "fr",
+    });
     expect(subject).toBe("Nouveau commentaire à modérer : Ship an MVP");
     expect(text).not.toContain("E-mail :");
   });
@@ -35,6 +38,7 @@ describe("renderCommentNotificationEmail", () => {
 
     const { html, text } = renderCommentNotificationEmail({
       ...base,
+      locale: "fr",
       actions: {
         approveUrl:
           "https://x.com/api/comments/moderate?token=t&action=approve",
@@ -47,5 +51,28 @@ describe("renderCommentNotificationEmail", () => {
       expect(text).toContain(a);
     }
     expect(html).toContain("Approuver");
+  });
+
+  it("an untitled post reads as a post in the alert's language", () => {
+    const { postTitle: _, ...untitled } = base;
+    expect(
+      renderCommentNotificationEmail({ ...untitled, locale: "fr" }).text,
+    ).toContain("un article");
+    expect(
+      renderCommentNotificationEmail({ ...untitled, locale: "en" }).text,
+    ).toContain("a post");
+  });
+
+  it("follows the locale, English when it has no copy", () => {
+    const fr = renderCommentNotificationEmail({ ...base, locale: "fr" });
+    expect(fr.html).toContain("Nouveau commentaire à modérer");
+    expect(fr.text).toContain("Auteur : Ada");
+    expect(fr.html).toContain('lang="fr"');
+    for (const locale of ["en", "de"]) {
+      const en = renderCommentNotificationEmail({ ...base, locale });
+      expect(en.subject).toBe("New comment to moderate: Ship an MVP");
+      expect(en.text).toContain("Author: Ada");
+      expect(en.html).toContain('lang="en"');
+    }
   });
 });

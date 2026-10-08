@@ -10,8 +10,10 @@ import {
   type RenderedEmail,
 } from "@indiecrafts/packages-web-email";
 
-/** Owner alert on a new waitlist entry — operational (one team, not translated). */
+/** Owner alert on a new waitlist entry — follows the site's default locale. */
 export type WaitlistNotificationInput = {
+  /** The operator's locale — the site's `defaultLocale`; any locale without copy gets English. */
+  locale?: string;
   email: string;
   name?: string;
   source?: string;
@@ -26,31 +28,56 @@ export type WaitlistNotificationInput = {
 };
 
 const C = EMAIL_COLORS;
-const DEFAULT_HEADING = "Nouvelle inscription";
-const DEFAULT_INTRO = "Une nouvelle personne a rejoint la liste d'attente.";
+
+/** Last-resort copy when a Studio field is empty, per locale; any other locale gets English. */
+const EN = {
+  heading: "New sign-up",
+  intro: "Someone new joined the waitlist.",
+  subject: "New waitlist sign-up: {{email}}",
+  colon: ":",
+  name: "Name",
+  email: "Email",
+  source: "Source",
+  studioText: "View the list in the Studio",
+  studioButton: "View the list",
+};
+
+const COPY: Record<string, typeof EN> = {
+  en: EN,
+  fr: {
+    heading: "Nouvelle inscription",
+    intro: "Une nouvelle personne a rejoint la liste d'attente.",
+    subject: "Nouvelle inscription à la liste d'attente : {{email}}",
+    colon: " :",
+    name: "Nom",
+    email: "E-mail",
+    source: "Source",
+    studioText: "Voir la liste dans le Studio",
+    studioButton: "Voir la liste",
+  },
+};
 
 export function renderWaitlistNotificationEmail(
   input: WaitlistNotificationInput,
 ): RenderedEmail {
-  const subject = (
-    input.subjectTemplate?.trim() ||
-    "Nouvelle inscription à la liste d'attente : {{email}}"
-  )
+  const lang = input.locale && COPY[input.locale] ? input.locale : "en";
+  const copy = COPY[lang] ?? EN;
+  const subject = (input.subjectTemplate?.trim() || copy.subject)
     .replaceAll("{{email}}", input.email)
     .replaceAll("{{name}}", input.name ?? "");
 
-  const heading = input.heading?.trim() || DEFAULT_HEADING;
-  const intro = input.intro?.trim() || DEFAULT_INTRO;
+  const heading = input.heading?.trim() || copy.heading;
+  const intro = input.intro?.trim() || copy.intro;
   const outro = input.outro?.trim();
 
   const text = [
     intro,
     "",
-    ...(input.name ? [`Nom : ${input.name}`] : []),
-    `E-mail : ${input.email}`,
-    ...(input.source ? [`Source : ${input.source}`] : []),
+    ...(input.name ? [`${copy.name}${copy.colon} ${input.name}`] : []),
+    `${copy.email}${copy.colon} ${input.email}`,
+    ...(input.source ? [`${copy.source}${copy.colon} ${input.source}`] : []),
     "",
-    `Voir la liste dans le Studio : ${input.studioUrl}`,
+    `${copy.studioText}${copy.colon} ${input.studioUrl}`,
     ...(outro ? ["", outro] : []),
   ].join("\n");
 
@@ -59,10 +86,10 @@ export function renderWaitlistNotificationEmail(
 
   const contentHtml = [
     `<p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:${C.body}">${escapeHtml(intro).replaceAll("\n", "<br>")}</p>`,
-    input.name ? row("Nom", input.name) : "",
-    row("E-mail", input.email),
-    input.source ? row("Source", input.source) : "",
-    `<a href="${escapeHtml(input.studioUrl)}" style="display:inline-block;padding:11px 20px;background:${C.heading};color:${C.card};border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Voir la liste</a>`,
+    input.name ? row(copy.name, input.name) : "",
+    row(copy.email, input.email),
+    input.source ? row(copy.source, input.source) : "",
+    `<a href="${escapeHtml(input.studioUrl)}" style="display:inline-block;padding:11px 20px;background:${C.heading};color:${C.card};border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">${copy.studioButton}</a>`,
     outro
       ? `<p style="margin:20px 0 0;font-size:13px;line-height:1.6;color:${C.muted}">${escapeHtml(outro).replaceAll("\n", "<br>")}</p>`
       : "",
@@ -72,7 +99,7 @@ export function renderWaitlistNotificationEmail(
     title: heading,
     preheader: input.name || input.email,
     contentHtml,
-    lang: "fr",
+    lang,
     supportEmail: input.supportEmail,
   });
 

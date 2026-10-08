@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-Renders the owner alert email sent when a visitor submits a GDPR data-subject request. It is operational (one team, French, not translated). The caller resolves the request-type label and passes it as a plain string, so this template stays free of any Sanity or compliance types. It renders through `renderEmailLayout` from the email brick.
+Renders the owner alert email sent when a visitor submits a GDPR data-subject request. It follows the operator's locale: the caller passes the site's `defaultLocale` as `locale`. The defaults exist in English and French; any other locale gets English. The caller resolves the request-type label and passes it as a plain string, so this template stays free of any Sanity or compliance types. It renders through `renderEmailLayout` from the email brick.
 
 ## Exports
 
-- `DataRequestNotificationInput` — the input shape: resolved request-type label, visitor email, optional message and source, optional `reviewUrl` (the admin "Data requests" screen — unset → the email names the screen, no button), and editor overrides.
+- `DataRequestNotificationInput` — the input shape: resolved request-type label, visitor email, optional message and source, optional `locale`, optional `reviewUrl` (the admin "Data requests" screen — unset → the email names the screen, no button), and editor overrides.
 - `renderDataRequestNotificationEmail(input)` — returns a `RenderedEmail` with `subject`, `text`, and `html`.
 
 ## Usage

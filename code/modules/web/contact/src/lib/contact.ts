@@ -194,6 +194,7 @@ async function notifyOwner(
       return;
     }
     const rendered = renderContactNotificationEmail({
+      locale: defaultLocale,
       email: data.email,
       name: data.name,
       subject: data.subject,
