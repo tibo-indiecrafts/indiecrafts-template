@@ -74,6 +74,11 @@ pnpm dlx sanity@latest cors add https://acme.com --credentials --project-id <ID>
 Repeat for `https://staging.acme.com`, deploy-preview wildcards, etc. Then visit `https://acme.com/studio`, verify login against your real project, and invite editors at sanity.io/manage → your project → **Members**.
 
 The Studio's **Aperçu** (preview) tab needs `SANITY_API_READ_TOKEN` on the deployed site (else 503).
+On Cloudflare `/studio` redirects to the hosted Studio (`NEXT_PUBLIC_SANITY_STUDIO_URL`). Its Aperçu
+tab previews every site whose URL is known when you run `studio:deploy` (each env's
+`NEXT_PUBLIC_SITE_URL` in `wrangler.toml`, else the domain registry; prod first). After you set a
+new site URL, redeploy the site (it lets the Studio frame it) **and** the Studio.
+Safari blocks the preview cookie inside the Studio's frame: editors preview in Chrome, Edge or Firefox.
 
 **Publish webhook (every site, Studio or not).** Without it a newly published post stays 404 and
 a deleted one stays online. Set `SANITY_REVALIDATE_SECRET` for the environment, then at

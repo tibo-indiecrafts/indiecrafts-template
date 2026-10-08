@@ -30,6 +30,15 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The hosted Studio no longer crashes on load.** `sanity build` passes only `SANITY_STUDIO_*`
+  to the browser, so the shared config's `NEXT_PUBLIC_SANITY_PROJECT_ID` was empty and the
+  Studio threw "Missing NEXT_PUBLIC_SANITY_PROJECT_ID". `sanity.cli.ts` now inlines every
+  `NEXT_PUBLIC_*` (public by definition). **Why:** on Cloudflare, `/studio` redirects to that
+  hosted Studio — it is the one editors use.
+- **The hosted Studio's Aperçu tab previews the deployed sites.** `sanity.cli.ts` passes each
+  env's site URL (prod first, then local dev); each site lets `NEXT_PUBLIC_SANITY_STUDIO_URL`
+  frame it. **Why:** a relative preview URL pointed at `*.sanity.studio`, and the sites
+  refused to be framed by it.
 - **A published post now goes live; a deleted one goes offline.** New signed route
   `POST /api/revalidate` (Sanity webhook, `SANITY_REVALIDATE_SECRET`) purges every cached page.
   **Why:** `<SanityLive>` refreshes pages only while a visitor has the site open, and never

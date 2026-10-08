@@ -48,6 +48,10 @@ import { appContentSchema, appContentStructureItem } from "./src/sanity/app-cont
 // UI messages via `coreSanity`, cookies/consent, and the composed E-mails entity).
 // `sharedSanity` registers objects only (no desk). `emailSanity(all)` builds the
 // one E-mails singleton from every module's `emailGroups`.
+const previewOrigins = (process.env.SANITY_STUDIO_PREVIEW_ORIGINS ?? "")
+  .split(",")
+  .filter(Boolean);
+
 const appModules = [
   pageBuilderSanity,
   blogSanity,
@@ -128,7 +132,12 @@ export default defineConfig({
     // preview session through `/api/draft-mode/enable` (needs `SANITY_API_READ_TOKEN`).
     presentationTool({
       title: "Aperçu",
+      // Hosted Studio (`*.sanity.studio`): `sanity.cli.ts` passes the deployed sites —
+      // open the first, switch to the others from the address bar. Embedded (`/studio`):
+      // unset, so the preview is this same site.
+      ...(previewOrigins.length ? { allowOrigins: previewOrigins } : {}),
       previewUrl: {
+        ...(previewOrigins.length ? { initial: previewOrigins[0] } : {}),
         previewMode: {
           enable: "/api/draft-mode/enable",
           disable: "/api/draft-mode/disable",

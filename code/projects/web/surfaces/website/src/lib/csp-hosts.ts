@@ -23,6 +23,17 @@ function apiOrigin(): string[] {
   }
 }
 
+// The hosted Studio (`*.sanity.studio`, where `/studio` redirects on Cloudflare) frames the
+// site in its "Aperçu" tab, so it is an allowed frame ancestor next to the site itself.
+function hostedStudioOrigin(): string[] {
+  try {
+    const url = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL;
+    return url ? [new URL(url).origin] : [];
+  } catch {
+    return [];
+  }
+}
+
 /**
  * The website's CSP host allowlist — single source of truth shared by
  * `next.config.ts` (`securityHeaders` + `studioCspRule`) and `src/proxy.ts`
@@ -42,6 +53,7 @@ export const websiteCspHosts: CspHosts = {
   connectSrc: apiOrigin(),
   googleAnalytics: true,
   embedHosts: EMBED_HOSTS,
-  // The Studio's Presentation tool shows the site in a same-origin iframe. Nobody else may frame it.
-  frameAncestors: features.studio ? ["'self'"] : [],
+  // The Studio's "Aperçu" tab shows the site in an iframe: the embedded Studio (same origin)
+  // or the hosted one. Nobody else may frame it.
+  frameAncestors: features.studio ? ["'self'", ...hostedStudioOrigin()] : [],
 };

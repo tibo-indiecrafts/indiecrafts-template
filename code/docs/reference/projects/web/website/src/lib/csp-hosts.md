@@ -14,7 +14,7 @@ Declares the website's CSP host allowlist so the nonce-based proxy CSP and the s
 
 ## Exports
 
-- `websiteCspHosts` — a `CspHosts` object listing `frameSrc`, `mediaSrc`, `connectSrc`, `googleAnalytics`, and `embedHosts`.
+- `websiteCspHosts` — a `CspHosts` object listing `frameSrc`, `mediaSrc`, `connectSrc`, `googleAnalytics`, `embedHosts`, and `frameAncestors` (with `features.studio` on: `'self'` plus the hosted Studio origin from `NEXT_PUBLIC_SANITY_STUDIO_URL`, so the Studio's Aperçu tab can frame the site).
 
 ## Usage
 

@@ -20,3 +20,22 @@ describe("websiteCspHosts.connectSrc", () => {
     expect((await hosts()).connectSrc).toEqual([]);
   });
 });
+
+describe("websiteCspHosts.frameAncestors", () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it("lets the site and the hosted Studio frame it (the Aperçu tab)", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SANITY_STUDIO_URL", "https://acme.sanity.studio/");
+    expect((await hosts()).frameAncestors).toEqual([
+      "'self'",
+      "https://acme.sanity.studio",
+    ]);
+  });
+
+  it("keeps only the site itself without a valid Studio URL", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SANITY_STUDIO_URL", "");
+    expect((await hosts()).frameAncestors).toEqual(["'self'"]);
+    vi.stubEnv("NEXT_PUBLIC_SANITY_STUDIO_URL", "not a url");
+    expect((await hosts()).frameAncestors).toEqual(["'self'"]);
+  });
+});

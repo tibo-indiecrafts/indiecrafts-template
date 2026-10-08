@@ -1,5 +1,9 @@
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { defineCliConfig } from "sanity/cli";
+import { ENVS } from "../../../../shared/scripts/lib/apps.mjs";
+import { envVars } from "../../../../shared/scripts/lib/deploy-shared.mjs";
+import { originFor } from "../../../../shared/scripts/lib/domains.mjs";
 
 /**
  * Sanity CLI config — lets `sanity` subcommands (typegen, dataset export/import)
@@ -48,6 +52,35 @@ const workspaceIndexFallback = {
   },
 };
 
+// `sanity build` passes only `SANITY_STUDIO_*` to the browser, but the shared config reads
+// `NEXT_PUBLIC_*` (project id, dataset, site URL): without them the hosted Studio throws
+// "Missing NEXT_PUBLIC_SANITY_PROJECT_ID" on load. They are public by definition.
+const publicEnv = Object.fromEntries(
+  Object.entries(process.env)
+    .filter(([key]) => key.startsWith("NEXT_PUBLIC_"))
+    .map(([key, value]) => [`process.env.${key}`, JSON.stringify(value)]),
+);
+
+// The sites the hosted Studio's "Aperçu" tab may show, prod first: each env's website
+// origin (`wrangler.toml` NEXT_PUBLIC_SITE_URL, else the domain registry), then local dev.
+const toml = readFileSync(join(process.cwd(), "wrangler.toml"), "utf8");
+const previewOrigins = [
+  ...new Set(
+    [
+      ...[...ENVS]
+        .reverse()
+        .map(
+          (env) =>
+            (envVars(toml, env) as Record<string, string>).NEXT_PUBLIC_SITE_URL ||
+            originFor("website", env),
+        ),
+      "http://localhost:3000",
+    ]
+      .filter(Boolean)
+      .map((url) => new URL(url).origin),
+  ),
+];
+
 export default defineCliConfig({
   api: {
     projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -58,6 +91,13 @@ export default defineCliConfig({
   deployment: { appId: "q1mo279al0p9bwtt2pt24tdz" },
   vite: (config) => ({
     ...config,
+    define: {
+      ...config.define,
+      ...publicEnv,
+      "process.env.SANITY_STUDIO_PREVIEW_ORIGINS": JSON.stringify(
+        previewOrigins.join(","),
+      ),
+    },
     plugins: [...(config.plugins ?? []), workspaceIndexFallback],
   }),
 });

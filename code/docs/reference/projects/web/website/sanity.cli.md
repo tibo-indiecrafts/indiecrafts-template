@@ -14,6 +14,11 @@ Configures the Sanity CLI for the website. It resolves `projectId` and `dataset`
 
 Its main job beyond that is a Vite/Rollup plugin, `workspaceIndexFallback`, that makes `sanity build`/`deploy` resolve the app's `@/*` alias and workspace `@indiecrafts/*` subpaths. Rollup honours Node's exports spec strictly and does not index-fall-back, so the plugin tries the direct path first (files resolve) and retries `…/index` only when that fails (directories) — letting the hosted Studio build without editing every package's exports map.
 
+Its Vite `define` adds two things to the hosted Studio bundle:
+
+- **Every `NEXT_PUBLIC_*` value.** `sanity build` passes only `SANITY_STUDIO_*` to the browser, and the shared config reads `NEXT_PUBLIC_SANITY_PROJECT_ID` (and dataset, site URL). Without this the hosted Studio throws "Missing NEXT_PUBLIC_SANITY_PROJECT_ID" on load. The values are public by definition.
+- **`SANITY_STUDIO_PREVIEW_ORIGINS`.** The sites the Aperçu tab may show, prod first: each env's `NEXT_PUBLIC_SITE_URL` from `wrangler.toml` (else the domain registry), then `http://localhost:3000`. `sanity.config.ts` opens the first and allows the others. Redeploy the Studio after a site URL changes.
+
 ## Exports
 
 - Default export: the Sanity CLI config (`defineCliConfig({ … })`).
