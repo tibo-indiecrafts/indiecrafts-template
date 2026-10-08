@@ -16,6 +16,23 @@ describe("emailPreferencesSchema", () => {
     ]);
   });
 
+  it("seeds bilingual read-only notices", () => {
+    const iv = (
+      emailPreferencesSchema as {
+        initialValue?: {
+          notices?: {
+            name: Record<string, string>;
+            description: Record<string, string>;
+          }[];
+        };
+      }
+    ).initialValue;
+    expect(iv?.notices?.length).toBeGreaterThan(0);
+    for (const n of iv!.notices!)
+      for (const field of [n.name, n.description])
+        expect(Object.keys(field).sort()).toEqual(["en", "fr"]);
+  });
+
   it("key field is read-only once set (Studio guard)", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const cat = (emailPreferencesSchema as any).fields.find(

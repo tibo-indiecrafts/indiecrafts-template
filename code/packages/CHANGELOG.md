@@ -12,6 +12,20 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Removed
+
+- **`packages-web-email` — the unread `emailPreferences` fields.** `centreHeading`, `centreIntro`
+  and `noticesHeading` are gone from the Studio singleton. **Why:** nothing read them (the preference
+  centre takes its heading and intro from `messages/`), so an editor's text changed nothing.
+
+### Changed
+
+- **`packages-web-email` — the `emailPreferences` singleton seeds two notices** ("Sign-in and
+  security", "Your account and data", English and French). **Why:** the read-only "Account &
+  security" section stayed hidden until an editor wrote notices by hand.
+- **`packages-shared-compliance` — stories and tests for the email consent UI.** `EmailPreferences`,
+  `MarketingNudge` and `MarketingEmailToggle` have stories; the nudge and the switch have unit tests.
+
 ### Added
 
 - **`packages-web-auth/testing/clerk-user` — a throwaway Clerk test user for e2e.** `throwawayClerkUser(name)`

@@ -188,23 +188,27 @@ Only an `https` link is used.
 ## Commercial-email consent (marketing opt-in)
 
 A user opts in to commercial (marketing) emails. **Capture-only** — no campaign sends here; the
-opt-in is stored and mirrored to a Resend audience for a later sender.
+opt-in is stored and mirrored to Resend for a later sender. The single yes/no is the coarse view of
+the per-category [email preferences](../../projects/web/website/config/email-preferences.md): a yes
+grants the `includeAtSignup` categories, a no turns every category off.
 
 **Two stores** (both on `MAIN_DB` / `main` D1):
 
 - **Proof** — `consent_events` (append-only, `consent_type = "marketing_email"`). The legal record.
 - **Current state** — `user_profiles.marketing_email` (`NULL` = never decided · `0` = out · `1` = in),
-  a fast cache for the settings toggle + the admin list.
+  a cache derived from the categories ("any category granted") for the settings toggle + the admin list.
 
 **Capture is unchecked by default** on every surface (a pre-ticked box is invalid consent — CJEU
 Planet49):
 
 - **Sign-up** — the checkbox value rides Clerk `unsafeMetadata.marketing_email`. The `user.created`
   webhook validates it, sets the column **on the INSERT only** (never re-applied on `user.updated`,
-  so a settings change is not clobbered), writes a `consent_events` proof row (`source:"signup"`), and
-  syncs Resend. The box renders beside Clerk's prebuilt `<SignUp>`.
+  so a settings change is not clobbered) and writes a `consent_events` proof row (`source:"signup"`).
+  A yes also grants the sign-up categories and mirrors them to Resend. A no never calls Resend: the
+  same email may already be a confirmed newsletter subscriber. The box renders beside Clerk's
+  prebuilt `<SignUp>`.
 - **Account settings** — an editable toggle (`MarketingEmailToggle`) reads
-  `GET /v1/consent/marketing-email` and writes each change with `POST` (proof + column + Resend).
+  `GET /v1/consent/marketing-email` and writes each change with `POST` (proof + categories + Resend).
 - **Sign-in nudge** — a one-time post-sign-in banner (`MarketingNudge`) shown only when the flag is
   `NULL` (a pre-existing account that missed the checkbox). Yes/No record a decision; × snoozes
   per-device. Website and app mount it with `MarketingNudgeMount` (direct fetch); the shared
@@ -215,9 +219,9 @@ caller's own opt-in) · `POST /v1/profiles/consent` (bearer batch → the admin 
 column).
 
 **Resend Contacts** — global, addressed by email (Resend renamed Audiences to Segments, so there
-is no audience id); `RESEND_API_KEY` unset → the mirror no-ops, store-only. An opt-in
-upserts the contact `unsubscribed:false`; an opt-out flips it `unsubscribed:true`. **Erasure is a pure
-delete** — the self-service erasure and the Clerk `user.deleted` webhook both remove the contact
-entirely. **No win-back / "former members" audience** — a deliberate compliance decision (right to be
-forgotten overrides retained marketing consent). Every sync is best-effort: a Resend failure is logged
-and never blocks the D1 write.
+is no audience id); `RESEND_API_KEY` unset → the mirror no-ops, store-only. A decision sets the
+categories' Resend Topics (`opt_in`/`opt_out`) and moves the contact in or out of its
+`newsletter-<locale>` segment. **Erasure:** a DSAR erasure or an admin delete removes the contact
+entirely; a self-service account delete suppresses it instead (`unsubscribed:true`, off every
+marketing topic, in the churned topic — see [churn tracking](../../projects/web/website/config/churn.md)).
+Every sync is best-effort: a Resend failure is logged and never blocks the D1 write.

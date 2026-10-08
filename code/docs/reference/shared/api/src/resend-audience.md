@@ -15,7 +15,6 @@ Mirrors each marketing-email consent decision to Resend's global Contacts. Resen
 ## Exports
 
 - `ResendAudienceEnv` — the `Env` slice this module needs (`RESEND_API_KEY?`), never the full worker `Env`.
-- `upsertResendContact` — create-or-update the contact with the global `unsubscribed` marketing flag from `granted`.
 - `syncContactTopics` — create-or-update the contact's per-topic subscriptions, mapping `granted` to `opt_in`/`opt_out`. With `newsletterLocale` (the `news` category changed): a locale sets the `locale` property and moves the contact to `newsletter-<locale>`; `null` removes it from every `newsletter-*` segment.
 - `subscribeNewsletterContact` — a confirmed newsletter subscriber: global `unsubscribed: false`, the `locale` property, the `news` topic `opt_in` and the `newsletter-<locale>` segment. A new contact gets all of it in one `POST /contacts`; an existing one is updated, then moved out of the other `newsletter-*` segments. No `newsletter-<locale>` segment (setup not run) → throws: a subscriber outside every language segment would never get an issue.
 - `clearSegmentCache` — forget the cached segment list (a test seam).
@@ -26,9 +25,13 @@ Mirrors each marketing-email consent decision to Resend's global Contacts. Resen
 ## Usage
 
 ```ts
-import { upsertResendContact } from "@indiecrafts/shared-api/resend-audience";
+import { syncContactTopics } from "@indiecrafts/shared-api/resend-audience";
 
-await upsertResendContact(env, { email: "reader@example.com", granted: true });
+await syncContactTopics(env, {
+  email: "reader@example.com",
+  topics: [{ topicId: "t_news", granted: true }],
+  newsletterLocale: "en",
+});
 ```
 
 ## Source

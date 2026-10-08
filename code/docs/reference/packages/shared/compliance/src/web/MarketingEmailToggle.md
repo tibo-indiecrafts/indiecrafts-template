@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The account-settings toggle for the commercial-email opt-in. It reads the current value from the api consent route and writes each change back, so the server records the proof, updates the user profile, and syncs the email audience. Server-backed (distinct from the localStorage cookie categories) and optimistic — it reverts on a failed write. An empty `apiUrl` renders nothing.
+The account-settings toggle for the commercial-email opt-in. It reads the current value from the api consent route and writes each change back, so the server records the proof and sets the email-preference categories (yes → the sign-up ones, no → all), which syncs Resend. Server-backed (distinct from the localStorage cookie categories) and optimistic — it reverts on a failed write. An empty `apiUrl` renders nothing.
 
 ## Exports
 

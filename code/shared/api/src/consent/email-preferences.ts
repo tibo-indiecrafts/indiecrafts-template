@@ -25,7 +25,7 @@ import { logger } from "@indiecrafts/packages-shared-logger";
 import { isLocale, localeCodes } from "@indiecrafts/packages-shared-config";
 import { type Env, PUBLIC_CORS_POST, clientIp } from "../index";
 import { readProfileLocale } from "../erasure/email";
-import { verifyUserId } from "./marketing";
+import { verifyUserId } from "../auth/clerk-jwt";
 import { readPreferences, writePreferences } from "./email-preferences-store";
 import {
   fetchEmailPreferences,
@@ -199,6 +199,41 @@ async function applyUpdates(opts: {
   }
 
   return { ok: true };
+}
+
+/** The single "commercial emails" yes/no (the sign-up box, the sign-in nudge, the account
+ *  switch) as category writes, so `marketing_email` stays a derived cache that agrees with
+ *  the Emails page: yes → the `includeAtSignup` categories (else `news`), no → every category. */
+export async function applyMarketingDecision(opts: {
+  env: Env;
+  db: D1Database;
+  ctx?: ExecutionContext;
+  userId: string;
+  locale: string;
+  granted: boolean;
+  surface: string;
+  country: string | null;
+  deps?: EmailPreferencesDeps;
+}): Promise<void> {
+  const fetched = await (opts.deps?.fetchCategories ?? fetchEmailPreferences)(
+    opts.env,
+    opts.locale,
+  );
+  const { categories } = fetched;
+  const atSignup = categories.filter((c) => c.includeAtSignup);
+  const keys = (
+    !opts.granted
+      ? categories
+      : atSignup.length
+        ? atSignup
+        : categories.filter((c) => c.key === "news")
+  ).map((c) => c.key);
+  await applyUpdates({
+    ...opts,
+    fetchCategories: async () => fetched,
+    sync: opts.deps?.sync ?? syncContactTopics,
+    updates: keys.map((key) => ({ key, granted: opts.granted })),
+  });
 }
 
 export async function handleEmailPreferences(

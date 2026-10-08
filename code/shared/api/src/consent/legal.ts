@@ -15,7 +15,7 @@
 // A POST writes the append-only proof (consent_events, one row per accepted version via
 // INSERT OR IGNORE) and updates the current-state column (user_profiles.legal_acked_version).
 import { type Env, clientIp } from "../index";
-import { verifyUserId } from "./marketing";
+import { verifyUserId } from "../auth/clerk-jwt";
 
 const BODY_MAX = 4000;
 const VERSION_MAX = 64;

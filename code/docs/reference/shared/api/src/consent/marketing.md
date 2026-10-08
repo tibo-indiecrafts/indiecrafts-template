@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Implements the authenticated marketing-email consent endpoint for the shared API worker. A signed-in user reads (`GET`) and records (`POST`) their own opt-in; the Clerk session JWT proves identity, so the route keys on the JWT `sub` and never exposes a bearer token to the browser. A `POST` writes an append-only proof row to `consent_events`, updates the `user_profiles.marketing_email` cache column, and best-effort mirrors the decision to the Resend audience (never failing the write).
+Implements the authenticated marketing-email consent endpoint for the shared API worker. A signed-in user reads (`GET`) and records (`POST`) their own opt-in; the Clerk session JWT proves identity, so the route keys on the JWT `sub` and never exposes a bearer token to the browser. A `POST` writes an append-only proof row to `consent_events`, then sets the email-preference categories through `applyMarketingDecision` (yes → the `includeAtSignup` categories, no → every category). That recomputes the `user_profiles.marketing_email` cache column and best-effort mirrors Resend Topics and the newsletter segment (never failing the write).
 
 Routes handled:
 
@@ -21,8 +21,7 @@ It enforces method allow-listing, a `503` when `MAIN_DB` or the Clerk key is mis
 
 ## Exports
 
-- `verifyUserId(request, env)` — verifies the Clerk session JWT and returns the caller's user id (`sub`) or `null`; dynamically imports `@clerk/backend` and fails closed.
-- `handleMarketingConsent(request, env, ctx?, authenticate?, sync?)` — the route handler; `authenticate` and `sync` are injectable so tests avoid the SDK and network.
+- `handleMarketingConsent(request, env, ctx?, authenticate?, deps?)` — the route handler; `authenticate` (default `verifyUserId` from `auth/clerk-jwt.ts`) and `deps` (`fetchCategories`, `sync`) are injectable so tests avoid the SDK and network.
 
 ## Usage
 

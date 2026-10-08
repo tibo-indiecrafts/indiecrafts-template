@@ -16,7 +16,7 @@ import { authAppearance } from "./appearance";
  * tokens and carrying the active `locale` + the marketing-email opt-in in
  * `unsafeMetadata`. The api's Clerk webhook mirrors both to `user_profiles` (locale
  * localizes the auth emails; `marketing_email` records the commercial-email consent +
- * mirrors it to the Resend audience). Clerk's prebuilt card can't host a custom field,
+ * grants the sign-up email categories). Clerk's prebuilt card can't host a custom field,
  * so the (unchecked, GDPR-required) checkbox renders beside it and feeds the metadata
  * prop. Mount on a catch-all route (`/sign-up/[[...sign-up]]`) and point Clerk at it
  * with `AppClerkProvider signUpPath="/sign-up"`.

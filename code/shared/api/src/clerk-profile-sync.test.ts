@@ -378,6 +378,84 @@ describe("clerk webhook → user_profiles", () => {
     expect(res.status).toBe(413);
   });
 
+  // A yes reaches Resend as the `news` topic + the language segment (what a newsletter issue
+  // targets), not just a global flag. A no never touches Resend: the same email may already
+  // be a confirmed newsletter subscriber.
+  it("sign-up yes mirrors the news topic + segment to Resend; a no makes no Resend call", async () => {
+    const calls: { at: string; body?: unknown }[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        if (url.includes("sanity.io"))
+          return new Response(
+            JSON.stringify({
+              result: {
+                categories: [
+                  {
+                    key: "news",
+                    name: { en: "News" },
+                    description: { en: "News" },
+                    includeAtSignup: true,
+                    resendTopicId: "t_news",
+                  },
+                ],
+                notices: [],
+              },
+            }),
+          );
+        const at = `${init?.method ?? "GET"} ${url.replace("https://api.resend.com", "")}`;
+        calls.push({
+          at,
+          body: init?.body ? JSON.parse(String(init.body)) : undefined,
+        });
+        if (at === "GET /segments?limit=100")
+          return new Response(
+            JSON.stringify({ data: [{ id: "seg_en", name: "newsletter-en" }] }),
+          );
+        if (at.startsWith("GET /contacts/"))
+          return new Response(JSON.stringify({ data: [] }));
+        return new Response("{}");
+      }),
+    );
+    const overrides = {
+      SANITY_PROJECT_ID: "proj",
+      SANITY_DATASET: "production",
+      RESEND_API_KEY: "re_test",
+    };
+    const signUp = (id: string, email: string, yes: boolean) =>
+      postWebhook(
+        {
+          type: "user.created",
+          data: {
+            id,
+            primary_email_address_id: "e1",
+            email_addresses: [{ id: "e1", email_address: email }],
+            unsafe_metadata: { marketing_email: yes, locale: "en" },
+          },
+        },
+        overrides,
+      );
+
+    await signUp("user_su_yes", "yes@x.com", true);
+    const contacts = calls.filter((c) => c.at.includes("/contacts"));
+    expect(contacts[0]).toEqual({
+      at: "POST /contacts",
+      body: {
+        email: "yes@x.com",
+        properties: { locale: "en" },
+        topics: [{ id: "t_news", subscription: "opt_in" }],
+      },
+    });
+    expect(contacts.map((c) => c.at)).toContain(
+      "POST /contacts/yes@x.com/segments/seg_en",
+    );
+
+    calls.length = 0;
+    await signUp("user_su_no", "no@x.com", false);
+    expect(calls.filter((c) => c.at.includes("/contacts"))).toEqual([]);
+  });
+
   it("no marketing opt-in at sign-up → no granted email_preferences rows", async () => {
     await postWebhook({
       type: "user.created",

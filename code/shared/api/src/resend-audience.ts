@@ -95,19 +95,8 @@ async function upsertContact(
   return "updated";
 }
 
-/** Create-or-update the contact with `unsubscribed = !granted` (Resend's global marketing
- *  flag, not per-topic). */
-export async function upsertResendContact(
-  env: ResendAudienceEnv,
-  { email, granted }: { email: string; granted: boolean },
-  doFetch: typeof fetch = fetch,
-): Promise<void> {
-  if (!env.RESEND_API_KEY || !email) return;
-  await upsertContact(env, email, { unsubscribed: !granted }, [], doFetch);
-}
-
 /** Create-or-update the contact's per-topic subscriptions. Topics are Resend's per-category
- *  primitive (`unsubscribed` above is the global flag, not per-category); each entry maps
+ *  primitive (Resend's `unsubscribed` is the global flag, not per-category); each entry maps
  *  `granted` to Resend's `opt_in`/`opt_out`. Entries with an empty/missing `topicId` are
  *  dropped. `newsletterLocale` (set only when the `news` category changed): a locale → the
  *  `locale` property + that language segment; `null` → out of every language segment. */

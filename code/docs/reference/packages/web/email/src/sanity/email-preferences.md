@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Defines the `emailPreferences` Sanity singleton — the subscriber-facing preference centre. It holds the marketing categories a subscriber can toggle (seeded with the reserved keys `news`, `offers`, `partners`, `tips`), display-only transactional notices, and the win-back topic a departing contact is switched to in place of every other category. A category's `key` locks once saved so it can never drift under a live subscriber list. It is read by the preference-centre page, the unsubscribe flow, and the account-deletion path.
+Defines the `emailPreferences` Sanity singleton — the subscriber-facing preference centre. It holds the marketing categories a subscriber can toggle (seeded with the reserved keys `news`, `offers`, `partners`, `tips`), display-only transactional notices (seeded with "Sign-in and security" and "Your account and data", in English and French), and the win-back topic a departing contact is switched to in place of every other category. A category's `key` locks once saved so it can never drift under a live subscriber list. It is read by the preference-centre page, the unsubscribe flow, and the account-deletion path.
 
 ## Exports
 

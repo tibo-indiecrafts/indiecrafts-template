@@ -25,9 +25,9 @@ export interface MarketingEmailToggleProps {
 /**
  * The account-settings toggle for the commercial-email opt-in. Reads the current value
  * from `GET /v1/consent/marketing-email` and writes each change with `POST` — the api
- * records the proof, updates `user_profiles.marketing_email`, and syncs the Resend
- * audience. Server-backed (distinct from the localStorage cookie categories in the same
- * tab). Optimistic; reverts on a failed write.
+ * records the proof and sets the email-preference categories (yes → the sign-up ones,
+ * no → all), which syncs Resend. Server-backed (distinct from the localStorage cookie
+ * categories in the same tab). Optimistic; reverts on a failed write.
  */
 export function MarketingEmailToggle({
   apiUrl,

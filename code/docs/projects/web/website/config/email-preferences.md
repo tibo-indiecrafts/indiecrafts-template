@@ -14,7 +14,7 @@ controls, each mapped to a Resend Topic for real sending.
 ## The model
 
 - **Categories — Sanity.** The `emailPreferences` singleton (`code/packages/web/email/src/sanity/email-preferences.ts`)
-  holds `categories[]` (editor-defined) and `notices[]` (display-only). Each category has
+  holds `categories[]` (editor-defined) and `notices[]` (display-only, seeded with two account and security notices). Each category has
   a `key` (locked after first save — code matches on it), a localized `name`/`description`,
   `includeAtSignup` (pre-checked at sign-up), and `resendTopicId`. Seeded with four
   reserved keys: `news`, `offers`, `partners`, `tips`. A notice has no `key` or toggle — it
@@ -25,7 +25,10 @@ controls, each mapped to a Resend Topic for real sending.
   same append-only idiom as cookie consent.
 - **Derived cache.** `user_profiles.marketing_email` is no longer the source of truth — it's
   recomputed after every write as "any category granted", kept only because other code
-  still reads the single flag.
+  still reads the single flag. The single "Commercial emails" yes/no (the sign-up box, the
+  sign-in nudge, the account switch) writes through the categories too
+  (`applyMarketingDecision`): yes grants the `includeAtSignup` categories, no turns every
+  category off. So the switch and the Emails page never disagree.
 - **The api is the single reader.** `fetchEmailPreferences` (`code/shared/api/src/consent/email-preferences-sanity.ts`)
   reads the Sanity singleton over GROQ, locale-resolved. Every surface calls the api;
   none reads Sanity directly. It **never throws** — an unset, unreachable, or empty
@@ -88,16 +91,18 @@ capture-only (D1 keeps the real state; nothing reaches Resend).
 - **Remove a category** → the matching Topic is set `opt_out`; the Resend **contact is
   kept** (other categories may still be granted).
 - **Erasure** → `email_preferences` rows are hard-deleted (`d1-core` adapter,
-  `code/shared/api/src/erasure/d1.ts`) and the Resend **contact itself is deleted**
-  (`deleteResendContact`, called from the `clerk-deleted` and `self` erasure paths) —
-  no win-back list.
+  `code/shared/api/src/erasure/d1.ts`). A DSAR erasure or an admin delete **deletes the
+  Resend contact** (`deleteResendContact`); a self-service account delete suppresses it into
+  the churned topic instead ([churn tracking](./churn.md)).
 
 ## Sign-up grant
 
 On `user.created`, if the sign-up opted into marketing (`unsafe_metadata.marketing_email`),
 the webhook grants every Sanity category with `includeAtSignup: true` (falling back to
 `news` if none is flagged) — the new user starts subscribed to the categories the editor
-chose as defaults, with the same D1 write + proof row as any other change.
+chose as defaults, with the same D1 write, proof row and Resend mirror (topics + the
+`newsletter-<locale>` segment) as any other change. An unticked box writes no category and
+never calls Resend.
 
 ## Web + mobile
 
@@ -116,10 +121,7 @@ chose as defaults, with the same D1 write + proof row as any other change.
 ## Known gaps / follow-ups
 
 - **Live Resend wiring is operator-run.** Creating the Topics, pasting `resendTopicId`s,
-  and setting a real `RESEND_API_KEY` is manual (above). The local dev key is a
-  placeholder, so the mirror no-ops in dev — dev capture is D1-only.
-- **Erasure `preview()` undercounts.** The `d1-core` adapter's dry-run preview doesn't yet
-  count `email_preferences` rows in its estimate; the real (non-preview) erasure does
-  delete them. A follow-up should add the count to `preview()`.
+  and setting a real `RESEND_API_KEY` is manual (above). With no key the mirror no-ops —
+  capture is D1-only.
 - **No manual visual/a11y pass yet** on the public token page — not runnable in this CI. The
   account widget's Emails page was checked on 2026-10-02 (website + app, en/fr, 375/768/1280).

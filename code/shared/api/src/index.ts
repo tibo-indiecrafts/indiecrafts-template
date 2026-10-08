@@ -52,16 +52,14 @@ import { handleErasureSelf } from "./erasure/self";
 import { handleClerkUserDeleted } from "./erasure/clerk-deleted";
 import { handleClerkEmail } from "./clerk-email/handle";
 import { sendWelcomeEmail } from "./clerk-email/welcome";
-import { upsertResendContact } from "./resend-audience";
 import { handleMarketingConsent } from "./consent/marketing";
 import { handleLegalConsent } from "./consent/legal";
 import {
   handleEmailPreferences,
   handleTokenPreferences,
   handleOneClickUnsubscribe,
+  applyMarketingDecision,
 } from "./consent/email-preferences";
-import { writePreferences } from "./consent/email-preferences-store";
-import { fetchEmailPreferences } from "./consent/email-preferences-sanity";
 import { handleExport, handleExportDownload } from "./export/route";
 import {
   handleDataRequestWrite,
@@ -1414,9 +1412,11 @@ async function route(
             }
 
             // Sign-up marketing decision → append the consent proof (append-only; keyed by
-            // fingerprint, never raw email) and mirror to the Resend audience (best-effort,
-            // via waitUntil so a Resend hiccup never fails the webhook). Only on create —
-            // the settings toggle owns every later change.
+            // fingerprint, never raw email). Only on create — the settings switch owns every
+            // later change. A yes also grants the sign-up categories and mirrors them to
+            // Resend (best-effort: never fails the webhook — the column write above is the
+            // primary path). A no stays out of Resend: it must not unsubscribe a newsletter
+            // subscriber who signs up with the same email.
             if (evt.type === "user.created" && marketingEmail !== null) {
               await env.MAIN_DB.prepare(
                 "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, country, ip_hash, idempotency_key) " +
@@ -1431,58 +1431,17 @@ async function route(
                   `signup:${userId}:marketing_email`,
                 )
                 .run();
-              if (email) {
-                const contactEmail = email;
-                ctx.waitUntil(
-                  (async () => {
-                    try {
-                      await upsertResendContact(env, {
-                        email: contactEmail,
-                        granted: marketingEmail === 1,
-                      });
-                    } catch (error) {
-                      logger.error("resend signup sync failed", {
-                        name: (error as Error)?.name,
-                      });
-                    }
-                  })(),
-                );
-              }
-
-              // Sign-up opt-in → grant the Studio's `includeAtSignup` categories
-              // (per-category email_preferences + proof), so a new opted-in user starts
-              // subscribed. Best-effort: never fails the webhook — the marketing_email
-              // column write above is the primary path. Only on create, matching the
-              // "mirror on insert only" semantics above.
               if (marketingEmail === 1) {
                 try {
-                  const { categories } = await fetchEmailPreferences(
+                  await applyMarketingDecision({
                     env,
-                    locale ?? defaultLocale,
-                  );
-                  const includeAtSignupKeys = categories
-                    .filter((c) => c.includeAtSignup)
-                    .map((c) => c.key);
-                  const grantKeys =
-                    includeAtSignupKeys.length > 0
-                      ? includeAtSignupKeys
-                      : ["news"];
-                  // Superset of the Studio categories + whatever we actually grant, so a
-                  // "news" fallback (not itself a Studio category) still recomputes
-                  // marketing_email consistently.
-                  const marketingKeys = Array.from(
-                    new Set([...categories.map((c) => c.key), ...grantKeys]),
-                  );
-                  await writePreferences(env.MAIN_DB, {
+                    db: env.MAIN_DB,
+                    ctx,
                     userId,
-                    fingerprint,
-                    updates: grantKeys.map((key) => ({
-                      key,
-                      granted: true,
-                    })),
+                    locale: locale ?? defaultLocale,
+                    granted: true,
                     surface: "signup",
                     country: request.headers.get("cf-ipcountry") ?? null,
-                    marketingKeys,
                   });
                 } catch (error) {
                   logger.error("email preferences signup grant failed", {

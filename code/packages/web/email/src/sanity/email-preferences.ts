@@ -124,32 +124,12 @@ export const emailPreferencesSchema = defineType({
   __experimental_omnisearch_visibility: false,
   fields: [
     defineField({
-      name: "centreHeading",
-      title: "Titre du centre de préférences",
-      type: "localeString",
-      description: "Le grand titre en haut de la page. Une ligne par langue.",
-    }),
-    defineField({
-      name: "centreIntro",
-      title: "Texte d'introduction",
-      type: "localeText",
-      description:
-        "Le texte sous le titre, expliquant la page à l'abonné. Une ligne par langue.",
-    }),
-    defineField({
       name: "categories",
       title: "Catégories",
       type: "array",
       of: [emailPreferenceCategory],
       description:
         "Les catégories que l'abonné peut activer ou désactiver. L'identifiant de chacune est fixé à la création.",
-    }),
-    defineField({
-      name: "noticesHeading",
-      title: "Titre des mentions informatives",
-      type: "localeString",
-      description:
-        "Le titre au-dessus des mentions (e-mails que l'abonné reçoit toujours). Une ligne par langue.",
     }),
     defineField({
       name: "notices",
@@ -229,6 +209,26 @@ export const emailPreferencesSchema = defineType({
           fr: "Conseils et bonnes pratiques.",
         },
       ),
+    ],
+    // The transactional emails the site sends today, so the read-only section shows.
+    notices: [
+      {
+        name: { en: "Sign-in and security", fr: "Connexion et sécurité" },
+        description: {
+          en: "Sign-in codes and security alerts.",
+          fr: "Codes de connexion et alertes de sécurité.",
+        },
+      },
+      {
+        name: {
+          en: "Your account and data",
+          fr: "Votre compte et vos données",
+        },
+        description: {
+          en: "Welcome, data export and account deletion emails.",
+          fr: "E-mails de bienvenue, d'export de données et de suppression de compte.",
+        },
+      },
     ],
   },
   preview: {

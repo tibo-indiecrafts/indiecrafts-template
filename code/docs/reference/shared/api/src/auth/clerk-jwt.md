@@ -16,6 +16,7 @@ Verifies the `Authorization: Bearer <jwt>` session token that the web surfaces s
 
 - `verifyClerkClaims(token, options)` — the claims (`sub`, `fva`) of a valid token, else `null`. `options` are `verifyToken` options (`secretKey`, or `jwtKey` for a networkless check).
 - `bearerToken(request)` — the request's bearer token, or `""`.
+- `verifyUserId(request, env)` — the caller's user id (`sub`) from the request's Clerk session JWT, or `null` (no `CLERK_SECRET_KEY`, or any verify failure). The default `authenticate` of the self-service consent routes.
 - `ClerkClaims` (type) — `{ sub, fva? }`.
 
 ## Usage

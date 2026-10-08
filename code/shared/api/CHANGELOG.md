@@ -5,6 +5,21 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **The "Commercial emails" switch and the Emails page no longer disagree.** `POST
+/v1/consent/marketing-email` (the account switch and the sign-in nudge) now writes through the
+  email-preference categories (`applyMarketingDecision`): yes grants the `includeAtSignup`
+  categories, no turns every category off. Before, it set only `user_profiles.marketing_email`,
+  so a user who switched it off still had `news` on (topic and newsletter segment included), and
+  the next category change recomputed the column back. The `upsertResendContact` helper (the
+  global `unsubscribed` flag) is gone; `verifyUserId` moved to `auth/clerk-jwt.ts`.
+- **A sign-up opt-in reaches the newsletter.** The `user.created` webhook now mirrors the granted
+  categories to Resend: the `news` topic and the `newsletter-<locale>` segment, the list an issue
+  goes to. Before, it set only the global flag, so the new subscriber got no issue. An unticked box
+  now never calls Resend: it used to create the contact as `unsubscribed`, which also cut off a
+  confirmed newsletter subscriber who signed up with the same email.
+
 ### Added
 
 - **Anonymous post-view counter for the blog's Trending block.** `POST /v1/views` (server bearer,
