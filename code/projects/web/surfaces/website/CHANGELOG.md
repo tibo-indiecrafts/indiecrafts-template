@@ -88,6 +88,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Dev email links pointed at `example.com`.** The dev Worker runs on `*.workers.dev`, which is not
+  in the domain registry, so its build baked the placeholder site URL: every link in a dev email
+  (newsletter confirm, lead-magnet download, comment moderation) and the canonical URLs pointed
+  nowhere. `[env.dev.vars]` now sets `NEXT_PUBLIC_SITE_URL` to the dev Worker's own origin; a
+  `wrangler-parity` test keeps it set. Found by the live lead-magnet check.
 - **The erasure, account and email-preference forms failed outside dev.** They call the shared api
   from the browser, but the production CSP `connect-src` allowed only `'self'`, so the browser
   blocked the request and the form showed "Something went wrong". `websiteCspHosts.connectSrc` now

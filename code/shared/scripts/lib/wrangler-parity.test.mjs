@@ -174,3 +174,16 @@ test("every Cloudflare app has logs, traces and issues on in every env", () => {
     assert.deepEqual(observabilityGaps(toml), [], `${app.dir}/wrangler.toml`);
   }
 });
+
+// A workers.dev env is not in the domain registry, so without its own NEXT_PUBLIC_SITE_URL the
+// build bakes the `example.com` placeholder — every link in a dev email (newsletter confirm,
+// lead-magnet download, comment moderation) then points nowhere.
+test("website dev: the build gets a real origin (email links), not the placeholder", async () => {
+  const { envVars } = await import("./deploy-shared.mjs");
+  const { originFor } = await import("./domains.mjs");
+  const website = read("../../../projects/web/surfaces/website/wrangler.toml");
+  const url =
+    originFor("website", "dev") || envVars(website, "dev").NEXT_PUBLIC_SITE_URL;
+  assert.match(url ?? "", /^https:\/\/[^/]+$/);
+  assert.doesNotMatch(url, /example\.com/);
+});

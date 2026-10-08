@@ -129,6 +129,10 @@ workers_dev = true
 [env.dev.vars]
 # Non-production → robots.txt serves Disallow (see @indiecrafts/packages-shared-config env logic).
 NEXT_PUBLIC_ENVIRONMENT = "development"
+# This env's own origin (workers.dev is not in the domain registry): baked at build, so the
+# links in emails (confirm, download, moderation) and canonical URLs point here, not at the
+# `example.com` placeholder.
+NEXT_PUBLIC_SITE_URL = "https://indiecrafts-dev-web-surfaces-website.thibault-montaufray.workers.dev"
 # Per-env origins (config, not secrets — the secret sync skips keys set here).
 API_URL = "https://indiecrafts-dev-shared-api.thibault-montaufray.workers.dev"
 # Admin origin — the GDPR request owner alert links `${ADMIN_URL}/data-requests`.
