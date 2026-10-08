@@ -11,7 +11,7 @@ import { buildMetadata } from "@/lib/metadata";
 import { translationAlternates } from "@/lib/seo/translations";
 import { buildWebPageSchema } from "@/lib/seo/jsonld-core";
 import { JsonLdScript } from "@/lib/seo/jsonld";
-import { getPage, getAllPageParams } from "@/lib/page";
+import { getPage } from "@/lib/page";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { renderBlock } from "@indiecrafts/packages-web-ui-components/web/registry";
 import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
@@ -23,13 +23,11 @@ import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared
  * `sections[]` through the shared `renderBlock` registry. A required catch-all
  * (`[...slug]`, not `[[...slug]]`) so it never shadows the `(home)` index; the 11
  * static route folders resolve first, this is the fallback (unknown path → 404).
+ * No `generateStaticParams`: the locale layout reads the per-request CSP nonce, so the
+ * route is dynamic. With it, Next rendered an unknown slug as a static page and its
+ * `notFound()` answered 500 (`DYNAMIC_SERVER_USAGE`), not 404.
  */
 type Props = { params: Promise<{ locale: Locale; slug: string[] }> };
-
-export async function generateStaticParams() {
-  const params = await getAllPageParams();
-  return params.map((p) => ({ locale: p.locale, slug: p.slug.split("/") }));
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;

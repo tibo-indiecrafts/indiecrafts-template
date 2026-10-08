@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
 
 /**
- * Theme toggle — pick Dark, assert `<html>` flips, and that the choice persists
- * across a reload (next-themes stores it). Deterministic: message-file labels.
+ * Theme toggle — pick Dark, assert `<html data-theme>` flips (`themeProviderProps` sets
+ * `attribute: "data-theme"`), and that the choice persists across a reload (next-themes
+ * stores it). Deterministic: message-file labels.
  */
 test("dark theme applies and persists", async ({ page }) => {
   await page.goto("/");
@@ -11,8 +12,8 @@ test("dark theme applies and persists", async ({ page }) => {
   await page.getByRole("menuitemradio", { name: /dark/i }).click();
 
   const html = page.locator("html");
-  await expect(html).toHaveClass(/dark/);
+  await expect(html).toHaveAttribute("data-theme", "dark");
 
   await page.reload();
-  await expect(html).toHaveClass(/dark/);
+  await expect(html).toHaveAttribute("data-theme", "dark");
 });

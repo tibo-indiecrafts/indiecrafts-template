@@ -10,11 +10,10 @@ status: stable
 
 ## Purpose
 
-Handles the generic `/[locale]/<slug>` route. It resolves a page-builder `page` document by slug and locale, then renders its `sections[]` through the shared `renderBlock` registry. It is a required catch-all (`[...slug]`) so it never shadows the `(home)` index; the static route folders resolve first and this is the fallback (an unknown path is a 404). It also emits WebPage JSON-LD built from the page's own SEO, gated on the structured-data feature and the page's noindex.
+Handles the generic `/[locale]/<slug>` route. It resolves a page-builder `page` document by slug and locale, then renders its `sections[]` through the shared `renderBlock` registry. It is a required catch-all (`[...slug]`) so it never shadows the `(home)` index; the static route folders resolve first and this is the fallback (an unknown path is a 404). The route has no `generateStaticParams`: the locale layout reads the per-request CSP nonce, so the route is dynamic, and a static render of an unknown slug answered 500 instead of 404. It also emits WebPage JSON-LD built from the page's own SEO, gated on the structured-data feature and the page's noindex.
 
 ## Exports
 
-- `generateStaticParams` — enumerates every page's (locale, slug) pair for static generation.
 - `generateMetadata` — resolves the page and builds self-canonicalizing metadata with translation alternates; the page's own `seo` overrides the copy.
 - `BuilderPage` (default) — renders the resolved page's sections; `notFound()` when the slug does not resolve.
 

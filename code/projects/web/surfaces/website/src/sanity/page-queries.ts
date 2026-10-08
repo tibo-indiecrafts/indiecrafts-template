@@ -20,14 +20,6 @@ export const pageBySlugQuery = defineQuery(`
   }
 `);
 
-/** Every published page (slug, locale) — for `generateStaticParams`. */
-export const allPageParamsQuery = defineQuery(`
-  *[_type == "page" && isHome != true && defined(slug.current) && seo.unpublished != true]{
-    "slug": slug.current,
-    "locale": language
-  }
-`);
-
 /** Indexable published pages (slug, language) — for the sitemap. Drops
  *  unpublished / noindex / hidden-from-discovery. */
 export const sitemapPagesQuery = defineQuery(`

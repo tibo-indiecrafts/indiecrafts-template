@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
+import { throwawayClerkUser } from "@indiecrafts/packages-web-auth/testing/clerk-user";
 
 /**
  * An unknown route answers 404 with the branded page: the `[locale]/[...rest]` catch-all calls
@@ -9,7 +10,12 @@ import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
  * sign-in.spec.ts, before asking for the unknown route.
  */
 const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-const TEST_EMAIL = process.env.E2E_CLERK_TEST_EMAIL ?? "e2e+clerk_test@example.com";
+const user = throwawayClerkUser("app-not-found");
+
+test.beforeAll(async () => {
+  if (clerkConfigured) await user.create();
+});
+test.afterAll(user.remove);
 
 test("unknown route returns the branded 404", async ({ page }) => {
   if (clerkConfigured) {
@@ -17,7 +23,7 @@ test("unknown route returns the branded 404", async ({ page }) => {
     await page.goto("/en");
     await clerk.signIn({
       page,
-      signInParams: { strategy: "email_code", identifier: TEST_EMAIL },
+      signInParams: { strategy: "email_code", identifier: user.email },
     });
   }
 

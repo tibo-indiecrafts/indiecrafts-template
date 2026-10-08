@@ -93,6 +93,20 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **An unknown page path answered 500, not 404.** The page-builder catch-all (`[locale]/[...slug]`)
+  had `generateStaticParams`, so Next rendered an unknown slug as a static page; the layout reads the
+  per-request CSP nonce, and `notFound()` then failed with `DYNAMIC_SERVER_USAGE`. The route is now
+  dynamic like every other one (`getAllPageParams` and `allPageParamsQuery` are gone with it).
+  **Why:** a broken link showed the error page and told crawlers the site was down.
+- **The e2e journeys pass again (72/72).** `sign-in` started from `/`, where Clerk never loads; it now
+  starts on `/sign-in` and creates its own `+clerk_test` user (Clerk signs in existing users only).
+  `theme` checked a `dark` class; the site sets `data-theme`. `csp-nonce` waited for `networkidle`,
+  which `<SanityLive>` never reaches; it waits for `load`. `comment` ticks consent until the form is
+  hydrated, then types. The suite allows 15 s per assertion and 60 s per test (a production build
+  that reads Sanity on every request, under parallel workers), and the e2e server keeps sockets alive
+  for 70 s (Node's 5 s default caused "socket hang up"). **Why:** 7 journeys were red locally, so the
+  suite proved nothing.
+
 - **Dev email links pointed at `example.com`.** The dev Worker runs on `*.workers.dev`, which is not
   in the domain registry, so its build baked the placeholder site URL: every link in a dev email
   (newsletter confirm, lead-magnet download, comment moderation) and the canonical URLs pointed

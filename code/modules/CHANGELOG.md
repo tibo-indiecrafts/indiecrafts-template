@@ -15,6 +15,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`modules-web-blog` — a Big Hero block on "latest" broke its page (500).** `BlogHeroModule` sent
+  `pinnedId: undefined`; the request drops an undefined param, and the query's `$pinnedId` then fails
+  to parse. It now sends `null` (`defined(null)` is false). `BlogHeroModule.test.tsx` covers latest,
+  pinned with no pick, and pinned. **Why:** `/blog` answered 500 on the seeded e2e content.
+
 - **contact / waitlist / blog / newsletter — owner alerts were French-only.** The default heading,
   intro, subject and field labels of the four owner alerts were French for every site.
   `renderContactNotificationEmail`, `renderWaitlistNotificationEmail`, `renderCommentNotificationEmail`

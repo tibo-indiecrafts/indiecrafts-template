@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
+import { throwawayClerkUser } from "@indiecrafts/packages-web-auth/testing/clerk-user";
 import messages from "../../messages/en.json";
 
 /**
@@ -8,13 +9,14 @@ import messages from "../../messages/en.json";
  * user or credentials exist. SKIPS unless the Clerk test keys are wired
  * (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` + `CLERK_SECRET_KEY`).
  *
- *  • non-admin — the default test identity has no role: the gate still sends it to sign-in,
+ *  • non-admin — a throwaway test user with no role: the gate still sends it to sign-in,
  *    which offers a way out (sign out) instead of the dashboard.
  *  • admin — also needs `E2E_CLERK_ADMIN_EMAIL`: a test user with `publicMetadata.role =
  *    "admin"`, on an instance whose session token carries `metadata` (the claim `isAdmin` reads).
  */
 const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-const TEST_EMAIL = process.env.E2E_CLERK_TEST_EMAIL ?? "e2e+clerk_test@example.com";
+// The non-admin: a fresh user per run (Clerk signs in existing users only), removed after.
+const user = throwawayClerkUser("admin-non-admin");
 const ADMIN_EMAIL = process.env.E2E_CLERK_ADMIN_EMAIL;
 const SHELL = '[data-slot^="sidebar"]';
 
@@ -26,9 +28,11 @@ async function signIn(page: import("@playwright/test").Page, identifier: string)
 
 test.describe("admin auth (Clerk sign-in)", () => {
   test.skip(!clerkConfigured, "no Clerk instance wired for e2e — set the test keys");
+  test.beforeAll(user.create);
+  test.afterAll(user.remove);
 
   test("a signed-in non-admin is kept out of the dashboard", async ({ page }) => {
-    await signIn(page, TEST_EMAIL);
+    await signIn(page, user.email);
     await page.goto("/en/sessions");
     await expect(page).toHaveURL(/\/sign-in/);
     await expect(page.getByText(messages.admin.notAdmin)).toBeVisible();

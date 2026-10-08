@@ -708,8 +708,8 @@ export const moduleBlogPostListQuery = defineQuery(`
 
 /**
  * The post feeding a `module.blog-hero`. Pass `locale` + `pinnedId` — the
- * editor's pinned post `_id` when `source == "pinned"`, else `undefined` for
- * the latest published post. Same public filter as the other listings
+ * editor's pinned post `_id` when `source == "pinned"`, else `null` for the
+ * latest published post (never `undefined`: the param would be dropped). Same public filter as the other listings
  * (excludes drafts/unpublished/scheduled); `select()` puts the pinned post
  * first when set, otherwise falls through to the normal listing order.
  */

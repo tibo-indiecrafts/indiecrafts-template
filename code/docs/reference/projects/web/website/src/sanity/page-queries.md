@@ -1,6 +1,6 @@
 ---
 title: "Page queries"
-description: "GROQ queries for a generic page by slug, all page params for static generation, and indexable pages for the sitemap."
+description: "GROQ queries for a generic page by slug and for the indexable pages in the sitemap."
 status: stable
 ---
 
@@ -10,12 +10,11 @@ status: stable
 
 ## Purpose
 
-GROQ for the generic `page` documents, excluding the home page. One query renders a page by slug and locale with its `sections[]` resolved through the page-builder `MODULES_FRAGMENT`; the others list params for `generateStaticParams` and for the sitemap.
+GROQ for the generic `page` documents, excluding the home page. One query renders a page by slug and locale with its `sections[]` resolved through the page-builder `MODULES_FRAGMENT`; the other lists the pages for the sitemap.
 
 ## Exports
 
 - `pageBySlugQuery` — a `page` by slug and locale, with resolved sections.
-- `allPageParamsQuery` — every published page's (slug, locale) for `generateStaticParams`.
 - `sitemapPagesQuery` — indexable published pages (slug, language) for the sitemap, dropping unpublished, noindex, and hidden pages.
 
 ## Usage

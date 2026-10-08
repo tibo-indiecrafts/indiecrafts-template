@@ -51,7 +51,9 @@ test("home page: strict nonce CSP is enforced, matching script nonce, no CSP vio
   const html = await res!.text();
   expect(html).toContain(`nonce="${nonce}"`);
 
-  await page.waitForLoadState("networkidle");
+  // `load`, not `networkidle`: <SanityLive> keeps a live connection open, so the network
+  // never goes idle. Every script has run (or been blocked) by `load`.
+  await page.waitForLoadState("load");
   const domViolations = await page.evaluate(
     () => (window as unknown as { __cspViolations: string[] }).__cspViolations,
   );

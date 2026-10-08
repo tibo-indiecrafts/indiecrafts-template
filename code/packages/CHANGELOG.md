@@ -14,6 +14,12 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`packages-web-auth/testing/clerk-user` — a throwaway Clerk test user for e2e.** `throwawayClerkUser(name)`
+  creates a `+clerk_test` user through the Clerk Backend API and removes it after the run. The website,
+  admin and app sign-in journeys use it. **Why:** Clerk signs in existing users only, and the fixed
+  `e2e+clerk_test@example.com` identity never existed, so every signed-in journey failed once Clerk keys
+  were set.
+
 - **`packages-web-auth` — `useClerkActive()` (`./clerk-active`).** True under `AppClerkProvider`.
   A client component checks it before using Clerk UI, since Clerk's hooks throw without the
   provider. **Why:** the website now loads Clerk only when needed.

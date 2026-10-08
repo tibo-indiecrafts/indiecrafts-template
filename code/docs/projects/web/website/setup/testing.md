@@ -126,13 +126,18 @@ required-field gates, success + error states; the api route is stubbed), `erasur
 travels only in the POST body; self-skips when the build has no `NEXT_PUBLIC_API_URL`), `account` (a
 signed-out visitor never reaches export/delete), `account-data` (signed in: export answers a
 single-use link to the user's own data, delete refuses a mismatched email, then erases the account and
-signs out — a throwaway `+clerk_test` user per run, created and removed through the Clerk Backend API;
+signs out — a throwaway `+clerk_test` user per run (`e2e/clerk-user.ts`);
 self-skips without Clerk keys or `NEXT_PUBLIC_API_URL`, and needs the api running, e.g. `pnpm dev`), `newsletter`, `download` (a gated lead-magnet `/api/download` returns 403 on a bad/missing token, no CDN URL
 leaked), `waitlist`, `consent`, `a11y` (skip-link + axe), `theme`, `not-found`, plus content-dependent
 `blog-read` · `comment` · `search` · `i18n` · `route-gate` (a default-off route 404s), plus
 `sign-in` (the **auth** journey — self-skips without Clerk keys; see below). Content journeys rely on
 the seeded posts; the deterministic ones (`api-guard`, `download`, `account`, `erasure`, `data-request`, `a11y`, `not-found`, `route-gate`)
 need only the app booted.
+
+**Timeouts:** 15 s per assertion and 60 s per test (`playwright.config.ts`): the journeys run a
+production build that reads Sanity on every request, under parallel workers. The e2e server runs
+`next start --keepAliveTimeout 70000`, because at Node's 5 s default the request client can reuse a
+socket the server just closed ("socket hang up").
 
 **Env for `pnpm e2e`:** `NEXT_PUBLIC_SANITY_PROJECT_ID` + `SANITY_API_WRITE_TOKEN` (to seed);
 `E2E_SANITY_DATASET` overrides the dataset, `E2E_SKIP_SEED=1` reuses an already-seeded one.
@@ -146,6 +151,9 @@ that grant) creates it **once**:
 ```bash
 pnpm --filter @indiecrafts/web-surfaces-website exec sanity dataset create e2e --visibility private
 ```
+
+On a Sanity plan without private datasets, the CLI creates it **public** (a warning, not an
+error). It holds only the seeded demo content.
 
 Until it exists, every app-journey run fails at seed with a clear message. In CI, the token behind
 `SANITY_API_WRITE_TOKEN` must either have the grant or the dataset must be pre-created.
@@ -165,7 +173,9 @@ optional, only to keep test users out of your dev data.) Never use production (`
 
 1. **Clerk dashboard** (once, on that instance): confirm **Email address** is an identifier with
    **Email verification code** enabled — the passwordless flow the journey drives (the default). No
-   test user to create: `+clerk_test` emails are handled by the instance, code is always `424242`.
+   test user to create by hand: Clerk signs in existing users only, so each run creates its own
+   `+clerk_test` user through the Backend API (`e2e/clerk-user.ts`) and deletes it after. The code is
+   always `424242`.
 2. **CI** — add two repo **Secrets**: `E2E_CLERK_PUBLISHABLE_KEY` = your `pk_test_…`,
    `E2E_CLERK_SECRET_KEY` = your `sk_test_…`. The `browser-e2e-app` job injects them; the journey then
    runs and gates.
@@ -175,7 +185,6 @@ optional, only to keep test users out of your dev data.) Never use production (`
    set -a; . ./.env.local; set +a
    pnpm --filter @indiecrafts/web-surfaces-website e2e   # runs every journey incl. sign-in
    ```
-   Override the identity with `E2E_CLERK_TEST_EMAIL` (default `e2e+clerk_test@example.com`).
 
 Until the keys are present the journey is skipped and everything else runs unchanged.
 

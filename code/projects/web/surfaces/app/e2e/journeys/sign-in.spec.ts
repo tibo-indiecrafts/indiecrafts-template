@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
+import { throwawayClerkUser } from "@indiecrafts/packages-web-auth/testing/clerk-user";
 
 /**
  * App auth journey — mirrors the website's. Clerk **Testing Tokens** + a `+clerk_test`
@@ -8,7 +9,8 @@ import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
  * green until they are). Setup → `docs/projects/web/website/setup/testing.md` § Auth E2E.
  */
 const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-const TEST_EMAIL = process.env.E2E_CLERK_TEST_EMAIL ?? "e2e+clerk_test@example.com";
+// Clerk signs in existing users only: each run creates its own and removes it.
+const user = throwawayClerkUser("app-sign-in");
 
 async function isSignedIn(
   page: import("@playwright/test").Page,
@@ -20,6 +22,8 @@ async function isSignedIn(
 
 test.describe("app auth (Clerk sign-in)", () => {
   test.skip(!clerkConfigured, "no Clerk instance wired for e2e — set the test keys");
+  test.beforeAll(user.create);
+  test.afterAll(user.remove);
 
   test("sign-in establishes a session; sign-out clears it", async ({ page }) => {
     await setupClerkTestingToken({ page });
@@ -27,7 +31,7 @@ test.describe("app auth (Clerk sign-in)", () => {
 
     await clerk.signIn({
       page,
-      signInParams: { strategy: "email_code", identifier: TEST_EMAIL },
+      signInParams: { strategy: "email_code", identifier: user.email },
     });
     expect(await isSignedIn(page)).toBe(true);
 

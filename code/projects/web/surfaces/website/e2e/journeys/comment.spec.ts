@@ -16,9 +16,13 @@ test("submitting a comment shows the awaiting-review message", async ({ page }) 
   const form = page.locator("form", { has: page.locator("textarea") });
   await expect(form).toBeVisible();
 
+  // Consent first, retried until it sticks: the checkbox only toggles once React has
+  // hydrated the form. Text typed before that is lost (seen under a full parallel run).
+  await expect(async () => {
+    await form.getByRole("checkbox").check({ timeout: 1_000 });
+  }).toPass({ timeout: 15_000 });
   await form.getByRole("textbox").first().fill("E2E Reviewer"); // author name
   await form.locator("textarea").fill("A thoughtful comment from the e2e suite.");
-  await form.getByRole("checkbox").check();
   await form.getByRole("button", { name: /.+/ }).click();
 
   await expect(page.getByRole("status")).toBeVisible();

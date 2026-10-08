@@ -33,7 +33,9 @@ export async function BlogHeroModule({
       query: blogHeroQuery,
       params: {
         locale,
-        pinnedId: m.source === "pinned" ? m.pinned?._ref : undefined,
+        // `null`, never `undefined`: an undefined param is dropped from the request and
+        // the query's `$pinnedId` then fails to parse (the page answered 500).
+        pinnedId: (m.source === "pinned" && m.pinned?._ref) || null,
       },
     }),
     getTranslations({ locale, namespace: "pages.blog" }),

@@ -29,6 +29,11 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",
+  // The app journeys run a production build that reads Sanity over the network on every
+  // request; under parallel workers a page or a server navigation can pass the 5 s / 30 s
+  // defaults (seen locally: a locale switch, a comment submit, the account erasure chain).
+  timeout: 60_000,
+  expect: { timeout: 15_000 },
   use: { trace: "on-first-retry" },
   // Seed the e2e dataset before the app journeys run (no-op for a visual-only run).
   globalSetup: runApp ? "./e2e/global-setup.ts" : undefined,
@@ -64,7 +69,9 @@ export default defineConfig({
           {
             // Build + serve the app with the e2e dataset. NEXT_PUBLIC_* are inlined
             // at build time, so the override must be present for `build`, not just `start`.
-            command: "pnpm build && pnpm start",
+            // keepAliveTimeout > Playwright's socket reuse: at Node's 5 s default the server
+            // can close a kept-alive socket the request client is reusing ("socket hang up").
+            command: "pnpm build && pnpm start --keepAliveTimeout 70000",
             url: `http://localhost:${APP_PORT}`,
             reuseExistingServer: !process.env.CI,
             timeout: 300_000, // a cold Next build is slow

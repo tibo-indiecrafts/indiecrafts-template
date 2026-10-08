@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
+import { throwawayClerkUser } from "@indiecrafts/packages-web-auth/testing/clerk-user";
 
 /**
  * Auth journey — the highest-risk flow every other journey deliberately skips. Uses Clerk
@@ -15,7 +16,8 @@ import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
  * ("Auth E2E") + the Clerk checklist there.
  */
 const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-const TEST_EMAIL = process.env.E2E_CLERK_TEST_EMAIL ?? "e2e+clerk_test@example.com";
+// Clerk signs in existing users only: each run creates its own and removes it.
+const user = throwawayClerkUser("sign-in");
 
 /** True when Clerk has loaded a signed-in user on the page (framework state, not app DOM). */
 async function isSignedIn(page: import("@playwright/test").Page): Promise<boolean> {
@@ -26,6 +28,8 @@ async function isSignedIn(page: import("@playwright/test").Page): Promise<boolea
 
 test.describe("auth (Clerk sign-in)", () => {
   test.skip(!clerkConfigured, "no Clerk instance wired for e2e — set the test keys");
+  test.beforeAll(user.create);
+  test.afterAll(user.remove);
 
   test("the /sign-in page renders Clerk's form", async ({ page }) => {
     await setupClerkTestingToken({ page });
@@ -36,11 +40,11 @@ test.describe("auth (Clerk sign-in)", () => {
 
   test("sign-in establishes a session; sign-out clears it", async ({ page }) => {
     await setupClerkTestingToken({ page });
-    await page.goto("/");
+    await page.goto("/sign-in"); // the site loads Clerk only here (or once signed in)
 
     await clerk.signIn({
       page,
-      signInParams: { strategy: "email_code", identifier: TEST_EMAIL },
+      signInParams: { strategy: "email_code", identifier: user.email },
     });
     expect(await isSignedIn(page)).toBe(true);
 
