@@ -88,6 +88,15 @@ Full model → the [`code/shared/db` brief](/.claude/CLAUDE).
    `NEXT_PUBLIC_*` of `[env.<env>.vars]`, and refuses a build that would ship a `localhost` URL — see
    [Platform deploy](/shared/architecture/platform-deploy).
 
+## GitLab CI (the gate on GitLab)
+
+The repo lives on GitLab, where `.github/workflows/*` never run. `.gitlab-ci.yml` runs the same gate
+as `test.yml` on merge requests and pushes to `main`: `verify`, `infra`, `wrangler`, `docs`,
+`secrets-scan`, `build`, `browser-stories`, `browser-e2e-app`, `csp`, and the advisory
+`browser-e2e-visual`. Deploys stay manual there (`pnpm deploy:*` runs `pnpm verify` first for
+staging and prod). Set the CI/CD variables listed at the top of the file (mask and protect the
+secrets). To block a merge on red, enable **Settings → Merge requests → Pipelines must succeed**.
+
 ## GitHub Actions (auto-deploy)
 
 `.github/workflows/deploy.yml`: **push to `main` (after CI passes) → prod**; **Run workflow** → pick dev/staging/prod.

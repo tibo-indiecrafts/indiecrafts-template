@@ -18,6 +18,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 
 ## [Unreleased]
 
+### Added
+
+- **GitLab CI (`.gitlab-ci.yml`).** The repo lives on GitLab, so the GitHub workflows never ran: no
+  CI gate and no daily backup. The new file runs the same gate as `test.yml` on merge requests and
+  `main`, and a scheduled `backup` job (`BACKUP_ENV`) that runs `backup.mjs --all <env> --remote`.
+  Deploys stay manual. Setup → `code/docs/projects/web/website/setup/deployment.md` § GitLab CI.
 - **CI enforces coverage floors and lists leftover placeholders.** `verify` re-runs the Vitest
   suites with `--coverage` against per-package floors (`COVERAGE_FLOORS` in `vitest.shared.ts`:
   `app`, `website`, `admin`, `shared-security`, `shared-compliance`, `shared-config`; measured
