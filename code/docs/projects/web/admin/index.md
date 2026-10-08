@@ -121,7 +121,8 @@ the middleware ungated — but `requireAdminPage` still fails closed and redirec
 gate in front of the admin host, so only listed people reach the Worker; Clerk's admin role
 still applies after it. To add an admin, append the address to `access_emails` in
 `infra/cloudflare/env/<env>.tfvars` (or set `access_email_domain` for a whole domain) and apply.
-The account needs an identity provider in Zero Trust first (one-time PIN by email is enough).
+The sign-in method is the account's one-time PIN (Cloudflare emails a code), created by the
+`account` stack (`pnpm infra:shared:account:apply:staging`) — apply it before the admin stack.
 An attached host with no email and no domain fails the plan. Dev (`*.workers.dev`) has no
 Access gate: Clerk only.
 

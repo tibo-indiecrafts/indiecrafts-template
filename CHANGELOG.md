@@ -24,6 +24,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
   CI gate and no daily backup. The new file runs the same gate as `test.yml` on merge requests and
   `main`, and a scheduled `backup` job (`BACKUP_ENV`) that runs `backup.mjs --all <env> --remote`.
   Deploys stay manual. Setup → `code/docs/projects/web/website/setup/deployment.md` § GitLab CI.
+- **Zero Trust sign-in as code.** The `account` Terraform stack now creates the account's one-time-PIN
+  identity provider (`manage_access_idp`, set in staging only: three env workspaces share one
+  account). The admin Access gate signs in with it — no dashboard step left.
 - **CI enforces coverage floors and lists leftover placeholders.** `verify` re-runs the Vitest
   suites with `--coverage` against per-package floors (`COVERAGE_FLOORS` in `vitest.shared.ts`:
   `app`, `website`, `admin`, `shared-security`, `shared-compliance`, `shared-config`; measured

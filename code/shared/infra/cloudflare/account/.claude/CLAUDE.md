@@ -3,8 +3,9 @@
 Auto-loads under `code/shared/infra/cloudflare/account/**`. The **account-altitude** Cloudflare stack —
 account-wide config that is NOT tied to one zone or one app (zone creation, account settings, an
 account-owned ruleset). At the `global` altitude in the infra registry, it is applied **first** (lowest
-`order`). As shipped it manages **nothing** — it only declares the account id and offers the account-wide
-resources as commented, opt-in blocks.
+`order`). It manages one resource: the Zero Trust **one-time-PIN identity provider** that every Access gate
+signs in with — created only by the env whose tfvars set `manage_access_idp = true` (staging), since
+all three env workspaces share one account. The rest are commented, opt-in blocks.
 
 **Not the place for per-app edge.** WAF, rate-limit, cache rules, Turnstile, and Zero Trust Access gates are
 ZONE-scoped and owned by each app's own co-located stack (`code/projects/**/infra/cloudflare`,

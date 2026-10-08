@@ -115,14 +115,14 @@ Every Cloudflare-deployable surface that can take edge config now ships its own 
 registered in `code/shared/scripts/lib/infra-registry.mjs` and driven by the `infra:*` delegators
 (`code/shared/scripts/infra/run.mjs` resolves each `dir`):
 
-| Stack       | Altitude | Dir                                    | Notes                                                                    |
-| ----------- | -------- | -------------------------------------- | ------------------------------------------------------------------------ |
-| `account`   | global   | `code/shared/infra/cloudflare/account` | account-wide config (zone creation, account settings — mostly commented) |
-| `api`       | global   | `code/shared/api/infra/cloudflare`     | rate-limit `/v1/*` · WAF · bot · leaked-creds · zone hardening           |
-| `website`   | leaf     | `…/surfaces/website/infra/cloudflare`  | full next-cf edge + Turnstile                                            |
-| `app`       | leaf     | `…/surfaces/app/infra/cloudflare`      | website-style edge                                                       |
-| `admin`     | leaf     | `…/surfaces/admin/infra/cloudflare`    | website edge **+ Cloudflare Zero Trust Access** (SSO-gated)              |
-| `storybook` | leaf     | `…/tools/storybook/infra/cloudflare`   | minimal (custom domain + zone hardening)                                 |
+| Stack       | Altitude | Dir                                    | Notes                                                                                                                      |
+| ----------- | -------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `account`   | global   | `code/shared/infra/cloudflare/account` | account-wide config: the Zero Trust one-time-PIN identity provider (`manage_access_idp`, staging only); the rest commented |
+| `api`       | global   | `code/shared/api/infra/cloudflare`     | rate-limit `/v1/*` · WAF · bot · leaked-creds · zone hardening                                                             |
+| `website`   | leaf     | `…/surfaces/website/infra/cloudflare`  | full next-cf edge + Turnstile                                                                                              |
+| `app`       | leaf     | `…/surfaces/app/infra/cloudflare`      | website-style edge                                                                                                         |
+| `admin`     | leaf     | `…/surfaces/admin/infra/cloudflare`    | website edge **+ Cloudflare Zero Trust Access** (SSO-gated)                                                                |
+| `storybook` | leaf     | `…/tools/storybook/infra/cloudflare`   | minimal (custom domain + zone hardening)                                                                                   |
 
 To add another app, copy the closest stack dir, point the tfvars at that app's Worker name + domain, and
 add `infra:<scope>:<app>:<action>:<env>` delegators (mirroring the existing ones). `main.tf` is
