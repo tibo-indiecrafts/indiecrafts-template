@@ -51,10 +51,12 @@ pnpm infra:all apply dev        # provision — confirm each stack with "yes"
 
 ## Prerequisites
 
-- **Terraform ≥ 1.6** (`brew install terraform`).
+- **Terraform ≥ 1.9** (`brew install terraform`) — the admin stack's allow-list validation needs it.
 - **`CLOUDFLARE_API_TOKEN`** — a **scoped** token (dashboard → My Profile → API Tokens):
   _Zone_ → DNS · Cache Rules · Config · WAF · Zone Settings **Edit**; _Account_ → Workers Scripts ·
-  Turnstile **Edit**. Never commit it.
+  Turnstile · Workers R2 Storage **Edit**, and for the admin Access gate + the `account` stack's
+  identity provider: Access: Apps and Policies · Access: Organizations, Identity Providers, and
+  Groups **Edit**. Never commit it.
 - Fill `code/projects/web/surfaces/website/infra/env/<env>.tfvars` — `account_id`, `zone_id` (the domain's zone), and `domain`.
   `project:rename <slug>` rewrites `worker_name` to match the wrangler names.
 
