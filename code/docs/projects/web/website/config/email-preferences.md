@@ -123,5 +123,8 @@ never calls Resend.
 - **Live Resend wiring is operator-run.** Creating the Topics, pasting `resendTopicId`s,
   and setting a real `RESEND_API_KEY` is manual (above). With no key the mirror no-ops —
   capture is D1-only.
-- **No manual visual/a11y pass yet** on the public token page — not runnable in this CI. The
-  account widget's Emails page was checked on 2026-10-02 (website + app, en/fr, 375/768/1280).
+- **Notices are content.** The seed only fills a new singleton; an existing one shows the
+  read-only section once an editor adds notices in Studio.
+- **Manual checks** (2026-10-08): the account Emails page (website + app, en/fr) and the public
+  token page (fr) at 375/768/1280 and in dark mode — no overflow, visible focus ring; Lighthouse
+  accessibility 100 on the token page.
