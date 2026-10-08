@@ -25,10 +25,10 @@ controls, each mapped to a Resend Topic for real sending.
   same append-only idiom as cookie consent.
 - **Derived cache.** `user_profiles.marketing_email` is no longer the source of truth — it's
   recomputed after every write as "any category granted", kept only because other code
-  still reads the single flag. The single "Commercial emails" yes/no (the sign-up box, the
-  sign-in nudge, the account switch) writes through the categories too
-  (`applyMarketingDecision`): yes grants the `includeAtSignup` categories, no turns every
-  category off. So the switch and the Emails page never disagree.
+  still reads the single flag. The one yes/no of the sign-up box and the sign-in nudge writes
+  through the categories too (`applyMarketingDecision`): yes grants the `includeAtSignup`
+  categories, no turns every category off. In the account there is no all-in-one switch:
+  the Emails page has one switch per category.
 - **The api is the single reader.** `fetchEmailPreferences` (`code/shared/api/src/consent/email-preferences-sanity.ts`)
   reads the Sanity singleton over GROQ from the live API (not the CDN, whose copy can be an hour old), locale-resolved. Every surface calls the api;
   none reads Sanity directly. It **never throws** — an unset, unreachable, or empty

@@ -14,7 +14,7 @@ The four custom-page contents, shared by `AccountButton` (modal) and `AccountPag
 
 ## Exports
 
-- `ConsentContent(props)` — cookie choices (`AccountConsentTab`) and the commercial-email toggle.
+- `ConsentContent(props)` — cookie choices (`AccountConsentTab`). Email choices live on the Emails page, one switch per category.
 - `EmailsContent(props)` — the email preference centre, read in the page `locale`.
 - `LanguageContent(props)` — title, intro and the `AccountLanguageTab`; passes `onLocaleChange`.
 - `DataContent(props)` — export and deletion (`AccountDataTab`).

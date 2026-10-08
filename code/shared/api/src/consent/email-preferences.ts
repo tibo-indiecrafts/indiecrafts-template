@@ -201,9 +201,9 @@ async function applyUpdates(opts: {
   return { ok: true };
 }
 
-/** The single "commercial emails" yes/no (the sign-up box, the sign-in nudge, the account
- *  switch) as category writes, so `marketing_email` stays a derived cache that agrees with
- *  the Emails page: yes → the `includeAtSignup` categories (else `news`), no → every category. */
+/** The single "commercial emails" yes/no (the sign-up box, the sign-in nudge) as category
+ *  writes, so `marketing_email` stays a derived cache that agrees with the Emails page:
+ *  yes → the `includeAtSignup` categories (else `news`), no → every category. */
 export async function applyMarketingDecision(opts: {
   env: Env;
   db: D1Database;

@@ -142,9 +142,6 @@
       "consentTitle": "Cookie preferences",
       "consentSave": "Save"
     },
-    "marketing": {
-      "label": "Commercial emails"
-    },
     "emailPreferences": {
       "heading": "Email preferences",
       "intro": "Choose which emails you'd like to receive, and see the emails we always send.",

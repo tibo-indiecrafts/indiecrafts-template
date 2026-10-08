@@ -28,7 +28,6 @@ export interface AccountCopy {
   consentTitle: string;
   consentSaveLabel: string;
   /** The commercial-email toggle row label. */
-  marketingLabel: string;
   /** The "Emails" page: tab label, heading, intro, and the preference centre's chrome. */
   emailsTabLabel: string;
   emailsTitle: string;

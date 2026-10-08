@@ -13,7 +13,6 @@ import {
   AccountDataTab,
   EmailPreferences,
   emailPreferencesIo,
-  MarketingEmailToggle,
 } from "@indiecrafts/packages-shared-compliance/web";
 import type { AccountModalProps } from "./account-modal";
 import { AccountLanguageTab } from "./language-tab";
@@ -29,7 +28,6 @@ function PageTitle({ children }: { children: string }) {
 // (standalone /account). Rendered inside Clerk's <UserProfile>, so their hooks
 // (useClerkAuthPort → useAuth/useReverification) have a provider.
 export function ConsentContent(p: AccountModalProps) {
-  const auth = useClerkAuthPort(p.apiUrl);
   return (
     <div className="space-y-6">
       <PageTitle>{p.copy.consentTabLabel}</PageTitle>
@@ -40,12 +38,6 @@ export function ConsentContent(p: AccountModalProps) {
         title={p.copy.consentTitle}
         saveLabel={p.copy.consentSaveLabel}
         onSaved={p.onConsentSaved}
-      />
-      <MarketingEmailToggle
-        apiUrl={p.apiUrl}
-        getToken={auth.getToken}
-        label={p.copy.marketingLabel}
-        surface={p.surface}
       />
     </div>
   );

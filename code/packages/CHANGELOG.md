@@ -14,6 +14,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Removed
 
+- **`packages-shared-compliance` — `MarketingEmailToggle` is gone.** The account's "Privacy & consent"
+  page no longer has an all-in-one "Commercial emails" switch; the Emails page has one switch per
+  category, and that is the only place to manage emails. **Why:** the single switch sat next to the
+  cookie "Marketing" switch, silently changed four switches on another page (hidden behind the menu
+  on mobile), and hid a mixed state. `packages-web-auth`: `AccountModalProps.copy.marketingLabel` is
+  removed.
+
 - **`packages-web-email` — the unread `emailPreferences` fields.** `centreHeading`, `centreIntro`
   and `noticesHeading` are gone from the Studio singleton. **Why:** nothing read them (the preference
   centre takes its heading and intro from `messages/`), so an editor's text changed nothing.

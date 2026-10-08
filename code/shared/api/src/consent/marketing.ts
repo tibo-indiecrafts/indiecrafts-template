@@ -4,9 +4,9 @@
  * @see docs/reference/shared/api/src/consent/marketing.md
  */
 // Marketing-email consent — the AUTHENTICATED self-service endpoint. A signed-in user
-// reads and sets their own opt-in; the Clerk session JWT proves identity. The account
-// settings toggle AND the one-time sign-in nudge both call this (GET to render, POST to
-// record). Distinct from the bearer `/v1/events` cookie-consent path: keyed on the JWT
+// reads and sets their own opt-in; the Clerk session JWT proves identity. The one-time
+// sign-in nudge calls this (GET to decide whether to show, POST to record); the account's
+// Emails page writes each category through /v1/consent/email-preferences instead. Distinct from the bearer `/v1/events` cookie-consent path: keyed on the JWT
 // `sub`, no bearer token exposed to the browser.
 //
 //   GET  /v1/consent/marketing-email → { marketing_email: boolean | null }

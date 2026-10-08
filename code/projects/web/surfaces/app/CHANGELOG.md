@@ -14,6 +14,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **One place for email choices: the account's Emails page.** The "Commercial emails" switch is
+  gone from "Privacy & consent" (and the `account.marketing.label` copy, en/fr); each email category
+  has its own switch on the Emails page. **Why:** one switch for all categories next to the cookie
+  switches was confusing, worst on mobile.
+- **`/account` no longer says "Account" twice.** The page drops its own "Account / Manage your
+  account." header (and the `account.title`/`account.description` copy); Clerk's card already
+  titles itself, as on the website.
 - **The commercial-email opt-in copy covers every category.** The sign-up box and the sign-in
   nudge now read "occasional emails from us and our partners" (en/fr). **Why:** a yes grants
   every email category, partners included, and consent to partner emails must name them.

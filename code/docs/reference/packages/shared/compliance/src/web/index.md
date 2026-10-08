@@ -19,7 +19,7 @@ Re-exports the DOM (shadcn) compliance UI plus the `localStorage` store adapter 
 - `browserSignalsDeny`, `signalsDeny` — Global Privacy Control / Do-Not-Track opt-out checks.
 - `DeleteAccountSection`, `submitAccountErasure`, `ChurnSurvey`, `ExportSection` — the account-data bodies.
 - `AccountDataTab`, `AccountConsentTab` — the account-settings tabs.
-- `MarketingEmailToggle`, `MarketingNudge` — the marketing-email consent pair.
+- `MarketingNudge` — the one-time sign-in prompt for the marketing-email opt-in.
 - `buildDeleteAccountCopy`, `buildExportCopy`, `CHURN_REASON_CODES`, `rawErasureFetch`, `mapErasureResponse` — re-exported copy builders and erasure helpers from `../shared`.
 - Types: `DeleteAccountSectionProps`, `ErasureSelfResult`, `ChurnSurveyProps`, `ChurnSurveyCopy`, `ExportSectionProps`, `AccountDataTabProps`, `AccountConsentTabProps`, `MarketingEmailToggleProps`, `MarketingNudgeProps`, `MarketingNudgeCopy`, `AccountAuth`, `ErasureFetchOutcome`, `ChurnSurveyInput`, `ChurnReasonCode`, `DeleteAccountCopy`, `DeleteAccountSurveyCopy`, `ExportCopy`.
 

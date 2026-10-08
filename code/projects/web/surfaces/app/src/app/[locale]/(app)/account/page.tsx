@@ -4,10 +4,9 @@
  * @see docs/reference/projects/web/app/src/app/locale/(app)/account/page.md
  */
 import { notFound } from "next/navigation";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { features, type Locale } from "@/config";
 import { AccountControl } from "@/user-interface/account/AccountControl";
-import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
@@ -27,11 +26,8 @@ export default async function AccountPage({ params }: Props) {
   // submit (a relative `/v1/erasure/self` 404s) — 404 the whole page instead.
   if (!process.env.NEXT_PUBLIC_API_URL) notFound();
 
-  const th = await getTranslations({ locale, namespace: "account" });
-
   return (
     <div className="p-4 md:p-6">
-      <PageHeader title={th("title")} description={th("description")} />
       {/* Clerk's <UserProfile> has a fixed max width — centre it in the content area. */}
       <div className="flex justify-center">
         <AccountControl variant="page" />

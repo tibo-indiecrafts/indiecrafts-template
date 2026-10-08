@@ -68,8 +68,6 @@
     }
   },
   "account": {
-    "title": "Account",
-    "description": "Manage your account.",
     "delete": {
       "heading": "Delete your account",
       "body": "This permanently deletes your account and personal data. We keep a minimal activity log, stripped of identifying details, for security and legal compliance.",
@@ -115,9 +113,6 @@
       "data": "Your data",
       "consentTitle": "Cookie preferences",
       "consentSave": "Save"
-    },
-    "marketing": {
-      "label": "Commercial emails"
     },
     "emailPreferences": {
       "heading": "Email preferences",

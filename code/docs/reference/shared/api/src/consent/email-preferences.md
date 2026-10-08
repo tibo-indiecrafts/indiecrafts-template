@@ -18,7 +18,7 @@ Serves the per-category email-preference routes. There are two ways in: authenti
 - `handleEmailPreferences(request, env, ctx?, deps?)` — the authenticated GET/POST route.
 - `handleTokenPreferences(request, env, ctx?, deps?)` — the no-login GET/POST route, keyed by a signed pref-token.
 - `handleOneClickUnsubscribe(request, env, ctx?, deps?)` — the RFC 8058 `List-Unsubscribe-Post` target; always 200s on a valid token.
-- `applyMarketingDecision({ env, db, userId, locale, granted, surface, country, ctx?, deps? })` — the single "commercial emails" yes/no as category writes: yes → the `includeAtSignup` categories (else `news`), no → every category. The sign-up webhook and `/v1/consent/marketing-email` call it, so `marketing_email` stays a derived cache.
+- `applyMarketingDecision({ env, db, userId, locale, granted, surface, country, ctx?, deps? })` — the sign-up box and nudge yes/no as category writes: yes → the `includeAtSignup` categories (else `news`), no → every category. The sign-up webhook and `/v1/consent/marketing-email` call it, so `marketing_email` stays a derived cache.
 - `emailPreferenceLinks(env, uid, cat?)` — builds the manage and unsubscribe URLs plus the `List-Unsubscribe` headers for an outbound email.
 
 ## Usage

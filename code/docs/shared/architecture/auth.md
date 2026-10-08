@@ -188,15 +188,16 @@ Only an `https` link is used.
 ## Commercial-email consent (marketing opt-in)
 
 A user opts in to commercial (marketing) emails. **Capture-only** — no campaign sends here; the
-opt-in is stored and mirrored to Resend for a later sender. The single yes/no is the coarse view of
-the per-category [email preferences](../../projects/web/website/config/email-preferences.md): a yes
-grants the `includeAtSignup` categories, a no turns every category off.
+opt-in is stored and mirrored to Resend for a later sender. The sign-up box and the sign-in nudge
+ask one yes/no: a yes grants the `includeAtSignup` categories, a no turns every category off. After
+that, the user manages each category on its own in the account's **Emails** page — one switch per
+category, no all-in-one switch ([email preferences](../../projects/web/website/config/email-preferences.md)).
 
 **Two stores** (both on `MAIN_DB` / `main` D1):
 
 - **Proof** — `consent_events` (append-only, `consent_type = "marketing_email"`). The legal record.
 - **Current state** — `user_profiles.marketing_email` (`NULL` = never decided · `0` = out · `1` = in),
-  a cache derived from the categories ("any category granted") for the settings toggle + the admin list.
+  a cache derived from the categories ("any category granted") for the nudge + the admin list.
 
 **Capture is unchecked by default** on every surface (a pre-ticked box is invalid consent — CJEU
 Planet49):
@@ -207,8 +208,8 @@ Planet49):
   A yes also grants the sign-up categories and mirrors them to Resend. A no never calls Resend: the
   same email may already be a confirmed newsletter subscriber. The box renders beside Clerk's
   prebuilt `<SignUp>`.
-- **Account settings** — an editable toggle (`MarketingEmailToggle`) reads
-  `GET /v1/consent/marketing-email` and writes each change with `POST` (proof + categories + Resend).
+- **Account settings** — the **Emails** page: one switch per category (`EmailPreferences`), each
+  saved on its own (proof + Resend topic). There is no single "commercial emails" switch.
 - **Sign-in nudge** — a one-time post-sign-in banner (`MarketingNudge`) shown only when the flag is
   `NULL` (a pre-existing account that missed the checkbox). Yes/No record a decision; × snoozes
   per-device. Website and app mount it with `MarketingNudgeMount` (direct fetch); the shared

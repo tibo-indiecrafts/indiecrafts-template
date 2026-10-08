@@ -68,8 +68,6 @@
     }
   },
   "account": {
-    "title": "Compte",
-    "description": "Gérez votre compte.",
     "delete": {
       "heading": "Supprimer votre compte",
       "body": "Cette action supprime définitivement votre compte et vos données personnelles. Nous conservons un journal d'activité minimal, dépourvu de détails identifiants, à des fins de sécurité et de conformité légale.",
@@ -115,9 +113,6 @@
       "data": "Vos données",
       "consentTitle": "Préférences de cookies",
       "consentSave": "Enregistrer"
-    },
-    "marketing": {
-      "label": "E-mails commerciaux"
     },
     "emailPreferences": {
       "heading": "Préférences d'e-mails",

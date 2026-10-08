@@ -28,7 +28,6 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
   const tTabs = useTranslations("account.tabs");
   const tDelete = useTranslations("account.delete");
   const tExport = useTranslations("account.export");
-  const tMkt = useTranslations("account.marketing");
   const tEmails = useTranslations("account.emailPreferences");
   const tCat = useTranslations("consent.categories");
   const cat = (key: string) => ({
@@ -58,7 +57,6 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
       dataTabLabel: tTabs("data"),
       consentTitle: tTabs("consentTitle"),
       consentSaveLabel: tTabs("consentSave"),
-      marketingLabel: tMkt("label"),
       emailsTabLabel: tTabs("emails"),
       emailsTitle: tEmails("heading"),
       emailsIntro: tEmails("intro"),
