@@ -168,8 +168,10 @@ async function applyUpdates(opts: {
   });
 
   // Best-effort Resend Topics mirror — never fails the write (the D1 rows are the source of
-  // truth). Only the changed categories' topics, matching the write payload.
+  // truth). Only the changed categories' topics, matching the write payload. A changed `news`
+  // category also moves the contact's newsletter language segment (granted → this locale).
   const email = prof?.email;
+  const news = updates.find((u) => u.key === "news");
   if (email) {
     const topics = updates
       .map((u) => ({
@@ -181,7 +183,11 @@ async function applyUpdates(opts: {
       );
     const run = (async () => {
       try {
-        await sync(env, { email, topics });
+        await sync(env, {
+          email,
+          topics,
+          ...(news ? { newsletterLocale: news.granted ? locale : null } : {}),
+        });
       } catch (error) {
         logger.error("resend topics sync failed", {
           name: (error as Error)?.name,

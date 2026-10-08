@@ -1,6 +1,7 @@
 import { env } from "cloudflare:test";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
 import { beforeEach, describe, expect, it } from "vitest";
+import { recordNewsletterConsent } from "../newsletter/resend-sync";
 import { createAuditErasureAdapter, createCoreErasureAdapter } from "./d1";
 
 const SALT = "test-erasure-salt";
@@ -268,6 +269,44 @@ describe("D1 erasure adapters (core + audit split)", () => {
       const data = (await core.export(EMAIL)) as Record<string, unknown[]>;
       expect(data.user_profiles.length).toBe(1);
       expect(data.consent_events.length).toBe(1);
+    });
+
+    it("a newsletter visitor row is exported by fingerprint and stays email-free after erasure", async () => {
+      // A newsletter sign-up with no account: the proof row is born pseudonymised
+      // (subject_id = email_fingerprint = fp), the end state the erasure gives user rows.
+      const NEWS = "news-only@x.com";
+      const fp = await fingerprintEmail(NEWS, SALT);
+      await recordNewsletterConsent(coreDb, SALT, {
+        email: NEWS,
+        policyVersion: "2026-10",
+        consentAt: "2026-10-08T09:30:00.000Z",
+      });
+      const core = createCoreErasureAdapter(coreDb, SALT);
+      const data = (await core.export(NEWS)) as Record<
+        string,
+        Array<Record<string, unknown>>
+      >;
+      expect(data.consent_events).toEqual([
+        expect.objectContaining({
+          consent_type: "newsletter",
+          subject_type: "visitor",
+          subject_id: fp,
+          email_fingerprint: fp,
+        }),
+      ]);
+
+      await core.anonymize(NEWS);
+      await core.delete(NEWS);
+      const rows = await coreDb
+        .prepare(
+          "SELECT subject_type, subject_id FROM consent_events WHERE email_fingerprint = ?",
+        )
+        .bind(fp)
+        .all<{ subject_type: string; subject_id: string }>();
+      expect(rows.results).toEqual([
+        { subject_type: "visitor", subject_id: fp },
+      ]);
+      expect(JSON.stringify(rows.results)).not.toContain(NEWS);
     });
 
     it("erasing one subject leaves an unrelated subject's rows untouched", async () => {

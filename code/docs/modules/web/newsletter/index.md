@@ -1,22 +1,22 @@
 ---
 title: "Newsletter capture"
-description: "An editor-droppable email capture block (module.newsletter) with a gated API route, a Studio subscriber desk, optional double opt-in + owner-alert emails, an…"
+description: "An editor-droppable email capture block (module.newsletter) with a gated API route, a signed double opt-in, and Resend as the only subscriber list — one segment per language."
 status: stable
 ---
 
 # Newsletter capture
 
-An editor-droppable email capture block (`module.newsletter`) with a gated API route, a Studio
-subscriber desk, optional **double opt-in** + owner-alert emails, and a CSV export. Works out of the
-box with **no API keys** — a signup lands as a Sanity `subscriber` document you read in the Studio.
-With the api and Resend wired, confirmed subscribers also join **Resend's `news` topic** — the same
-list signed-in members opt into — so one Resend Broadcast reaches both (see [Resend](#resend-one-list)).
+An editor-droppable email capture block (`module.newsletter`) with a gated API route and a
+**double opt-in**. **Resend is the only subscriber list**: nothing is stored when someone signs up;
+their confirm click makes them a Resend contact on the **`news` topic** — the same topic signed-in
+members opt into — with their language, so each issue goes to the right people.
 
-Lives in the **`@indiecrafts/modules-web-newsletter`** module (`code/modules/web/newsletter`): the subscribe
-engine, the `subscriber` doc, and an editable **`newsletterSettings`** singleton — shipped as a
-one-line `composeStudio`-group contribution. The public form stays a page-builder block (renderer in
-`@indiecrafts/packages-web-ui-components`). The emails' config + copy live on the shared **E-mails** entity
-(`@indiecrafts/packages-web-email`).
+Lives in the **`@indiecrafts/modules-web-newsletter`** module (`code/modules/web/newsletter`): the
+sign-up and confirm engine, the lead magnets, and an editable **`newsletterSettings`** singleton —
+shipped as a one-line `composeStudio`-group contribution. The public form stays a page-builder block
+(renderer in `@indiecrafts/packages-web-ui-components`). The emails' config + copy live on the shared
+**E-mails** entity (`@indiecrafts/packages-web-email`). The api (`@indiecrafts/shared-api`) owns the
+Resend contact and the consent proof.
 
 ## One switch
 
@@ -24,108 +24,107 @@ one-line `composeStudio`-group contribution. The public form stays a page-builde
   feature. Off → the block renders nothing and `/api/newsletter` + `/api/newsletter/confirm` return
   `404`, in lockstep. See [Feature flags](/projects/web/website/config/feature-flags).
 
-There is **no provider config**. The block always stores the subscriber in Sanity; there are no
-per-ESP adapters to manage. To use an external service, see [External provider](#external-provider).
+There is **no provider config**: Resend is the list. To use an external service instead, see
+[External provider](#external-provider).
+
+## What it needs
+
+| Piece                                                    | Where                                                                                      | Without it                                                   |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------ |
+| `NEWSLETTER_SECRET`                                      | website env, server-only                                                                   | the form answers `503`                                       |
+| `RESEND_API_KEY`                                         | website env + api secret                                                                   | the form answers `503`                                       |
+| The confirmation email, enabled with a verified `From`   | Studio → E-mails → newsletter confirmation                                                 | the form answers `503`                                       |
+| `API_URL` + `APP_API_TOKEN`                              | website env                                                                                | the form answers `503` (a lead-magnet request still works)   |
+| `GDPR_FINGERPRINT_SALT` + main D1                        | api                                                                                        | confirm answers `error` (nothing stored)                     |
+| The `locale` contact property                            | Resend, via `pnpm resend:topics:sync`                                                      | confirm answers `error` (Resend refuses an unknown property) |
+| The `news` topic id + the `newsletter-<locale>` segments | Resend, via `pnpm resend:topics:sync`, then the topic id in Studio → E-mails → Préférences | the contact is stored without them                           |
+
+A missing piece fails loudly — the visitor sees an error — instead of accepting a sign-up that
+could never be stored.
 
 ## The flow
 
-1. The block posts `{ email, consent, source, honeypot }` to `/api/newsletter`.
+1. The block posts `{ email, consent, source, language, honeypot }` to `/api/newsletter`.
 2. The route gates on `features.newsletter`, then `subscribe()` (`@indiecrafts/modules-web-newsletter/lib/newsletter`)
-   validates: email shape, consent required, honeypot must be empty.
-3. Dedupe by email, then `writeClient.create` a `subscriber` (`status: "pending"`, whitelisted
-   fields, `_type` hard-coded). `newsletter` records the purpose: `true` for the newsletter block,
-   `false` for a lead-magnet block (`source: "lead-magnet"`), whose consent covers the document only.
-   - An address that is already **confirmed** is applied at once, with no second email: a newsletter
-     sign-up after a lead-magnet-only one adds `newsletter: true` (+ the Resend sync); a lead-magnet
-     request gets its document straight away.
-   - A **pending** or **unsubscribed** address is re-armed to `pending` with a new link. After an
-     unsubscribe, only the new request's own consent counts — a lead magnet never re-subscribes
-     anyone to the newsletter.
-4. On a **new** subscriber, two **best-effort** emails may fire (see below) — a failure only logs,
-   never fails the signup.
-5. Response: `201` for a **new or already-known** email — identical body, so membership can't be
-   enumerated — `400` invalid, `404` gated off. A honeypot-filled submission also returns `201`, so
-   bots learn nothing.
+   validates: email shape, consent required, honeypot empty, not a near-instant submit.
+3. **Nothing is stored.** `subscribe()` signs the sign-up — address, language, purpose, tags, source,
+   policy version, issue time — with `NEWSLETTER_SECRET` and emails the link in the visitor's language.
+   `newsletter` records the purpose: `false` for a lead-magnet block (`source: "lead-magnet"`), whose
+   consent covers the document only.
+4. Response: `201` for every real sign-up — also an address that is already subscribed, so
+   membership can't be enumerated — `400` invalid, `503` setup missing, `404` gated off. A
+   honeypot-filled submission also returns `201`, so bots learn nothing.
+5. The visitor taps **Confirm** on the link's page (below). A newsletter sign-up becomes a Resend
+   subscriber; a lead magnet is e-mailed; you get the owner alert.
 
 ## Emails (Studio → E-mails)
 
-Both are off by default and configured on the shared `emailStrings` entity (owned by
-`@indiecrafts/packages-web-email`, Studio → **E-mails**). The email secret is `RESEND_API_KEY` (env, server-only,
-never `NEXT_PUBLIC_`); unset → emails are skipped and the signup still works. (Lead magnets add a
-second secret — see below.) The `From` must be a
-**Resend-verified domain**. Verify delivery with the **Send test** action (Studio → E-mails → ⋯).
+Configured on the shared `emailStrings` entity (owned by `@indiecrafts/packages-web-email`,
+Studio → **E-mails**). The `From` must be a **Resend-verified domain**. Verify delivery with the
+**Send test** action (Studio → E-mails → ⋯).
 
-- **Confirmation → the subscriber** (`newsletterConfirm`) — the double opt-in email, with **copy
-  translated per language** (`subject`, `heading`, `intro`, `buttonLabel`, `outro`) + an optional
-  `BCC` (copy an admin on the confirmation). Seeded EN + FR.
-- **New-subscriber alert → you** (`newsletterOwner`) — `To`/`CC`/`BCC` (multi-email), `From`, and a
-  <code v-pre>{{email}}</code> subject.
+- **Confirmation → the subscriber** (`newsletterConfirm`, **required**) — the double opt-in email,
+  with **copy translated per language** (`subject`, `heading`, `intro`, `buttonLabel`, `outro`) + an
+  optional `BCC`. Seeded EN + FR; an empty field falls back to English or French.
+- **Confirmed-subscriber alert → you** (`newsletterOwner`, optional) — `To`/`CC`/`BCC`, `From`, and a
+  <code v-pre>{{email}}</code> subject. Sent on confirm, in the site's default language, with the
+  subscriber's language and source.
 
 ### Double opt-in
 
-When the confirmation email is enabled, a new subscriber is stored with a one-time `confirmToken`
-and mailed a link to the localized **confirm page** (`/<locale>/newsletter/confirm?token=…`). The
-page renders a **Confirm** button; only the button's `POST` flips the subscriber `pending → confirmed`
-and **clears the token** (single-use). The link works for **7 days** (`CONFIRM_TOKEN_DAYS`); after
-that the page says it expired, and signing up again sends a fresh one. A bare page load never mutates — so a mail scanner or
-link-prefetcher (Outlook SafeLinks, etc.) can't auto-confirm. When it's disabled, subscribers simply
-stay `pending` (mark them by hand in the desk if you like).
+The email links to the localized **confirm page** with the signed token in the URL **fragment**:
+`/<locale>/newsletter/confirm#t=…`. Browsers never send a fragment to a server, so the address in the
+token stays out of request logs. The page reads the token, drops it from the address bar and shows a
+**Confirm** button; only the button's `POST` to `/api/newsletter/confirm` confirms. A bare page load
+never does, so a mail scanner or link prefetcher (Outlook SafeLinks, …) can't confirm anyone.
+
+The link works for **7 days** (`CONFIRM_TOKEN_DAYS`); after that the page says it expired, and
+signing up again sends a fresh one. It is not single-use: tapping it again re-applies the same
+consent (the api keeps one proof row per link). When the api can't store the subscriber, the page
+says so and keeps the button, so the visitor can try again.
 
 ### Lead magnets (gated delivery)
 
 A **`leadMagnet`** doc (Studio) pairs a tag with an uploaded file. Drop a **`module.lead-magnet`**
-block instead of the plain newsletter block: on **confirm**, a subscriber whose tags include a magnet
-is e-mailed a **signed, expiring download link** (`/api/download` verifies it). This needs a second
-secret — **`LEAD_MAGNET_SECRET`** (env, server-only, HMAC signing); without it the download `403`s.
+block instead of the plain newsletter block: on **confirm**, the request's tags are checked and each
+magnet is e-mailed as a **signed, expiring download link** (`/api/download` verifies it, signed with
+the same `NEWSLETTER_SECRET`). A lead-magnet request never subscribes anyone to the newsletter.
 Delivery is best-effort — a failure never blocks the confirmation.
 
-Delivery happens **only on confirm**, so it needs the **newsletter confirmation email enabled**
-(`emailStrings.newsletterConfirm`). With it disabled, a lead-magnet subscriber stays `pending` and
-never gets the file.
+## Resend — the only list
 
-## Resend — one list
+On confirm, the website calls the api (`POST /v1/newsletter/subscribers`), which:
 
-The Sanity `subscriber` doc is the source of truth; Resend mirrors it so you send from one place.
+1. writes the **consent proof** to the main D1 `consent_events` table — a `visitor` row keyed by the
+   email's salted fingerprint (never the address), `consent_type: newsletter`, the policy version and
+   the time the link was issued;
+2. creates or updates the **Resend contact**: `unsubscribed: false`, the **`news` topic** opted in
+   (the topic the `emailPreferences` → `news` category points at), and the **`locale` property**;
+3. puts the contact in the **`newsletter-<locale>` segment** and takes it out of the other languages'.
 
-- **Confirm → Resend.** On confirm, a newsletter sign-up (not a lead-magnet-only one) is sent to the
-  api (`POST /v1/newsletter/subscribers`, `syncNewsletterContact`): the contact is created or updated
-  with the global flag `unsubscribed: false` and the **`news` topic** opted in — the topic the
-  `emailPreferences` → `news` category points at (its `resendTopicId`). Signed-in members who opt into
-  "news" are on the same topic, so a Broadcast to it reaches both.
-- **Unsubscribe → Sanity.** A Broadcast carries Resend's unsubscribe link. When someone opts out
-  (globally, or from the `news` topic), Resend calls the api webhook (`POST /v1/resend/webhook`,
-  Svix-signed with `RESEND_WEBHOOK_SECRET`), which sets the confirmed `subscriber` to `unsubscribed`.
-  The webhook never re-confirms anyone: coming back needs the double opt-in again.
-- **Not synced:** a status you change by hand in the Studio desk. Unsubscribe people from Resend (or
-  let them do it) so both sides agree.
-- **Without the api** (`API_URL` / `APP_API_TOKEN` unset) or without `RESEND_API_KEY`, nothing syncs —
-  the list stays Sanity-only, as before.
-- **Setup per env:** Resend → Webhooks → `https://<api host>/v1/resend/webhook`, events
-  `contact.updated`, `contact.deleted`, `contact.topics.updated`; store the signing secret as
-  `RESEND_WEBHOOK_SECRET`; set the `news` category's `resendTopicId` in Studio. Details:
-  [api](/shared/api/).
+Signed-in members who opt into "news" from their preferences get the same topic, property and
+segment. **Send an issue per language**: a Broadcast to `newsletter-fr` with the `news` topic reaches
+every French subscriber. Unsubscribing is Resend's own link in the Broadcast — nothing to sync back.
 
-## Studio — Abonnés
+**Setup per env:** run `pnpm resend:topics:sync` once (it creates the topics, the `locale` property
+and one `newsletter-<locale>` segment per site language), then paste the `news` topic id into Studio
+→ E-mails → Préférences. Details: [api](/shared/api/).
 
-With `features.newsletter` on, the Studio shows an **Abonnés** desk (mirrors the blog **Commentaires**
-desk) with three lists by status — **En attente**, **Confirmés**, **Désabonnés**, newest first.
-Subscribers are never editor-created; the desk is read/manage only. A lead-magnet-only sign-up shows
-"· document seulement" — it is not a newsletter subscriber.
+## Where subscribers live
+
+In **Resend** (Audience → Contacts, filtered by segment or topic). There is no Studio desk: the list
+lives where you send from.
 
 ## Export
 
-Subscribers live in Sanity, so export them any time:
-
 ```bash
-pnpm export:web:website:subscribers          # who may receive the newsletter
-pnpm export:web:website:subscribers --all    # every doc, for an audit — never mail this file
+pnpm export:web:website:subscribers          # every subscribed contact, per language
+pnpm export:web:website:subscribers --all    # also the unsubscribed ones, for an audit
 ```
 
-The default file holds only **confirmed newsletter subscribers** (`status: "confirmed"` and newsletter
-consent) — columns `email, language, source, createdAt`. Pending, unsubscribed and lead-magnet-only
-people are never in it. `--all` writes `subscribers-all-<timestamp>.csv` with every doc and its
-`status`, `newsletter` and `consent`. Read-only; needs `SANITY_API_READ_TOKEN` (or the write token) in
-`.env.local`.
+The file lists the `newsletter-<locale>` segments' contacts — columns `email, locale, unsubscribed,
+created_at`. Read-only; needs `RESEND_API_KEY` in `.env.local`. Resend data is not in the R2 backups,
+so keep an export if you need an offline copy.
 
 ## External provider
 
@@ -154,16 +153,14 @@ provider embeds usually already do.
 ## GDPR
 
 The consent checkbox is required — the submit button stays disabled until it is ticked, and
-`subscribe()` rejects a submission without `consent: true`. The stored `subscriber` records
-`consent`, `source` (the page the signup came from), `language` (the page's locale; the latest
-sign-up wins, so the confirm, lead-magnet and Resend steps follow it), and `createdAt`. Double opt-in adds
-a verified-intent step. No address is stored without an explicit opt-in.
+`subscribe()` rejects a submission without `consent: true`. Nothing is stored before the visitor
+confirms from their own inbox. The consent proof (D1 `consent_events`) records the policy version,
+the time and the country — never the address, only its salted fingerprint.
 
 - **Two purposes, two consents.** A lead-magnet sign-up agrees to receive a document, not the
-  newsletter: it is stored with `newsletter: false`, never exported, and never added to the Resend
-  `news` topic.
-- **Erasure** (`/erasure`, a data request) pseudonymises the `subscriber` doc and, with Resend wired,
-  deletes the Resend contact (the api's `resend` erasure adapter).
+  newsletter: it is never added to Resend.
+- **Erasure** (`/erasure`, a data request) deletes the Resend contact (the api's `resend` erasure
+  adapter) and erases the consent rows by fingerprint. A data export includes the Resend contact.
 
 ## The block
 

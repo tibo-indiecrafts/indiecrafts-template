@@ -10,7 +10,7 @@ import { emailGroups } from "./email";
 
 /**
  * The newsletter module's Sanity contribution — the `newsletterSettings`
- * singleton + `subscriber` doc + the desk sections + its two `emailStrings`
+ * singleton + the `leadMagnet` doc + the desk sections + its two `emailStrings`
  * groups. Called with the app's `features.newsletter` (like `emailSanity(...)`):
  * `enabled` false hides the desk section (schema + email groups still register).
  * Add `newsletterSanity(features.newsletter)` to the modules array in

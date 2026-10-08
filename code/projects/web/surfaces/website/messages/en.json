@@ -279,6 +279,8 @@
       "confirmedBody": "Your subscription is confirmed. Welcome aboard — keep an eye on your inbox.",
       "invalidHeading": "This link has expired",
       "invalidBody": "This confirmation link is no longer valid — it may have already been used, or it timed out. Try subscribing again.",
+      "errorHeading": "Something went wrong",
+      "errorBody": "We couldn't save your subscription. Please try again in a moment.",
       "homeCta": "Back home"
     },
     "emailPreferences": {
@@ -479,7 +481,7 @@
     "error": "Something went wrong. Please try again.",
     "newsletter": {
       "button": "Subscribe",
-      "success": "Thanks! Your sign-up is saved.",
+      "success": "Almost there — check your inbox to confirm your subscription.",
       "consent": "I agree to receive the newsletter and that my email address is kept for that purpose."
     },
     "waitlist": {
@@ -489,7 +491,7 @@
     },
     "leadMagnet": {
       "button": "Get the document",
-      "success": "Thanks! Your document is on its way to your inbox.",
+      "success": "Almost there — confirm from your inbox and we'll send your document.",
       "consent": "I agree to receive this document and that my email address is kept for that purpose."
     },
     "contact": {

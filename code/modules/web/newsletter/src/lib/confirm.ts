@@ -1,68 +1,169 @@
 /**
- * Confirms a pending subscriber from its one-time double opt-in token.
+ * Sign and verify the double opt-in token, and confirm a subscription from it.
  *
  * @see docs/reference/modules/web/newsletter/src/lib/confirm.md
  */
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";
-import { writeClient } from "@indiecrafts/packages-web-sanity/write";
-import { defaultLocale } from "@indiecrafts/packages-shared-config";
+import {
+  defaultLocale,
+  isLocale,
+  localeCodes,
+} from "@indiecrafts/packages-shared-config";
+import {
+  signHmac,
+  verifyHmac,
+} from "@indiecrafts/packages-shared-gated-delivery";
+import { sendEmail } from "@indiecrafts/packages-web-email";
+import {
+  getEmailStrings,
+  pick,
+  type OwnerAlertConfig,
+} from "@indiecrafts/packages-web-email/strings";
+import {
+  cleanList,
+  isValidEmail,
+} from "@indiecrafts/packages-shared-utils/form";
+import { renderNewsletterNotificationEmail } from "../emails/newsletter-notification";
 import { deliverMagnetsForTags } from "./deliver-magnet";
-import { wantsNewsletter } from "./purpose";
-import { syncNewsletterContact } from "./newsletter-contact";
+import { subscribeContact } from "./newsletter-contact";
 
 /** A confirmation link works this many days; after that the visitor signs up again. */
 export const CONFIRM_TOKEN_DAYS = 7;
 
 /**
- * Double opt-in confirm — flips a `pending` subscriber to `confirmed` when its
- * one-time `confirmToken` matches, then clears the token (single-use). A bad,
- * already-used or expired token (older than `CONFIRM_TOKEN_DAYS`) is a no-op. Called
- * by `/api/newsletter/confirm`.
- *
- * On success, if the subscriber signed up via a `module.lead-magnet` block (the
- * magnet doc id is stored in `tags`), the gated download is e-mailed — best-effort,
- * so a delivery failure never turns a real confirmation into an error. A newsletter
- * sign-up (not a lead-magnet-only one) is then mirrored to Resend's `news` topic.
+ * Everything a confirmation needs, carried by the signed link — nothing is stored at
+ * sign-up. `newsletter` is false for a lead-magnet-only request: its consent covers the
+ * document, not the newsletter. `issuedAt` is the consent time recorded on confirm.
  */
-export async function confirmSubscriber(
+export type ConfirmPayload = {
+  email: string;
+  locale: string;
+  newsletter: boolean;
+  tags: string[];
+  source?: string;
+  policyVersion: string;
+  issuedAt: string;
+};
+
+/** Sign the payload with `NEWSLETTER_SECRET`, valid `CONFIRM_TOKEN_DAYS`. */
+export async function signConfirmToken(
+  payload: ConfirmPayload,
+  secret: string,
+): Promise<string> {
+  const exp = Date.parse(payload.issuedAt) + CONFIRM_TOKEN_DAYS * 86_400_000;
+  return signHmac({ ...payload, exp }, secret);
+}
+
+/** The payload of a valid, unexpired token; null for anything else (never throws). */
+export async function verifyConfirmToken(
   token: string,
-  now: Date = new Date(),
-): Promise<"confirmed" | "invalid"> {
-  const t = token.trim();
-  if (!t) return "invalid";
-  const since = new Date(
-    now.getTime() - CONFIRM_TOKEN_DAYS * 86_400_000,
-  ).toISOString();
-  try {
-    const doc = await writeClient.fetch<{
-      _id: string;
-      email: string;
-      language?: string;
-      tags?: string[];
-      newsletter?: boolean | null;
-      source?: string | null;
-    } | null>(
-      `*[_type == "subscriber" && confirmToken == $t && status == "pending" && confirmTokenAt > $since][0]{ _id, email, language, tags, newsletter, source }`,
-      { t, since },
-    );
-    if (!doc?._id) return "invalid";
-    await writeClient
-      .patch(doc._id)
-      .set({ status: "confirmed" })
-      .unset(["confirmToken", "confirmTokenAt"])
-      .commit();
-    await deliverMagnetsForTags(doc.email, doc.tags, doc.language);
-    if (wantsNewsletter(doc))
-      await syncNewsletterContact({
-        email: doc.email,
-        locale: doc.language ?? defaultLocale,
-        granted: true,
+  secret: string,
+  now: number = Date.now(),
+): Promise<ConfirmPayload | null> {
+  const p = await verifyHmac(token.trim(), secret);
+  if (
+    !p ||
+    typeof p.exp !== "number" ||
+    p.exp <= now ||
+    typeof p.email !== "string" ||
+    !isValidEmail(p.email) ||
+    typeof p.locale !== "string" ||
+    !isLocale(p.locale, localeCodes) ||
+    typeof p.newsletter !== "boolean" ||
+    !Array.isArray(p.tags) ||
+    !p.tags.every((t) => typeof t === "string") ||
+    typeof p.policyVersion !== "string" ||
+    typeof p.issuedAt !== "string"
+  )
+    return null;
+  return {
+    email: p.email,
+    locale: p.locale,
+    newsletter: p.newsletter,
+    tags: p.tags as string[],
+    ...(typeof p.source === "string" ? { source: p.source } : {}),
+    policyVersion: p.policyVersion,
+    issuedAt: p.issuedAt,
+  };
+}
+
+/**
+ * Double opt-in confirm, called by the POST `/api/newsletter/confirm` route (a human tap on
+ * the confirm page — a bare page load never confirms). A bad or expired token is
+ * `invalid`. A newsletter sign-up becomes a Resend subscriber through the api; when that
+ * fails, the answer is `error` (nothing confirmed — the visitor can tap again). Then any
+ * lead magnet is e-mailed and the owner is alerted, both best-effort.
+ *
+ * The token is not single-use: tapping the same link again re-applies the same consent
+ * (the api dedupes the consent proof on `issuedAt`).
+ */
+export async function confirmSubscription(
+  token: string,
+  now: number = Date.now(),
+): Promise<"confirmed" | "invalid" | "error"> {
+  const secret = process.env.NEWSLETTER_SECRET;
+  if (!secret || !token.trim()) return "invalid";
+  const p = await verifyConfirmToken(token, secret, now);
+  if (!p) return "invalid";
+  if (p.newsletter) {
+    try {
+      await subscribeContact({
+        email: p.email,
+        locale: p.locale,
+        policyVersion: p.policyVersion,
+        consentAt: p.issuedAt,
       });
-    return "confirmed";
+    } catch (error) {
+      logger.error("newsletter confirm failed", { error });
+      return "error";
+    }
+  }
+  await deliverMagnetsForTags(p.email, p.tags, p.locale);
+  await notifyOwner(p);
+  return "confirmed";
+}
+
+/** New-subscriber alert → the site owner, in the site's default locale. Never throws. */
+async function notifyOwner(p: ConfirmPayload): Promise<void> {
+  try {
+    const strings = (await getEmailStrings()) as {
+      newsletterOwner?: OwnerAlertConfig;
+      supportEmail?: string;
+      bccAll?: string;
+    } | null;
+    const cfg = strings?.newsletterOwner;
+    const to = cleanList(cfg?.to);
+    if (!cfg?.enabled || to.length === 0 || !process.env.RESEND_API_KEY) return;
+    const from = cfg.from?.trim();
+    if (!from) {
+      logger.error("newsletter owner alert skipped: no `from` configured");
+      return;
+    }
+    // CMS bcc honored only behind the infra gate (unset in prod). QA-only.
+    const bccAll = process.env.EMAIL_BCC_ALL_ENABLED
+      ? strings?.bccAll
+      : undefined;
+    const message = renderNewsletterNotificationEmail({
+      locale: defaultLocale,
+      subscriberEmail: p.email,
+      subscriberLocale: p.locale,
+      source: p.source,
+      subjectTemplate: cfg.subject ?? undefined,
+      heading: pick(cfg.heading, defaultLocale) || undefined,
+      intro: pick(cfg.intro, defaultLocale) || undefined,
+      outro: pick(cfg.outro, defaultLocale) || undefined,
+      supportEmail: strings?.supportEmail,
+    });
+    await sendEmail({
+      from,
+      to,
+      cc: cleanList(cfg.cc),
+      bcc: cleanList([...(cfg.bcc ?? []), bccAll ?? ""]),
+      ...message,
+    });
   } catch (error) {
-    logger.error("newsletter confirm failed", { error });
-    return "invalid";
+    logger.error("newsletter owner alert failed", { error });
   }
 }

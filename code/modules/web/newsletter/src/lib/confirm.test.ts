@@ -1,91 +1,127 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+// @vitest-environment node
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// Fluent write-client mock: patch(id).set(x).unset([...]).commit(). deliverMagnets
-// is stubbed (it imports gated-delivery + email, which read env at load).
-const { fetch, patch, set, unset, commit, deliverMagnetsForTags } = vi.hoisted(
-  () => {
-    const commit = vi.fn(async () => ({}));
-    const unset = vi.fn(() => ({ commit }));
-    const set = vi.fn(() => ({ unset }));
-    const patch = vi.fn(() => ({ set }));
-    const fetch = vi.fn();
-    const deliverMagnetsForTags = vi.fn(async () => undefined);
-    return { fetch, patch, set, unset, commit, deliverMagnetsForTags };
-  },
-);
-
-vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
-  writeClient: { fetch, patch },
-}));
+const { subscribeContact, deliverMagnetsForTags, sendEmail, getEmailStrings } =
+  vi.hoisted(() => ({
+    subscribeContact: vi.fn(async (_i: unknown) => undefined),
+    deliverMagnetsForTags: vi.fn(async (..._a: unknown[]) => undefined),
+    sendEmail: vi.fn(async (_m: { to: string[]; text: string }) => undefined),
+    getEmailStrings: vi.fn(async () => null as unknown),
+  }));
+vi.mock("./newsletter-contact", () => ({ subscribeContact }));
 vi.mock("./deliver-magnet", () => ({ deliverMagnetsForTags }));
-const syncNewsletterContact = vi.hoisted(() => vi.fn(async () => undefined));
-vi.mock("./newsletter-contact", () => ({ syncNewsletterContact }));
+vi.mock("@indiecrafts/packages-web-email/strings", () => ({
+  getEmailStrings,
+  pick: () => "",
+}));
+vi.mock("@indiecrafts/packages-web-email", () => ({
+  sendEmail,
+  renderEmailLayout: () => "",
+  escapeHtml: (s: string) => s,
+  EMAIL_COLORS: new Proxy({}, { get: () => "#000000" }),
+}));
 
-const { confirmSubscriber } = await import("./confirm");
+const {
+  CONFIRM_TOKEN_DAYS,
+  confirmSubscription,
+  signConfirmToken,
+  verifyConfirmToken,
+} = await import("./confirm");
 
-afterEach(() => vi.clearAllMocks());
+const SECRET = "test-newsletter-secret";
+const ISSUED = "2026-10-08T10:00:00.000Z";
+const T0 = Date.parse(ISSUED);
+const payload = {
+  email: "a@b.com",
+  locale: "fr",
+  newsletter: true,
+  tags: [] as string[],
+  source: "/blog/x",
+  policyVersion: "v2",
+  issuedAt: ISSUED,
+};
 
-describe("confirmSubscriber", () => {
-  it("an empty token is invalid without a lookup", async () => {
-    expect(await confirmSubscriber("  ")).toBe("invalid");
-    expect(fetch).not.toHaveBeenCalled();
+beforeEach(() => vi.stubEnv("NEWSLETTER_SECRET", SECRET));
+afterEach(() => {
+  vi.clearAllMocks();
+  vi.unstubAllEnvs();
+});
+
+describe("signConfirmToken / verifyConfirmToken", () => {
+  it("round-trips the payload until it expires", async () => {
+    const token = await signConfirmToken(payload, SECRET);
+    expect(await verifyConfirmToken(token, SECRET, T0 + 1000)).toEqual(payload);
+    const end = T0 + CONFIRM_TOKEN_DAYS * 86_400_000;
+    expect(await verifyConfirmToken(token, SECRET, end)).toBeNull();
   });
 
-  it("an unknown / already-used token is invalid, no write", async () => {
-    fetch.mockResolvedValueOnce(null);
-    expect(await confirmSubscriber("nope")).toBe("invalid");
-    expect(patch).not.toHaveBeenCalled();
-  });
-
-  it("flips a pending subscriber to confirmed, clears the token, delivers magnets", async () => {
-    fetch.mockResolvedValueOnce({
-      _id: "sub.1",
-      email: "a@b.com",
-      language: "fr",
-      tags: ["magnet.1"],
-      source: "lead-magnet",
-      newsletter: false,
-    });
-    expect(await confirmSubscriber("tok")).toBe("confirmed");
-    expect(patch).toHaveBeenCalledWith("sub.1");
-    expect(set).toHaveBeenCalledWith({ status: "confirmed" });
-    expect(unset).toHaveBeenCalledWith(["confirmToken", "confirmTokenAt"]);
-    expect(deliverMagnetsForTags).toHaveBeenCalledWith(
-      "a@b.com",
-      ["magnet.1"],
-      "fr",
+  it("refuses a tampered token, another secret or a bad payload", async () => {
+    const token = await signConfirmToken(payload, SECRET);
+    expect(await verifyConfirmToken(`x${token}`, SECRET, T0)).toBeNull();
+    expect(await verifyConfirmToken(token, "other", T0)).toBeNull();
+    const badLocale = await signConfirmToken(
+      { ...payload, locale: "xx" },
+      SECRET,
     );
-    // A lead-magnet-only sign-up never joins the newsletter in Resend.
-    expect(syncNewsletterContact).not.toHaveBeenCalled();
+    expect(await verifyConfirmToken(badLocale, SECRET, T0)).toBeNull();
+    const badEmail = await signConfirmToken(
+      { ...payload, email: "nope" },
+      SECRET,
+    );
+    expect(await verifyConfirmToken(badEmail, SECRET, T0)).toBeNull();
+  });
+});
+
+describe("confirmSubscription", () => {
+  it("is invalid without a token, without the secret, or for a bad token", async () => {
+    expect(await confirmSubscription("  ", T0)).toBe("invalid");
+    expect(await confirmSubscription("garbage", T0)).toBe("invalid");
+    const token = await signConfirmToken(payload, SECRET);
+    vi.stubEnv("NEWSLETTER_SECRET", "");
+    expect(await confirmSubscription(token, T0)).toBe("invalid");
+    expect(subscribeContact).not.toHaveBeenCalled();
   });
 
-  it("a confirmed newsletter sign-up is mirrored to Resend's news topic", async () => {
-    fetch.mockResolvedValueOnce({
-      _id: "sub.2",
-      email: "n@b.com",
-      newsletter: true,
+  it("subscribes a newsletter sign-up with its consent proof, then delivers + alerts", async () => {
+    vi.stubEnv("RESEND_API_KEY", "re_x");
+    getEmailStrings.mockResolvedValue({
+      newsletterOwner: {
+        enabled: true,
+        to: ["owner@site.test"],
+        from: "hi@site.test",
+      },
     });
-    expect(await confirmSubscriber("tok")).toBe("confirmed");
-    expect(syncNewsletterContact).toHaveBeenCalledWith({
-      email: "n@b.com",
-      locale: "en",
-      granted: true,
+    const token = await signConfirmToken({ ...payload, tags: ["m1"] }, SECRET);
+    expect(await confirmSubscription(token, T0 + 1000)).toBe("confirmed");
+    expect(subscribeContact).toHaveBeenCalledWith({
+      email: "a@b.com",
+      locale: "fr",
+      policyVersion: "v2",
+      consentAt: ISSUED,
     });
+    expect(deliverMagnetsForTags).toHaveBeenCalledWith("a@b.com", ["m1"], "fr");
+    const alert = sendEmail.mock.calls[0]?.[0];
+    expect(alert?.to).toEqual(["owner@site.test"]);
+    expect(alert?.text).toContain("a@b.com");
   });
 
-  it("only matches a token issued within the last 7 days", async () => {
-    fetch.mockResolvedValueOnce(null);
-    await confirmSubscriber("tok", new Date("2026-10-08T12:00:00Z"));
-    const [query, params] = fetch.mock.calls[0] as [
-      string,
-      Record<string, string>,
-    ];
-    expect(query).toContain("confirmTokenAt > $since");
-    expect(params.since).toBe("2026-10-01T12:00:00.000Z");
+  it("never subscribes a lead-magnet-only request, but sends its document", async () => {
+    const token = await signConfirmToken(
+      { ...payload, newsletter: false, tags: ["m1"] },
+      SECRET,
+    );
+    expect(await confirmSubscription(token, T0)).toBe("confirmed");
+    expect(subscribeContact).not.toHaveBeenCalled();
+    expect(deliverMagnetsForTags).toHaveBeenCalledWith("a@b.com", ["m1"], "fr");
   });
 
-  it("a write failure is swallowed to invalid, never throws", async () => {
-    fetch.mockRejectedValueOnce(new Error("network"));
-    expect(await confirmSubscriber("tok")).toBe("invalid");
+  it("answers error (and sends nothing) when the api fails", async () => {
+    subscribeContact.mockRejectedValueOnce(
+      new Error("newsletter/subscribers 502"),
+    );
+    const token = await signConfirmToken({ ...payload, tags: ["m1"] }, SECRET);
+    expect(await confirmSubscription(token, T0)).toBe("error");
+    expect(deliverMagnetsForTags).not.toHaveBeenCalled();
+    expect(sendEmail).not.toHaveBeenCalled();
   });
 });

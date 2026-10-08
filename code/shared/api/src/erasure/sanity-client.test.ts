@@ -24,13 +24,13 @@ describe("createRealSanityClient", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
     const client = createRealSanityClient(cfg);
-    const docs = await client.findByEmail("subscriber", "X@Y.com");
+    const docs = await client.findByEmail("waitlistEntry", "X@Y.com");
     expect(docs).toEqual([{ _id: "sub1" }]);
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe(
       `https://${cfg.projectId}.api.sanity.io/v${cfg.apiVersion}/data/query/${cfg.dataset}` +
         `?query=${encodeURIComponent("*[_type == $type && email == $email]{ _id }")}` +
-        `&$type=${encodeURIComponent(JSON.stringify("subscriber"))}` +
+        `&$type=${encodeURIComponent(JSON.stringify("waitlistEntry"))}` +
         `&$email=${encodeURIComponent(JSON.stringify("x@y.com"))}`,
     );
     expect(init.headers).toEqual({ authorization: `Bearer ${cfg.readToken}` });
@@ -42,7 +42,7 @@ describe("createRealSanityClient", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
     const client = createRealSanityClient({ ...cfg, readToken: undefined });
-    const docs = await client.findByEmail("subscriber", "x@y.com");
+    const docs = await client.findByEmail("waitlistEntry", "x@y.com");
     expect(docs).toEqual([]);
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(init.headers).toEqual({});
@@ -54,9 +54,9 @@ describe("createRealSanityClient", () => {
       vi.fn(async () => jsonResponse({}, false, 500)),
     );
     const client = createRealSanityClient(cfg);
-    await expect(client.findByEmail("subscriber", "x@y.com")).rejects.toThrow(
-      "sanity query 500",
-    );
+    await expect(
+      client.findByEmail("waitlistEntry", "x@y.com"),
+    ).rejects.toThrow("sanity query 500");
   });
 
   it("pseudonymise POSTs /data/mutate with the patch mutation and the write token", async () => {

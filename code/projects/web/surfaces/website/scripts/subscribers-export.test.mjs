@@ -1,72 +1,78 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createRequire } from "node:module";
-import { exportQuery, toCsv } from "./subscribers-export.mjs";
+import { FIELDS, fetchSubscribers, toCsv } from "./subscribers-export.mjs";
 
-// The real GROQ evaluator (groq-js, a website dependency) runs the export filter on fixtures.
-const require = createRequire(new URL("../package.json", import.meta.url));
-const { parse, evaluate } = require("groq-js");
-const docs = [
-  {
-    _type: "subscriber",
-    email: "ok@x.com",
-    status: "confirmed",
-    newsletter: true,
-    createdAt: "3",
-  },
-  {
-    _type: "subscriber",
-    email: "legacy@x.com",
-    status: "confirmed",
-    source: "/blog",
-    createdAt: "2",
-  },
-  {
-    _type: "subscriber",
-    email: "magnet@x.com",
-    status: "confirmed",
-    newsletter: false,
-    source: "lead-magnet",
-    createdAt: "1",
-  },
-  {
-    _type: "subscriber",
-    email: "oldmagnet@x.com",
-    status: "confirmed",
-    source: "lead-magnet",
-    createdAt: "1",
-  },
-  {
-    _type: "subscriber",
-    email: "pending@x.com",
-    status: "pending",
-    newsletter: true,
-    createdAt: "1",
-  },
-  {
-    _type: "subscriber",
-    email: "gone@x.com",
-    status: "unsubscribed",
-    newsletter: true,
-    createdAt: "1",
-  },
-];
-const run = async (all) =>
-  (await (await evaluate(parse(exportQuery(all).query), { dataset: docs })).get()).map(
-    (r) => r.email,
-  );
+/** A mocked Resend: two language segments (the `en` one spans two pages) + one other segment. */
+function mockResend() {
+  const calls = [];
+  const pages = {
+    "/segments/seg-en/contacts?limit=100": {
+      has_more: true,
+      data: [
+        { id: "c1", email: "a@x.com", unsubscribed: false, created_at: "2026-10-01" },
+        { id: "c2", email: "gone@x.com", unsubscribed: true, created_at: "2026-10-02" },
+      ],
+    },
+    "/segments/seg-en/contacts?limit=100&after=c2": {
+      has_more: false,
+      data: [
+        { id: "c3", email: "b@x.com", unsubscribed: false, created_at: "2026-10-03" },
+      ],
+    },
+    "/segments/seg-fr/contacts?limit=100": {
+      has_more: false,
+      data: [
+        { id: "c4", email: "c@x.com", unsubscribed: false, created_at: "2026-10-04" },
+      ],
+    },
+  };
+  const doFetch = async (url, init) => {
+    const path = url.replace("https://api.resend.com", "");
+    calls.push({ path, auth: init.headers.Authorization });
+    if (path === "/segments?limit=100")
+      return Response.json({
+        data: [
+          { id: "seg-en", name: "newsletter-en" },
+          { id: "seg-fr", name: "newsletter-fr" },
+          { id: "seg-vip", name: "vip" },
+        ],
+      });
+    return pages[path] ? Response.json(pages[path]) : new Response("{}", { status: 404 });
+  };
+  return { calls, doFetch };
+}
 
-test("the default export holds only confirmed newsletter subscribers", async () => {
-  assert.deepEqual(await run(false), ["ok@x.com", "legacy@x.com"]);
+test("exports every newsletter segment's subscribed contacts, locale from the segment name", async () => {
+  const { calls, doFetch } = mockResend();
+  const rows = await fetchSubscribers("re_k", { doFetch });
+  assert.deepEqual(rows, [
+    { email: "a@x.com", locale: "en", unsubscribed: false, created_at: "2026-10-01" },
+    { email: "b@x.com", locale: "en", unsubscribed: false, created_at: "2026-10-03" },
+    { email: "c@x.com", locale: "fr", unsubscribed: false, created_at: "2026-10-04" },
+  ]);
+  assert.ok(calls.every((c) => c.auth === "Bearer re_k"));
+  assert.ok(!calls.some((c) => c.path.includes("seg-vip")));
 });
 
-test("--all lists every doc, with status and consent columns", async () => {
-  assert.equal((await run(true)).length, docs.length);
-  assert.ok(exportQuery(true).fields.includes("status"));
-  assert.ok(exportQuery(true).fields.includes("newsletter"));
+test("--all keeps unsubscribed contacts", async () => {
+  const rows = await fetchSubscribers("re_k", {
+    all: true,
+    doFetch: mockResend().doFetch,
+  });
+  assert.equal(rows.length, 4);
+  assert.equal(rows.find((r) => r.email === "gone@x.com").unsubscribed, true);
 });
 
-test("cells are formula-injection-safe", () => {
-  const csv = toCsv(["email"], [{ email: "=HYPERLINK(1)" }]);
-  assert.ok(!csv.split("\n")[1].startsWith('"='));
+test("a Resend error throws", async () => {
+  const doFetch = async () => new Response("{}", { status: 401 });
+  await assert.rejects(fetchSubscribers("bad", { doFetch }), /resend GET \/segments 401/);
+});
+
+test("the CSV has the four columns and formula-injection-safe cells", () => {
+  const csv = toCsv(FIELDS, [
+    { email: "=HYPERLINK(1)", locale: "en", unsubscribed: false, created_at: "x" },
+  ]);
+  const [head, row] = csv.split("\n");
+  assert.equal(head, "email,locale,unsubscribed,created_at");
+  assert.ok(row.startsWith("'="));
 });

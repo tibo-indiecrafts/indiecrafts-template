@@ -65,7 +65,8 @@ export default defineModule({
       name: "successMessage",
       title: "Message après inscription",
       type: "string",
-      initialValue: "Merci ! Votre document arrive dans votre boîte e-mail.",
+      initialValue:
+        "Presque terminé — confirmez depuis votre boîte mail et nous vous envoyons le document.",
     }),
     defineField({
       name: "errorMessage",

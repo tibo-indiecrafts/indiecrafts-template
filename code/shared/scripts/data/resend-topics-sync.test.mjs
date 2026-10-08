@@ -1,10 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   resolveKey,
   topicPayload,
   findTopicId,
   TOPICS,
+  siteLocales,
+  missingSegments,
+  localePropertyPayload,
 } from "./resend-topics-sync.mjs";
 
 test("resolveKey throws without a key", () => {
@@ -50,4 +54,40 @@ test("TOPICS covers the four categories + churned + general", () => {
     "partners",
     "tips",
   ]);
+});
+
+test("siteLocales reads the codes + default from the real shared config", () => {
+  const source = readFileSync(
+    new URL(
+      "../../../packages/shared/config/src/shared/i18n.ts",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  const { codes, defaultLocale } = siteLocales(source);
+  assert.ok(codes.length > 0);
+  assert.ok(codes.includes(defaultLocale));
+});
+
+test("missingSegments lists only the absent newsletter-<code> segments", () => {
+  const list = {
+    data: [
+      { id: "s1", name: "newsletter-en" },
+      { id: "s2", name: "vip" },
+    ],
+  };
+  assert.deepEqual(missingSegments(list, ["en", "fr"]), ["newsletter-fr"]);
+  assert.deepEqual(missingSegments({ data: [] }, ["en"]), ["newsletter-en"]);
+});
+
+test("localePropertyPayload creates the property once, with the default as fallback", () => {
+  assert.deepEqual(localePropertyPayload({ data: [] }, "en"), {
+    key: "locale",
+    type: "string",
+    fallback_value: "en",
+  });
+  assert.equal(
+    localePropertyPayload({ data: [{ id: "p1", key: "locale" }] }, "en"),
+    null,
+  );
 });

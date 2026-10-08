@@ -1,5 +1,5 @@
 /**
- * Pseudonymise subject emails in the subscriber and waitlistEntry docs.
+ * Pseudonymise subject emails in the waitlistEntry docs.
  *
  * @see docs/reference/shared/api/src/erasure/sanity.md
  */
@@ -11,9 +11,10 @@ import type {
   ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
 
-// The Sanity docs that hold a subject email. Pseudonymised (not deleted) so the
-// marketing/waitlist records survive with the email replaced by its fingerprint.
-const SANITY_ERASURE_TYPES = ["subscriber", "waitlistEntry"] as const;
+// The Sanity docs that hold a subject email. Pseudonymised (not deleted) so the waitlist
+// records survive with the email replaced by its fingerprint. Newsletter subscribers live in
+// Resend only (the `resend` adapter).
+const SANITY_ERASURE_TYPES = ["waitlistEntry"] as const;
 
 // The minimal Sanity surface the adapter needs. The real client (raw-HTTP mutate
 // against /data/mutate, or writeClient in a Next context) is wired in Phase 4.

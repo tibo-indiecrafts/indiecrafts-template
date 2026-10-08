@@ -34,7 +34,7 @@ import {
 // 1. On confirm — sign a 7-day link and e-mail it.
 const token = await signDownloadToken(
   { assetId: magnet._id, exp: Date.now() + 7 * 24 * 60 * 60 * 1000 },
-  process.env.LEAD_MAGNET_SECRET!,
+  process.env.NEWSLETTER_SECRET!,
 );
 const url = `${site.url}/api/download?token=${encodeURIComponent(token)}`;
 
@@ -60,6 +60,6 @@ The lead-magnet wiring lives in the newsletter module
 
 ## Config
 
-`LEAD_MAGNET_SECRET` (server-only, never `NEXT_PUBLIC_`) is the HMAC key. Unset → no token can
+The consumer picks the HMAC key; the newsletter module uses `NEWSLETTER_SECRET` (server-only, never `NEXT_PUBLIC_`), the same key as its confirm link. Unset → no token can
 be signed or verified, so delivery is off. Generate with `openssl rand -hex 32`; keep it stable
 (rotating invalidates live links).

@@ -110,9 +110,10 @@ The mapping is **data-driven** — edit a category's signals in Sanity, no code 
 - **Policy-linked re-consent** — the effective `version` = `cookieConsent.version` + the
   **cookie-policy** page's `lastUpdated` (composed in `getCookieConsent`). Publish a cookie-policy
   update → every visitor is re-prompted, no manual version bump.
-- **Opt-in proof of consent** — newsletter/waitlist submissions are stamped with the
-  **privacy-policy version** the person accepted + the timestamp (`consentPolicyVersion` on the
-  `subscriber` / `waitlistEntry` doc). The version is derived **server-side** by the app route
+- **Opt-in proof of consent** — newsletter/waitlist submissions carry the **privacy-policy
+  version** the person accepted + the timestamp: `consentPolicyVersion` on the `waitlistEntry` doc;
+  for the newsletter, a `consent_events` row in D1 written on confirm (the version rides in the signed
+  confirm link). The version is derived **server-side** by the app route
   (`getConsentPolicyVersion()`, `@indiecrafts/packages-web-compliance/sanity/policy-version`) and passed to the module engine — never
   from the request. Defensible proof for email marketing (GDPR Art. 7).
 

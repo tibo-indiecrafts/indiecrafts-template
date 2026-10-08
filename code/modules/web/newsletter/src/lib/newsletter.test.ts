@@ -1,29 +1,15 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+// @vitest-environment node
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// Fluent write-client mock: fetch + create + patch(id).set(x).commit() and
-// patch(id).set(x).unset([...]).commit(). getEmailStrings is a vi.fn so a test can
-// arm the confirm-email path per case.
-const { fetch, patch, set, unset, commit, create, getEmailStrings } =
-  vi.hoisted(() => {
-    const commit = vi.fn(async () => ({}));
-    const unset = vi.fn(() => ({ commit }));
-    const set = vi.fn(() => ({ commit, unset }));
-    const patch = vi.fn(() => ({ set }));
-    const create = vi.fn(async () => ({}));
-    const fetch = vi.fn();
-    const getEmailStrings = vi.fn(async () => null as unknown);
-    return { fetch, patch, set, unset, commit, create, getEmailStrings };
-  });
-
-vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
-  writeClient: { fetch, patch, create },
+const { getEmailStrings, sendEmail } = vi.hoisted(() => ({
+  getEmailStrings: vi.fn(async () => null as unknown),
+  sendEmail: vi.fn(
+    async (_m: { to: string[]; subject: string; text: string }) => undefined,
+  ),
 }));
 vi.mock("@indiecrafts/packages-web-email/strings", () => ({
   getEmailStrings,
   pick: () => "",
-}));
-const { sendEmail } = vi.hoisted(() => ({
-  sendEmail: vi.fn(async (_m: { subject: string; text: string }) => undefined),
 }));
 vi.mock("@indiecrafts/packages-web-email", () => ({
   sendEmail,
@@ -33,15 +19,36 @@ vi.mock("@indiecrafts/packages-web-email", () => ({
   EMAIL_COLORS: new Proxy({}, { get: () => "#000000" }),
 }));
 
-const { deliverMagnetsForTags, syncNewsletterContact } = vi.hoisted(() => ({
-  deliverMagnetsForTags: vi.fn(async () => undefined),
-  syncNewsletterContact: vi.fn(async () => undefined),
-}));
-vi.mock("./deliver-magnet", () => ({ deliverMagnetsForTags }));
-vi.mock("./newsletter-contact", () => ({ syncNewsletterContact }));
+// Sign-up never delivers a document; the real module would load the Sanity client.
+vi.mock("./deliver-magnet", () => ({ deliverMagnetsForTags: vi.fn() }));
 
 const { validateSubscribe, subscribe } = await import("./newsletter");
+const { verifyConfirmToken } = await import("./confirm");
 
+const SECRET = "test-newsletter-secret";
+const NOW = Date.parse("2026-10-08T10:00:00.000Z");
+const input = { email: "New@B.com", consent: true, source: "/blog/x" };
+
+/** Arm every requirement of a sign-up: secret, Resend, the confirm email, the api. */
+function armed() {
+  vi.stubEnv("NEWSLETTER_SECRET", SECRET);
+  vi.stubEnv("RESEND_API_KEY", "re_x");
+  vi.stubEnv("API_URL", "https://api.test");
+  vi.stubEnv("APP_API_TOKEN", "tok");
+  getEmailStrings.mockResolvedValue({
+    newsletterConfirm: { enabled: true, from: "hi@site.test" },
+  });
+}
+
+/** The confirm link of the last email, and the payload its token carries. */
+async function sentLink() {
+  const mail = sendEmail.mock.calls.at(-1)?.[0];
+  const link = mail?.text.match(/https?:\/\/\S+/)?.[0] ?? "";
+  const token = decodeURIComponent(link.split("#t=")[1] ?? "");
+  return { mail, link, payload: await verifyConfirmToken(token, SECRET, NOW) };
+}
+
+beforeEach(armed);
 afterEach(() => {
   vi.clearAllMocks();
   vi.unstubAllEnvs();
@@ -81,188 +88,85 @@ describe("validateSubscribe", () => {
 });
 
 describe("subscribe", () => {
-  const input = { email: "a@b.com", consent: true };
-
-  it("an already-confirmed email is a no-op (already, no write)", async () => {
-    fetch.mockResolvedValueOnce({ _id: "sub.1", status: "confirmed" });
-    expect(await subscribe(input, "2026-01-01", "v1")).toEqual({
+  it("stores nothing and mails a signed link carrying the sign-up", async () => {
+    expect(
+      await subscribe({ ...input, language: "fr", tags: ["m1"] }, "v2", NOW),
+    ).toEqual({
       ok: true,
-      already: true,
     });
-    expect(patch).not.toHaveBeenCalled();
-    expect(create).not.toHaveBeenCalled();
-    expect(syncNewsletterContact).not.toHaveBeenCalled();
-  });
-
-  it("a confirmed address that asks for a lead magnet gets it at once — no newsletter consent added", async () => {
-    fetch.mockResolvedValueOnce({
-      _id: "sub.1",
-      status: "confirmed",
-      tags: ["old"],
-    });
-    const res = await subscribe(
-      { ...input, source: "lead-magnet", tags: ["guide"], language: "fr" },
-      "2026-01-01",
-    );
-    expect(res).toEqual({ ok: true, already: true });
-    expect(set).toHaveBeenCalledWith({ tags: ["old", "guide"] });
-    expect(deliverMagnetsForTags).toHaveBeenCalledWith(
-      "a@b.com",
-      ["guide"],
-      "fr",
-    );
-    expect(syncNewsletterContact).not.toHaveBeenCalled();
-  });
-
-  it("a confirmed lead-magnet-only address that now signs up gains newsletter consent + the Resend sync", async () => {
-    fetch.mockResolvedValueOnce({
-      _id: "sub.1",
-      status: "confirmed",
-      source: "lead-magnet",
-      language: "fr",
-    });
-    await subscribe({ ...input, source: "/blog" }, "2026-01-01", "v3");
-    expect(set).toHaveBeenCalledWith({
-      newsletter: true,
-      consentPolicyVersion: "v3",
-    });
-    expect(syncNewsletterContact).toHaveBeenCalledWith({
-      email: "a@b.com",
+    const { mail, payload } = await sentLink();
+    expect(mail?.to).toEqual(["new@b.com"]);
+    expect(payload).toEqual({
+      email: "new@b.com",
       locale: "fr",
-      granted: true,
+      newsletter: true,
+      tags: ["m1"],
+      source: "/blog/x",
+      policyVersion: "v2",
+      issuedAt: "2026-10-08T10:00:00.000Z",
     });
-  });
-
-  it("a pending email re-arms (patch), never creates a duplicate", async () => {
-    fetch.mockResolvedValueOnce({ _id: "sub.2", status: "pending" });
-    expect(await subscribe(input, "2026-01-01", "v1")).toEqual({
-      ok: true,
-      already: false,
-    });
-    expect(patch).toHaveBeenCalledWith("sub.2");
-    expect(set).toHaveBeenCalledWith(
-      expect.objectContaining({
-        status: "pending",
-        consentPolicyVersion: "v1",
-      }),
-    );
-    expect(create).not.toHaveBeenCalled();
-  });
-
-  it("a re-arm stores the new sign-up's language, so later emails follow it", async () => {
-    fetch.mockResolvedValueOnce({
-      _id: "sub.4",
-      status: "pending",
-      language: "fr",
-    });
-    await subscribe({ ...input, language: "en" }, "2026-01-01");
-    expect(set).toHaveBeenCalledWith(
-      expect.objectContaining({ language: "en" }),
-    );
   });
 
   it.each([
-    ["fr", "Confirmez votre inscription", "/fr/newsletter/confirm?token="],
-    ["en", "Confirm your subscription", "/newsletter/confirm?token="],
+    ["fr", "Confirmez votre inscription", "/fr/newsletter/confirm#t="],
+    ["en", "Confirm your subscription", "/newsletter/confirm#t="],
   ])(
-    "a %s sign-up gets the confirm email and link in its language",
+    "a %s sign-up gets the email and link in its language",
     async (language, subject, path) => {
-      vi.stubEnv("RESEND_API_KEY", "re_x");
-      getEmailStrings.mockResolvedValueOnce({
-        newsletterConfirm: { enabled: true, from: "hi@site.com" },
-      });
-      fetch.mockResolvedValueOnce(null);
-      await subscribe({ ...input, language }, "2026-01-01");
-      const mail = sendEmail.mock.calls.at(-1)?.[0];
+      await subscribe({ ...input, language }, "v2", NOW);
+      const { mail, link } = await sentLink();
       expect(mail?.subject).toBe(subject);
-      expect(mail?.text).toContain(path);
-      if (language === "en") expect(mail?.text).not.toContain("/fr/");
-      vi.unstubAllEnvs();
+      expect(link).toContain(path);
+      if (language === "en") expect(link).not.toContain("/fr/");
     },
   );
 
-  it("an unknown language is never stored", async () => {
-    fetch.mockResolvedValueOnce(null);
-    await subscribe({ ...input, language: "xx" }, "2026-01-01");
-    expect(create).toHaveBeenCalledWith(
-      expect.not.objectContaining({ language: expect.anything() }),
-    );
+  it("keeps the token out of the query string (the fragment never reaches a server)", async () => {
+    await subscribe(input, "v2", NOW);
+    const { link } = await sentLink();
+    expect(link).not.toContain("?");
   });
 
-  it("an unsubscribed address re-arms with this request's consent only — a lead magnet never re-subscribes", async () => {
-    fetch.mockResolvedValueOnce({
-      _id: "sub.4",
-      status: "unsubscribed",
-      newsletter: true,
-    });
+  it("falls back to the default locale for an unknown language", async () => {
+    await subscribe({ ...input, language: "xx" }, "v2", NOW);
+    expect((await sentLink()).payload?.locale).toBe("en");
+  });
+
+  it("marks a lead-magnet request as not a newsletter sign-up", async () => {
     await subscribe(
-      { ...input, source: "lead-magnet", tags: ["guide"] },
-      "2026-01-01",
+      { ...input, source: "lead-magnet", tags: ["m1"] },
+      "v2",
+      NOW,
     );
-    expect(set).toHaveBeenCalledWith(
-      expect.objectContaining({
-        status: "pending",
-        newsletter: false,
-        tags: ["guide"],
-      }),
-    );
+    expect((await sentLink()).payload?.newsletter).toBe(false);
   });
 
-  it("an unsubscribed email re-arms to pending (never dead-ends)", async () => {
-    fetch.mockResolvedValueOnce({ _id: "sub.3", status: "unsubscribed" });
-    expect(await subscribe(input, "2026-01-01")).toEqual({
-      ok: true,
-      already: false,
+  it.each([
+    ["the secret", () => vi.stubEnv("NEWSLETTER_SECRET", "")],
+    ["Resend", () => vi.stubEnv("RESEND_API_KEY", "")],
+    ["the confirm email", () => getEmailStrings.mockResolvedValue(null)],
+    ["the api", () => vi.stubEnv("API_URL", "")],
+  ])("is unavailable without %s, and sends nothing", async (_name, unset) => {
+    unset();
+    expect(await subscribe(input, "v2", NOW)).toEqual({
+      ok: false,
+      error: "unavailable",
     });
-    expect(patch).toHaveBeenCalledWith("sub.3");
-    expect(create).not.toHaveBeenCalled();
+    expect(sendEmail).not.toHaveBeenCalled();
   });
 
-  it("a new email creates a whitelisted subscriber doc with the policy stamp", async () => {
-    fetch.mockResolvedValueOnce(null);
+  it("a lead-magnet request does not need the api", async () => {
+    vi.stubEnv("API_URL", "");
     expect(
-      await subscribe(
-        { email: "New@B.com", consent: true, source: "/x", language: "fr" },
-        "2026-01-01",
-        "v2",
-      ),
-    ).toEqual({ ok: true, already: false });
-    const doc = create.mock.calls[0][0] as Record<string, unknown>;
-    expect(doc._type).toBe("subscriber"); // hard-coded, never from input
-    expect(doc.email).toBe("new@b.com"); // normalized
-    expect(doc.status).toBe("pending");
-    expect(doc.consent).toBe(true);
-    expect(doc.consentPolicyVersion).toBe("v2");
-    expect(doc.confirmToken).toBeUndefined(); // no RESEND key → no token minted
-    expect(doc.newsletter).toBe(true);
-  });
-
-  it("a lead-magnet sign-up is stored without newsletter consent", async () => {
-    fetch.mockResolvedValueOnce(null);
-    await subscribe(
-      { ...input, source: "lead-magnet", tags: ["guide"] },
-      "2026-01-01",
-    );
-    const doc = create.mock.calls[0][0] as Record<string, unknown>;
-    expect(doc.newsletter).toBe(false);
-    expect(doc.tags).toEqual(["guide"]);
-  });
-
-  it("mints a confirm token only when the confirmation email can be sent", async () => {
-    vi.stubEnv("RESEND_API_KEY", "re_x");
-    getEmailStrings.mockResolvedValueOnce({
-      newsletterConfirm: { enabled: true, from: "hi@site.com" },
+      await subscribe({ ...input, source: "lead-magnet" }, "v2", NOW),
+    ).toEqual({
+      ok: true,
     });
-    fetch.mockResolvedValueOnce(null);
-    await subscribe(input, "2026-01-01", "v1");
-    const doc = create.mock.calls[0][0] as Record<string, unknown>;
-    expect(typeof doc.confirmToken).toBe("string");
-    expect(doc.confirmTokenAt).toBe("2026-01-01"); // the expiry clock starts here
   });
 
-  it("a write failure returns a server error, not a throw", async () => {
-    fetch.mockRejectedValueOnce(new Error("network"));
-    expect(await subscribe(input, "2026-01-01")).toEqual({
+  it("a failed send is a server error, not a throw", async () => {
+    sendEmail.mockRejectedValueOnce(new Error("mail down"));
+    expect(await subscribe(input, "v2", NOW)).toEqual({
       ok: false,
       error: "server",
     });

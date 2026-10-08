@@ -97,8 +97,9 @@ the same override mechanism as the other retention windows.
 
 1. Run `pnpm resend:topics:sync`. It creates or verifies every Resend Topic — the four
    marketing categories plus `churned` — all `visibility: private`, and prints each
-   Topic's id. Idempotent: rerunning finds existing topics by name instead of duplicating
-   them.
+   Topic's id. It also creates the newsletter's `locale` contact property and one
+   `newsletter-<code>` segment per site locale. Idempotent: rerunning finds existing topics,
+   the property and the segments by name instead of duplicating them.
 2. Paste each printed id into the Sanity `emailPreferences` singleton: the marketing
    categories' `resendTopicId` fields, and the new `churned.resendTopicId` field.
 3. Run migration `0010` against the `main` D1 (creates `churn_events` +

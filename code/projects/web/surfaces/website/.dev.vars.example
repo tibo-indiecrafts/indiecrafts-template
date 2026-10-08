@@ -6,3 +6,5 @@
 SANITY_API_READ_TOKEN=
 SANITY_API_WRITE_TOKEN=
 # RESEND_API_KEY=
+# Signs the newsletter confirm link + the lead-magnet download link (required for the newsletter).
+NEWSLETTER_SECRET=

@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { signDownloadToken } from "@indiecrafts/packages-shared-gated-delivery";
 
-const SECRET = "test-lead-magnet-secret";
+const SECRET = "test-newsletter-secret";
 const fetch = vi.hoisted(() => vi.fn());
 const sendEmail = vi.hoisted(() => vi.fn(async () => undefined));
 vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
@@ -21,10 +21,10 @@ vi.mock("@indiecrafts/packages-web-email/strings", () => ({
   pick: () => "",
 }));
 
-/** The module reads LEAD_MAGNET_SECRET at load: import it fresh per env. */
+/** Stub the env for one test, then import the module. */
 async function load(secret?: string) {
   vi.resetModules();
-  vi.stubEnv("LEAD_MAGNET_SECRET", secret ?? "");
+  vi.stubEnv("NEWSLETTER_SECRET", secret ?? "");
   vi.stubEnv("RESEND_API_KEY", "re_test");
   return import("./deliver-magnet");
 }
@@ -38,7 +38,7 @@ afterEach(() => {
 });
 
 describe("resolveMagnetDownload", () => {
-  it("refuses every token while LEAD_MAGNET_SECRET is unset (delivery off)", async () => {
+  it("refuses every token while NEWSLETTER_SECRET is unset (delivery off)", async () => {
     const { resolveMagnetDownload } = await load();
     expect(
       await resolveMagnetDownload(await token("magnet.1", Date.now() + 60_000)),

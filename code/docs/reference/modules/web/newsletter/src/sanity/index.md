@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`newsletterSanity` returns the newsletter module's `SanityModule` — the `newsletterSettings` singleton and `subscriber` and `leadMagnet` schema, the desk sections, and the two `emailStrings` groups. It is called with the app's `features.newsletter` flag: when `enabled` is false the desk section is hidden while the schema and email groups still register. Add `newsletterSanity(features.newsletter)` to the modules array in `sanity.config.ts` to activate.
+`newsletterSanity` returns the newsletter module's `SanityModule` — the `newsletterSettings` singleton and the `leadMagnet` schema, the desk sections, and the two `emailStrings` groups. It is called with the app's `features.newsletter` flag: when `enabled` is false the desk section is hidden while the schema and email groups still register. Add `newsletterSanity(features.newsletter)` to the modules array in `sanity.config.ts` to activate.
 
 ## Exports
 

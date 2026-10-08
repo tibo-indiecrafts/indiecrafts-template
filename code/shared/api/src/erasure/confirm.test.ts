@@ -82,7 +82,7 @@ function mockAdapters(
   };
   const sanityClient = {
     findByEmail: vi.fn(async (type: string) =>
-      type === "subscriber" ? [{ _id: "sub1" }] : [],
+      type === "waitlistEntry" ? [{ _id: "w1" }] : [],
     ),
     pseudonymise: vi.fn(async () => {}),
     ...sanityOverrides,

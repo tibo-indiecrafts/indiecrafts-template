@@ -154,8 +154,7 @@ enabled = true
 #   independently — STABLE within an env, never rotate a live one) ·
 #   CLERK_SECRET_KEY (erasure route's real Clerk client) ·
 #   SANITY_API_WRITE_TOKEN (erasure route's Sanity pseudonymisation writes) ·
-#   EMAIL_PREF_SECRET (signs the no-login email-preferences token) ·
-#   RESEND_WEBHOOK_SECRET (Svix; verifies POST /v1/resend/webhook) —
+#   EMAIL_PREF_SECRET (signs the no-login email-preferences token) —
 #   wrangler secret put <NAME> --env <env>
 # Per-category Resend Topic wiring (each category's resendTopicId) is Sanity-configured, not
 # a wrangler var — see the emailPreferences singleton in Studio. Contacts are global (Resend

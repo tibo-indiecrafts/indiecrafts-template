@@ -1,6 +1,6 @@
 ---
 title: "Sanity erasure adapter"
-description: "Pseudonymises subject emails in the subscriber and waitlistEntry Sanity documents."
+description: "Pseudonymises subject emails in the waitlistEntry Sanity documents."
 status: stable
 ---
 
@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Implements the compliance `ErasureAdapter` for Sanity. It targets the document types that hold a subject email (`subscriber`, `waitlistEntry`). These are pseudonymised rather than deleted, so the marketing and waitlist records survive with the email replaced by its salted fingerprint and an `erased` flag set. The concrete Sanity surface is passed in as `SanityErasureClient`.
+Implements the compliance `ErasureAdapter` for Sanity. It targets the document types that hold a subject email (`waitlistEntry`). These are pseudonymised rather than deleted, so the waitlist records survive with the email replaced by its salted fingerprint and an `erased` flag set. Newsletter subscribers live in Resend only (the `resend` adapter). The concrete Sanity surface is passed in as `SanityErasureClient`.
 
 ## Exports
 

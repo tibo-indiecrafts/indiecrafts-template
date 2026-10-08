@@ -21,23 +21,10 @@ Changed · Deprecated · Removed · Fixed**.
   and `renderNewsletterNotificationEmail` take a `locale` (the site's `defaultLocale`) and use English
   or French copy, English for any other locale. `<html lang>` follows it. A post with no title reads
   "a post" / "un article". **Why:** the owner reads the site's default language, not always French.
-- **`modules-web-newsletter` — a repeat sign-up kept the old language.** A pending or unsubscribed
-  address that signed up again from another language got the confirm email in the new language, but
-  `subscriber.language` kept the old one, so the lead-magnet email and the Resend sync after confirm
-  used it. The re-arm now stores the new language (an unknown code is never stored).
 - **`modules-web-contact` / `modules-web-waitlist` — confirmation emails fell back to French.** An
   empty Studio field sent French copy to every visitor. `contactConfirmDefaults(locale)` and
   `waitlistConfirmDefaults(locale, name)` now give English or French, and English for any other
   locale. **Why:** a missing string must fall back to English (QA card 31).
-- **`modules-web-newsletter` — consent and confirm gaps.** (1) A lead-magnet sign-up consented to its
-  document, not the newsletter, yet landed in the newsletter list: `subscriber.newsletter` now records
-  the purpose (`false` for `source: "lead-magnet"`), and only newsletter consent is exported or synced.
-  (2) A confirmed subscriber who asked for a lead magnet got nothing (the engine stopped at "already
-  subscribed"); a confirmed address now gets the document at once, and a lead-magnet-only one that
-  signs up gains newsletter consent. After an unsubscribe, a lead magnet never re-subscribes anyone.
-  (3) Confirm links never expired; they now work for 7 days (`confirmTokenAt`). (4) The confirmation
-  email fell back to French copy for every language; `confirmEmailDefaults(locale)` gives English or
-  French.
 - **blog / contact / waitlist — SEO per language on the shared settings.** `blog` (its `seo` and the
   `indexSeo` pages), `contactSettings` and `waitlistSettings` gain `seoTranslations`
   (`seoTranslationsField`, `@indiecrafts/packages-web-schema`, now a dependency of the three modules), so
@@ -71,11 +58,17 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
-- **`modules-web-newsletter` — one list in Resend.** On confirm, a newsletter sign-up joins Resend's
-  `news` topic through the api (`syncNewsletterContact` → `POST /v1/newsletter/subscribers`), the topic
-  signed-in members' "news" opt-in already uses, so one Broadcast reaches both; a Resend unsubscribe
-  comes back through the api webhook. **Why:** anonymous subscribers lived only in Sanity, so a
-  Resend Broadcast missed them and nothing could unsubscribe them.
+- **`modules-web-newsletter` — Resend is the only subscriber list.** The Sanity `subscriber` doc, its
+  Abonnés desk and the re-arm logic are gone. `subscribe()` stores nothing: it signs the sign-up
+  (address, language, purpose, tags, policy version) with `NEWSLETTER_SECRET` and emails the confirm
+  link. `confirmSubscription()` verifies it and calls the api, which records the consent proof in D1
+  and upserts the Resend contact with the `locale` property and the `newsletter-<locale>` segment — so
+  each issue goes to the right language. The token rides in the URL fragment (`#t=`), so the address
+  never reaches a request log. The owner alert fires on confirm. `LEAD_MAGNET_SECRET` became
+  `NEWSLETTER_SECRET` (one key for both links). A missing setup answers `unavailable` instead of
+  dropping the sign-up. A lead-magnet request never subscribes anyone, and an empty Studio field in
+  the confirm email falls back to English or French (`confirmEmailDefaults`). A lead-magnet request never subscribes anyone, and an empty Studio field in the confirm email falls back to English or French (`confirmEmailDefaults`). **Why:** two lists
+  drifted apart, and Resend had no language to send by.
 - **`modules-web-blog` — LCP images fetch first.** The blog mosaic's first card, the post-content
   cover and the author photo use `loading="eager"` + `fetchPriority="high"` instead of Next 16's
   deprecated `priority` (preload only); the mosaic's second large card loads eagerly at normal

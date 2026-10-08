@@ -41,6 +41,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **Newsletter: Resend is the only list.** `/api/newsletter` stores nothing and answers `503` when the
+  newsletter's setup is missing; `/api/newsletter/confirm` answers `502 { status: "error" }` when the
+  subscriber could not be stored (its body cap is now 4000 bytes for the signed token). The confirm
+  page reads the token from the URL fragment, drops it from the address bar, and shows an error state
+  with a retry (`pages.newsletterConfirm.errorHeading` / `errorBody`). The forms' success copy now says
+  to confirm from the inbox. New secret `NEWSLETTER_SECRET` replaces `LEAD_MAGNET_SECRET`. The seed no
+  longer creates demo subscribers. **Why:** one list in Resend, with each subscriber's language.
 - **First-load performance, from a Lighthouse pass.** (1) The cookie banner renders in the first HTML
   for an undecided visitor: the layout reads the new `consent-v` cookie and passes `decided` to
   `CookieBanner`. It used to appear only after hydration and was the home page's largest paint; now
@@ -84,14 +91,6 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   from the browser, but the production CSP `connect-src` allowed only `'self'`, so the browser
   blocked the request and the form showed "Something went wrong". `websiteCspHosts.connectSrc` now
   lists the `NEXT_PUBLIC_API_URL` origin, as the app already does. The `erasure` journey caught it.
-- **The subscriber export emailed the wrong people.** `subscribers-export.mjs` exported every
-  `subscriber` — pending, unsubscribed and lead-magnet-only included. It now writes only confirmed
-  newsletter subscribers; `--all` writes an audit file with every status. The Studio "send test"
-  confirmation used French fallback copy and a non-existent `/api/newsletter/confirm?token=` GET link;
-  it now uses the localized confirm page and `confirmEmailDefaults`. The e2e guard journey's
-  invalid-email case answered `201` (its `startedAt` tripped the bot check) and a newsletter journey now
-  covers the block's consent gate and the POST-only confirm page. The demo seed marks subscribers'
-  `newsletter` consent and adds a lead-magnet-only one.
 - **Every page shipped ~2.4 MB of gzipped JavaScript; now ~370 kB.** `NavIcon` resolved editor-typed
   Reicon names at runtime (`import * as ReiconReact`), which bundles all 2,670 icons, and the header
   renders on every page. Nav icons now use the curated `GLYPHS` set (`Icon`, lucide), picked from a

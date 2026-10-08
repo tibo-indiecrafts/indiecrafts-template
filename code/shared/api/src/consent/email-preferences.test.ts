@@ -197,6 +197,38 @@ describe("GET/POST /v1/consent/email-preferences", () => {
         { topicId: "topic_news", granted: true },
         { topicId: "topic_offers", granted: false },
       ],
+      newsletterLocale: "en",
+    });
+  });
+
+  it("POST moves the newsletter language segment only when `news` changes", async () => {
+    await seed("user_ep_seg");
+    const sync = vi.fn(async () => {});
+    const deps = {
+      authenticate: async () => "user_ep_seg",
+      fetchCategories,
+      sync,
+    };
+    await handleEmailPreferences(
+      post([{ key: "news", granted: false }]),
+      ENV,
+      undefined,
+      deps,
+    );
+    expect(sync).toHaveBeenLastCalledWith(ENV, {
+      email: "user_ep_seg@x.com",
+      topics: [{ topicId: "topic_news", granted: false }],
+      newsletterLocale: null,
+    });
+    await handleEmailPreferences(
+      post([{ key: "offers", granted: true }]),
+      ENV,
+      undefined,
+      deps,
+    );
+    expect(sync).toHaveBeenLastCalledWith(ENV, {
+      email: "user_ep_seg@x.com",
+      topics: [{ topicId: "topic_offers", granted: true }],
     });
   });
 });

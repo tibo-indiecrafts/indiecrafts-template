@@ -61,6 +61,9 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`packages-web-page-builder` — newsletter + lead-magnet default success copy.** A new block's
+  success message now asks the visitor to confirm from their inbox: nothing is subscribed or sent
+  before that click. **Why:** the newsletter is a strict double opt-in in Resend.
 - **`packages-web-compliance` — the consent banner can render on the server.** `consentStore.save`
   mirrors the decided version (never the choices) into `<site.prefix>.consent-v`
   (`consent/consent-cookie`), and `CookieBanner` takes `decided` (server-read) as its server snapshot:

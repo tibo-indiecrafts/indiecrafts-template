@@ -1,23 +1,24 @@
 ---
-title: "Subscribe engine"
-description: "Validates and stores a newsletter subscription, then fires best-effort confirmation and owner-alert emails."
+title: "Sign-up engine"
+description: "Validates a newsletter or lead-magnet sign-up and emails its signed double opt-in link; nothing is stored."
 status: stable
 ---
 
-# Subscribe engine
+# Sign-up engine
 
-> The single runtime write path for the newsletter block — validate, dedupe, store, notify.
+> The runtime path of the newsletter and lead-magnet blocks — validate, sign, email the confirm link.
 
 ## Purpose
 
-`subscribe` is the newsletter module's write path for the `module.newsletter` block. It validates the input, always stores a `subscriber` doc (deduped by email, fields whitelisted, `_type` hard-coded), and stamps the accepted privacy-policy version as GDPR proof of consent. It records the purpose in `newsletter` (`false` for a lead-magnet sign-up, whose consent covers the document only). An already-confirmed address is applied at once: a newsletter sign-up adds `newsletter: true` and syncs to Resend (`syncNewsletterContact`); a lead-magnet request gets its document. A pending or unsubscribed address is re-armed with a new link that expires after 7 days — after an unsubscribe only the new request's consent counts. Empty Studio copy falls back to `confirmEmailDefaults(locale)`. On a new or re-armed subscriber it fires two best-effort emails that never throw: a double opt-in confirmation to the subscriber and an owner alert. A honeypot field marks bots as spam and drops them while still returning success. Server-only.
+`subscribe` handles a sign-up from the `module.newsletter` or `module.lead-magnet` block. Resend is the only subscriber list, so nothing is stored here: it validates the input (anti-spam, email, consent), signs the sign-up with `signConfirmToken` and emails the confirm link — `/<locale>/newsletter/confirm#t=<token>`, the token in the URL fragment so it never reaches a server log — in the visitor's language (empty Studio copy falls back to `confirmEmailDefaults(locale)`). `LEAD_MAGNET_SOURCE` marks a lead-magnet-only request (`newsletter: false`). Every real sign-up gets the email, also an already-subscribed address, so the answer never reveals membership. When the secret, the Resend key, the confirmation email or (for a newsletter sign-up) the api is missing, it returns `unavailable` — never a silent drop. A honeypot field marks bots as spam. Server-only.
 
 ## Exports
 
-- `SubscribeInput` — the subscribe payload: `email`, `consent`, plus optional `source`, `language`, `tags`, `honeypot`, `startedAt`.
-- `SubscribeResult` — `{ ok: true, already? }` or `{ ok: false, error }` where `error` is `"invalid" | "spam" | "server"`.
-- `validateSubscribe(input)` — pure validator (anti-spam, email, consent checks).
-- `subscribe(input, createdAt, policyVersion?)` — the async engine; validates, writes, and sends the emails.
+- `LEAD_MAGNET_SOURCE` — the `source` the lead-magnet block posts.
+- `SubscribeInput` — the payload: `email`, `consent`, plus optional `source`, `language`, `tags`, `honeypot`, `startedAt`.
+- `SubscribeResult` — `{ ok: true }` or `{ ok: false, error }` where `error` is `"invalid" | "spam" | "unavailable" | "server"`.
+- `validateSubscribe(input)` — pure validator (anti-spam, email, consent).
+- `subscribe(input, policyVersion?, now?)` — validates, signs and sends the confirmation email.
 
 ## Usage
 
@@ -25,8 +26,7 @@ status: stable
 import { subscribe } from "@indiecrafts/modules-web-newsletter/lib/newsletter";
 
 const result = await subscribe(
-  { email: "jo@example.com", consent: true, source: "/blog" },
-  new Date().toISOString(),
+  { email: "jo@example.com", consent: true, source: "/blog", language: "fr" },
   "2026-01-01",
 );
 ```

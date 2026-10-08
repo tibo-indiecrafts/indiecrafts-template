@@ -171,6 +171,87 @@ describe("syncContactTopics", () => {
   });
 });
 
+describe("syncContactTopics — newsletter language segment", () => {
+  const SEGMENTS = [
+    { id: "seg-en", name: "newsletter-en" },
+    { id: "seg-fr", name: "newsletter-fr" },
+    { id: "seg-vip", name: "vip" },
+  ];
+  /** Routes by URL; the contact is in `newsletter-en` + `vip`. Returns `METHOD path` lines. */
+  function stub() {
+    const calls: Array<{ line: string; body: unknown }> = [];
+    const f = vi.fn(async (url: string, init: RequestInit = {}) => {
+      const path = url.replace("https://api.resend.com", "");
+      calls.push({
+        line: `${init.method ?? "GET"} ${path}`,
+        body: init.body ? JSON.parse(String(init.body)) : undefined,
+      });
+      if (path === "/segments?limit=100")
+        return new Response(JSON.stringify({ data: SEGMENTS }));
+      if (path.endsWith("/segments?limit=100"))
+        return new Response(
+          JSON.stringify({ data: [SEGMENTS[0], SEGMENTS[2]] }),
+        );
+      return new Response("{}", { status: 200 });
+    });
+    return { calls, f: f as unknown as typeof fetch };
+  }
+
+  it("news granted: sets the locale property and moves the contact to its segment", async () => {
+    const { calls, f } = stub();
+    await syncContactTopics(
+      env,
+      {
+        email: "u@x.com",
+        topics: [{ topicId: "t1", granted: true }],
+        newsletterLocale: "fr",
+      },
+      f,
+    );
+    expect(calls[0].body).toEqual({
+      email: "u@x.com",
+      properties: { locale: "fr" },
+      topics: [{ id: "t1", subscription: "opt_in" }],
+    });
+    expect(calls.map((c) => c.line)).toEqual([
+      "POST /contacts",
+      "GET /segments?limit=100",
+      "GET /contacts/u@x.com/segments?limit=100",
+      "POST /contacts/u@x.com/segments/seg-fr",
+      "DELETE /contacts/u@x.com/segments/seg-en",
+    ]);
+  });
+
+  it("news revoked: leaves every newsletter segment, keeps other segments", async () => {
+    const { calls, f } = stub();
+    await syncContactTopics(
+      env,
+      { email: "u@x.com", topics: [], newsletterLocale: null },
+      f,
+    );
+    expect(calls.map((c) => c.line)).toEqual([
+      "GET /contacts/u@x.com/segments?limit=100",
+      "DELETE /contacts/u@x.com/segments/seg-en",
+    ]);
+  });
+
+  it("a 404 on a segment removal is fine; another error throws", async () => {
+    const segs = (status: number) =>
+      vi.fn(async (url: string, init: RequestInit = {}) =>
+        init.method === "DELETE"
+          ? new Response("{}", { status })
+          : new Response(JSON.stringify({ data: [SEGMENTS[0]] })),
+      ) as unknown as typeof fetch;
+    const args = { email: "u@x.com", topics: [], newsletterLocale: null };
+    await expect(syncContactTopics(env, args, segs(404))).resolves.toBe(
+      undefined,
+    );
+    await expect(syncContactTopics(env, args, segs(500))).rejects.toThrow(
+      "resend 500",
+    );
+  });
+});
+
 describe("suppressResendContact", () => {
   it("no-ops without a key", async () => {
     const f = vi.fn();

@@ -1,38 +1,45 @@
 ---
-title: "Newsletter Resend sync"
-description: "Mirrors newsletter subscribers to Resend's news topic and flows Resend unsubscribes back to the Sanity subscriber."
+title: "Newsletter subscribe"
+description: "Records a newsletter double opt-in in D1 and makes the person a Resend subscriber."
 status: stable
 ---
 
-# Newsletter Resend sync
+# Newsletter subscribe
 
-> One newsletter list in Resend: the `news` topic mirrors the Sanity `subscriber` docs.
+> Resend is the newsletter's only list; the consent proof stays in D1.
 
 ## Purpose
 
-The Sanity `subscriber` doc is the source of truth for the newsletter. This module keeps Resend in step, in two directions:
+The website stores nothing at sign-up. It emails a signed confirm link; on the click its server calls `POST /v1/newsletter/subscribers`. The route uses this module in two steps:
 
-- **Website → Resend** (`POST /v1/newsletter/subscribers`). A confirmed subscriber gets the global flag `unsubscribed: false` and the `news` topic `opt_in`. An unsubscribe sets the `news` topic to `opt_out` only — the global flag stays.
-- **Resend → Sanity** (`POST /v1/resend/webhook`). An unsubscribe made in Resend (Broadcast link or preference page) sets the confirmed subscriber doc(s) to `unsubscribed`. It never sets `confirmed`: re-subscribing needs the double opt-in.
+1. `recordNewsletterConsent` appends the proof to `consent_events`: `subject_type = 'visitor'`, `subject_id` and `email_fingerprint` = the salted email fingerprint, `consent_type = 'newsletter'`, `surface = 'website'`, `source = 'double_opt_in'`, `ts` = the confirm-token issue time. The email itself is never stored. `INSERT OR IGNORE` on `newsletter:<fp>:<consentAt>`, so a repeat click on the same link adds no row.
+2. `syncNewsletterSubscriber` upserts the Resend contact: `unsubscribed: false`, `properties.locale`, the `news` topic `opt_in` and the `newsletter-<locale>` segment (via `subscribeNewsletterContact`). The `news` topic id comes from the Studio `emailPreferences` singleton; none set → no topic.
 
-The `news` topic id comes from the Studio `emailPreferences` singleton (`fetchEmailPreferences`, category key `news`). With no topic id, only the global flag counts. D1 `email_preferences` (signed-in users) is not touched.
+Unsubscribe is Resend's own link; nothing here handles it.
 
 ## Exports
 
 - `isNewsletterEmail(value)` — `isValidEmail` plus no URL-path characters (the email goes raw into Resend's path).
-- `syncNewsletterSubscriber(env, { email, locale, granted }, doFetch?)` — website → Resend. No-op without `RESEND_API_KEY`; throws on a Resend error (the route logs it and still answers `204`).
-- `ResendContactEvent` — the webhook payload fields read.
-- `handleResendContactEvent(env, evt, doFetch?)` — Resend → Sanity. Handles `contact.updated`, `contact.deleted` and `contact.topics.updated`; returns `"ignored"`, `"kept"` or `"unsubscribed"`. Throws when the Sanity write fails or is unconfigured, so the route answers `500` and Resend retries. Idempotent: only `confirmed` docs match.
+- `isConsentTime(value)` — an ISO 8601 date-time string.
+- `recordNewsletterConsent(db, salt, { email, policyVersion, consentAt })` — the D1 proof row (no country or IP hash: the caller is the website server). An empty `policyVersion` is stored as `unknown`.
+- `syncNewsletterSubscriber(env, { email, locale }, doFetch?)` — the Resend upsert. Throws on a Resend error (the route answers `502`).
 
 ## Usage
 
 ```ts
-import { syncNewsletterSubscriber } from "./newsletter/resend-sync";
+import {
+  recordNewsletterConsent,
+  syncNewsletterSubscriber,
+} from "./newsletter/resend-sync";
 
+await recordNewsletterConsent(env.MAIN_DB, env.GDPR_FINGERPRINT_SALT, {
+  email: "reader@example.com",
+  policyVersion: "2026-10",
+  consentAt: "2026-10-08T09:30:00.000Z",
+});
 await syncNewsletterSubscriber(env, {
   email: "reader@example.com",
-  locale: "en",
-  granted: true,
+  locale: "fr",
 });
 ```
 

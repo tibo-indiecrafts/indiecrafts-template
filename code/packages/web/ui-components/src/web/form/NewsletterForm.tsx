@@ -21,13 +21,13 @@ type Status = "idle" | "submitting" | "success" | "error";
 /**
  * Newsletter capture form — the client half of `module.newsletter`, rendered by
  * the server `<Newsletter>` wrapper (which owns the feature gate). Every label is
- * a resolved, per-locale string from the block. Posts to `/api/newsletter` → a
- * `subscriber` doc (the engine always stores in Sanity — no provider adapters).
+ * a resolved, per-locale string from the block. Posts to `/api/newsletter`, which
+ * emails a double opt-in link; the confirm click makes the person a Resend subscriber.
  *
  * `website` is a honeypot: off-screen, hidden from users + assistive tech. Only
  * bots fill it; the server drops those and still answers `201`, so they learn
- * nothing. `201` → done (new or already-subscribed — deliberately indistinguishable
- * so membership can't be enumerated); anything else → error.
+ * nothing. `201` → done (every real sign-up answers the same, so membership can't be
+ * enumerated); anything else → error.
  */
 export function NewsletterForm({
   heading,

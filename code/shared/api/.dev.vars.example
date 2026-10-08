@@ -45,8 +45,3 @@ GDPR_FINGERPRINT_SALT=""
 # No-login email-preferences token (GET/POST /v1/email-preferences + the RFC 8058 one-click
 # unsubscribe route). Unset → those routes answer 503.
 # EMAIL_PREF_SECRET=""
-
-# Resend webhook (Svix) — verifies POST /v1/resend/webhook (a Resend unsubscribe → the Sanity
-# newsletter subscriber). From Resend Dashboard → Webhooks → your endpoint → Signing Secret.
-# Unset → the route answers 503.
-# RESEND_WEBHOOK_SECRET=""

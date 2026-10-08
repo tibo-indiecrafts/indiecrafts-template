@@ -1,6 +1,6 @@
 > `module.newsletter` renderer · `renderers/web/form/Newsletter.tsx` (+ client `NewsletterForm.tsx`)
 
-**Use when** a page or post needs an email capture block. Editors drop it inline in a body or into `postModules`; every string is per-instance and per-locale. Submits to `/api/newsletter` — where the address goes (a Sanity `subscriber` doc, an email provider, or both) is set once in `@indiecrafts/packages-shared-config` `newsletter.destination`, not per block.
+**Use when** a page or post needs an email capture block. Editors drop it inline in a body or into `postModules`; every string is per-instance and per-locale. Submits to `/api/newsletter`, which emails a double opt-in link; the confirm click adds the person to Resend, the only list ([Newsletter](/modules/web/newsletter/)).
 
 ## Fields
 

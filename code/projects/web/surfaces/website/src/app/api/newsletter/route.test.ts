@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const flags = vi.hoisted(() => ({ newsletter: true }));
 const subscribe = vi.hoisted(() => vi.fn());
-const confirmSubscriber = vi.hoisted(() => vi.fn());
+const confirmSubscription = vi.hoisted(() => vi.fn());
 vi.mock("@/config", async (importOriginal) => {
   const real = await importOriginal<typeof import("@/config")>();
   return {
@@ -14,7 +14,9 @@ vi.mock("@/config", async (importOriginal) => {
   };
 });
 vi.mock("@indiecrafts/modules-web-newsletter/lib/newsletter", () => ({ subscribe }));
-vi.mock("@indiecrafts/modules-web-newsletter/lib/confirm", () => ({ confirmSubscriber }));
+vi.mock("@indiecrafts/modules-web-newsletter/lib/confirm", () => ({
+  confirmSubscription,
+}));
 vi.mock("@indiecrafts/packages-web-compliance/sanity/policy-version", () => ({
   getConsentPolicyVersion: async () => "v1",
 }));
@@ -37,16 +39,12 @@ const post = (handler: (r: Request) => Promise<Response>, body: unknown) =>
 beforeEach(() => {
   flags.newsletter = true;
   subscribe.mockReset();
-  confirmSubscriber.mockReset();
+  confirmSubscription.mockReset();
 });
 
 describe("POST /api/newsletter", () => {
-  it("answers new, known and spam sign-ups alike — 201, same body (no membership oracle)", async () => {
-    for (const result of [
-      { ok: true, already: false },
-      { ok: true, already: true },
-      { ok: false, error: "spam" },
-    ]) {
+  it("answers a sign-up and a spam drop alike — 201, same body (no oracle)", async () => {
+    for (const result of [{ ok: true }, { ok: false, error: "spam" }]) {
       subscribe.mockResolvedValueOnce(result);
       const res = await post(subscribeRoute, { email: "a@b.com", consent: true });
       expect(res.status).toBe(201);
@@ -62,7 +60,18 @@ describe("POST /api/newsletter", () => {
       policyVersion: "forged",
     });
     expect(res.status).toBe(400);
-    expect(subscribe.mock.calls[0]?.[2]).toBe("v1");
+    expect(subscribe.mock.calls[0]?.[1]).toBe("v1");
+  });
+
+  it("a site without the newsletter's setup → 503, a failure → 500", async () => {
+    subscribe.mockResolvedValueOnce({ ok: false, error: "unavailable" });
+    expect((await post(subscribeRoute, { email: "a@b.com", consent: true })).status).toBe(
+      503,
+    );
+    subscribe.mockResolvedValueOnce({ ok: false, error: "server" });
+    expect((await post(subscribeRoute, { email: "a@b.com", consent: true })).status).toBe(
+      500,
+    );
   });
 
   it("both routes are a 404 with the flag off, and never reach the engine", async () => {
@@ -72,19 +81,28 @@ describe("POST /api/newsletter", () => {
     );
     expect((await post(confirmRoute, { token: "t" })).status).toBe(404);
     expect(subscribe).not.toHaveBeenCalled();
-    expect(confirmSubscriber).not.toHaveBeenCalled();
+    expect(confirmSubscription).not.toHaveBeenCalled();
   });
 });
 
 describe("POST /api/newsletter/confirm", () => {
   it("reports the engine's outcome for the posted token", async () => {
-    confirmSubscriber.mockResolvedValueOnce("confirmed").mockResolvedValueOnce("invalid");
+    confirmSubscription
+      .mockResolvedValueOnce("confirmed")
+      .mockResolvedValueOnce("invalid");
     expect(await (await post(confirmRoute, { token: "good" })).json()).toEqual({
       status: "confirmed",
     });
     expect(await (await post(confirmRoute, { token: "expired" })).json()).toEqual({
       status: "invalid",
     });
-    expect(confirmSubscriber).toHaveBeenNthCalledWith(1, "good");
+    expect(confirmSubscription).toHaveBeenNthCalledWith(1, "good");
+  });
+
+  it("a subscriber that could not be stored → 502 error, so the visitor can retry", async () => {
+    confirmSubscription.mockResolvedValueOnce("error");
+    const res = await post(confirmRoute, { token: "good" });
+    expect(res.status).toBe(502);
+    expect(await res.json()).toEqual({ status: "error" });
   });
 });

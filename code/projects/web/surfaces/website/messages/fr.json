@@ -279,6 +279,8 @@
       "confirmedBody": "Votre inscription est confirmée. Bienvenue — surveillez votre boîte de réception.",
       "invalidHeading": "Ce lien a expiré",
       "invalidBody": "Ce lien de confirmation n'est plus valide — il a peut-être déjà été utilisé, ou il a expiré. Réessayez de vous inscrire.",
+      "errorHeading": "Un problème est survenu",
+      "errorBody": "Nous n'avons pas pu enregistrer votre inscription. Réessayez dans un instant.",
       "homeCta": "Retour à l'accueil"
     },
     "emailPreferences": {
@@ -479,7 +481,7 @@
     "error": "Une erreur s'est produite. Merci de réessayer.",
     "newsletter": {
       "button": "S'inscrire",
-      "success": "Merci ! Votre inscription est bien enregistrée.",
+      "success": "Presque terminé — vérifiez votre boîte mail pour confirmer votre inscription.",
       "consent": "J'accepte de recevoir l'infolettre et que mon adresse e-mail soit conservée à cette fin."
     },
     "waitlist": {
@@ -489,7 +491,7 @@
     },
     "leadMagnet": {
       "button": "Recevoir le document",
-      "success": "Merci ! Votre document arrive dans votre boîte e-mail.",
+      "success": "Presque terminé — confirmez depuis votre boîte mail et nous vous envoyons le document.",
       "consent": "J'accepte de recevoir ce document et que mon adresse e-mail soit conservée à cette fin."
     },
     "contact": {

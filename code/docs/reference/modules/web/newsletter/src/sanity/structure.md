@@ -1,6 +1,6 @@
 ---
 title: "Newsletter desk structure"
-description: "Builds the newsletter Studio desk — settings, subscribers by status, and lead magnets."
+description: "Builds the newsletter Studio desk — the settings singleton and the lead magnets."
 status: stable
 ---
 
@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Builds the newsletter module's Studio desk sections: the settings singleton editor, an "Abonnés" list grouping subscribers by `status` (pending, confirmed, unsubscribed), and the "Aimants à prospects" lead-magnet list. Feature-gating is the app's job — `newsletterSanity(enabled)` returns `[]` here when `features.newsletter` is off.
+Builds the newsletter module's Studio desk sections: the settings singleton editor and the "Aimants à prospects" lead-magnet list. Subscribers live in Resend, the only list, not in the Studio. Feature-gating is the app's job — `newsletterSanity(enabled)` returns `[]` here when `features.newsletter` is off.
 
 ## Exports
 

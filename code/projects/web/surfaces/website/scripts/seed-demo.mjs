@@ -1888,10 +1888,10 @@ const showcaseCopyEn = {
   newsletterButton: "Subscribe",
   newsletterConsent:
     "I agree to receive the newsletter and to my email being stored for that purpose.",
-  newsletterSuccess: "Thanks! Your signup is saved.",
+  newsletterSuccess: "Almost there — check your inbox to confirm your subscription.",
   newsletterError: "Something went wrong. Please try again.",
   afterNewsletter:
-    "Every submission lands in the Studio under Abonnés, or forwards to your email provider — your choice, set once in config.",
+    "Every confirmed sign-up lands in Resend, one segment per language. Prefer another provider? Drop its own form in a custom HTML block.",
   closingHeading: "Closing thought",
   closingLead: "The template this guide ships with — ",
   closingLinkText: "indiecrafts.dev",
@@ -2042,10 +2042,11 @@ const showcaseCopyFr = {
   newsletterButton: "S'inscrire",
   newsletterConsent:
     "J'accepte de recevoir l'infolettre et que mon adresse e-mail soit conservée à cette fin.",
-  newsletterSuccess: "Merci ! Votre inscription est bien enregistrée.",
+  newsletterSuccess:
+    "Presque terminé — vérifiez votre boîte mail pour confirmer votre inscription.",
   newsletterError: "Une erreur s'est produite. Merci de réessayer.",
   afterNewsletter:
-    "Chaque inscription arrive dans le Studio sous Abonnés, ou est transmise à votre fournisseur d'e-mails — au choix, réglé une fois dans la config.",
+    "Chaque inscription confirmée arrive dans Resend, un segment par langue. Un autre fournisseur ? Collez son propre formulaire dans un bloc HTML.",
   closingHeading: "Pour conclure",
   closingLead: "Le template fourni avec ce guide — ",
   closingLinkText: "indiecrafts.dev",
@@ -2499,63 +2500,10 @@ const comments = [
   },
 ];
 
-// ─── Newsletter subscribers — the "Abonnés" moderation desk demo ─
-// Captured via /api/newsletter. One per status so each Studio sub-list (En attente /
-// Confirmés / Désabonnés) has a row, plus a lead-magnet-only sign-up (no newsletter).
-const subscribers = [
-  {
-    _id: "subscriber.demo-pending",
-    _type: "subscriber",
-    newsletter: true,
-    email: "alan.turing@example.com",
-    status: "pending",
-    consent: true,
-    source: "/blog/fast-proto-nextjs",
-    language: "en",
-    createdAt: daysAgo(0),
-  },
-  {
-    _id: "subscriber.demo-confirmed",
-    _type: "subscriber",
-    newsletter: true,
-    email: "grace.hopper@example.com",
-    status: "confirmed",
-    consent: true,
-    source: "/blog/fast-proto-nextjs",
-    language: "en",
-    createdAt: daysAgo(3),
-  },
-  {
-    _id: "subscriber.demo-unsubscribed",
-    _type: "subscriber",
-    newsletter: true,
-    email: "ada.lovelace@example.com",
-    status: "unsubscribed",
-    consent: true,
-    source: "/fr/blog/fast-proto-nextjs",
-    language: "fr",
-    createdAt: daysAgo(9),
-  },
-  {
-    // A lead-magnet download only: confirmed address, no newsletter consent — never
-    // exported or synced to the Resend `news` topic.
-    _id: "subscriber.demo-lead-magnet",
-    _type: "subscriber",
-    newsletter: false,
-    email: "katherine.johnson@example.com",
-    status: "confirmed",
-    consent: true,
-    source: "lead-magnet",
-    language: "en",
-    tags: ["guide-2026"],
-    createdAt: daysAgo(5),
-  },
-];
-
 // ─── E-mails singleton — config + translated copy for every email ─
 // Owner alerts ship OFF (fill recipients + a Resend-verified From to enable).
 // The subscriber double opt-in copy is translated + ready; toggle it on + set a
-// verified From. The only secret is RESEND_API_KEY (env).
+// verified From. Secrets: RESEND_API_KEY + NEWSLETTER_SECRET (env).
 const emailStrings = {
   _id: "emailStrings",
   _type: "emailStrings",
@@ -3398,7 +3346,6 @@ async function run() {
     buildContactSettings(),
     blog,
     ...comments,
-    ...subscribers,
     emailStrings,
     newsletterSettings,
     waitlistSettings,

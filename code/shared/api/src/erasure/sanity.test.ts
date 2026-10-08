@@ -13,28 +13,20 @@ function mockClient(
 }
 
 describe("Sanity erasure adapter", () => {
-  it("anonymize pseudonymises subscriber + waitlistEntry docs to the fingerprint", async () => {
-    const c = mockClient({
-      subscriber: [{ _id: "sub1" }],
-      waitlistEntry: [{ _id: "w1" }],
-    });
+  it("anonymize pseudonymises waitlistEntry docs to the fingerprint", async () => {
+    const c = mockClient({ waitlistEntry: [{ _id: "w1" }] });
     const a = createSanityErasureAdapter(c, SALT);
     const r = await a.anonymize("x@y.com");
     const fp = await fingerprintEmail("x@y.com", SALT);
     expect(c.pseudonymise).toHaveBeenCalledWith(
-      "sub1",
-      expect.objectContaining({ email: fp, erased: true }),
-    );
-    expect(c.pseudonymise).toHaveBeenCalledWith(
       "w1",
       expect.objectContaining({ email: fp, erased: true }),
     );
-    expect(r.anonymized.subscriber).toBe(1);
-    expect(r.anonymized.waitlistEntry).toBe(1);
+    expect(r.anonymized).toEqual({ waitlistEntry: 1 });
   });
 
   it("delete() is a no-op — Sanity records are pseudonymised, not deleted", async () => {
-    const c = mockClient({ subscriber: [{ _id: "sub1" }] });
+    const c = mockClient({ waitlistEntry: [{ _id: "w1" }] });
     const a = createSanityErasureAdapter(c, SALT);
     const r = await a.delete("x@y.com");
     expect(c.pseudonymise).not.toHaveBeenCalled();
@@ -42,11 +34,10 @@ describe("Sanity erasure adapter", () => {
   });
 
   it("preview reports counts without mutating", async () => {
-    const c = mockClient({ subscriber: [{ _id: "sub1" }], waitlistEntry: [] });
+    const c = mockClient({ waitlistEntry: [{ _id: "w1" }] });
     const a = createSanityErasureAdapter(c, SALT);
     const p = await a.preview("x@y.com");
-    expect(p.wouldAnonymize.subscriber).toBe(1);
-    expect(p.wouldAnonymize.waitlistEntry).toBe(0);
+    expect(p.wouldAnonymize).toEqual({ waitlistEntry: 1 });
     expect(c.pseudonymise).not.toHaveBeenCalled();
   });
 });

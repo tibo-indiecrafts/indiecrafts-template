@@ -11,7 +11,7 @@ import {
 /**
  * The newsletter's transactional-email groups on the shared `emailStrings`
  * singleton — the double opt-in confirmation to the subscriber (translated) and
- * the new-subscriber alert to the team. Contributed via
+ * the confirmed-subscriber alert to the team. Contributed via
  * `newsletterSanity.emailGroups`; read as `getEmailStrings()?.newsletterConfirm`
  * / `?.newsletterOwner`.
  */
@@ -20,8 +20,9 @@ export const emailGroups = [
     name: "newsletterConfirm",
     title: "Infolettre — confirmation (double opt-in)",
     description:
-      "E-mail envoyé à chaque nouvel abonné avec un lien de confirmation. Le clic valide l'inscription. Textes traduits par langue.",
-    enabledHint: "Vide/décoché = aucun e-mail ; l'abonné reste « En attente ».",
+      "E-mail envoyé à chaque inscription avec un lien de confirmation. Le clic inscrit la personne dans Resend (la liste). Textes traduits par langue.",
+    enabledHint:
+      "Obligatoire : décoché ou sans expéditeur, le formulaire d'inscription répond par une erreur (personne ne peut s'inscrire).",
     subjectHint: "Modèle disponible : {{email}}. Vide = objet par défaut.",
     introHint:
       "Le message au-dessus du bouton. Une ligne vide sépare deux paragraphes.",
@@ -33,7 +34,7 @@ export const emailGroups = [
     name: "newsletterOwner",
     title: "Infolettre — nouvel abonné (alerte à l'équipe)",
     description:
-      "E-mail à chaque nouvelle inscription. Interne — traductions facultatives (envoyé dans la langue par défaut).",
+      "E-mail à chaque inscription confirmée. Interne — traductions facultatives (envoyé dans la langue par défaut).",
     enabledHint: "Vide/décoché = aucun e-mail envoyé.",
     toHint: "Une ou plusieurs adresses.",
     subjectHint: "Modèle disponible : {{email}}. Vide = objet par défaut.",
@@ -44,7 +45,7 @@ export const emailGroups = [
     description:
       "E-mail envoyé après confirmation, avec le lien de téléchargement du document promis. Textes traduits par langue.",
     enabledHint:
-      "Informatif — la livraison dépend du document + de LEAD_MAGNET_SECRET, pas de cette case. Vide sur les textes = valeurs par défaut.",
+      "Informatif — la livraison dépend du document + de NEWSLETTER_SECRET, pas de cette case. Vide sur les textes = valeurs par défaut.",
     subjectHint: "Vide = objet par défaut.",
     introHint:
       "Message au-dessus du bouton. Modèle {{title}} = le titre du document. Vide = texte par défaut.",

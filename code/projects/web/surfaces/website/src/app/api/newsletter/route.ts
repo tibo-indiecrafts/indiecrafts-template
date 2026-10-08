@@ -12,9 +12,10 @@ import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sa
 /**
  * Public newsletter signup. `withGuard` hardens the boundary (same-site origin,
  * body cap, rate limit, optional Turnstile) and parses the body once; `subscribe`
- * validates, dedupes, and writes. A honeypot-flagged submission returns `201` too,
- * so bots can't tell it was dropped. New + already-subscribed both answer `201`
- * with an identical body, so membership can't be enumerated.
+ * validates and sends the double opt-in email (nothing is stored until the visitor
+ * confirms). A honeypot-flagged submission returns `201` too, so bots can't tell it was
+ * dropped. Every real sign-up answers `201` with the same body, so membership can't be
+ * enumerated. A site without the newsletter's setup answers `503`.
  */
 const handle = withGuard(async (_req, data) => {
   const body = (data ?? {}) as Record<string, unknown>;
@@ -28,14 +29,14 @@ const handle = withGuard(async (_req, data) => {
       honeypot: body.honeypot ? String(body.honeypot) : undefined,
       startedAt: typeof body.startedAt === "number" ? body.startedAt : undefined,
     },
-    new Date().toISOString(),
     await getConsentPolicyVersion(),
   );
-  // New + already-subscribed answer identically (201, same body) — no membership oracle.
   if (result.ok) return NextResponse.json({ ok: true }, { status: 201 });
   if (result.error === "spam") return NextResponse.json({ ok: true }, { status: 201 });
   if (result.error === "invalid")
     return NextResponse.json({ error: "invalid" }, { status: 400 });
+  if (result.error === "unavailable")
+    return NextResponse.json({ error: "unavailable" }, { status: 503 });
   return NextResponse.json({ error: "server" }, { status: 500 });
 }, security.newsletter);
 

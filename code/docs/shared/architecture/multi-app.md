@@ -27,7 +27,7 @@ page-builder (`@indiecrafts/packages-web-page-builder`) `module.*` blocks compos
 app-dataset would fork all of that and break content sharing.
 
 So **the dataset is the tenant, not the app.** Each app queries the one dataset for the `_type`s it
-renders; app-**private** collections (`subscriber`, `waitlistEntry`, `comment`) are only edited/owned by
+renders; app-**private** collections (`waitlistEntry`, `comment`) are only edited/owned by
 the app that defines them; **shared** collections (`post`, `quote`, `person`) are read by any app.
 Scoping is by **`_type`** (today's mechanism). If two apps ever need separate instances of the _same_
 type (e.g. two blogs), add an optional `scope` field + a query filter — not needed until then.

@@ -28,7 +28,7 @@ const email = renderNewsletterConfirmEmail({
   heading: "Plus qu'une étape",
   intro: "Confirmez votre adresse e-mail pour recevoir l'infolettre.",
   buttonLabel: "Confirmer mon inscription",
-  confirmUrl: "https://example.com/fr/newsletter/confirm?token=abc",
+  confirmUrl: "https://example.com/fr/newsletter/confirm#t=abc",
 });
 ```
 

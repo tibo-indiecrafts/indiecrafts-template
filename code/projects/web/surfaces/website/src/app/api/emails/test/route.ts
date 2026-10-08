@@ -171,7 +171,7 @@ async function buildSamples(to: string): Promise<Sample[]> {
         buttonLabel:
           pick(nlConfirm.buttonLabel, locale) || confirmEmailDefaults(locale).buttonLabel,
         // The real email's link: the localized confirm page (its button POSTs the token).
-        confirmUrl: `${site.url}${localizedPathname("/newsletter/confirm", locale)}?token=TEST`,
+        confirmUrl: `${site.url}${localizedPathname("/newsletter/confirm", locale)}#t=TEST`,
         outro: pick(nlConfirm.outro, locale) || undefined,
       }),
     });
@@ -185,8 +185,8 @@ async function buildSamples(to: string): Promise<Sample[]> {
       message: renderNewsletterNotificationEmail({
         locale,
         subscriberEmail: to,
+        subscriberLocale: locale,
         source: "test",
-        studioUrl,
         subjectTemplate: nlOwner.subject ?? undefined,
         heading: pick(nlOwner.heading, locale) || undefined,
         intro: pick(nlOwner.intro, locale) || undefined,

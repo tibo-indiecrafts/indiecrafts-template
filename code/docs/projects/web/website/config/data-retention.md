@@ -235,17 +235,17 @@ that errors.
 **read-only handle to `main`** to resolve `user_id` before scrubbing `audit` rows — a
 lookup-then-use, not a cross-DB join or transaction):
 
-| Adapter    | Store                        | Policy                                                                                                                                                                                        |
-| ---------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `d1-core`  | `user_profiles`              | pseudonymise (scrub email/name, keep the fingerprint); the cron then **hard-deletes** the row after `retention.profile_anonymized_days` (90) — dropping the fingerprint = final anonymisation |
-| `d1-audit` | `session_events`             | delete (low-sensitivity sign-in activity)                                                                                                                                                     |
-| `d1-audit` | `security_events`            | delete low/medium severity; pseudonymise high/critical (`user_id`→fingerprint)                                                                                                                |
-| `d1-core`  | `consent_events`             | pseudonymise (`subject_id`→fingerprint, `subject_type`→`visitor`)                                                                                                                             |
-| `d1-audit` | `admin_audit`                | retain (the accountability trail)                                                                                                                                                             |
-| `clerk`    | the Clerk user               | delete (Clerk holds identity + credentials — there is no pseudonymised form)                                                                                                                  |
-| `sanity`   | `subscriber`/`waitlistEntry` | pseudonymise (email replaced by its fingerprint)                                                                                                                                              |
-| `resend`   | the Resend contact           | delete (a mirror of D1/Sanity consent; a 404 counts as done). Only when `RESEND_API_KEY` is set; self-erasure and the Clerk webhook exclude it (they handle Resend)                           |
-| `orders`   | future commerce D1           | no-op seam — orders/invoices carry a 7–10y anonymised retention duty, deferred until checkout ships                                                                                           |
+| Adapter    | Store              | Policy                                                                                                                                                                                        |
+| ---------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `d1-core`  | `user_profiles`    | pseudonymise (scrub email/name, keep the fingerprint); the cron then **hard-deletes** the row after `retention.profile_anonymized_days` (90) — dropping the fingerprint = final anonymisation |
+| `d1-audit` | `session_events`   | delete (low-sensitivity sign-in activity)                                                                                                                                                     |
+| `d1-audit` | `security_events`  | delete low/medium severity; pseudonymise high/critical (`user_id`→fingerprint)                                                                                                                |
+| `d1-core`  | `consent_events`   | pseudonymise (`subject_id`→fingerprint, `subject_type`→`visitor`)                                                                                                                             |
+| `d1-audit` | `admin_audit`      | retain (the accountability trail)                                                                                                                                                             |
+| `clerk`    | the Clerk user     | delete (Clerk holds identity + credentials — there is no pseudonymised form)                                                                                                                  |
+| `sanity`   | `waitlistEntry`    | pseudonymise (email replaced by its fingerprint)                                                                                                                                              |
+| `resend`   | the Resend contact | delete (the newsletter list lives only in Resend; a 404 counts as done). Only when `RESEND_API_KEY` is set; self-erasure and the Clerk webhook exclude it (they handle Resend)                |
+| `orders`   | future commerce D1 | no-op seam — orders/invoices carry a 7–10y anonymised retention duty, deferred until checkout ships                                                                                           |
 
 `runErasure`/`runExport` run up to six adapters (`d1-core`, `d1-audit`, `clerk`, `sanity`,
 `resend`, `orders`) — the D1 split added one, a no-op change for the orchestrator, which already

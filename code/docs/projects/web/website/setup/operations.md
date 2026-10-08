@@ -20,7 +20,7 @@ Day-to-day for whoever runs the site. Where things live, what to bookmark, what 
 | `/<locale>/blog/rss.xml`                                 | RSS feed per locale — pasteable into Feedly / a Slack RSS bot           |
 | `/<locale>/blog/<slug>/md`                               | Markdown export of a single post                                        |
 | `/<locale>/llms.txt`                                     | LLM-readable site summary per locale                                    |
-| Studio → **Abonnés** / **Commentaires**                  | Newsletter signups + blog comments (they POST to `/api/*` → Sanity)     |
+| Studio → **Commentaires** · Resend → **Contacts**        | Blog comments (Sanity) · newsletter subscribers (Resend, the only list) |
 | Cloudflare → **Workers** → your worker → **Deployments** | Deploy history, versions, rollback (CI logs: GitHub → Actions → Deploy) |
 | Google Search Console → **Coverage** + **Sitemaps**      | What Google sees + indexing errors                                      |
 | sanity.io/manage → your project                          | API tokens, members, CORS allowlist                                     |
@@ -51,7 +51,7 @@ Post never appears? See § Troubleshooting → "Post published but 404".
 
 Forms POST to **API routes**, not a host feature, and land in **Sanity** — read them in the Studio:
 
-- **Newsletter** (`/api/newsletter`) → Studio → **Abonnés** (grouped by status). Config + provider forwarding: [Newsletter](/modules/web/newsletter/).
+- **Newsletter** (`/api/newsletter`) → a confirm email; the confirm click adds the person to Resend (one `newsletter-<locale>` segment per language). Setup: [Newsletter](/modules/web/newsletter/).
 - **Blog comments** (`/api/comments`) → Studio → **Commentaires** (moderation). See [Comments](/modules/web/blog/comments).
 - **Waitlist** (`/api/waitlist`) → Studio → **Liste d'attente**. See [Waitlist](/modules/web/waitlist/).
 - **Contact** (`/api/contact`) → Studio → **Contact** (message inbox). See [Contact](/modules/web/contact/).
@@ -62,7 +62,7 @@ Each uses a honeypot + a gated route + a server-only Sanity write. A submit that
 
 | Entity                | Ingest route      | Rate-limit + Turnstile    | Studio inbox    | Export                                | Delete | Live toggle                             |
 | --------------------- | ----------------- | ------------------------- | --------------- | ------------------------------------- | ------ | --------------------------------------- |
-| Newsletter subscriber | `/api/newsletter` | ✓ (`security.newsletter`) | Abonnés         | `pnpm export:web:website:subscribers` | Studio | code flag                               |
+| Newsletter subscriber | `/api/newsletter` | ✓ (`security.newsletter`) | Resend contacts | `pnpm export:web:website:subscribers` | Resend | code flag                               |
 | Blog comment          | `/api/comments`   | ✓ (`security.comments`)   | Commentaires    | `pnpm comments:export`                | Studio | code flag                               |
 | Waitlist entry        | `/api/waitlist`   | ✓ (`security.waitlist`)   | Liste d'attente | `pnpm waitlist:export`                | Studio | `waitlistSettings.enabled` (page + API) |
 | Contact message       | `/api/contact`    | ✓ (`security.contact`)    | Contact         | `pnpm contact:export`                 | Studio | `contactSettings.enabled` (page + API)  |
@@ -151,7 +151,7 @@ Deeper Sanity-specific symptoms (schema migration, legacy fields) are in [`sanit
   pnpm db:backup:content:prod                  # → website/backups/sanity/  (db:backup:content:prod:remote for an R2 copy)
   ```
   Re-importable with `pnpm --filter @indiecrafts/web-surfaces-website db:restore:content -- <file>` if the live dataset breaks.
-- **Form submissions** — they're Sanity docs (Abonnés / Commentaires); the dataset export above already includes them.
+- **Form submissions** — comments, contact and waitlist entries are Sanity docs (the dataset export above includes them). Newsletter subscribers live in Resend: keep a `pnpm export:web:website:subscribers` file if you need an offline copy.
 
 Brand assets in Sanity are covered by the dataset export; code-side assets (fonts) by the git backup.
 
@@ -161,7 +161,7 @@ Brand assets in Sanity are covered by the dataset export; code-side assets (font
 
 | Cadence   | Action                                                                                                   |
 | --------- | -------------------------------------------------------------------------------------------------------- |
-| Weekly    | Glance at Studio → **Abonnés** / **Commentaires** for spam (honeypot catches most)                       |
+| Weekly    | Glance at Studio → **Commentaires** for spam (honeypot catches most)                                     |
 | Monthly   | Run `pnpm verify` on latest `main` (tsc + lint + format + contrast + doctor)                             |
 | Monthly   | Export the Sanity dataset (§ 9)                                                                          |
 | Monthly   | `node --env-file=.env.local scripts/audit-dataset.mjs` — catch content drift (broken refs, stale drafts) |

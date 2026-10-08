@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-Confirms a newsletter double opt-in. It is `POST` only, so a mail scanner or link prefetcher cannot auto-confirm. The confirmation email links to the `newsletter/confirm` page, whose button POSTs the one-time `token` here; `confirmSubscriber` verifies it. `withGuard` rate-limits the route (the token is the auth, so no Turnstile). The route `404`s when the newsletter feature is off, and otherwise returns a confirmed or invalid status.
+Confirms a newsletter double opt-in. It is `POST` only, so a mail scanner or link prefetcher cannot auto-confirm. The confirmation email links to the `newsletter/confirm` page, whose button POSTs the signed `token` here; `confirmSubscription` verifies it and stores the subscriber in Resend through the api. `withGuard` rate-limits the route and caps the body at 4000 bytes (the token is the auth, so no Turnstile). The route `404`s when the newsletter feature is off; otherwise it answers `{ status: "confirmed" | "invalid" }`, or `502 { status: "error" }` when the subscriber could not be stored.
 
 ## Exports
 
-- `POST` — confirms the subscriber for a `token`, returns the confirm status or `404` when disabled.
+- `POST` — confirms the sign-up in a `token`; returns the status, `502` on a storage failure, or `404` when disabled.
 
 ## Source
 

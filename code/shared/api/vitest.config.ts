@@ -40,7 +40,6 @@ export default defineWorkersConfig(async () => {
               // developer's real `.dev.vars` (which the pool loads and would otherwise
               // flip 503 → 401). An explicit binding overrides `.dev.vars`.
               CLERK_WEBHOOK_SECRET: "",
-              RESEND_WEBHOOK_SECRET: "",
               // Same for outbound keys: a real `.dev.vars` key made tests call Resend /
               // Sanity for real (slow → 5 s timeouts, and real side effects). A test that
               // needs one passes its own env.

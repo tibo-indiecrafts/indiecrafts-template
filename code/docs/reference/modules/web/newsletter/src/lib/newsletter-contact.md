@@ -1,20 +1,21 @@
 ---
-title: "Newsletter Resend sync"
-description: "Mirrors a confirmed newsletter subscriber into Resend's news topic through the shared api."
+title: "Newsletter Resend contact"
+description: "Makes a confirmed newsletter subscriber a Resend contact through the shared api."
 status: stable
 ---
 
-# Newsletter Resend sync
+# Newsletter Resend contact
 
-> One list to send from: a confirmed subscriber joins Resend's `news` topic.
+> Resend is the only list: a confirmed subscriber becomes a Resend contact through the api.
 
 ## Purpose
 
-The Sanity `subscriber` doc is the newsletter's source of truth. `syncNewsletterContact` posts it to the shared api (`POST /v1/newsletter/subscribers`, server token), which creates or updates the Resend contact and opts it into the `news` topic — the topic signed-in members' "news" category uses — so one Resend Broadcast reaches both. `confirmSubscriber` calls it on confirm, and `subscribe` when a confirmed lead-magnet-only address signs up for the newsletter. An unsubscribe made in Resend comes back through the api's Resend webhook. Best-effort: a failure is logged (never the address) and never fails the confirmation; without `API_URL` / `APP_API_TOKEN` it does nothing. Server-only.
+`subscribeContact` posts a confirmed sign-up to the shared api (`POST /v1/newsletter/subscribers`, the server bearer `APP_API_TOKEN`). The api records the consent proof in D1 and upserts the Resend contact: the `news` topic, the `locale` property and the `newsletter-<locale>` segment. It throws when the api is unconfigured or answers non-2xx, so a confirmation never reports success for a subscriber that was not stored. `newsletterApiConfigured` tells `subscribe` whether a newsletter sign-up can be accepted at all. Server-only.
 
 ## Exports
 
-- `syncNewsletterContact({ email, locale, granted })` — mirrors the subscriber; `granted: false` opts it out of the topic.
+- `newsletterApiConfigured()` — `API_URL` and `APP_API_TOKEN` are set.
+- `subscribeContact({ email, locale, policyVersion, consentAt })` — stores the subscriber; throws on failure.
 
 ## Source
 

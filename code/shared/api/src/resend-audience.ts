@@ -9,6 +9,8 @@
 // Sibling of `erasure/email.ts` — same inline-`fetch` + injectable-seam pattern, no
 // `server-only`, no new deps. Best-effort by contract: callers wrap these in try/catch and
 // log, so a Resend hiccup never blocks the D1 write that is the real source of truth.
+// Resend is the newsletter's only list: a newsletter contact also carries a `locale`
+// property and sits in one `newsletter-<code>` language segment.
 //
 // Unset `RESEND_API_KEY` → every function no-ops, so the whole feature degrades to
 // capture-only when Resend is unconfigured.
@@ -88,13 +90,19 @@ export async function upsertResendContact(
 /** Create-or-update the contact's per-topic subscriptions. Topics are Resend's per-category
  *  primitive (`unsubscribed` above is the global flag, not per-category); each entry maps
  *  `granted` to Resend's `opt_in`/`opt_out`. Entries with an empty/missing `topicId` are
- *  dropped. */
+ *  dropped. `newsletterLocale` (set only when the `news` category changed): a locale → the
+ *  `locale` property + that language segment; `null` → out of every language segment. */
 export async function syncContactTopics(
   env: ResendAudienceEnv,
   {
     email,
     topics,
-  }: { email: string; topics: { topicId: string; granted: boolean }[] },
+    newsletterLocale,
+  }: {
+    email: string;
+    topics: { topicId: string; granted: boolean }[];
+    newsletterLocale?: string | null;
+  },
   doFetch: typeof fetch = fetch,
 ): Promise<void> {
   if (!env.RESEND_API_KEY || !email) return;
@@ -104,42 +112,93 @@ export async function syncContactTopics(
       id: t.topicId,
       subscription: t.granted ? "opt_in" : "opt_out",
     }));
-  if (!subs.length) return;
-  await upsertContact(env, email, {}, subs, doFetch);
+  const fields = newsletterLocale
+    ? { properties: { locale: newsletterLocale } }
+    : {};
+  if (subs.length || newsletterLocale)
+    await upsertContact(env, email, fields, subs, doFetch);
+  if (newsletterLocale !== undefined)
+    await syncNewsletterSegments(
+      env,
+      { email, locale: newsletterLocale },
+      doFetch,
+    );
 }
 
-/** A confirmed newsletter subscriber: clear the global flag (`unsubscribed: false`) and opt
- *  INTO the `news` topic in one upsert. No `topicId` → the global flag only. */
+/** A confirmed newsletter subscriber: clear the global flag (`unsubscribed: false`), set the
+ *  `locale` property and opt INTO the `news` topic in one upsert, then move the contact to its
+ *  language segment. No `topicId` → no topic. */
 export async function subscribeNewsletterContact(
   env: ResendAudienceEnv,
-  { email, topicId }: { email: string; topicId?: string },
+  {
+    email,
+    locale,
+    topicId,
+  }: { email: string; locale: string; topicId?: string },
   doFetch: typeof fetch = fetch,
 ): Promise<void> {
   if (!env.RESEND_API_KEY || !email) return;
   const topics: TopicSub[] = topicId
     ? [{ id: topicId, subscription: "opt_in" }]
     : [];
-  await upsertContact(env, email, { unsubscribed: false }, topics, doFetch);
+  await upsertContact(
+    env,
+    email,
+    { unsubscribed: false, properties: { locale } },
+    topics,
+    doFetch,
+  );
+  await syncNewsletterSegments(env, { email, locale }, doFetch);
 }
 
-/** A newsletter unsubscribe: opt OUT of the `news` topic only — the global flag stays, so
- *  other topics keep working. PATCH-only: an unknown contact (404) is left uncreated, so an
- *  opt-out never adds an email to Resend. */
-export async function unsubscribeNewsletterContact(
+type Segment = { id: string; name: string };
+/** One segment per site language, named `newsletter-<code>` (created by `resend:topics:sync`). */
+const NEWSLETTER_SEGMENT = "newsletter-";
+
+/** Put the contact in `newsletter-<locale>` and out of every other `newsletter-*` segment;
+ *  `locale` null → out of all of them. Reads the contact's own segments first, so a repeat
+ *  call adds and removes nothing. No `newsletter-<locale>` segment (setup not run) → no-op.
+ *  An unknown contact (404) has no segments. Throws on any other Resend error. */
+async function syncNewsletterSegments(
   env: ResendAudienceEnv,
-  { email, topicId }: { email: string; topicId: string },
+  { email, locale }: { email: string; locale: string | null },
   doFetch: typeof fetch = fetch,
 ): Promise<void> {
-  if (!env.RESEND_API_KEY || !email || !topicId) return;
-  const res = await doFetch(`${RESEND_API}/contacts/${email}/topics`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${env.RESEND_API_KEY}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify([{ id: topicId, subscription: "opt_out" }]),
-  });
-  if (!res.ok && res.status !== 404) throw new Error(`resend ${res.status}`);
+  if (!env.RESEND_API_KEY || !email) return;
+  const headers = { Authorization: `Bearer ${env.RESEND_API_KEY}` };
+  const newsletterSegments = async (path: string): Promise<Segment[]> => {
+    const res = await doFetch(`${RESEND_API}${path}`, { headers });
+    if (res.status === 404) return [];
+    if (!res.ok) throw new Error(`resend ${res.status}`);
+    const { data } = (await res.json()) as { data?: Segment[] };
+    return (data ?? []).filter((s) => s.name?.startsWith(NEWSLETTER_SEGMENT));
+  };
+
+  let target: Segment | undefined;
+  if (locale) {
+    target = (await newsletterSegments("/segments?limit=100")).find(
+      (s) => s.name === `${NEWSLETTER_SEGMENT}${locale}`,
+    );
+    if (!target) return;
+  }
+  const current = await newsletterSegments(
+    `/contacts/${email}/segments?limit=100`,
+  );
+  if (target && !current.some((s) => s.id === target.id)) {
+    const res = await doFetch(
+      `${RESEND_API}/contacts/${email}/segments/${target.id}`,
+      { method: "POST", headers },
+    );
+    if (!res.ok) throw new Error(`resend ${res.status}`);
+  }
+  for (const s of current) {
+    if (s.id === target?.id) continue;
+    const res = await doFetch(
+      `${RESEND_API}/contacts/${email}/segments/${s.id}`,
+      { method: "DELETE", headers },
+    );
+    if (!res.ok && res.status !== 404) throw new Error(`resend ${res.status}`);
+  }
 }
 
 /** The contact's topic subscriptions (`GET /contacts/{email}/topics`, first 100 — far

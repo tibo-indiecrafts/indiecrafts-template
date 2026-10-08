@@ -34,7 +34,7 @@ const GUARDED: Guarded[] = [
     invalid: { email: "not-an-email", requestType: "access" },
   },
   // The token is the auth; any token string answers 200 `{status}`, so the 400 is the guard's JSON parse.
-  { path: "/api/newsletter/confirm", bodyMax: 2000, invalid: "{not json" },
+  { path: "/api/newsletter/confirm", bodyMax: 4000, invalid: "{not json" },
   {
     path: "/api/views",
     bodyMax: 1000,

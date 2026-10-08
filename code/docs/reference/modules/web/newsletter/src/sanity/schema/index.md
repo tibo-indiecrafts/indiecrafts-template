@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-Collects the newsletter module's Sanity schema definitions — `newsletterSettings`, `subscriber`, and `leadMagnet` — into one array for the `newsletterSanity` barrel to register.
+Collects the newsletter module's Sanity schema definitions — `newsletterSettings` and `leadMagnet` — into one array for the `newsletterSanity` barrel to register.
 
 ## Exports
 
-- `schemaTypes` — `SchemaTypeDefinition[]` with the newsletter settings singleton, subscriber, and lead-magnet types.
+- `schemaTypes` — `SchemaTypeDefinition[]` with the newsletter settings singleton and the lead-magnet type.
 
 ## Source
 

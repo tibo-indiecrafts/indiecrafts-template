@@ -21,17 +21,17 @@ import {
 } from "@indiecrafts/packages-shared-gated-delivery";
 
 /**
- * Lead-magnet delivery — the step that fires AFTER a subscriber confirms their
- * e-mail. A `module.lead-magnet` capture block tags the subscriber with the
- * referenced `leadMagnet` doc id; on confirm (`lib/confirm.ts`) we sign a short
+ * Lead-magnet delivery — the step that fires AFTER the visitor confirms their
+ * e-mail. A `module.lead-magnet` capture block puts the referenced `leadMagnet` doc id
+ * in the confirm link's `tags`; on confirm (`lib/confirm.ts`) we sign a short
  * gated-delivery token (`@indiecrafts/packages-shared-gated-delivery`) and e-mail the download
  * link. The `/api/download` route verifies the token, then resolves the file URL.
  *
- * Delivery is gated on `LEAD_MAGNET_SECRET` (server-only, never `NEXT_PUBLIC_`) —
- * absent, no token can be signed or verified, so the feature is off. The link is
- * signed + expiring, not single-use.
+ * Signed with `NEWSLETTER_SECRET` (server-only, never `NEXT_PUBLIC_`), the same secret as
+ * the confirm link — absent, no token can be signed or verified, so the feature is off.
+ * The link is signed + expiring, not single-use.
  */
-const SECRET = process.env.LEAD_MAGNET_SECRET;
+const secret = () => process.env.NEWSLETTER_SECRET;
 const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 /** Fallback delivery copy when the Sanity `leadMagnet` group is empty; a magnet's title is interpolated. */
@@ -83,13 +83,14 @@ export async function getLeadMagnetAssetUrl(
 export async function resolveMagnetDownload(
   token: string,
 ): Promise<{ ok: true; url: string } | { ok: false; status: 403 }> {
-  if (!SECRET || !token) return { ok: false, status: 403 };
-  return resolveGatedDownload(token, SECRET, getLeadMagnetAssetUrl);
+  const key = secret();
+  if (!key || !token) return { ok: false, status: 403 };
+  return resolveGatedDownload(token, key, getLeadMagnetAssetUrl);
 }
 
 /**
- * Deliver every lead magnet a confirmed subscriber signed up for. The capture
- * block stores the magnet doc id in `tags`; a tag that isn't a magnet is a no-op.
+ * Deliver every lead magnet a confirmed request asked for. The capture block puts the
+ * magnet doc id in `tags`; a tag that isn't a magnet is a no-op.
  * Best-effort — a mail/lookup failure must never fail the confirmation.
  */
 export async function deliverMagnetsForTags(
@@ -97,7 +98,7 @@ export async function deliverMagnetsForTags(
   tags: string[] | undefined,
   language: string | undefined,
 ): Promise<void> {
-  if (!SECRET || !tags?.length) return;
+  if (!secret() || !tags?.length) return;
   for (const tag of tags) {
     try {
       const magnet = await getMagnet(tag);
@@ -115,7 +116,8 @@ async function sendMagnetEmail(
   magnet: Magnet,
   language: string | undefined,
 ): Promise<void> {
-  if (!SECRET || !process.env.RESEND_API_KEY) return;
+  const key = secret();
+  if (!key || !process.env.RESEND_API_KEY) return;
   const strings = (await getEmailStrings()) as {
     newsletterConfirm?: ConfirmationConfig;
     leadMagnet?: ConfirmationConfig;
@@ -140,7 +142,7 @@ async function sendMagnetEmail(
   const intro = pick(lead?.intro, locale);
   const token = await signDownloadToken(
     { assetId: magnet._id, exp: Date.now() + TTL_MS },
-    SECRET,
+    key,
   );
   const message = renderLeadMagnetEmail({
     subject: pick(lead?.subject, locale) || fallback.subject,

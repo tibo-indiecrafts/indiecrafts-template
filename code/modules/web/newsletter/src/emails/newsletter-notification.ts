@@ -1,5 +1,5 @@
 /**
- * Renders the owner alert email for a new newsletter subscriber.
+ * Renders the owner alert email for a newly confirmed newsletter subscriber.
  *
  * @see docs/reference/modules/web/newsletter/src/emails/newsletter-notification.md
  */
@@ -15,8 +15,9 @@ export type NewsletterNotificationInput = {
   /** The operator's locale — the site's `defaultLocale`; any locale without copy gets English. */
   locale?: string;
   subscriberEmail: string;
+  /** The subscriber's language (the page they signed up on). */
+  subscriberLocale?: string;
   source?: string;
-  studioUrl: string;
   /** Optional subject with a `{{email}}` placeholder. */
   subjectTemplate?: string;
   /** Editor overrides (resolved strings) — empty falls back to the defaults below. */
@@ -35,9 +36,8 @@ const EN = {
   subject: "New newsletter subscriber: {{email}}",
   colon: ":",
   email: "Email",
+  language: "Language",
   source: "Source",
-  studioText: "View subscribers in the Studio",
-  studioButton: "View subscribers",
 };
 
 const COPY: Record<string, typeof EN> = {
@@ -48,9 +48,8 @@ const COPY: Record<string, typeof EN> = {
     subject: "Nouvel abonné à l'infolettre : {{email}}",
     colon: " :",
     email: "E-mail",
+    language: "Langue",
     source: "Source",
-    studioText: "Voir les abonnés dans le Studio",
-    studioButton: "Voir les abonnés",
   },
 };
 
@@ -72,20 +71,21 @@ export function renderNewsletterNotificationEmail(
     intro,
     "",
     `${copy.email}${copy.colon} ${input.subscriberEmail}`,
+    ...(input.subscriberLocale
+      ? [`${copy.language}${copy.colon} ${input.subscriberLocale}`]
+      : []),
     ...(input.source ? [`${copy.source}${copy.colon} ${input.source}`] : []),
-    "",
-    `${copy.studioText}${copy.colon} ${input.studioUrl}`,
     ...(outro ? ["", outro] : []),
   ].join("\n");
 
+  const row = (label: string, value: string) =>
+    `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">${label}</p><p style="margin:0 0 16px;font-size:15px">${escapeHtml(value)}</p>`;
+
   const contentHtml = [
     `<p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:${C.body}">${escapeHtml(intro).replaceAll("\n", "<br>")}</p>`,
-    `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">${copy.email}</p>`,
-    `<p style="margin:0 0 16px;font-size:15px">${escapeHtml(input.subscriberEmail)}</p>`,
-    input.source
-      ? `<p style="margin:0 0 4px;color:${C.muted};font-size:12px;text-transform:uppercase;letter-spacing:.04em">${copy.source}</p><p style="margin:0 0 20px;font-size:15px">${escapeHtml(input.source)}</p>`
-      : "",
-    `<a href="${escapeHtml(input.studioUrl)}" style="display:inline-block;padding:11px 20px;background:${C.heading};color:${C.card};border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">${copy.studioButton}</a>`,
+    row(copy.email, input.subscriberEmail),
+    input.subscriberLocale ? row(copy.language, input.subscriberLocale) : "",
+    input.source ? row(copy.source, input.source) : "",
     outro
       ? `<p style="margin:20px 0 0;font-size:13px;line-height:1.6;color:${C.muted}">${escapeHtml(outro).replaceAll("\n", "<br>")}</p>`
       : "",

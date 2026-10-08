@@ -27,8 +27,9 @@ export const security = {
   comments: { rateLimit: rateLimits.standard, bodyMax: 12_000, turnstile: true },
   /** GDPR data-subject request — `/api/data-request`. */
   dataRequest: { rateLimit: rateLimits.strict, bodyMax: 8000, turnstile: true },
-  /** Double-opt-in confirm — `/api/newsletter/confirm`. The one-time token is the auth, so no Turnstile. */
-  confirm: { rateLimit: rateLimits.confirm, bodyMax: 2000 },
+  /** Double-opt-in confirm — `/api/newsletter/confirm`. The signed token is the auth, so no Turnstile.
+   *  It carries the whole sign-up (≤ 20 tags, a 300-char source): ~2.3 KB at most. */
+  confirm: { rateLimit: rateLimits.confirm, bodyMax: 4000 },
   /** One-click email moderation — `/api/comments/moderate`. Cross-site form POST, token-gated; rate-limit is defence-in-depth on the token. */
   moderate: { rateLimit: rateLimits.lenient },
   /** Anonymous post-view beacon — `/api/views` (Trending). The cap also bounds how fast one visitor can inflate a count. */
