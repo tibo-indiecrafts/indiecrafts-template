@@ -155,7 +155,8 @@ provider embeds usually already do.
 
 The consent checkbox is required — the submit button stays disabled until it is ticked, and
 `subscribe()` rejects a submission without `consent: true`. The stored `subscriber` records
-`consent`, `source` (the page the signup came from), `language`, and `createdAt`. Double opt-in adds
+`consent`, `source` (the page the signup came from), `language` (the page's locale; the latest
+sign-up wins, so the confirm, lead-magnet and Resend steps follow it), and `createdAt`. Double opt-in adds
 a verified-intent step. No address is stored without an explicit opt-in.
 
 - **Two purposes, two consents.** A lead-magnet sign-up agrees to receive a document, not the
