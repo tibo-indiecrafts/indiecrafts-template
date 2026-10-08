@@ -55,7 +55,7 @@ export default defineType({
       title: "Image de partage",
       type: "image",
       description:
-        "1200×630 recommandé. Carte OG/Twitter affichée quand la page est partagée. Vide = image de partage par défaut de la langue.",
+        "L'aperçu affiché quand la page est partagée sur les réseaux sociaux. 1200×630 recommandé. Vide = image de partage par défaut de la langue.",
       options: { hotspot: true, metadata: ["lqip"] },
       fields: [
         defineField({ name: "alt", type: "string", title: "Texte alternatif" }),
@@ -83,7 +83,8 @@ export default defineType({
       name: "noIndex",
       title: "Masquer des moteurs de recherche",
       type: "boolean",
-      description: "Ajoute robots:noindex + retire la page du plan de site.",
+      description:
+        "Google et les autres moteurs n'affichent plus cette page ; elle sort aussi du plan du site.",
       initialValue: false,
     }),
     defineField({

@@ -37,6 +37,16 @@ describe("buildCsp", () => {
     expect(csp).toMatch(/form-action [^;]*https:\/\/x\.list-manage\.com/); // embed hosts
     expect(csp).toContain("https://*.googletagmanager.com"); // GA
   });
+
+  it("frameAncestors opens framing to the listed origins only", () => {
+    const csp = buildCsp("production", { frameAncestors: ["'self'"] });
+    expect(csp).toContain("frame-ancestors 'self';");
+    const xfo = securityHeaders({
+      env: "production",
+      csp: { frameAncestors: ["'self'"] },
+    })[0].headers.find((h) => h.key === "X-Frame-Options");
+    expect(xfo?.value).toBe("SAMEORIGIN");
+  });
 });
 
 describe("securityHeaders", () => {
@@ -135,11 +145,17 @@ describe("permissiveCspRule", () => {
     expect(studio.source).toBe("/studio/:path*");
     const maintenance = permissiveCspRule("/maintenance", "production");
     expect(maintenance.source).toBe("/maintenance");
-    // Both reproduce the permissive (non-nonce) policy exactly.
+    // Both use the permissive (non-nonce) policy.
     const csp = (r: typeof maintenance) =>
       r.headers.find((h) => h.key === "Content-Security-Policy")?.value;
-    expect(csp(studio)).toBe(buildCsp("production"));
     expect(csp(maintenance)).toBe(buildCsp("production"));
+    // The Studio adds only Sanity's own bridge script + font hosts.
+    expect(csp(studio)).toBe(
+      buildCsp("production", {
+        scriptSrc: ["https://core.sanity-cdn.com"],
+        fontSrc: ["https://design-system-static.sanity.io"],
+      }),
+    );
   });
 
   it("adds Reporting-Endpoints only when a reporting endpoint is given", () => {

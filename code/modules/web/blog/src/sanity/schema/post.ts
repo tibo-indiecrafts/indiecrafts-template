@@ -138,7 +138,7 @@ export default defineType({
         },
       ],
       description:
-        "Étiquettes plus fines. Chaque tag a sa propre page /blog/tag/<slug>.",
+        "Mots-clés plus précis que les catégories. Chaque tag a sa propre page qui liste ses articles.",
       group: "content",
     }),
     defineField({
@@ -146,7 +146,7 @@ export default defineType({
       title: "Mis en avant",
       type: "boolean",
       description:
-        "Marqué comme article phare (utilisé par `featuredPostsQuery`).",
+        "Activé = l'article apparaît dans la section « À la une » de la page d'accueil.",
       initialValue: false,
       group: "content",
     }),

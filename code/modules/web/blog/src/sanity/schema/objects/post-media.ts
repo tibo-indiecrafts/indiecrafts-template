@@ -21,9 +21,10 @@ export default defineType({
   fields: [
     defineField({
       name: "slug",
-      title: "Slug",
+      title: "Adresse web",
       type: "slug",
-      description: "Chemin d'URL. Minuscules, tirets uniquement.",
+      description:
+        "La fin de l'adresse de l'article (ex. mon-article). Minuscules et tirets. « Générer » la crée depuis le titre.",
       options: {
         source: (doc) => (doc as { title?: string }).title ?? "",
         maxLength: 96,

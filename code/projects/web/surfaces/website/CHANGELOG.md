@@ -17,7 +17,30 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **Draft preview from the Studio: the "Aperçu" tab.** The Studio now has Sanity's Presentation
+  tool: it shows the site with unpublished changes, and a click on a text opens its field. An
+  article's "Utilisé sur" panel links to its page. **Why:** the draft-mode routes existed, but
+  nothing in the Studio could open them, so editors had no way to preview a draft.
+- **An "exit preview" bar.** When draft mode is on outside the Studio, a bar at the bottom says so
+  and links to `/api/draft-mode/disable` (`common.preview` / `common.exitPreview`, en/fr).
+  **Why:** the preview cookie outlives the Studio tab, so an editor could read drafts on the
+  public site as if they were live.
+
+### Fixed
+
+- **A published post now goes live; a deleted one goes offline.** New signed route
+  `POST /api/revalidate` (Sanity webhook, `SANITY_REVALIDATE_SECRET`) purges every cached page.
+  **Why:** `<SanityLive>` refreshes pages only while a visitor has the site open, and never
+  clears a cached "not found" — a new post stayed 404, a deleted one stayed online. Setup: one
+  webhook per site URL (launch checklist §3).
+
 ### Changed
+
+- **The site may frame itself.** With `features.studio` on, `frame-ancestors` is `'self'` and
+  `X-Frame-Options` is `SAMEORIGIN` (was `'none'` / `DENY`); other sites still cannot frame it.
+  **Why:** the Aperçu tab shows the site in a same-origin iframe.
 
 - **One place for email choices: the account's Emails page.** The "Commercial emails" switch is
   gone from "Privacy & consent" (and the `account.marketing.label` copy, en/fr); each email category

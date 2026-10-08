@@ -28,6 +28,8 @@ const ALLOWLIST = {
     "browser CSP-violation report sink (Reporting API), website + admin — no auth by design; handleCspReport is the trust boundary (CSP content-type allowlist + body cap + per-IP rateLimit + sanitize, always 204). withGuard's origin/Turnstile don't apply to Reporting-API beacons.",
   "src/app/api/csp-report/route.ts":
     "same CSP-report sink on the `app` surface (its folder name shifts the route key); handleCspReport is the trust boundary — see the website entry.",
+  "api/revalidate/route.ts":
+    "Sanity publish webhook, server-to-server — authenticated by the HMAC `sanity-webhook-signature` (parseBody + SANITY_REVALIDATE_SECRET; 401 unsigned, 503 unset). Its only effect is a cache purge. withGuard's origin/Turnstile don't apply to a webhook.",
   "api/comments/moderate/route.ts":
     "single-use moderationToken + cross-site form POST from the email client (rate-limited via rateLimit()).",
   "api/emails/test/route.ts":

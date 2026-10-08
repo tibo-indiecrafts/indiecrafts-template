@@ -26,6 +26,9 @@ export type CspHosts = {
   embedHosts?: string[];
   /** Add Google Analytics / Tag Manager hosts to script-src + connect-src. */
   googleAnalytics?: boolean;
+  /** Who may frame the page. Default: nobody (`'none'`). The website lists `'self'` so the
+   *  Studio's Presentation tool can show the site in its preview iframe. */
+  frameAncestors?: string[];
 };
 
 // GA hosts. The measurement ID is a runtime Sanity value the build-time CSP can't
@@ -124,7 +127,7 @@ function cspDirectives(
       `frame-src ${src(["'self'"], TURNSTILE, clerk.frame, csp.frameSrc, embed)}`,
     ),
     `object-src 'none'`,
-    `frame-ancestors 'none'`,
+    `frame-ancestors ${csp.frameAncestors?.length ? csp.frameAncestors.join(" ") : "'none'"}`,
     `base-uri 'self'`,
     `form-action ${src(["'self'"], embed)}`,
   ];

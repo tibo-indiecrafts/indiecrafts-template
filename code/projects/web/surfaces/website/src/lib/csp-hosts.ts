@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/website/src/lib/csp-hosts.md
  */
 import type { CspHosts } from "@indiecrafts/packages-shared-security";
+import { features } from "../config/features";
 
 // Extra origins allowed for editor-pasted embeds — e.g. an external newsletter
 // provider's form dropped in a `custom-html` block (Mailchimp/ConvertKit/…). Empty
@@ -41,4 +42,6 @@ export const websiteCspHosts: CspHosts = {
   connectSrc: apiOrigin(),
   googleAnalytics: true,
   embedHosts: EMBED_HOSTS,
+  // The Studio's Presentation tool shows the site in a same-origin iframe. Nobody else may frame it.
+  frameAncestors: features.studio ? ["'self'"] : [],
 };

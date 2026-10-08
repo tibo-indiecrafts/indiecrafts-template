@@ -172,6 +172,8 @@
     "copy": "Copy",
     "copied": "Copied",
     "announcement": "Announcement",
+    "preview": "Preview: you see unpublished changes.",
+    "exitPreview": "Exit preview",
     "share": {
       "label": "Share this page",
       "x": "Share on X",

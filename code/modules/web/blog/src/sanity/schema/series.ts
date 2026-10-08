@@ -34,14 +34,15 @@ export default defineType({
     }),
     defineField({
       name: "slug",
-      title: "Slug",
+      title: "Adresse web",
       type: "slug",
+      description:
+        "La fin de l'adresse de la page de la série (ex. guide-du-debutant). Minuscules et tirets. « Générer » la crée depuis le titre.",
       options: {
         source: "title",
         maxLength: 96,
         documentInternationalization: { exclude: true },
       },
-      description: "Fragment d'URL pour /blog/series/<slug>.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({

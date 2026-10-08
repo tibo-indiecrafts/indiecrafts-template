@@ -15,6 +15,9 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **blog: "Slug" fields read "Adresse web".** Post, author, category, series and tag explain the
+  field in plain French with an example; the "Mis en avant" and tag help no longer name code.
+  **Why:** a non-technical editor could not tell what "Slug" or `featuredPostsQuery` meant.
 - **`modules-web-blog` — a Big Hero block on "latest" broke its page (500).** `BlogHeroModule` sent
   `pinnedId: undefined`; the request drops an undefined param, and the query's `$pinnedId` then fails
   to parse. It now sends `null` (`defined(null)` is false). `BlogHeroModule.test.tsx` covers latest,

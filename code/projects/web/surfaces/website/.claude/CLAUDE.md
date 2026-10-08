@@ -43,7 +43,7 @@ Rationale + full tree → `code/docs/projects/web/website/config/project-organiz
   Reach Clerk UI only through `@/user-interface/account/LazyClerk` (`next/dynamic`) from anything the layout or
   header renders — a static import puts Clerk back on every page. Client code checks `useClerkActive()`.
 - **Flags:** `features.blog` (every blog route 404s and leaves sitemap, `llms.txt`, nav when off; gate in
-  `@indiecrafts/modules-web-blog/lib/route-gate`) and `features.studio` (`/studio` + draft mode) are independent.
+  `@indiecrafts/modules-web-blog/lib/route-gate`) and `features.studio` (`/studio` + its Aperçu preview tab + draft mode + `frame-ancestors 'self'`) are independent.
 - **Library sections:** copy, then adapt — strings → `messages/`, colors/nav → `@/config`, links →
   `@/i18n/routing`. Target shape: `src/user-interface/homepage/sections/Features.tsx`. Never add the
   component library as a dependency, workspace, or symlink. → `design/sections.md`.

@@ -127,17 +127,16 @@ Each inline module has a small form on insert (title, items, etc.) — no code.
 
 Preview a saved draft **on the live site** before publishing.
 
-1. Click **Save as draft** instead of Publish.
-2. Enter draft mode by hitting the enable endpoint:
+1. Save your changes as a draft (don't publish yet).
+2. Open the **Aperçu** tab at the top of the Studio. It shows the site with your drafts, and
+   you can click a text on the page to jump to its field. From an article, the preview panel
+   links straight to its page.
+3. Publish when it looks right.
 
-   ```text
-   /api/draft-mode/enable?sanity-preview-secret=<SECRET>&sanity-preview-pathname=/blog/your-slug
-   ```
-
-   The endpoint is gated by `features.studio` and needs `SANITY_API_READ_TOKEN` set on the server. The `<SECRET>` is validated by next-sanity's draft-mode flow — ask your developer for the preview link, since this project doesn't ship a Studio "Preview" button.
-
-3. You land on the post URL with **draft** content rendered.
-4. Exit with `/api/draft-mode/disable` — it drops draft mode and redirects to the home page.
+If you browse the site in the same browser after a preview, a black bar at the bottom says you
+still see unpublished changes. **Quitter l'aperçu** turns the preview off. Under the hood:
+the tab opens `/api/draft-mode/enable` with a short-lived secret, and the bar links to
+`/api/draft-mode/disable`.
 
 **Responses to expect:** `404` = `features.studio` is off; `503` = `SANITY_API_READ_TOKEN` isn't set (see [`sanity-tokens.md`](/modules/web/blog/sanity-tokens)).
 

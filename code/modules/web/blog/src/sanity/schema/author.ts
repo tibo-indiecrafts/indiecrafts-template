@@ -28,8 +28,10 @@ export default defineType({
     defineField({ name: "position", title: "Poste", type: "string" }),
     defineField({
       name: "slug",
-      title: "Slug",
+      title: "Adresse web",
       type: "slug",
+      description:
+        "La fin de l'adresse de sa page auteur (ex. marie-dupont). Minuscules et tirets. « Générer » la crée depuis le nom.",
       // `exclude` : une traduction démarre avec un slug vide, pas une copie
       // du slug source — chaque locale a sa propre URL.
       options: {
@@ -37,7 +39,6 @@ export default defineType({
         maxLength: 96,
         documentInternationalization: { exclude: true },
       },
-      description: "Fragment d'URL pour /author/<slug>.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({

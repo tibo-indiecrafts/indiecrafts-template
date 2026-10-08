@@ -63,6 +63,7 @@ jobs:
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
           TURNSTILE_SECRET: ${{ secrets.TURNSTILE_SECRET }}
           NEWSLETTER_SECRET: ${{ secrets.NEWSLETTER_SECRET }}
+          SANITY_REVALIDATE_SECRET: ${{ secrets.SANITY_REVALIDATE_SECRET }}
 
       # Post-deploy smoke test — best-effort. Curls the app's custom-domain origin
       # from the registry (`domains:url`); if the app/env has no custom domain (still

@@ -12,6 +12,24 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **security: `CspHosts.frameAncestors`.** Lists who may frame the page (default `'none'`);
+  when set, `X-Frame-Options` becomes `SAMEORIGIN`. **Why:** the website's Studio preview frames
+  the site from the same origin.
+
+### Fixed
+
+- **ui-tokens: bottom overlays clear a fixed bottom bar.** With a `data-bottom-bar` element on
+  the page, `bottom-safe-4` adds `--bottom-bar` (3.5rem) and the body gets matching padding.
+  **Why:** the website's draft-preview bar covered the cookie and legal banners on phones.
+- **security: the Studio CSP allows Sanity's own assets.** `studioCspRule` adds
+  `core.sanity-cdn.com` (script) and `design-system-static.sanity.io` (font). **Why:** the Studio
+  logged three CSP errors on load (its bridge script and Inter font were blocked).
+- **schema · page-builder: plainer Studio labels.** The "noindex" help text, the share-image
+  help and the body link ("URL" → "Lien" / "Adresse du lien") now read in plain French.
+  **Why:** the legends are the whole UI for a non-technical editor.
+
 ### Removed
 
 - **`packages-shared-compliance` — `MarketingEmailToggle` is gone.** The account's "Privacy & consent"

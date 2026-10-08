@@ -12,6 +12,7 @@ import { visionTool } from "@sanity/vision";
 import { documentInternationalization } from "@sanity/document-internationalization";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
+import { defineLocations, presentationTool } from "sanity/presentation";
 import {
   apiVersion,
   dataset,
@@ -123,5 +124,34 @@ export default defineConfig({
       metadataOmnisearchVisibility: false,
     }),
     visionTool({ defaultApiVersion: apiVersion }),
+    // "Aperçu" (the Presentation tool): the site in an iframe, in draft mode, with click-to-edit. It opens a
+    // preview session through `/api/draft-mode/enable` (needs `SANITY_API_READ_TOKEN`).
+    presentationTool({
+      title: "Aperçu",
+      previewUrl: {
+        previewMode: {
+          enable: "/api/draft-mode/enable",
+          disable: "/api/draft-mode/disable",
+        },
+      },
+      resolve: {
+        locations: {
+          post: defineLocations({
+            select: { title: "title", slug: "media.slug.current", language: "language" },
+            resolve: (doc) =>
+              doc?.slug
+                ? {
+                    locations: [
+                      {
+                        title: doc.title ?? doc.slug,
+                        href: `/${doc.language}/blog/${doc.slug}`,
+                      },
+                    ],
+                  }
+                : null,
+          }),
+        },
+      },
+    }),
   ],
 });

@@ -98,10 +98,10 @@ export default defineType({
         ],
         annotations: [
           {
-            title: "URL",
+            title: "Lien",
             name: "link",
             type: "object",
-            fields: [{ title: "URL", name: "href", type: "url" }],
+            fields: [{ title: "Adresse du lien", name: "href", type: "url" }],
           },
         ],
       },

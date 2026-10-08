@@ -349,7 +349,18 @@
  * "Overlays take turns") so they clear the iPhone home indicator.
  */
 @utility bottom-safe-4 {
-  bottom: max(1rem, env(safe-area-inset-bottom));
+  bottom: calc(max(1rem, env(safe-area-inset-bottom)) + var(--bottom-bar, 0px));
+}
+
+/*
+ * A fixed bottom bar (the website's draft-preview bar, `data-bottom-bar`) lifts the
+ * bottom-slot overlays above it and pads the page so its end stays readable.
+ */
+:root:has([data-bottom-bar]) {
+  --bottom-bar: 3.5rem;
+}
+:root:has([data-bottom-bar]) body {
+  padding-bottom: var(--bottom-bar);
 }
 
 /*

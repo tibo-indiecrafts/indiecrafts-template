@@ -70,7 +70,7 @@ scopes one to `/maintenance`). Full worked example + the `CSP_MODE` rollout stor
 
 ## What ships on every response
 
-`X-Content-Type-Options: nosniff` · `X-Frame-Options: DENY` · `Referrer-Policy:
+`X-Content-Type-Options: nosniff` · `X-Frame-Options: DENY` (`SAMEORIGIN` when `CspHosts.frameAncestors` is set) · `Referrer-Policy:
 strict-origin-when-cross-origin` · `Permissions-Policy` (denies sensor/hardware/payment/privacy
 features — `camera`, `microphone`, `geolocation`, `payment`, `usb`, `browsing-topics`, … — but leaves
 `autoplay`/`fullscreen`/`encrypted-media`/`picture-in-picture` open for video embeds) ·

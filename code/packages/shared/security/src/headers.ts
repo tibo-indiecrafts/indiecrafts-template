@@ -89,7 +89,11 @@ export function securityHeaders({
 }: SecurityHeadersOptions): HeaderRule[] {
   const headers: { key: string; value: string }[] = [
     { key: "X-Content-Type-Options", value: "nosniff" },
-    { key: "X-Frame-Options", value: "DENY" },
+    // Mirrors CSP `frame-ancestors` for old browsers (modern ones ignore it when CSP is set).
+    {
+      key: "X-Frame-Options",
+      value: csp?.frameAncestors?.length ? "SAMEORIGIN" : "DENY",
+    },
     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
     { key: "Permissions-Policy", value: permissionsPolicy },
   ];
@@ -150,11 +154,24 @@ export function permissiveCspRule(
   return rule;
 }
 
+// The Studio loads Sanity's dashboard bridge script and its own Inter font from Sanity hosts.
+const STUDIO_SCRIPT = ["https://core.sanity-cdn.com"];
+const STUDIO_FONT = ["https://design-system-static.sanity.io"];
+
 /** The permissive CSP rule for the Sanity Studio route (`/studio/:path*`). */
 export function studioCspRule(
   env: Environment,
   csp: CspHosts = {},
   reporting?: CspReporting,
 ): HeaderRule {
-  return permissiveCspRule("/studio/:path*", env, csp, reporting);
+  return permissiveCspRule(
+    "/studio/:path*",
+    env,
+    {
+      ...csp,
+      scriptSrc: [...(csp.scriptSrc ?? []), ...STUDIO_SCRIPT],
+      fontSrc: [...(csp.fontSrc ?? []), ...STUDIO_FONT],
+    },
+    reporting,
+  );
 }

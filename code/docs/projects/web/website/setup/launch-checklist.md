@@ -73,6 +73,14 @@ pnpm dlx sanity@latest cors add https://acme.com --credentials --project-id <ID>
 
 Repeat for `https://staging.acme.com`, deploy-preview wildcards, etc. Then visit `https://acme.com/studio`, verify login against your real project, and invite editors at sanity.io/manage → your project → **Members**.
 
+The Studio's **Aperçu** (preview) tab needs `SANITY_API_READ_TOKEN` on the deployed site (else 503).
+
+**Publish webhook (every site, Studio or not).** Without it a newly published post stays 404 and
+a deleted one stays online. Set `SANITY_REVALIDATE_SECRET` for the environment, then at
+sanity.io/manage → **API** → **Webhooks** create one per site URL: `https://acme.com/api/revalidate`,
+dataset `production`, triggers **Create · Update · Delete**, method `POST`, the same secret.
+Details → [the route reference](/reference/projects/web/website/src/app/api/revalidate/route).
+
 ---
 
 ## 4. Analytics + cookie consent

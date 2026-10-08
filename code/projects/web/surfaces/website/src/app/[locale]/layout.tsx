@@ -8,7 +8,8 @@ import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { cookies, headers } from "next/headers";
+import { cookies, draftMode, headers } from "next/headers";
+import { VisualEditing } from "next-sanity/visual-editing";
 import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import {
   consent,
@@ -39,6 +40,7 @@ import { shouldLoadClerk } from "@/lib/clerk-load";
 import { ThemeProvider } from "@/user-interface/shared/layout/ThemeProvider";
 import { preloadChrome } from "@/user-interface/shared/layout/DefaultLayout";
 import { LocaleSwitchBoundary } from "@/user-interface/shared/layout/LocaleSwitchBoundary";
+import { DraftModeBar } from "@/user-interface/shared/layout/DraftModeBar";
 import { resolveThemeConfig, themeProviderProps } from "@/lib/theme";
 import { JsonLdScript } from "@/lib/seo/jsonld";
 import { buildSiteSchemas } from "@/lib/seo/jsonld-core";
@@ -170,6 +172,12 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   const legalAck = jar.get(LEGAL_ACK_COOKIE)?.value;
   // Same for cookie consent: an undecided visitor gets the banner in the first HTML.
   const consentDecided = jar.get(CONSENT_COOKIE)?.value === cookieConsent.version;
+  // Draft preview (opened from the Studio's "Aperçu" tool): click-to-edit overlays, plus
+  // an exit bar when the editor browses the site outside the Studio.
+  const tPreview =
+    features.studio && (await draftMode()).isEnabled
+      ? await getTranslations("common")
+      : null;
   // Clerk mounts only for a signed-in visitor or on the sign-in / sign-up pages: everyone
   // else skips its bundle and CDN scripts (`shouldLoadClerk`, `LazyClerk`).
   const clerk = await shouldLoadClerk(requestHeaders.get("x-pathname"));
@@ -334,6 +342,12 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
           />
         ) : null}
         {features.blog ? <SanityLive /> : null}
+        {tPreview ? (
+          <>
+            <VisualEditing />
+            <DraftModeBar label={tPreview("preview")} exit={tPreview("exitPreview")} />
+          </>
+        ) : null}
         <style>{`:root{--max-container:${theme.container.maxWidth};--gutter:${theme.container.gutter};}`}</style>
       </body>
     </html>

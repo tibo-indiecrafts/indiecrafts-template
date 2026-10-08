@@ -27,8 +27,10 @@ export default defineType({
     }),
     defineField({
       name: "slug",
-      title: "Slug",
+      title: "Adresse web",
       type: "slug",
+      description:
+        "La fin de l'adresse de la page de la catégorie (ex. recettes). Minuscules et tirets. « Générer » la crée depuis le titre.",
       // `exclude` : une traduction démarre avec un slug vide, pas une copie
       // du slug source — chaque locale a sa propre URL.
       options: {
@@ -36,7 +38,6 @@ export default defineType({
         maxLength: 96,
         documentInternationalization: { exclude: true },
       },
-      description: "Fragment d'URL pour /blog/category/<slug>.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({ name: "description", title: "Description", type: "text" }),

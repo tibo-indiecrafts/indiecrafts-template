@@ -39,7 +39,7 @@ Theme availability (`light` / `dark` / `system` / `forced`) lives in a sibling a
 | `blogComments`    | `boolean` | `true`     | Moderated comments on each post (`/api/comments` + the `<Comments>` section) — **requires `blog`** ([guide](/modules/web/blog/comments))                                         |
 | `blogSearch`      | `boolean` | `true`     | The `/blog/search` route + the frontpage search box (`isSearchEnabled`) — **requires `blog`**                                                                                    |
 | `blogSeries`      | `boolean` | `true`     | The `/blog/series/<slug>` landing + on-post "Part N of M" nav (`isSeriesEnabled`) — **requires `blog`**                                                                          |
-| `studio`          | `boolean` | `true`     | `/studio` + the draft-mode preview API                                                                                                                                           |
+| `studio`          | `boolean` | `true`     | `/studio` + the draft-mode preview API + same-site framing for the Studio's Aperçu tab                                                                                           |
 | `maintenance`     | `boolean` | `false`    | Site-wide 503 rewrite to `/maintenance` (via `proxy.ts`)                                                                                                                         |
 
 Everything reads these from `@/config` — the app-owned `src/config/features.ts` (flags,
