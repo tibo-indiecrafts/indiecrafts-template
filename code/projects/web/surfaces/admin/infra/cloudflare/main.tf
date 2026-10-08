@@ -22,7 +22,7 @@
 # `terraform init && validate` against the pinned version before the first apply.
 
 terraform {
-  required_version = ">= 1.6"
+  required_version = ">= 1.9" # cross-variable validation (access allow-list)
   required_providers {
     cloudflare = { source = "cloudflare/cloudflare", version = "~> 5" }
   }
@@ -83,7 +83,16 @@ variable "turnstile_domains" {
   type    = list(string)
   default = []
 }
-# SSO-allowed email domain for the Zero Trust Access gate (set in tfvars)
+# Who passes the Zero Trust Access gate: listed emails and/or one email domain (set in
+# tfvars). An attached host with both empty would leave the gate open, so plan fails.
+variable "access_emails" {
+  type    = list(string)
+  default = []
+  validation {
+    condition     = !var.attach_domain || length(var.access_emails) > 0 || var.access_email_domain != ""
+    error_message = "attach_domain = true needs access_emails or access_email_domain: the Access gate would allow no one or everyone."
+  }
+}
 variable "access_email_domain" {
   type    = string
   default = ""
@@ -384,16 +393,18 @@ resource "cloudflare_r2_bucket" "db_backup" {
 # }
 #
 # ── Zero Trust Access — SSO gate for the ADMIN app (ACTIVE: this IS the admin app's own
-#    infra). Fronts `var.domain` (admin's own host) — only var.access_email_domain reaches
-#    the Worker. Needs Cloudflare Zero Trust configured on the account (an IdP set up).
+#    infra). Fronts `var.domain` (admin's own host) — only var.access_emails / var.access_email_domain
+#    reach the Worker. Needs Cloudflare Zero Trust configured on the account (an IdP set up).
 # Provider v5: the policy is a reusable ACCOUNT-level object; the application attaches it by id.
 resource "cloudflare_zero_trust_access_policy" "admin_allow" {
   count      = var.attach_domain ? 1 : 0
   account_id = var.account_id
   name       = "${var.worker_name}-team-only"
   decision   = "allow"
-  include    = [{ email_domain = { domain = var.access_email_domain } }]
-  # or pin individual emails: include = [{ email = { email = "you@your-company.com" } }]
+  include = concat(
+    [for e in var.access_emails : { email = { email = e } }],
+    var.access_email_domain != "" ? [{ email_domain = { domain = var.access_email_domain } }] : [],
+  )
 }
 resource "cloudflare_zero_trust_access_application" "admin" {
   count            = var.attach_domain ? 1 : 0 # inert on *.workers.dev (dev) — needs a real host + zone

@@ -5,8 +5,8 @@ Cloudflare **edge** (domain · WAF · rate-limit `/api/*` · cache · Turnstile 
 `wrangler.toml` can't express. The app owns its whole deploy surface: `wrangler.toml` ships the Worker, this ships the edge.
 
 **admin is SSO-gated.** This stack is the website stack PLUS an active Cloudflare Zero Trust Access gate on the
-admin host — only the allowed email domain (`access_email_domain`) reaches the Worker. Set `access_email_domain`
-in the tfvars, and configure Cloudflare Zero Trust (an IdP) on the account before the first apply.
+admin host — only the listed emails (`access_emails`) or email domain (`access_email_domain`) reach the Worker.
+Set them in the tfvars (an attached host with both empty fails the plan), and configure Cloudflare Zero Trust (an IdP) on the account before the first apply.
 
 **Stack:** Terraform (`cloudflare/cloudflare ~> 5`). **Self-contained** — one `main.tf` holds the provider,
 the per-app/per-env variables, and all the edge resources directly (no shared module). A next-cf sibling of
@@ -22,7 +22,7 @@ the website stack (same resources) with the Access gate turned on.
   variables with sensible defaults — override a value in the tfvars. **Commented** optionals in the file: a
   remote-state backend, a first-party asset-CDN domain (`cdn.<domain>`), CF Image Transformations.
 - `env/{dev,staging,prod}.tfvars` — the per-env **values** (`account_id`, `zone_id`, `domain`,
-  `worker_name`, `turnstile_domains`, **`access_email_domain`**). `dev` runs on `*.workers.dev`
+  `worker_name`, `turnstile_domains`, **`access_emails`** / `access_email_domain`). `dev` runs on `*.workers.dev`
   (`attach_domain = false`).
 
 ## Run (from the repo root)
@@ -39,8 +39,8 @@ Needs a **scoped** `CLOUDFLARE_API_TOKEN` (Zone: DNS/Cache/WAF edit · Account: 
 
 ## Rules
 
-- **admin is SSO-gated** — the Zero Trust Access gate is active; set `access_email_domain` in every attached-domain
-  tfvars, and set up Cloudflare Zero Trust (an IdP) on the account first, or the apply fails.
+- **admin is SSO-gated** — the Zero Trust Access gate is active; list the admins in `access_emails` (or set
+  `access_email_domain`) in every attached-domain tfvars, and set up Cloudflare Zero Trust (an IdP) on the account first, or the apply fails.
 - **NEVER commit state** — `terraform.tfstate*` holds the Turnstile secret + resource ids (gitignored here).
 - **Turnstile keys flow to the app env** — `output turnstile_site_key` → `NEXT_PUBLIC_TURNSTILE_SITE_KEY`;
   `turnstile_secret` → `TURNSTILE_SECRET` (set via `wrangler secret put` / the app's secrets sync, never committed).

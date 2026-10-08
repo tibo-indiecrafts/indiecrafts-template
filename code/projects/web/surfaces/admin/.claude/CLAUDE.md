@@ -22,7 +22,7 @@ reads yet (`packages-web-sanity` is wired, unused); operator copy lives in `mess
   `requireAdminPage` (`src/lib/require-admin.ts`) in the `(dashboard)` layout **and every page** before it
   reads data (Next skips a layout on client navigation; `page-gate.test.ts` enforces it); every server
   action re-checks with `requireAdmin` and audits via `src/lib/audit.ts`.
-  Before go-live, add a Cloudflare Access gate on the subdomain.
+  Staging/prod sit behind Cloudflare Access: the allow-list is `access_emails` in `infra/cloudflare/env/<env>.tfvars`.
 - **Dates:** next-intl `getFormatter`/`useFormatter` only (UTC, set in `src/i18n/request.ts`) — never
   `toLocaleString`, which breaks hydration in client tables.
 - **Deploy:** `pnpm deploy:web:admin:<dev|staging|prod>` → the shared `shared/scripts/deploy/next.mjs`; or

@@ -1,5 +1,5 @@
 # admin · prod. Fill account_id + zone_id + domain (the zone must be on this CF account).
-# admin is SSO-gated via Cloudflare Zero Trust Access — set access_email_domain below.
+# admin is gated by Cloudflare Zero Trust Access — only access_emails (or access_email_domain) pass.
 env                 = "prod"
 worker_name         = "indiecrafts-prod-web-surfaces-admin"
 attach_domain       = true
@@ -8,7 +8,8 @@ zone_id             = ""                                 # REQUIRED (the domain'
 domain              = "admin.example.com"                # REQUIRED — your production host
 manage_zone         = false                              # a subdomain of the website zone — the prod website stack owns its zone-wide rules
 turnstile_domains   = ["admin.example.com"]
-access_email_domain = "your-company.com" # REQUIRED — SSO-allowed email domain (Cloudflare Zero Trust Access)
+access_emails       = ["thibault.indiecrafts@gmail.com"] # who may reach the admin (add an admin here)
+access_email_domain = ""                                 # optional: allow a whole email domain instead
 
 # Optional edge tunables — module defaults (uncomment here AND in main.tf to override):
 # rate_limit_requests      = 20

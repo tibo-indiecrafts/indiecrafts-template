@@ -115,8 +115,15 @@ no IP (GDPR data minimization), with a durable console fallback so an audit is n
 
 **Before shipping.** An unconfigured Clerk (no `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`) leaves
 the middleware ungated — but `requireAdminPage` still fails closed and redirects to
-`/sign-in`, so the operator screens stay locked, not exposed. Configure Clerk, then add a
-Cloudflare Access gate on the subdomain as defense-in-depth before the app goes live.
+`/sign-in`, so the operator screens stay locked, not exposed. Configure Clerk before the app goes live.
+
+**Cloudflare Access (staging, prod).** The admin's Terraform stack puts a Zero Trust Access
+gate in front of the admin host, so only listed people reach the Worker; Clerk's admin role
+still applies after it. To add an admin, append the address to `access_emails` in
+`infra/cloudflare/env/<env>.tfvars` (or set `access_email_domain` for a whole domain) and apply.
+The account needs an identity provider in Zero Trust first (one-time PIN by email is enough).
+An attached host with no email and no domain fails the plan. Dev (`*.workers.dev`) has no
+Access gate: Clerk only.
 
 ## Wired baseline
 

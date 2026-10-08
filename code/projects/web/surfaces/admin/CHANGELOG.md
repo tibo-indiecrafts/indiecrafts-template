@@ -14,6 +14,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Access allow-list by email (`access_emails`).** The Zero Trust Access policy took only an email
+  domain; it now also takes a list of addresses. Staging and prod list the operator and drop the
+  `your-company.com` placeholder. An attached host with no email and no domain fails the plan, so
+  the gate can never ship open by mistake. **Why:** QA card 41.
 - **Admin e2e and more unit tests.** `pnpm --filter @indiecrafts/web-surfaces-admin e2e` runs
   Playwright journeys against a built admin on port 3012 (`playwright.config.ts`,
   `e2e/journeys/`). `gate.spec.ts` needs no credentials: signed out, every dashboard route lands
