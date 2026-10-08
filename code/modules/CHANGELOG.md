@@ -13,6 +13,14 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Security
+
+- **Contact messages, waitlist entries and comments get private ids** (`privateId` from
+  `@indiecrafts/packages-web-sanity/private-id`). **Why:** a random id from `writeClient.create()`
+  is readable without a token on a public (free-plan) dataset — the visitor's email, message and a
+  comment's moderation token. The waitlist desk no longer offers "create" by hand (the website's
+  Studio config removes create and duplicate for the three types).
+
 ### Fixed
 
 - **blog: "Slug" fields read "Adresse web".** Post, author, category, series and tag explain the

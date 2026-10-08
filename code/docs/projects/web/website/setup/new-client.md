@@ -23,11 +23,11 @@ Companion docs:
 
 ## 1. Pick a duplication model
 
-| Model                                      | Sanity                                                                                                                | When to pick                                               |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| **Fork + new Sanity project**              | Brand-new project; the client owns the bill + permissions                                                             | Default for paid client work                               |
-| **Fork + new dataset on a shared project** | Same project id, dataset like `acme-prod` (**never reuse `production`** — clients on one project would share content) | Internal projects or many low-traffic clients you maintain |
-| **Fork without Sanity**                    | `features.blog: false` + `features.studio: false`, no Studio                                                          | Brochure site with no blog or editor surface               |
+| Model                                      | Sanity                                                                                                                | When to pick                                                     |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| **Fork + new Sanity project**              | Brand-new project; the client owns the bill + permissions                                                             | Default for paid client work                                     |
+| **Fork + new dataset on a shared project** | Same project id, dataset like `acme-prod` (**never reuse `production`** — clients on one project would share content) | Paid Sanity plan only: the free plan's 2 datasets are taken (§4) |
+| **Fork without Sanity**                    | `features.blog: false` + `features.studio: false`, no Studio                                                          | Brochure site with no blog or editor surface                     |
 
 The rest of this doc assumes the **first model**.
 
@@ -71,7 +71,7 @@ Every var is optional — the template boots with none set (placeholder origin, 
 | `NEXT_PUBLIC_SANITY_DATASET`     | all envs        | Public. Usually `production`.                                                                                                                                                                                                                                                               |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | all envs        | Pins query semantics. Defaults to `2025-01-01`; bump intentionally.                                                                                                                                                                                                                         |
 | `SANITY_API_READ_TOKEN`          | all envs        | **Server-only.** Viewer role is enough. Powers draft-mode preview (`/api/draft-mode/enable`) and the live-preview fetch used by blog routes.                                                                                                                                                |
-| `SANITY_API_WRITE_TOKEN`         | local only      | Editor role. Read **only** by `pnpm seed`. Never set it in a deploy env.                                                                                                                                                                                                                    |
+| `SANITY_API_WRITE_TOKEN`         | all envs        | **Server-only.** Editor role. A runtime secret: the contact, waitlist and comment forms write with it, and the lead-magnet download reads with it. Also used by `pnpm seed` and the e2e setup.                                                                                              |
 | `RESEND_API_KEY`                 | server-only     | Transactional email. **Reusing the template:** one key = one shared Resend account (shared quota/logs/verified domains). Give each client its **own** Resend account/key for real isolation — the per-site `From` (Sanity) is not enough. Verify with Studio → E-mails → "Envoyer un test". |
 
 Never commit `.env.local` — `.gitignore` already blocks every `.env*` except `.env.example`. Never move a server token under a `NEXT_PUBLIC_` prefix.
@@ -80,42 +80,93 @@ Never commit `.env.local` — `.gitignore` already blocks every `.env*` except `
 
 ## 4. Create the Sanity project
 
+### What the free plan gives you
+
+Sanity's free plan gives each project **2 datasets, public only**. The template uses both:
+
+| Dataset      | Holds                                  | Read by                                                              |
+| ------------ | -------------------------------------- | -------------------------------------------------------------------- |
+| `production` | The real content, edited in the Studio | Every deployed site (dev, staging, prod) and local dev               |
+| `tests-e2e`  | Demo content (`pnpm seed:e2e`)         | Only the Playwright journeys (`pnpm e2e`); CI reads it with no token |
+
+There is no `staging` dataset: the dev and staging sites read `production`, and the Studio's **Aperçu** tab previews drafts before they go live.
+
+**Public** means anyone can read a document without a token, **unless its id contains a dot**. The template relies on that rule:
+
+- The site's forms create contact messages, waitlist entries and comments with a `private.<type>.<uuid>` id.
+- The E-mails singleton (alert recipients, BCC list) lives at `private.emailStrings`.
+- The Studio cannot create or duplicate those personal types, because a Studio copy would get a public id.
+- **Files are always public.** Anyone can download a Sanity file with its URL, and can list the files of a public dataset. A lead magnet is therefore not truly gated on the free plan. Use a private dataset (paid Growth plan) or host the file elsewhere if it must stay private.
+
+A paid plan (Growth) makes the datasets **private**, so nothing is readable without a token. The dotted ids stay harmless there.
+
+### Create the project
+
 ```bash
-pnpm dlx sanity@latest login
-pnpm dlx sanity@latest init
+pnpm --filter @indiecrafts/web-surfaces-website exec sanity login
+pnpm --filter @indiecrafts/web-surfaces-website exec sanity init
 # → "Create new project"
 # → project name (e.g. "Acme")
 # → dataset name (default: "production")
 # → answer "n" to "add example schemas" — the template ships its own
 ```
 
-Save the printed project id into `NEXT_PUBLIC_SANITY_PROJECT_ID`.
+Save the printed project id into `NEXT_PUBLIC_SANITY_PROJECT_ID` (`.env.local`). Then point the api worker at it: set `SANITY_PROJECT_ID = "<id>"` in each env of `code/shared/api/wrangler.toml`.
 
-Mint the two runtime tokens:
-
-```bash
-pnpm dlx sanity@latest tokens add "Viewer (read-only)" --project-id <ID> --role viewer --json
-pnpm dlx sanity@latest tokens add "Editor (seed only)" --project-id <ID> --role editor --json
-```
-
-Copy the `sk_…` string out of each JSON response — it is shown **once**. Viewer → `SANITY_API_READ_TOKEN`, Editor → `SANITY_API_WRITE_TOKEN`. Detail (web UI path, CI, rotation) in [`../../../modules/web/blog/sanity-tokens.md`](/modules/web/blog/sanity-tokens).
-
-### Whitelist your dev origin (CORS)
-
-Without this the Studio at `http://localhost:3000/studio` loads but every API request fails with `CorsOriginError`.
+### Run the setup script
 
 ```bash
-pnpm dlx sanity@latest cors add http://localhost:3000 --credentials --project-id <ID>
+pnpm sanity:setup -- --dry-run   # preview
+pnpm sanity:setup                # apply
 ```
 
-`--credentials` is required so the Studio session cookie is sent. Repeat for every origin that talks to the project:
+It is safe to re-run; it only adds what is missing:
+
+1. **Datasets.** It creates `production` (or your `NEXT_PUBLIC_SANITY_DATASET`) and `tests-e2e`. It asks for private datasets; on the free plan Sanity makes them public, with a warning. It warns before a third dataset, which the free plan refuses.
+2. **CORS origins.** It allows every website origin, with credentials: each env's site URL (prod first, from `wrangler.toml` or the domain registry) and `http://localhost:3000`. Without them the Studio fails with `CorsOriginError`. Run it again after you add a domain.
+3. **api check.** It warns when `code/shared/api/wrangler.toml` still reads another project.
+
+### Mint the tokens
+
+The script cannot do this step, because tokens are secrets you must copy:
 
 ```bash
-pnpm dlx sanity@latest cors add https://acme.com --credentials --project-id <ID>
-pnpm dlx sanity@latest cors add https://staging.acme.com --credentials --project-id <ID>
+pnpm --filter @indiecrafts/web-surfaces-website exec sanity tokens add "Viewer (read-only)" --role viewer --json
+pnpm --filter @indiecrafts/web-surfaces-website exec sanity tokens add "Editor (runtime + seed)" --role editor --json
 ```
 
-Web UI alternative: Sanity manage → your project → API → CORS origins → Add CORS origin → tick **Allow credentials**.
+Copy the `sk_…` string out of each JSON response — it is shown **once**.
+
+| Token  | Variable                 | Where                                                                                          |
+| ------ | ------------------------ | ---------------------------------------------------------------------------------------------- |
+| Viewer | `SANITY_API_READ_TOKEN`  | Website `.env.local` **and** `code/shared/api/.dev.vars` (the api reads the E-mails singleton) |
+| Editor | `SANITY_API_WRITE_TOKEN` | Website `.env.local` and `code/shared/api/.dev.vars` (the erasure + export routes)             |
+
+`pnpm deploy:…` syncs both to each Worker from those files (CI: from the GitHub Environment secrets). Detail (web UI path, CI, rotation) in [`../../../modules/web/blog/sanity-tokens.md`](/modules/web/blog/sanity-tokens).
+
+### Fill the dataset
+
+```bash
+pnpm seed
+```
+
+This writes the **baseline** into the empty `production` dataset. It holds what every site needs: settings, SEO, legal pages, consent texts, navigation and email settings. See §8 for the details and the `--demo` option.
+
+### Deploy the hosted Studio
+
+On Cloudflare the embedded `/studio` is too large for a Worker, so `/studio` redirects to a hosted Studio:
+
+```bash
+pnpm --filter @indiecrafts/web-surfaces-website studio:deploy
+```
+
+The first deploy asks for a hostname (`acme` → `https://acme.sanity.studio`) and prints an app id. Then:
+
+1. Add the pair to `STUDIO_APP_IDS` in `code/projects/web/surfaces/website/sanity.cli.ts` (`"<project id>": "<app id>"`), so later deploys go to the same Studio without asking.
+2. Set `NEXT_PUBLIC_SANITY_STUDIO_URL=https://acme.sanity.studio` (website `.env.local` and the CI vars).
+3. Re-run `studio:deploy` after you add a site domain: the Studio's **Aperçu** tab learns the site URLs at build time.
+
+The publish webhook (`/api/revalidate`) comes at launch: [`./launch-checklist.md`](/projects/web/website/setup/launch-checklist) §3.
 
 ---
 
@@ -249,19 +300,22 @@ Keep `en.json` and `fr.json` key-parallel — same keys, translated.
 
 ---
 
-## 8. Seed (optional) + Studio bring-up
+## 8. Seed + Studio bring-up
 
-### Option A — start clean
+`pnpm seed` (§4) writes two kinds of content. Both live in `code/projects/web/surfaces/website/scripts/seed.mjs`.
 
-Skip the seed. With `pnpm dev` running, open `/studio` and create your first documents (Auteur → Catégorie → Tag → Article). Authors are global (no language picker); categories, tags, and articles pick a Français/English leaf then "+ Créer". Full step-by-step + smoke test: [`../../../modules/web/blog/sanity-setup.md`](/modules/web/blog/sanity-setup).
+| Command                  | Writes                                                                                                                                                                                                                       | Use it for                                |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `pnpm seed`              | **Baseline** — settings, per-language SEO, home page, UI messages, the five legal pages, navigation, cookie + legal consent, language suggestion, contact / newsletter / waitlist settings, blog settings, E-mails (all off) | A new client: the site works and is legal |
+| `pnpm seed -- --demo`    | Baseline + **demo** — authors, categories, tags, a series, 5 posts, quotes, people (Unsplash images), testimonials, blog pins, announcement bar + pop-up, 3 comments, 2 waitlist entries                                     | The template's own demo, never a client   |
+| `pnpm seed:e2e`          | Baseline + demo into the throwaway `tests-e2e` dataset (`--demo --force`)                                                                                                                                                    | The browser tests (see below)             |
+| `pnpm seed -- --dry-run` | Nothing — prints the documents as JSON (no network, no token)                                                                                                                                                                | Review before a write                     |
 
-### Option B — re-seed with your own demo content
+Without the baseline the site has no cookie-banner text, empty legal pages, no favicon or share image, and no navigation. So always seed a new dataset once; then the client edits everything in the Studio.
 
-`pnpm seed` runs `node --env-file=.env.local scripts/seed-demo.mjs` (needs `SANITY_API_WRITE_TOKEN`). It seeds EN+FR authors, categories, tags, posts, quotes, people, the `siteMeta` + `siteSettings` singletons, and an empty-`postModules` blog singleton. Edit the data arrays and image URLs at the top of `code/projects/web/surfaces/website/scripts/seed-demo.mjs`, then:
+**The guard.** `pnpm seed` refuses a dataset that already has content (a `siteSettings` document): a re-seed replaces every seeded document and erases the editors' work. Add `-- --force` only on a dataset you can lose.
 
-```bash
-pnpm seed
-```
+**The test dataset.** `pnpm e2e` on your machine re-seeds `tests-e2e` before the journeys. CI holds **no** Sanity token: a token works on every dataset of the project, so a CI token could write `production`. The journeys stub every form POST, and CI only reads the seeded `tests-e2e` dataset. **After you change the seed, run `pnpm seed:e2e` before you push**, or the CI journeys read stale content. `scripts/seed.test.mjs` checks the seed itself in CI with no token: the baseline holds no demo content, every reference resolves, and personal data has a private id.
 
 #### Re-seed semantics — read once
 
@@ -275,6 +329,7 @@ The whole seed is one `createOrReplace` transaction over every doc, keyed by `_i
 | Remove a doc from the script, re-run | **Old doc stays in Sanity** — the seed only writes           |
 | Change a doc's `_id`, re-run         | Old `_id` orphaned (still in the dataset); new `_id` created |
 | Change an image URL, re-run          | New image fetched + uploaded as a new asset; old asset stays |
+| Re-run on a dataset with content     | **Refused** — add `-- --force` to overwrite                  |
 
 #### Cleanup — clearing orphans
 
@@ -288,15 +343,15 @@ pnpm dlx sanity@latest documents query '*[_type == "tag"]._id' \
   xargs -I{} pnpm dlx sanity@latest documents delete {} --dataset <name>
 
 # Nuclear — wipe the dataset clean (DESTROYS EVERYTHING)
-pnpm dlx sanity@latest dataset delete <name>
-pnpm dlx sanity@latest dataset create <name>
+pnpm --filter @indiecrafts/web-surfaces-website exec sanity dataset delete <name>
+pnpm sanity:setup   # re-creates it
 pnpm seed
 ```
 
 #### When to re-seed in practice
 
 - **During template iteration** — often. Edit + re-run while shaping the schema.
-- **After deploying for a client** — never. Production content lives in the Studio; re-seeding overwrites real edits to any doc whose `_id` matches a seed entry.
+- **After deploying for a client** — never. Production content lives in the Studio; re-seeding overwrites real edits to any doc whose `_id` matches a seed entry. The guard refuses it unless you pass `--force`.
 - **For a clean demo** — destroy + recreate the dataset so removed entries don't linger.
 
 ### Blog layout + inline content
@@ -328,9 +383,9 @@ The app deploys to **Cloudflare Workers** ([runbook](/projects/web/website/setup
 | `NEXT_PUBLIC_SANITY_PROJECT_ID`  | all envs      | Public — the Studio uses it too                                                |
 | `NEXT_PUBLIC_SANITY_DATASET`     | all envs      | Usually `production`                                                           |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | all envs      | Match local (`2025-01-01` default)                                             |
-| `SANITY_API_READ_TOKEN`          | all envs      | Server-only; runtime preview client uses it                                    |
+| `SANITY_API_READ_TOKEN`          | all envs      | Server-only; preview, and the reads of private ids (comments, E-mails)         |
 | `NEXT_PUBLIC_ENVIRONMENT`        | optional      | `staging` on preview deploys → tighter CSP + `Disallow: /`                     |
-| `SANITY_API_WRITE_TOKEN`         | **never**     | Editor token; only the local seed script needs it                              |
+| `SANITY_API_WRITE_TOKEN`         | all envs      | Server-only Editor token: the forms write with it (§3)                         |
 
 Robots: with `NEXT_PUBLIC_SITE_URL` set and `NEXT_PUBLIC_ENVIRONMENT=production`, sitemap + canonicals go live and the site is indexable. `seoDefaults.robots` controls global index/follow; per-post `noIndex` lives under a post's **SEO & visibilité** section. Detail: [`../seo/robots-and-environments.md`](/projects/web/website/seo/robots-and-environments).
 

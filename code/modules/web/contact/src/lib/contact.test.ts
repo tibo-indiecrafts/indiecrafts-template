@@ -115,6 +115,7 @@ describe("submit", () => {
     ).toEqual({ ok: true });
     const doc = create.mock.calls[0][0] as Record<string, unknown>;
     expect(doc._type).toBe("contactMessage"); // hard-coded, never from input
+    expect(doc._id).toMatch(/^private\.contactMessage\./); // dotted → hidden from anonymous reads
     expect(doc.email).toBe("new@b.com"); // normalized
     expect(doc.status).toBe("new");
     expect(doc.consent).toBe(true);

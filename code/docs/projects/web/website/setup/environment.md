@@ -34,7 +34,7 @@ Run every command from the **repo root** — turbo delegates to `@indiecrafts/we
 Optional app extras:
 
 ```bash
-pnpm seed                       # demo Sanity blog content (needs SANITY_API_WRITE_TOKEN)
+pnpm seed                       # baseline Sanity content into an empty dataset (--demo adds demo posts)
 pnpm docs:install && pnpm docs  # VitePress docs → http://localhost:3002
 ```
 
@@ -83,7 +83,7 @@ need. **Never commit `.env*`** (only `.env.example`); the pre-commit gate and `.
 | `NEXT_PUBLIC_SANITY_DATASET`     | yes                  | `production`                          | Sanity dataset name.                                                                                                                                                                                                                                                                                       |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | yes                  | `2025-01-01`                          | Pinned API version — bump intentionally so query semantics stay stable.                                                                                                                                                                                                                                    |
 | `SANITY_API_READ_TOKEN`          | **no — server only** | —                                     | Viewer role. Required for draft-mode preview (`/api/draft-mode/enable`) and the live-fetch wrapper on blog routes.                                                                                                                                                                                         |
-| `SANITY_API_WRITE_TOKEN`         | **no — server only** | —                                     | Editor role. Used by `pnpm seed` and the write scripts. **Not** needed at runtime — leave unset in production.                                                                                                                                                                                             |
+| `SANITY_API_WRITE_TOKEN`         | **no — server only** | —                                     | Editor role. **A runtime secret:** the contact, waitlist and comment forms write with it, and the lead-magnet download reads with it — set it in every deployed env with one of those features on. Also used by `pnpm seed` and the write scripts.                                                         |
 
 The public/private split is load-bearing: everything a browser may read carries `NEXT_PUBLIC_`; the two Sanity tokens deliberately don't. Environment behaviour (which env indexes, CSP tightening) is detailed in [`robots-and-environments.md`](/projects/web/website/seo/robots-and-environments).
 

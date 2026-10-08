@@ -47,4 +47,5 @@ source for the visible FAQ and the JSON-LD.
 ## Seeding
 
 `pnpm seed` authors the home `page` per locale (`page-home-en` / `page-home-fr`, `isHome`) from
-`buildHomePage()` in `scripts/seed-demo.mjs` — the reference content you can edit or replace per client.
+`buildHomePage()` in `scripts/seed.mjs` — the reference content you can edit or replace per client.
+The testimonials section references the demo quotes, so only `pnpm seed -- --demo` adds it.

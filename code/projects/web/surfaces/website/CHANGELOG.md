@@ -17,7 +17,33 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Security
+
+- **Personal data is hidden from anonymous reads of the Sanity dataset.** On Sanity's free plan
+  every dataset is public: anyone can read a document without a token unless its id contains a
+  dot. Contact messages, waitlist entries and comments were created with random ids, so the first
+  real submission (email, message, a comment's moderation token) would have been readable by anyone.
+  The forms now create `private.<type>.<uuid>` ids, the E-mails singleton (alert recipients, BCC)
+  moved to `private.emailStrings`, and the Studio cannot create or duplicate the personal types
+  (a Studio copy would get a public id). New `pnpm sanity:privatize` moves existing documents
+  (dry run by default). **Why:** an anonymous count showed none leaked yet; `emailStrings` was public.
+- **CI holds no Sanity token for the browser tests.** A Sanity token works on every dataset of
+  the project (one-dataset tokens are Enterprise only), so the e2e token could write `production`.
+  The journeys already stub every form POST; CI now reads the seeded test dataset with no token
+  (`E2E_SKIP_SEED=1`), and `pnpm seed:e2e` re-seeds it from a developer's machine. The test
+  dataset is renamed `e2e` → `tests-e2e`, and the e2e setup accepts only a `tests-…` name, since it
+  seeds with `--force`.
+
 ### Added
+
+- **`pnpm sanity:setup`** — one-time Sanity project setup: creates the content and `tests-e2e`
+  datasets (warns past the free plan's 2), adds every website origin to the CORS list with
+  credentials, and checks the api worker reads the same project. **Why:** a new client's bring-up
+  had six manual Sanity steps; four are now one re-runnable command. The website origins come from
+  one module (`scripts/lib/site-origins.mjs`), shared with the Studio preview.
+- **The new-client runbook explains the free plan** (2 public datasets, what "public" means,
+  why there is no staging dataset) and the new order: setup → tokens → seed → hosted Studio.
+  It also fixes a wrong claim: `SANITY_API_WRITE_TOKEN` is a runtime secret, not seed-only.
 
 - **Draft preview from the Studio: the "Aperçu" tab.** The Studio now has Sanity's Presentation
   tool: it shows the site with unpublished changes, and a click on a text opens its field. An
@@ -47,6 +73,18 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   webhook per site URL (launch checklist §3).
 
 ### Changed
+
+- **`pnpm seed` writes a baseline by default and refuses a dataset with content.** The seed
+  (`scripts/seed-demo.mjs` → `scripts/seed.mjs`) now writes only what a new site needs (settings,
+  SEO, legal pages, consent, navigation, form and email settings); `--demo` adds the demo posts,
+  people, announcements, comments and waitlist entries. It refuses a dataset that already has a
+  `siteSettings` document unless `--force`, and `--dry-run` prints the documents with no network.
+  The dead `cleanupLegacy()` is gone (no dataset holds legacy blocks). **Why:** a re-seed replaced
+  about 25 documents an editor owns, and a new client's site either had no legal pages (no seed) or
+  demo content in production (the seed). `scripts/seed.test.mjs` checks the split, the references
+  and the private ids.
+- **The hosted Studio's app id is keyed by Sanity project** (`STUDIO_APP_IDS` in `sanity.cli.ts`).
+  **Why:** the id was hard-coded, so a fork's first `studio:deploy` targeted this project's Studio.
 
 - **The site may frame itself.** With `features.studio` on, `frame-ancestors` is `'self'` and
   `X-Frame-Options` is `SAMEORIGIN` (was `'none'` / `DENY`); other sites still cannot frame it.

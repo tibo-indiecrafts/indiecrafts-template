@@ -48,6 +48,11 @@ import { appContentSchema, appContentStructureItem } from "./src/sanity/app-cont
 // UI messages via `coreSanity`, cookies/consent, and the composed E-mails entity).
 // `sharedSanity` registers objects only (no desk). `emailSanity(all)` builds the
 // one E-mails singleton from every module's `emailGroups`.
+// Personal data, created only by the site's forms with a dotted id (`privateId`): a
+// public dataset hides dotted ids from anonymous reads. A copy made in the Studio would
+// get a random, public id — so the Studio cannot create or duplicate these types.
+const personalTypes = new Set(["comment", "contactMessage", "waitlistEntry"]);
+
 const previewOrigins = (process.env.SANITY_STUDIO_PREVIEW_ORIGINS ?? "")
   .split(",")
   .filter(Boolean);
@@ -110,9 +115,15 @@ export default defineConfig({
   },
   // "Envoyer un test" on the E-mails singleton — sends a sample of every enabled
   // email so an editor can verify deliverability. Owned by `@indiecrafts/packages-web-email`.
+  // The personal types get no "create" and no "duplicate" (see `personalTypes`).
   document: {
-    actions: (prev, ctx) =>
-      ctx.schemaType === "emailStrings" ? [...prev, sendTestEmailAction] : prev,
+    actions: (prev, ctx) => {
+      if (ctx.schemaType === "emailStrings") return [...prev, sendTestEmailAction];
+      if (personalTypes.has(ctx.schemaType))
+        return prev.filter((a) => a.action !== "duplicate");
+      return prev;
+    },
+    newDocumentOptions: (prev) => prev.filter((t) => !personalTypes.has(t.templateId)),
   },
   plugins: [
     structureTool({ structure: sanity.structure }),

@@ -7,7 +7,7 @@ import { STORYBOOK_STATIC } from "./e2e/storybook-static";
  * a visual-only run never builds the app, an app-only run never needs Storybook):
  *
  *  • app     → real user journeys against the running Next app (`e2e/journeys/`).
- *              Boots `pnpm build && pnpm start` against a throwaway Sanity `e2e`
+ *              Boots `pnpm build && pnpm start` against a throwaway Sanity `tests-e2e`
  *              dataset (seeded by `global-setup`). Turnstile + RATE_LIMIT_KV are
  *              unset (template defaults), so happy paths need only email+consent.
  *  • visual  → screenshots every Storybook story from the built `storybook-static`
@@ -18,7 +18,7 @@ import { STORYBOOK_STATIC } from "./e2e/storybook-static";
 const TARGET = process.env.E2E_TARGET; // "app" | "visual" | undefined (both)
 const STORYBOOK_PORT = 6007;
 const APP_PORT = 3000;
-const E2E_DATASET = process.env.E2E_SANITY_DATASET ?? "e2e";
+const E2E_DATASET = process.env.E2E_SANITY_DATASET ?? "tests-e2e";
 
 const runVisual = TARGET !== "app";
 const runApp = TARGET !== "visual";

@@ -1,9 +1,6 @@
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { defineCliConfig } from "sanity/cli";
-import { ENVS } from "../../../../shared/scripts/lib/apps.mjs";
-import { envVars } from "../../../../shared/scripts/lib/deploy-shared.mjs";
-import { originFor } from "../../../../shared/scripts/lib/domains.mjs";
+import { siteOrigins } from "./scripts/lib/site-origins.mjs";
 
 /**
  * Sanity CLI config — lets `sanity` subcommands (typegen, dataset export/import)
@@ -61,34 +58,24 @@ const publicEnv = Object.fromEntries(
     .map(([key, value]) => [`process.env.${key}`, JSON.stringify(value)]),
 );
 
-// The sites the hosted Studio's "Aperçu" tab may show, prod first: each env's website
-// origin (`wrangler.toml` NEXT_PUBLIC_SITE_URL, else the domain registry), then local dev.
-const toml = readFileSync(join(process.cwd(), "wrangler.toml"), "utf8");
-const previewOrigins = [
-  ...new Set(
-    [
-      ...[...ENVS]
-        .reverse()
-        .map(
-          (env) =>
-            (envVars(toml, env) as Record<string, string>).NEXT_PUBLIC_SITE_URL ||
-            originFor("website", env),
-        ),
-      "http://localhost:3000",
-    ]
-      .filter(Boolean)
-      .map((url) => new URL(url).origin),
-  ),
-];
+// The sites the hosted Studio's "Aperçu" tab may show: each env's website, prod first,
+// then local dev (the same list `pnpm sanity:setup` adds to Sanity's CORS origins).
+const previewOrigins = siteOrigins();
+
+// The hosted Studio of each Sanity project (project id → Studio app id). It pins the
+// deploy target, so `pnpm studio:deploy` does not ask again. Keyed by project, so a new
+// project never deploys over another project's Studio: its first deploy asks for a
+// hostname and prints the app id — add the pair here.
+const STUDIO_APP_IDS: Record<string, string> = {
+  qy2pp5sn: "q1mo279al0p9bwtt2pt24tdz", // indiecrafts.sanity.studio
+};
 
 export default defineCliConfig({
   api: {
     projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
     dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
   },
-  // The hosted-Studio app id (from the first `sanity deploy` → indiecrafts.sanity.studio).
-  // Pins the deploy target so later `pnpm studio:deploy` runs don't prompt.
-  deployment: { appId: "q1mo279al0p9bwtt2pt24tdz" },
+  deployment: { appId: STUDIO_APP_IDS[process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? ""] },
   vite: (config) => ({
     ...config,
     define: {

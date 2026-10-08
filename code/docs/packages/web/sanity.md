@@ -11,7 +11,7 @@ schemas and GROQ stay in their owning feature.
 
 |                                         |                                                                                                                      |
 | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| **Exports (subpath-only, no `.` root)** | `./client` · `./live` · `./env` · `./token` · `./structure` · `./image` · `./write` · `./module`                     |
+| **Exports (subpath-only, no `.` root)** | `./client` · `./live` · `./env` · `./token` · `./structure` · `./image` · `./write` · `./private-id` · `./module`    |
 | **Deps**                                | `next-sanity ^13.0.3`, `@indiecrafts/packages-shared-config`. **Peer:** `next 16.3.1`, `react 19.2.8`, `sanity: "*"` |
 | **Consumers**                           | app + blog                                                                                                           |
 
@@ -24,8 +24,12 @@ schemas and GROQ stay in their owning feature.
 - **`module.ts`** exports the `SanityModule` contribution type + `composeSanity()` — see
   [Composing the Studio config](#composing-the-studio-config).
 - **`write.ts`** exports `writeClient` — a **server-only** authenticated write client
-  (Editor-role `SANITY_API_WRITE_TOKEN`). The one runtime write path (blog comments); callers
-  must hard-code `_type` + whitelist fields. `import "server-only"` keeps it off the browser.
+  (Editor-role `SANITY_API_WRITE_TOKEN`). The one runtime write path (contact messages, waitlist
+  entries, blog comments); callers must hard-code `_type` + whitelist fields. `import "server-only"`
+  keeps it off the browser.
+- **`private-id.ts`** exports `privateId(type)` → `private.<type>.<uuid>`. Every runtime write of
+  personal data takes its `_id` from it: Sanity's free plan has public datasets only, and an
+  anonymous read skips documents with a dot in the id. A bare `writeClient.create()` id is public.
 - **`image.ts`** exports `sanityImageLoader` — the isomorphic `next/image` loader that
   rewrites every image `src` to a CDN-sized source (`?w=&q=&auto=format&fit=max`), wired
   app-side via `images.loaderFile`. Details: [Images](/projects/web/website/config/images).

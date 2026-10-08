@@ -10,14 +10,14 @@ status: stable
 
 ## Purpose
 
-Configures the Sanity CLI for the website. It resolves `projectId` and `dataset` from the same env the app uses, so `sanity` subcommands (typegen, dataset export/import) work. Schema-reading commands read `sanity.config.ts` and need no network; `dataset export/import` hit the API and need a token. It also pins the hosted-Studio `deployment.appId` so later `studio:deploy` runs do not prompt.
+Configures the Sanity CLI for the website. It resolves `projectId` and `dataset` from the same env the app uses, so `sanity` subcommands (typegen, dataset export/import) work. Schema-reading commands read `sanity.config.ts` and need no network; `dataset export/import` hit the API and need a token. It also pins the hosted-Studio `deployment.appId` so later `studio:deploy` runs do not prompt. The app id comes from `STUDIO_APP_IDS`, a map keyed by Sanity project id. A new project never deploys over another project's Studio: its first deploy asks for a hostname and prints the app id. Add that pair to the map.
 
 Its main job beyond that is a Vite/Rollup plugin, `workspaceIndexFallback`, that makes `sanity build`/`deploy` resolve the app's `@/*` alias and workspace `@indiecrafts/*` subpaths. Rollup honours Node's exports spec strictly and does not index-fall-back, so the plugin tries the direct path first (files resolve) and retries `…/index` only when that fails (directories) — letting the hosted Studio build without editing every package's exports map.
 
 Its Vite `define` adds two things to the hosted Studio bundle:
 
 - **Every `NEXT_PUBLIC_*` value.** `sanity build` passes only `SANITY_STUDIO_*` to the browser, and the shared config reads `NEXT_PUBLIC_SANITY_PROJECT_ID` (and dataset, site URL). Without this the hosted Studio throws "Missing NEXT_PUBLIC_SANITY_PROJECT_ID" on load. The values are public by definition.
-- **`SANITY_STUDIO_PREVIEW_ORIGINS`.** The sites the Aperçu tab may show, prod first: each env's `NEXT_PUBLIC_SITE_URL` from `wrangler.toml` (else the domain registry), then `http://localhost:3000`. `sanity.config.ts` opens the first and allows the others. Redeploy the Studio after a site URL changes.
+- **`SANITY_STUDIO_PREVIEW_ORIGINS`.** The sites the Aperçu tab may show, from `siteOrigins()` (`scripts/lib/site-origins.mjs`): each env's website origin, prod first, then `http://localhost:3000`. `pnpm sanity:setup` adds the same list to Sanity's CORS origins. `sanity.config.ts` opens the first and allows the others. Redeploy the Studio after a site URL changes.
 
 ## Exports
 

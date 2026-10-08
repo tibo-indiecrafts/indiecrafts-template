@@ -280,7 +280,7 @@ Follow [`packages/web/page-builder`](/packages/web/page-builder) § "Adding a bl
 
 Both add a `<Name>Module` type + a member in `AnyModule` (in their own `sanity/types.ts`), which makes a missing renderer entry a compile error.
 
-Removal is the reverse order plus **dataset hygiene** — existing instances survive a code delete. Strip them by adding the `_type` to `LEGACY_TYPES` in `scripts/seed-demo.mjs`'s `cleanupLegacy()` and re-seeding (see §9).
+Removal is the reverse order plus **dataset hygiene** — existing instances survive a code delete. Strip them with a one-shot script that patches the documents out (§10) — the seed never touches existing content.
 
 ---
 
@@ -294,9 +294,9 @@ It **does not** serialise inline modules — an unknown block type is skipped an
 
 ## 10. Dataset hygiene
 
-Two scripts in `code/projects/web/surfaces/website/scripts/` (run from repo root: `pnpm seed`):
+Two scripts in `code/projects/web/surfaces/website/scripts/`:
 
-- **`seed-demo.mjs`** — populates the demo dataset. Idempotent — re-run anytime. Starts with `cleanupLegacy()`, which strips legacy blocks (`LEGACY_TYPES = ["module.hero-split", "module.logo-list"]`) from every `post.body[]`, `blog.postModules[]`, **and** `blog.frontpageModules[]`, then deletes orphan `logo` docs (by id + `_type`). Add a newly-removed module's `_type` here.
+- **`seed.mjs`** (`pnpm seed`) — writes the baseline (+ demo content with `--demo`) into an **empty** dataset; it refuses a dataset with content unless `--force`. It only writes, never cleans: to strip a removed module's blocks from existing posts, patch them out with a one-shot script (the shape of `unset-legacy-fields.mjs`).
 - **`unset-legacy-fields.mjs`** — one-shot removal of a schema field after it's dropped from a document type. Edit the `TARGETS` array, run once. See [`sanity-setup.md`](/modules/web/blog/sanity-setup).
 
 For ad-hoc GROQ, the Vision plugin is embedded in the Studio: `/studio` → **Vision** tab.

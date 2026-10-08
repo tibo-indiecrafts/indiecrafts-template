@@ -18,7 +18,9 @@ import { apiVersion, dataset, projectId } from "./env";
  * bundle, and the token carries no `NEXT_PUBLIC_` prefix, so it can never reach
  * the browser. Sanity tokens are not per-type, so a caller must **hard-code
  * `_type` and whitelist fields** — never spread untrusted request input into a
- * mutation. Prefer a dedicated, independently-rotatable comments token.
+ * mutation. A document that holds personal data takes its `_id` from
+ * `privateId(type)` (`./private-id`): a random id is readable by anyone on a public
+ * dataset. Prefer a dedicated, independently-rotatable comments token.
  */
 export const writeClient = createClient({
   projectId,

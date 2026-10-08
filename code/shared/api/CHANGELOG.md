@@ -5,6 +5,13 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **`SANITY_API_READ_TOKEN` is needed in every env.** The E-mails singleton moved to the private id
+  `private.emailStrings`, so a token-less read gets nothing: the erasure, Clerk and security emails
+  would lose the support address and the BCC and use their built-in copy. The `wrangler.toml` and
+  `.dev.vars.example` notes now say so.
+
 ### Fixed
 
 - **The email categories come from the live Sanity API, not its CDN.** A sign-up read a stale copy

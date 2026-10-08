@@ -6,11 +6,11 @@ status: stable
 
 # Waitlist desk structure
 
-> The waitlist's Studio desk section, with a create-enabled entries list.
+> The waitlist's Studio desk section: the settings singleton and the entries lists.
 
 ## Purpose
 
-Produces the waitlist desk section: the settings singleton editor plus an "Inscrit·e·s" list. The top "Tous·tes" list is a `documentTypeList`, so it carries the native Create button; the per-status sub-lists (waiting, invited) are read views. Feature-gating is the app's job — the module factory returns an empty section when `features.waitlist` is off.
+Produces the waitlist desk section: the settings singleton editor plus an "Inscrit·e·s" list. The top "Tous·tes" list is a `documentTypeList`; the per-status sub-lists (waiting, invited) are read views. Entries come only from the site's form, on a dotted private id. The website's `sanity.config.ts` removes "create" and "duplicate" for this type. Feature-gating is the app's job — the module factory returns an empty section when `features.waitlist` is off.
 
 ## Exports
 

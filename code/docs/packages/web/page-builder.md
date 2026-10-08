@@ -54,7 +54,7 @@ A `module.<name>` block is easy to half-wire — a miss breaks the Studio picker
 
 ## Removing a field
 
-Drop it from the schema, the `<Name>Module` type, the block `.md`, `seed-demo.mjs`, and the
+Drop it from the schema, the `<Name>Module` type, the block `.md`, `seed.mjs`, and the
 website `schema.json`. Documents that still hold the value show an "unknown field" warning in
 Studio. Clear them once with `client.patch(id).unset([path])` from a `sanity exec` script
 (`--with-user-token`). Walk `page.sections`, `post.body` and `blog.postModules` /

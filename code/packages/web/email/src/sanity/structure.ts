@@ -9,7 +9,9 @@ import { EnvelopeIcon } from "@sanity/icons/Envelope";
 /**
  * The "E-mails" desk section — the single `emailStrings` singleton (config + copy
  * for every transactional email). `composeSanity` stitches this in with the other
- * owners.
+ * owners. Its id is dotted (`private.emailStrings`): it holds the owner-alert
+ * recipients and the BCC list, and a public dataset hides dotted ids from
+ * anonymous reads. Readers query by `_type`, so the id never appears in a query.
  */
 export function emailStructure(S: StructureBuilder): ListItemBuilder[] {
   return [
@@ -20,7 +22,7 @@ export function emailStructure(S: StructureBuilder): ListItemBuilder[] {
         S.editor()
           .id("emailStrings")
           .schemaType("emailStrings")
-          .documentId("emailStrings"),
+          .documentId("private.emailStrings"),
       ),
   ];
 }

@@ -6,8 +6,10 @@
 #                    # Server-side only; NEVER bundle it.
 # IP_HASH_SALT=""    # salt for hashing IPs before storage (never a raw IP is stored)
 
-# Announcements (GET /v1/announcements → Sanity). PROJECT_ID/DATASET go in wrangler.toml
-# [vars] (public); the read token is a secret, needed only if the dataset is not public-read:
+# Sanity reads (announcements, the E-mails singleton). PROJECT_ID/DATASET go in wrangler.toml
+# [vars] (public). The read token (Viewer) is a secret, needed in every env: the E-mails
+# singleton has a private id (`private.emailStrings`), so without it the erasure, Clerk and
+# security emails lose the support address + BCC and use their built-in copy.
 # SANITY_API_READ_TOKEN=""   # server-side Sanity read token (never shipped to clients)
 
 # Clerk backend secret — verifies the session JWT on the user routes (export, self-erasure,

@@ -41,6 +41,8 @@
     "brands:build": "pnpm --filter @indiecrafts/packages-web-ui-icons brands:build",
     "brands:check": "pnpm --filter @indiecrafts/packages-web-ui-icons brands:check",
     "seed": "pnpm --filter @indiecrafts/web-surfaces-website seed",
+    "seed:e2e": "pnpm --filter @indiecrafts/web-surfaces-website seed:e2e",
+    "sanity:setup": "pnpm --filter @indiecrafts/web-surfaces-website sanity:setup",
     "test": "turbo run test --concurrency=50%",
     "test:coverage": "turbo run test --concurrency=50% -- --coverage",
     "test:workers": "pnpm --filter @indiecrafts/shared-api --filter @indiecrafts/shared-cron --filter @indiecrafts/shared-workers test",

@@ -15,6 +15,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### Changed
+
+- **New-client runbook §4 and §8 rewritten** for the Sanity free plan (2 public datasets, private
+  ids), `pnpm sanity:setup`, the baseline/`--demo` seed and the hosted Studio app id. Testing,
+  scripts, environment, launch checklist, blog Sanity setup/tokens, waitlist and newsletter pages
+  follow (CI reads `tests-e2e` with no token; the lead-magnet file is public on the free plan).
+- **Reference pages:** `scripts/seed-demo` → `scripts/seed`; new `private-id`, `sanity-setup`,
+  `sanity-privatize`, `scripts/lib/site-origins`.
+
 ### Fixed
 
 - **Admin page no longer claims Sanity reads.** `projects/web/admin` said pages read Sanity content;

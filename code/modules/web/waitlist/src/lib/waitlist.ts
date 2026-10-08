@@ -12,6 +12,7 @@ import {
   isLocale,
   localeCodes,
 } from "@indiecrafts/packages-shared-config";
+import { privateId } from "@indiecrafts/packages-web-sanity/private-id";
 import { writeClient } from "@indiecrafts/packages-web-sanity/write";
 import { sendEmail } from "@indiecrafts/packages-web-email";
 import {
@@ -92,6 +93,7 @@ export async function join(
     if (existing) return { ok: true, already: true };
 
     await writeClient.create({
+      _id: privateId("waitlistEntry"), // dotted → hidden from anonymous reads
       _type: "waitlistEntry", // hard-coded — never from the request
       email,
       status: "waiting",

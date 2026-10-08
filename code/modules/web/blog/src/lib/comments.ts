@@ -6,6 +6,7 @@
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";
+import { privateId } from "@indiecrafts/packages-web-sanity/private-id";
 import { writeClient } from "@indiecrafts/packages-web-sanity/write";
 import { notifyNewComment } from "./notify-comment";
 
@@ -113,6 +114,7 @@ export async function createComment(
     const moderationToken = crypto.randomUUID();
 
     await writeClient.create({
+      _id: privateId("comment"), // dotted → hidden from anonymous reads
       _type: "comment", // hard-coded — never from the request
       approved: false,
       authorName: input.authorName.trim().slice(0, MAX_NAME),

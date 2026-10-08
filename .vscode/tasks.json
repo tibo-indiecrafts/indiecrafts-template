@@ -423,9 +423,23 @@
     // ── Data · DB · content ──────────────────────────────────────────────
     {
       "label": "seed",
-      "detail": "seed demo content into Sanity",
+      "detail": "seed the baseline into an empty Sanity dataset (--demo adds demo content)",
       "type": "shell",
       "command": "pnpm seed",
+      "problemMatcher": []
+    },
+    {
+      "label": "seed:e2e",
+      "detail": "re-seed the throwaway tests-e2e Sanity dataset (baseline + demo)",
+      "type": "shell",
+      "command": "pnpm seed:e2e",
+      "problemMatcher": []
+    },
+    {
+      "label": "sanity:setup",
+      "detail": "one-time Sanity setup: datasets + CORS origins",
+      "type": "shell",
+      "command": "pnpm sanity:setup",
       "problemMatcher": []
     },
     {

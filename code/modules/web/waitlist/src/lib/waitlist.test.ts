@@ -114,6 +114,7 @@ describe("join", () => {
     ).toEqual({ ok: true, already: false });
     const doc = create.mock.calls[0][0] as Record<string, unknown>;
     expect(doc._type).toBe("waitlistEntry"); // hard-coded, never from input
+    expect(doc._id).toMatch(/^private\.waitlistEntry\./); // dotted → hidden from anonymous reads
     expect(doc.email).toBe("new@b.com"); // normalized
     expect(doc.status).toBe("waiting");
     expect(doc.consent).toBe(true);

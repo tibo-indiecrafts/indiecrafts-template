@@ -29,16 +29,16 @@ SANITY_API_READ_TOKEN=sk_...   # Viewer role
 SANITY_API_WRITE_TOKEN=sk_...  # Editor role
 ```
 
-| Slot                                         | Role       | Read by                                                                                                                                                                                       | Required when                                                                                      |
-| -------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` + `_DATASET` | —          | `@indiecrafts/packages-web-sanity/env` (asserted — throws if missing) → Studio + every client read                                                                                            | always, when Studio/blog are on                                                                    |
-| `NEXT_PUBLIC_SANITY_API_VERSION`             | —          | `@indiecrafts/packages-web-sanity/env` (defaults to `2025-01-01` if unset)                                                                                                                    | optional; pin it to keep query semantics stable                                                    |
-| `SANITY_API_READ_TOKEN`                      | **Viewer** | `@indiecrafts/packages-web-sanity/token` → `@indiecrafts/packages-web-sanity/client` + `@indiecrafts/packages-web-sanity/live` (`sanityFetch` / `sanityFetchLive`) + `/api/draft-mode/enable` | draft preview + live updates. Without it: public reads still work; the enable endpoint returns 503 |
-| `SANITY_API_WRITE_TOKEN`                     | **Editor** | `code/projects/web/surfaces/website/scripts/seed-demo.mjs` only (`pnpm seed`)                                                                                                                 | running the seed. Never read at runtime                                                            |
+| Slot                                         | Role       | Read by                                                                                                                                                                                       | Required when                                                                                                                                                  |
+| -------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` + `_DATASET` | —          | `@indiecrafts/packages-web-sanity/env` (asserted — throws if missing) → Studio + every client read                                                                                            | always, when Studio/blog are on                                                                                                                                |
+| `NEXT_PUBLIC_SANITY_API_VERSION`             | —          | `@indiecrafts/packages-web-sanity/env` (defaults to `2025-01-01` if unset)                                                                                                                    | optional; pin it to keep query semantics stable                                                                                                                |
+| `SANITY_API_READ_TOKEN`                      | **Viewer** | `@indiecrafts/packages-web-sanity/token` → `@indiecrafts/packages-web-sanity/client` + `@indiecrafts/packages-web-sanity/live` (`sanityFetch` / `sanityFetchLive`) + `/api/draft-mode/enable` | draft preview + live updates + reading `private.` documents (approved comments, E-mails). Without it: public reads still work; the enable endpoint returns 503 |
+| `SANITY_API_WRITE_TOKEN`                     | **Editor** | `@indiecrafts/packages-web-sanity/write` (contact, waitlist, comment forms + moderation, the lead-magnet download) + `scripts/seed.mjs` (`pnpm seed`)                                         | at runtime whenever one of those features is on; and to seed                                                                                                   |
 
 The Studio at `/studio` needs **no token** — visitors authenticate with their own Sanity session cookie.
 
-> **Note.** Sanity requires an auth token even for "public" datasets unless an explicit allow-public policy is set. `@indiecrafts/packages-web-sanity/client` reads `SANITY_API_READ_TOKEN` inline: on the server it's sent on every request; in the browser bundle the non-`NEXT_PUBLIC_` var is stripped, so the client makes anonymous requests (fine — the only browser consumer is the embedded Studio with its cookie).
+> **Note.** On Sanity's free plan every dataset is **public**: an anonymous read returns every document **except** those with a dot in the id. The template gives personal and operator data a `private.` id (`privateId`, `private.emailStrings`), so only a token sees it. `@indiecrafts/packages-web-sanity/client` reads `SANITY_API_READ_TOKEN` inline: on the server it's sent on every request; in the browser bundle the non-`NEXT_PUBLIC_` var is stripped, so the client makes anonymous requests (fine — the only browser consumer is the embedded Studio with its cookie). A token works on **every** dataset of the project (a token limited to one dataset needs Sanity Enterprise), so CI holds none — see `setup/testing.md`.
 
 ---
 
@@ -147,7 +147,7 @@ SANITY_API_READ_TOKEN=<paste viewer token>
 SANITY_API_WRITE_TOKEN=<paste editor token>
 EOF
 
-# 5. Seed demo content (uses the Editor token → SANITY_API_WRITE_TOKEN)
+# 5. Seed the baseline content into the empty dataset (Editor token → SANITY_API_WRITE_TOKEN)
 pnpm seed
 # → "✓ Committed transaction <id>"
 
@@ -171,7 +171,7 @@ curl -sS  -o /dev/null -w "%{http_code}\n" http://localhost:3000/blog/rss.xml   
 open "https://www.sanity.io/manage/personal/project/qy2pp5sn/api/tokens"
 
 # 2. Add 'indiecrafts-template-read' role=Viewer; copy the token.
-# 3. Add 'indiecrafts-template-seed' role=Editor; copy the token.
+# 3. Add 'indiecrafts-template-write' role=Editor; copy the token (runtime forms + seed).
 # 4. Paste both into code/projects/web/surfaces/website/.env.local:
 #      SANITY_API_READ_TOKEN=<viewer token>
 #      SANITY_API_WRITE_TOKEN=<editor token>

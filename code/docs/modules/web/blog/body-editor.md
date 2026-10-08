@@ -135,7 +135,7 @@ Rendered with `dangerouslySetInnerHTML` — whatever the editor writes lands in 
 
 ### Legacy modules
 
-Earlier template versions shipped Logo List and Hero Split modules; they were removed. If you're on an older dataset that still holds those instances, run `pnpm seed` once — `cleanupLegacy()` strips `module.hero-split` / `module.logo-list` from post bodies and `postModules` automatically.
+Earlier template versions shipped Logo List and Hero Split modules; they were removed. An older dataset that still holds those instances shows them as unknown blocks: delete them in the Studio, or patch them out with a one-shot script (the shape of `scripts/unset-legacy-fields.mjs`).
 
 ---
 

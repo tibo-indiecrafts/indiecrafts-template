@@ -8,6 +8,7 @@
     "./image": "./src/image.ts",
     "./module": "./src/module.ts",
     "./write": "./src/write.ts",
+    "./private-id": "./src/private-id.ts",
     "./live": "./src/live.ts",
     "./env": "./src/env.ts",
     "./token": "./src/token.ts",

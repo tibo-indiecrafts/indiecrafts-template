@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Validates a comment submission, then creates a `comment` document with `approved: false` (invisible until an editor approves). Fields are whitelisted and `_type` is hard-coded — the request body is never spread into the mutation. A honeypot field and a too-fast-submit heuristic drop bot submissions as spam.
+Validates a comment submission, then creates a `comment` document with `approved: false` (invisible until an editor approves). Fields are whitelisted and `_type` is hard-coded — the request body is never spread into the mutation. The document takes a dotted id from `privateId("comment")`, so a public dataset hides it from anonymous reads. A honeypot field and a too-fast-submit heuristic drop bot submissions as spam.
 
 ## Exports
 

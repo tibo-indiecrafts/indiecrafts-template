@@ -1,43 +1,50 @@
 #!/usr/bin/env node
 /**
- * Seed the Sanity dataset with demo blog content.
+ * Seed a Sanity dataset — the content every site needs, plus optional demo content.
  *
- *   pnpm seed
+ *   pnpm seed                          # baseline, into an EMPTY dataset
+ *   pnpm seed -- --demo                # baseline + demo content
+ *   pnpm seed -- --force               # re-seed a dataset that has content (overwrites!)
+ *   pnpm seed -- --dry-run [--demo]    # print the documents as JSON; no network, no env
  *
- * Needs a write-capable Sanity token in `SANITY_API_WRITE_TOKEN`
- * (Editor role is enough). The package.json script loads `.env.local`
- * automatically via Node's `--env-file` flag.
+ * Needs `NEXT_PUBLIC_SANITY_PROJECT_ID` + a write-capable `SANITY_API_WRITE_TOKEN`
+ * (Editor role); the package script loads `.env.local`. Target dataset:
+ * `NEXT_PUBLIC_SANITY_DATASET` (default `production`).
  *
- * Idempotent: re-running re-applies the same `_id`s via `createOrReplace`,
- * so editing the data here and re-running updates content in place
- * instead of duplicating it.
+ * **Guard:** it refuses a dataset that already has a `siteSettings` document. A
+ * re-seed replaces every seeded document by `_id` (`createOrReplace`) — on a live
+ * site that erases the editors' work (legal pages, e-mail recipients, navigation).
+ * `--force` skips the guard: `pnpm seed:e2e` and the e2e setup use it on the throwaway `tests-e2e` dataset.
  *
- * What this seeds:
+ * Every content document is translated (plugin-managed `language`): an EN + FR
+ * version linked by a `translation.metadata` doc.
  *
- * Every content document is translated (plugin-managed `language`): each entity
- * has an EN + FR version linked by a `translation.metadata` doc.
+ * **Baseline** (always) — what a site needs to work and to be legal:
+ *   - `siteMeta.<locale>` — the per-language SEO source (tagline, description,
+ *     keywords, OG share card from `scripts/seed-media/`, llms.txt, system pages)
+ *   - `siteSettings` — logo + favicon/app icon (from `scripts/seed-media/`), social
+ *     profiles, business entity, one demo global schema (Service)
+ *   - the home `page` per locale (page-builder sections), `uiMessages.<locale>`
+ *     (from `messages/<locale>.json`), the five legal pages per locale + their
+ *     translation links, navigation, cookie consent, legal consent, language
+ *     suggestion, contact / newsletter / waitlist settings, the `blog` singleton
+ *     (display toggles, comment copy, a frontpage with no pinned documents), and
+ *     the E-mails singleton (`private.emailStrings`, every email OFF)
  *
- *   - 3 authors per locale (6 docs) with Unsplash portrait images
- *   - 3 categories per locale (6 docs)
- *   - 10 tags per locale (20 docs)
- *   - 5 posts per locale (10 docs), each with a media.image from Unsplash
- *   - 2 quotes per locale (4 docs, testimonials)
- *   - 3 people per locale (6 docs, team members) with portrait images
- *   - `translation.metadata` docs linking every EN↔FR set
- *   - 1 `siteMeta.<locale>` singleton per language — the per-language SEO source:
- *     tagline / description / keywords, OG share card (uploaded from
- *     `scripts/seed-media/` — og.png / og-fr.png), llms.txt summary + resources,
- *     and per-page title/description overrides (home / blog / legal)
- *   - 1 `siteSettings` singleton — logo + favicon/app icon (from `scripts/seed-media/`),
- *     social profiles, business entity, one demo global schema (Service)
- *   - 1 blog singleton with EMPTY postModules (posts use the default article
- *     layout) and a composed `frontpageModules` — hero, featured, category
- *     spotlight, collection, a latest-articles list, and explore — so /blog
- *     showcases the composable frontpage out of the box
- *   - The "fast prototyping with Next.js" post (both EN and FR) gets a
- *     `modules: [...]` override that showcases the inline module types
- *     (gallery excluded — it needs uploaded images). Every other post uses
- *     the default layout.
+ * **Demo** (`--demo`) — sample content to show the template; never for a client's
+ * live site:
+ *   - 3 authors, 3 categories (+ 4 sub-categories), 10 tags, 1 series, 5 posts,
+ *     2 quotes, 3 people per locale, with Unsplash images, + their translation links
+ *   - the home's testimonials section, the `/blog` frontpage pins (category
+ *     spotlight + collection), the announcement bar + pop-up
+ *   - 3 comments and 2 waitlist entries (`example.com`), on private ids
+ *   - the "fast prototyping with Next.js" post (EN + FR) shows every inline module
+ *     (gallery excluded — it needs uploaded images)
+ *
+ * Ids are stable, so editing the data here and re-running (`--force`) updates the
+ * documents in place. A document that holds personal or operator data gets a
+ * dotted `private.` id: a public dataset (Sanity's free plan) hides dotted ids from
+ * anonymous reads.
  */
 
 import { createClient } from "@sanity/client";
@@ -70,30 +77,14 @@ const buildUiMessages = () =>
     return { _id: `uiMessages.${lang}`, _type: "uiMessages", language: lang, ...copy };
   });
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+const flags = new Set(process.argv.slice(2));
+const DEMO = flags.has("--demo");
+const FORCE = flags.has("--force");
+const DRY_RUN = flags.has("--dry-run");
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
-const token = process.env.SANITY_API_WRITE_TOKEN;
 
-if (!projectId) {
-  console.error("✗ Missing NEXT_PUBLIC_SANITY_PROJECT_ID");
-  process.exit(1);
-}
-if (!token) {
-  console.error("✗ Missing SANITY_API_WRITE_TOKEN");
-  console.error("");
-  console.error("  Issue one at https://www.sanity.io/manage → your project →");
-  console.error("  API tab → Tokens → Add API token → Editor permissions.");
-  console.error("  Then run with: SANITY_API_WRITE_TOKEN=<token> pnpm seed");
-  process.exit(1);
-}
-
-const client = createClient({
-  projectId,
-  dataset,
-  apiVersion: "2025-01-01",
-  token,
-  useCdn: false,
-});
+/** Set in `run()` — a dry run never creates it. */
+let client;
 
 // ─── Helpers ────────────────────────────────────────────────────
 
@@ -306,7 +297,12 @@ async function uploadAllImages() {
   process.stdout.write("\n");
 }
 
-const img = (name) => assetCache.get(name);
+// A dry run uploads nothing: each image points at a placeholder asset id instead.
+const img = (name) =>
+  assetCache.get(name) ??
+  (DRY_RUN
+    ? { _type: "image", asset: { _type: "reference", _ref: `image-dry-run-${name}` } }
+    : undefined);
 
 // ─── Local media (from scripts/seed-media/) ────────────────────
 // The OG share cards live in the repo, not on Unsplash. Uploaded to Sanity and
@@ -1187,7 +1183,16 @@ const translationMeta = (type, prefix, baseKeys) =>
     ],
   }));
 
-const buildTranslationMeta = () => [
+const buildLegalTranslationMeta = () =>
+  translationMeta("legalPage", "legal", [
+    "mentions-legales",
+    "confidentialite",
+    "cookies",
+    "cgu",
+    "cgv",
+  ]);
+
+const buildDemoTranslationMeta = () => [
   ...translationMeta("post", "post", [
     "fast-proto-nextjs",
     "ship-weekend",
@@ -1212,13 +1217,6 @@ const buildTranslationMeta = () => [
   ...translationMeta("quote", "quote", ["lovelace", "hopper"]),
   ...translationMeta("author", "author", ["ada", "grace", "tim"]),
   ...translationMeta("person", "person", ["maya", "luis", "yuki"]),
-  ...translationMeta("legalPage", "legal", [
-    "mentions-legales",
-    "confidentialite",
-    "cookies",
-    "cgu",
-    "cgv",
-  ]),
 ];
 
 // ─── Inline content modules — interspersed inside the body PortableText.
@@ -1600,7 +1598,15 @@ const buildHomePage = () => {
           cta: extCta(t.cta, "#get-started", t.highlighted ? "primary" : "secondary"),
         })),
       },
-      inline.quoteList(c.testiTitle, [`quote.${lang}.lovelace`, `quote.${lang}.hopper`]),
+      // Testimonials reference the demo quotes.
+      ...(DEMO
+        ? [
+            inline.quoteList(c.testiTitle, [
+              `quote.${lang}.lovelace`,
+              `quote.${lang}.hopper`,
+            ]),
+          ]
+        : []),
       {
         ...inline.newsletter({
           heading: c.cta.title,
@@ -2371,7 +2377,7 @@ const buildPosts = () => [
 
 // ─── Blog singleton ─────────────────────────────────────────────
 
-const blog = {
+const buildBlog = () => ({
   _id: "blog",
   _type: "blog",
   // Empty → DefaultPostLayout takes over with translated breadcrumbs +
@@ -2396,21 +2402,26 @@ const blog = {
       limit: 4,
       leadCard: true,
     },
-    {
-      _type: "module.blog-category-spotlight",
-      _key: key("m"),
-      category: { _type: "reference", _ref: "cat.en.engineering" },
-      count: 4,
-    },
-    {
-      _type: "module.blog-collection",
-      _key: key("m"),
-      posts: [
-        { _type: "reference", _ref: "post.en.fast-proto-nextjs", _key: key("p") },
-        { _type: "reference", _ref: "post.en.ship-weekend", _key: key("p") },
-        { _type: "reference", _ref: "post.en.config-first", _key: key("p") },
-      ],
-    },
+    // These two pin demo documents.
+    ...(DEMO
+      ? [
+          {
+            _type: "module.blog-category-spotlight",
+            _key: key("m"),
+            category: { _type: "reference", _ref: "cat.en.engineering" },
+            count: 4,
+          },
+          {
+            _type: "module.blog-collection",
+            _key: key("m"),
+            posts: [
+              { _type: "reference", _ref: "post.en.fast-proto-nextjs", _key: key("p") },
+              { _type: "reference", _ref: "post.en.ship-weekend", _key: key("p") },
+              { _type: "reference", _ref: "post.en.config-first", _key: key("p") },
+            ],
+          },
+        ]
+      : []),
     { _type: "module.blog-post-list", _key: key("m"), limit: 6, featuredOnly: false },
     { _type: "module.blog-explore", _key: key("m"), variant: "categories" },
   ],
@@ -2461,13 +2472,13 @@ const blog = {
       fr: "Une erreur s'est produite. Merci de réessayer.",
     },
   },
-};
+});
 
 // Demo comments on the featured post — one approved (visible), one pending
 // (shows up in the Studio "En attente" queue). `approved` gates public display.
 const comments = [
   {
-    _id: "comment.demo-approved",
+    _id: "private.comment.demo-approved",
     _type: "comment",
     approved: true,
     authorName: "Katherine Johnson",
@@ -2477,7 +2488,7 @@ const comments = [
     createdAt: daysAgo(1),
   },
   {
-    _id: "comment.demo-pending",
+    _id: "private.comment.demo-pending",
     _type: "comment",
     approved: false,
     authorName: "Alan Turing",
@@ -2488,13 +2499,13 @@ const comments = [
   },
   {
     // Threaded reply → parent is the approved comment above (1-level demo).
-    _id: "comment.demo-reply",
+    _id: "private.comment.demo-reply",
     _type: "comment",
     approved: true,
     authorName: "Ada Lovelace",
     body: "Glad it helped! The skip-list is the whole trick — ship first, refine on real traffic.",
     post: { _type: "reference", _ref: "post.en.fast-proto-nextjs" },
-    parent: { _type: "reference", _ref: "comment.demo-approved" },
+    parent: { _type: "reference", _ref: "private.comment.demo-approved" },
     consent: true,
     createdAt: daysAgo(0),
   },
@@ -2505,7 +2516,7 @@ const comments = [
 // The subscriber double opt-in copy is translated + ready; toggle it on + set a
 // verified From. Secrets: RESEND_API_KEY + NEWSLETTER_SECRET (env).
 const emailStrings = {
-  _id: "emailStrings",
+  _id: "private.emailStrings", // recipients + BCC: hidden from anonymous reads
   _type: "emailStrings",
   commentNotification: {
     enabled: false,
@@ -2593,10 +2604,10 @@ const waitlistSettings = {
   },
 };
 
-// Captured via /api/waitlist (or added by hand). One per status for the desk demo.
+// Captured via /api/waitlist (a private id). One per status for the desk demo.
 const waitlistEntries = [
   {
-    _id: "waitlistEntry.demo-waiting",
+    _id: "private.waitlistEntry.demo-waiting",
     _type: "waitlistEntry",
     email: "grace.hopper@example.com",
     name: "Grace Hopper",
@@ -2607,7 +2618,7 @@ const waitlistEntries = [
     createdAt: daysAgo(1),
   },
   {
-    _id: "waitlistEntry.demo-invited",
+    _id: "private.waitlistEntry.demo-invited",
     _type: "waitlistEntry",
     email: "ada.lovelace@example.com",
     name: "Ada Lovelace",
@@ -2620,61 +2631,6 @@ const waitlistEntries = [
 ];
 
 // ─── Run ────────────────────────────────────────────────────────
-
-async function cleanupLegacy() {
-  // Order matters: Sanity blocks deletion of documents that still have
-  // references pointing at them. So we strip references first, then
-  // delete the orphan documents.
-
-  // ── 1. Strip legacy module blocks from any post body (both drafts
-  //       and published). The seed's `createOrReplace` covers the
-  //       showcase post + blog singleton; this catches every other.
-  const LEGACY_TYPES = ["module.hero-split", "module.logo-list"];
-  const dirtyPosts = await client.fetch(
-    `*[_type == "post" && count(body[_type in $types]) > 0]{ _id, body }`,
-    { types: LEGACY_TYPES },
-  );
-  for (const post of dirtyPosts) {
-    const cleaned = (post.body ?? []).filter((b) => !LEGACY_TYPES.includes(b._type));
-    await client.patch(post._id).set({ body: cleaned }).commit();
-  }
-
-  // ── 2. Also sweep `blog` singleton's frontpageModules + postModules.
-  const dirtyBlog = await client.fetch(
-    `*[_type == "blog" && (count(frontpageModules[_type in $types]) > 0 || count(postModules[_type in $types]) > 0)]{ _id, frontpageModules, postModules }`,
-    { types: LEGACY_TYPES },
-  );
-  for (const b of dirtyBlog) {
-    await client
-      .patch(b._id)
-      .set({
-        frontpageModules: (b.frontpageModules ?? []).filter(
-          (m) => !LEGACY_TYPES.includes(m._type),
-        ),
-        postModules: (b.postModules ?? []).filter((m) => !LEGACY_TYPES.includes(m._type)),
-      })
-      .commit();
-  }
-
-  // ── 3. Now safe to delete orphan `logo` documents. Sweep all logos
-  //       by type plus an explicit ID list covering draft copies.
-  const orphanedLogoIds = [
-    "logo.acme",
-    "logo.contoso",
-    "logo.northwind",
-    "logo.fabrikam",
-    "drafts.logo.acme",
-    "drafts.logo.contoso",
-    "drafts.logo.northwind",
-    "drafts.logo.fabrikam",
-  ];
-  await client.delete({ query: `*[_type == "logo"]` });
-  await client.delete({ query: `*[_id in $ids]`, params: { ids: orphanedLogoIds } });
-
-  console.log(
-    `✓ Cleanup: cleaned ${dirtyPosts.length} post(s) + ${dirtyBlog.length} blog singleton(s), removed orphan logos`,
-  );
-}
 
 // ─── Legal pages ───────────────────────────────────────────────
 // Client-editable boilerplate for the five legal pages. STARTER TEMPLATES only
@@ -3312,46 +3268,96 @@ const buildContactSettings = () => ({
   ),
 });
 
+/** The documents to write: the baseline, plus the demo content with `--demo`. */
+const buildDocs = () => [
+  ...buildSiteMeta(),
+  buildSiteSettings(),
+  ...buildHomePage(),
+  ...buildUiMessages(),
+  ...buildLegalPages(),
+  ...buildLegalTranslationMeta(),
+  buildNavigation(),
+  buildCookieConsent(),
+  buildLegalConsent(),
+  buildLocaleSuggest(),
+  buildContactSettings(),
+  buildBlog(),
+  emailStrings,
+  newsletterSettings,
+  waitlistSettings,
+  ...(DEMO
+    ? [
+        ...buildAuthors(),
+        ...categories,
+        ...tags,
+        ...series,
+        ...buildQuotes(),
+        ...buildPeople(),
+        ...buildPosts(),
+        ...buildDemoTranslationMeta(),
+        buildAnnouncementBar(),
+        buildAnnouncementToast(),
+        ...comments,
+        ...waitlistEntries,
+      ]
+    : []),
+];
+
+function connect() {
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+  const token = process.env.SANITY_API_WRITE_TOKEN;
+  if (!projectId) {
+    console.error("✗ Missing NEXT_PUBLIC_SANITY_PROJECT_ID");
+    process.exit(1);
+  }
+  if (!token) {
+    console.error("✗ Missing SANITY_API_WRITE_TOKEN");
+    console.error("");
+    console.error("  Issue one at https://www.sanity.io/manage → your project →");
+    console.error("  API tab → Tokens → Add API token → Editor permissions.");
+    console.error("  Then run with: SANITY_API_WRITE_TOKEN=<token> pnpm seed");
+    process.exit(1);
+  }
+  client = createClient({
+    projectId,
+    dataset,
+    apiVersion: "2025-01-01",
+    token,
+    useCdn: false,
+  });
+  return projectId;
+}
+
 async function run() {
-  console.log(`Seeding into ${projectId}/${dataset}…`);
+  if (DRY_RUN) {
+    // No uploads: image fields stay empty. Read by `seed.test.mjs`.
+    console.log(JSON.stringify(buildDocs(), null, 2));
+    return;
+  }
+  const projectId = connect();
+  console.log(
+    `Seeding ${DEMO ? "baseline + demo" : "baseline"} into ${projectId}/${dataset}…`,
+  );
+
+  const seeded = await client.fetch(
+    `count(*[_id in ["siteSettings", "drafts.siteSettings"]])`,
+  );
+  if (seeded && !FORCE) {
+    console.error(`✗ ${dataset} already has content (a siteSettings document).`);
+    console.error(
+      "  A re-seed replaces every seeded document — the editors' changes are lost.",
+    );
+    console.error("  On a live site, edit in the Studio instead. To overwrite anyway:");
+    console.error("  pnpm seed -- --force");
+    process.exit(1);
+  }
   console.log("");
 
-  await cleanupLegacy();
-  console.log("");
-
-  await uploadAllImages();
+  if (DEMO) await uploadAllImages();
   await uploadLocalMedia();
   console.log("");
 
-  const allDocs = [
-    ...buildAuthors(),
-    ...categories,
-    ...tags,
-    ...series,
-    ...buildQuotes(),
-    ...buildPeople(),
-    ...buildPosts(),
-    ...buildTranslationMeta(),
-    ...buildSiteMeta(),
-    ...buildHomePage(),
-    ...buildUiMessages(),
-    buildSiteSettings(),
-    ...buildLegalPages(),
-    buildNavigation(),
-    buildCookieConsent(),
-    buildLegalConsent(),
-    buildAnnouncementBar(),
-    buildAnnouncementToast(),
-    buildLocaleSuggest(),
-    buildContactSettings(),
-    blog,
-    ...comments,
-    emailStrings,
-    newsletterSettings,
-    waitlistSettings,
-    ...waitlistEntries,
-  ];
-
+  const allDocs = buildDocs();
   console.log(`Committing ${allDocs.length} documents…`);
   let tx = client.transaction();
   for (const doc of allDocs) tx = tx.createOrReplace(doc);
@@ -3360,16 +3366,20 @@ async function run() {
   console.log("");
   console.log("What you should see:");
   console.log(
-    "  /blog                                 → composed frontpage (hero → featured → spotlight → collection → latest → explore)",
+    "  /           → the home page; /contact, /waitlist, legal pages, cookie banner",
   );
-  console.log(
-    "  /fr/blog                              → same frontpage, EN-only pins hidden",
-  );
-  console.log("  /blog/fast-prototyping-with-nextjs    → ALL 17 modules");
-  console.log("  /blog/prototypage-rapide-avec-nextjs  → ALL 17 modules (FR)");
-  console.log("  any other post                         → default article layout");
-  console.log("");
-  console.log("Re-running this script updates the documents in place (same _ids).");
+  if (DEMO) {
+    console.log(
+      "  /blog       → composed frontpage (hero → featured → spotlight → collection → latest → explore)",
+    );
+    console.log(
+      "  /blog/fast-prototyping-with-nextjs → every inline module (FR: /fr/blog/prototypage-rapide-avec-nextjs)",
+    );
+  } else {
+    console.log(
+      "  /blog       → empty until you write a post (Studio → Blog). Demo content: pnpm seed -- --demo --force",
+    );
+  }
 }
 
 run().catch((err) => {

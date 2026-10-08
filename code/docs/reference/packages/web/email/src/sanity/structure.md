@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Builds the "E-mails" list item for the Sanity desk. It opens the `emailStrings` singleton, which holds the config and copy for every transactional email. `composeSanity` stitches this section in with the other owners.
+Builds the "E-mails" list item for the Sanity desk. It opens the `emailStrings` singleton, which holds the config and copy for every transactional email. `composeSanity` stitches this section in with the other owners. The singleton's id is dotted (`private.emailStrings`): it holds the owner-alert recipients and the BCC list, and a public dataset hides dotted ids from anonymous reads. Readers query by `_type`, so the id never appears in a query.
 
 ## Exports
 

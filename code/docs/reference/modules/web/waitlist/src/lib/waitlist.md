@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Validates a waitlist submission, dedupes it by email, and always stores a `waitlistEntry` document via the server-only write client. On a new entry it may fire two best-effort emails: a confirmation to the joiner and an alert to the owner. Neither email can fail the signup. This is a collect-and-export feature with no runtime gating.
+Validates a waitlist submission, dedupes it by email, and always stores a `waitlistEntry` document via the server-only write client. The entry takes a dotted id from `privateId("waitlistEntry")`, so a public dataset hides it from anonymous reads. On a new entry it may fire two best-effort emails: a confirmation to the joiner and an alert to the owner. Neither email can fail the signup. This is a collect-and-export feature with no runtime gating.
 
 ## Exports
 

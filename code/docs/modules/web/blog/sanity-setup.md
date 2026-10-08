@@ -40,7 +40,7 @@ NEXT_PUBLIC_SANITY_API_VERSION=2025-01-01  # query-stability pin; bump intention
 
 # ── Server-only (NOT NEXT_PUBLIC_) ──
 SANITY_API_READ_TOKEN=                  # Viewer role. Required for draft preview.
-SANITY_API_WRITE_TOKEN=                 # Editor role. Only `pnpm seed` uses this.
+SANITY_API_WRITE_TOKEN=                 # Editor role. Runtime forms (contact, waitlist, comments) + `pnpm seed`.
 ```
 
 `projectId` and `dataset` are asserted at import (`code/packages/web/sanity/src/env.ts` throws `Missing NEXT_PUBLIC_SANITY_…` if unset); `apiVersion` falls back to `"2025-01-01"`. Issue tokens at <https://www.sanity.io/manage> → your project → **API** → **Tokens** → **Add API token**. Full token reference (roles, CORS, security) in [`sanity-tokens.md`](/modules/web/blog/sanity-tokens).
@@ -223,7 +223,7 @@ cp code/projects/web/surfaces/website/.env.example code/projects/web/surfaces/we
 
 # 4. (Optional) Issue tokens at https://www.sanity.io/manage
 #    SANITY_API_READ_TOKEN  → draft preview
-#    SANITY_API_WRITE_TOKEN → `pnpm seed`
+#    SANITY_API_WRITE_TOKEN → the forms at runtime + `pnpm seed`
 
 # 5. Boot dev — Studio is at /studio
 pnpm dev
@@ -233,7 +233,7 @@ pnpm dev
 
 ## 6. Seed demo content
 
-`code/projects/web/surfaces/website/scripts/seed-demo.mjs` populates a complete bilingual demo dataset in a single transaction. Every content document is translated (plugin-managed `language`) — each entity has an EN + FR version linked by a `translation.metadata` doc:
+`code/projects/web/surfaces/website/scripts/seed.mjs` writes in a single transaction. `pnpm seed` writes only the **baseline** (the site singletons, legal pages, navigation, consent, the `blog` singleton with no pinned posts) — the blog stays empty. **`pnpm seed -- --demo`** adds the complete bilingual demo below. Every content document is translated (plugin-managed `language`) — each entity has an EN + FR version linked by a `translation.metadata` doc:
 
 - **3 authors / locale** (Lovelace, Hopper, Berners-Lee) with Unsplash portraits
 - **3 categories / locale**
@@ -242,23 +242,23 @@ pnpm dev
 - **2 quotes / locale** (testimonials, real Unsplash portraits)
 - **3 people / locale** for the Person List module
 - **1 `blog` singleton** — `postModules` empty (posts fall back to `DefaultPostLayout`); `frontpageModules` composed with `blog-hero` → `blog-featured` → `blog-category-spotlight` → `blog-collection` → `blog-post-list` → `blog-explore`, so `/blog` showcases the composable frontpage out of the box
-- Plus the site singletons the app needs: `siteMeta.<locale>` (per-language SEO), `siteSettings`, `legalPage`s, `navigation`, `cookieConsent`
+- Plus the baseline the app needs: `siteMeta.<locale>` (per-language SEO), `siteSettings`, `legalPage`s, `navigation`, `cookieConsent`
+
+Without `--demo`, the `blog` singleton drops the two blocks that pin demo documents (`blog-category-spotlight`, `blog-collection`).
 
 The script prints the exact document total (`allDocs.length`) at commit time — it grows if you add content, so trust the console, not a fixed number.
 
 The "fast prototyping" showcase post exercises **every body-editor primitive** (H1–H6, numbered + bulleted lists, code / strong / em / strike-through marks, inline image, link, blockquote) plus **12 inline module instances across 9 module types** (callout ×4 variants, stat-list, card-list, step-list, accordion-list, quote-list, person-list, custom-html, newsletter). The gallery, prose, and `blog-*` modules are excluded — gallery needs uploaded images; the rest are `postModules`-only.
 
-Before the transaction commits, `cleanupLegacy()` scrubs any leftover `module.hero-split` / `module.logo-list` blocks from post bodies and deletes orphan `logo` docs in the correct reference order — so re-running the seed is safe even against an older dataset that predates this template.
-
 ### Run
 
 ```bash
-SANITY_API_WRITE_TOKEN=<your-editor-token> pnpm seed
+SANITY_API_WRITE_TOKEN=<your-editor-token> pnpm seed -- --demo
 ```
 
-Or set `SANITY_API_WRITE_TOKEN` in `.env.local` and just run `pnpm seed` — the npm script loads `.env.local` via `node --env-file=.env.local`.
+Or set `SANITY_API_WRITE_TOKEN` in `.env.local` and just run `pnpm seed -- --demo` — the npm script loads `.env.local` via `node --env-file=.env.local`.
 
-**Idempotent**: re-running upserts the same `_id`s via `createOrReplace`. Tweak the script and re-run to update content in place.
+**Guarded**: the seed refuses a dataset that already has content (a `siteSettings` document), because a re-seed replaces the editors' work. Add `--force` to re-seed a dataset you can lose: it upserts the same `_id`s via `createOrReplace`, so the content updates in place.
 
 ### Expected output
 
@@ -439,7 +439,7 @@ Already allowed via `getCSPConnectSources()` in `code/packages/shared/config/src
 
 ### `/blog` 200s but is blank
 
-With `frontpageModules` empty, the code-default `DefaultBlogFrontpage` is driven entirely by published posts, so a blank `/blog` means no posts in the requested locale — run `pnpm seed`, or publish a post whose `language` matches the route. With `frontpageModules` composed, a blank page instead means every block resolved empty (e.g. `blog-collection`'s pins, or `blog-hero`/`blog-featured`'s source, don't match any post in that locale) — check the singleton's Sections de l'accueil du blog in the Studio.
+With `frontpageModules` empty, the code-default `DefaultBlogFrontpage` is driven entirely by published posts, so a blank `/blog` means no posts in the requested locale — run `pnpm seed -- --demo` (on an empty dataset), or publish a post whose `language` matches the route. With `frontpageModules` composed, a blank page instead means every block resolved empty (e.g. `blog-collection`'s pins, or `blog-hero`/`blog-featured`'s source, don't match any post in that locale) — check the singleton's Sections de l'accueil du blog in the Studio.
 
 ### `/studio` shows "Configuration error"
 
@@ -476,7 +476,7 @@ Every module has a `hidden` boolean (auto-injected by `defineModule`). Toggle it
 
 ```text
 code/projects/web/surfaces/website/sanity.config.ts                     Studio config (schema, plugins, structure, i18n)
-code/projects/web/surfaces/website/scripts/seed-demo.mjs                pnpm seed — populates the demo dataset
+code/projects/web/surfaces/website/scripts/seed.mjs                pnpm seed — the baseline (+ demo with --demo)
 code/projects/web/surfaces/website/scripts/unset-legacy-fields.mjs      one-shot field unset after a schema removal
 
 code/packages/web/sanity/src/                          SHARED core infra

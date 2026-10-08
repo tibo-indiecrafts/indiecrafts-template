@@ -45,7 +45,7 @@ story; the visual suite screenshots them all, so you don't author screenshots by
 pnpm test              # Vitest unit + integration + parity — turbo fan-out, per-package cached
 pnpm test:coverage     # same, with v8 coverage
 pnpm test:stories      # every Storybook story as a component + a11y test (headless Chromium)
-pnpm --filter @indiecrafts/web-surfaces-website e2e          # app journeys — seeds an `e2e` dataset, builds + serves the app
+pnpm --filter @indiecrafts/web-surfaces-website e2e          # app journeys — seeds the `tests-e2e` dataset, builds + serves the app
 pnpm --filter @indiecrafts/web-surfaces-website e2e:visual   # visual regression against the built Storybook
 pnpm --filter @indiecrafts/web-surfaces-website e2e:update   # (re)generate visual baselines
 pnpm verify            # the full gate — now ends with `pnpm test`
@@ -104,8 +104,8 @@ holds the path), so every changed story is reported, not only the first.
 `playwright.config.ts` runs **two targets**, gated by `E2E_TARGET` (a webServer can't be scoped to
 one project, so the target picks both the project and its server):
 
-- **`app`** (`pnpm e2e`) — journeys in `e2e/journeys/`. A `global-setup` seeds a **throwaway `e2e`
-  Sanity dataset** (reusing `scripts/seed-demo.mjs` — never `production`), then the webServer runs
+- **`app`** (`pnpm e2e`) — journeys in `e2e/journeys/`. A `global-setup` seeds a **throwaway `tests-e2e`
+  Sanity dataset** (reusing `scripts/seed.mjs` — never `production`), then the webServer runs
   `pnpm build && pnpm start` against it. **The app can't boot without a real dataset** — server
   components fetch Sanity during SSR, which Playwright `page.route()` can't intercept.
 - **`visual`** (`pnpm e2e:visual`) — the Storybook screenshot suite (no app, no Sanity).
@@ -140,23 +140,29 @@ production build that reads Sanity on every request, under parallel workers. The
 socket the server just closed ("socket hang up").
 
 **Env for `pnpm e2e`:** `NEXT_PUBLIC_SANITY_PROJECT_ID` + `SANITY_API_WRITE_TOKEN` (to seed);
-`E2E_SANITY_DATASET` overrides the dataset, `E2E_SKIP_SEED=1` reuses an already-seeded one.
+`E2E_SANITY_DATASET` overrides the dataset (it must start with `tests-`: the seed runs
+with `--force`), `E2E_SKIP_SEED=1` reuses an already-seeded one.
 
-::: warning One-time setup — the `e2e` dataset must exist first
-`global-setup` **imports** into the throwaway `e2e` dataset; it can't **create** it, and a content
-`SANITY_API_WRITE_TOKEN` lacks the `datasets/create` grant. So **before the app journeys can run**
-(locally or in CI), someone with dataset-admin rights (a `sanity login` session, or a robot token with
-that grant) creates it **once**:
+**No Sanity write in the journeys.** Every form journeys stubs its POST (`/api/contact`,
+`/api/waitlist`, `/api/comments`, `/api/newsletter`), so a run writes to Sanity only through the
+seed. **CI holds no Sanity token:** a token works on every dataset of the project (a token limited
+to one dataset needs Sanity Enterprise), so a CI token could write `production`. CI sets
+`E2E_SKIP_SEED=1` and reads the public `tests-e2e` dataset. **After you change the seed, run
+`pnpm seed:e2e` before you push** — the CI journeys read what you seeded last. The seed itself is
+checked in CI by `scripts/seed.test.mjs` (a dry run: no token, no network).
+
+::: warning One-time setup — create and seed the `tests-e2e` dataset
+`global-setup` **imports** into the throwaway `tests-e2e` dataset; it can't **create** it, and a content
+`SANITY_API_WRITE_TOKEN` lacks the `datasets/create` grant. So **before the app journeys can run**,
+someone logged in to Sanity (`sanity login`) runs once:
 
 ```bash
-pnpm --filter @indiecrafts/web-surfaces-website exec sanity dataset create e2e --visibility private
+pnpm sanity:setup   # creates `production` + `tests-e2e` and the CORS origins (new-client §4)
+pnpm seed:e2e       # fills `tests-e2e` with the baseline + demo content
 ```
 
-On a Sanity plan without private datasets, the CLI creates it **public** (a warning, not an
-error). It holds only the seeded demo content.
-
-Until it exists, every app-journey run fails at seed with a clear message. In CI, the token behind
-`SANITY_API_WRITE_TOKEN` must either have the grant or the dataset must be pre-created.
+On Sanity's free plan the dataset is **public** (a warning, not an error). It holds only the seeded
+demo content; its comments and waitlist entries have `private.` ids, hidden from anonymous reads.
 :::
 
 ### Auth E2E (Clerk) — `sign-in.spec.ts`

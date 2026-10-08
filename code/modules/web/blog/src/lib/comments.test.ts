@@ -100,6 +100,7 @@ describe("createComment", () => {
     });
     const doc = create.mock.calls[0][0] as Record<string, unknown>;
     expect(doc._type).toBe("comment");
+    expect(doc._id).toMatch(/^private\.comment\./); // dotted → hidden from anonymous reads
     expect(doc.approved).toBe(false);
     expect(doc.post).toEqual({ _type: "reference", _ref: "post.1" });
     expect(doc.consentPolicyVersion).toBe("v1");

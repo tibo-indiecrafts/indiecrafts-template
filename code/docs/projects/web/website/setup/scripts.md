@@ -127,7 +127,7 @@ Because it runs via `npx …@latest`, the first run fetches the CLI (needs netwo
 | `comments:export`                                 | `doctor:web:website:env && node --env-file=.env.local scripts/comments-export.mjs`                     | Exports blog comments → `backups/comments/comments-<timestamp>.csv` (`authorName,authorEmail,body,approved,spam,post,createdAt`). Read-only; needs `SANITY_API_READ_TOKEN`.                                                                                                                                                                                                                                                                                                                                         |
 | `waitlist:export`                                 | `doctor:web:website:env && node --env-file=.env.local scripts/waitlist-export.mjs`                     | Exports waitlist entries → `backups/waitlist/waitlist-<timestamp>.csv` (`email,name,status,source,language,consent,createdAt`). Read-only; needs `SANITY_API_READ_TOKEN`.                                                                                                                                                                                                                                                                                                                                           |
 | `contact:export`                                  | `doctor:web:website:env && node --env-file=.env.local scripts/contact-export.mjs`                      | Exports contact messages → `backups/contact/contact-<timestamp>.csv` (`email,name,subject,message,status,source,language,consent,consentPolicyVersion,createdAt`). Read-only; needs `SANITY_API_READ_TOKEN`.                                                                                                                                                                                                                                                                                                        |
-| `seed`                                            | `doctor:web:website:env --for=seed && node --env-file=.env.local scripts/seed-demo.mjs`                | Seeds the Sanity dataset with demo content. The preflight fails fast if the write token is missing. See § 2.                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `seed`                                            | `doctor:web:website:env --for=seed && node --env-file=.env.local scripts/seed.mjs`                     | Seeds the Sanity dataset with demo content. The preflight fails fast if the write token is missing. See § 2.                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `check:placeholders`                              | `node code/shared/scripts/checks/scan-placeholders.mjs`                                                | **Pre-handoff scan** of `code/` + `docs/` for leftover scaffolding (`<production URL>`, `lorem`, unfilled `your_…_here`, `CHANGEME`). `-- --strict` exits 1 on a HARD hit. CI runs it report-only (the template ships its own fill-me tokens); `--strict` before a **client** go-live.                                                                                                                                                                                                                              |
 | `resources:dev` / `:staging` / `:prod`            | `node code/shared/scripts/lib/resources.mjs <env>`                                                     | **List every Cloudflare resource this instance owns** in one env (workers · D1 · KV · R2), DERIVED from the registries + the site prefix — no hard-coded ids, so the list follows a `project:rename`. Read-only. The single source of truth for what a deploy creates.                                                                                                                                                                                                                                              |
 | `resources:teardown:dev` / `:staging` / `:prod`   | `node code/shared/scripts/infra/teardown.mjs <env>`                                                    | **DELETE all of the above** — for shipping the template clean (no leftover cloud resources on the seller's account) or wiping a demo instance. **Dry-run by default**; add `-- --yes` to execute. prod re-confirms by typing the prefix; a missing resource is skipped. ⚠ Destructive + irreversible — never a live client env.                                                                                                                                                                                     |
@@ -178,12 +178,25 @@ Node scripts in `code/projects/web/surfaces/website/scripts/`. The contrast chec
 - **Result:** prints each pair's ratio in light and dark, exits `1` if any text pair dips below AA. Part of `pnpm verify`.
 - **Keep in sync:** to enforce a new token pair, add it to the `PAIRS` array in the script.
 
-### `seed-demo.mjs` — seed demo content
+### `seed.mjs` — seed a dataset
 
-- **Purpose:** populates the dataset with demo blog content (authors, categories, tags, posts with Unsplash images, quotes, people), plus the `blog`, `siteSettings`, and per-locale `siteMeta` singletons — uploading logo/icon/OG assets from `scripts/seed-media/`. Every content doc is translated (EN + FR, linked by a `translation.metadata` doc).
-- **Invoke:** `pnpm seed`. Needs `SANITY_API_WRITE_TOKEN` (Editor role); reads `projectId`/`dataset` from `NEXT_PUBLIC_SANITY_*`.
-- **Touches:** writes to the live dataset. **Idempotent** — `createOrReplace` keyed on fixed `_id`s, so re-running updates docs in place. It never deletes; removing an entry and re-running leaves the old doc orphaned.
-- **When:** during template iteration or to stand up a demo. **Never** against a client's production dataset with real content.
+- **Purpose:** writes the **baseline** a site needs (settings, per-language SEO, home page, UI messages, legal pages, navigation, consent, form settings, the blog singleton, the E-mails singleton) — uploading logo/icon/OG assets from `scripts/seed-media/`. `--demo` adds the demo content (authors, categories, tags, posts with Unsplash images, quotes, people, announcements, comments, waitlist entries). Every content doc is translated (EN + FR, linked by a `translation.metadata` doc).
+- **Invoke:** `pnpm seed` (baseline) · `pnpm seed -- --demo` · `pnpm seed:e2e` (baseline + demo into `tests-e2e`, `--force`) · `pnpm seed -- --dry-run` (JSON, no network). Needs `SANITY_API_WRITE_TOKEN` (Editor role); reads `projectId`/`dataset` from `NEXT_PUBLIC_SANITY_*`.
+- **Touches:** writes to the dataset. **Refuses** a dataset that already has a `siteSettings` document unless `--force`. Re-running with `--force` updates docs in place (`createOrReplace` on fixed `_id`s); it never deletes, so a removed entry stays orphaned.
+- **When:** once on a new client's empty dataset; `seed:e2e` after any seed change. **Never** with `--force` against a dataset with real content.
+- **Test:** `seed.test.mjs` — the baseline holds no demo content, every reference resolves, personal data has a `private.` id.
+
+### `sanity-setup.mjs` — one-time Sanity project setup
+
+- **Purpose:** creates the content dataset + `tests-e2e` (warns past the free plan's 2 datasets), adds every website origin to Sanity's CORS list (with credentials), and checks the api worker reads the same project. Prints the manual steps (tokens, seed, hosted Studio, webhook).
+- **Invoke:** `pnpm sanity:setup` (`-- --dry-run` to preview). Needs a `sanity login` session.
+- **Touches:** the Sanity project's datasets and CORS origins — adds only; safe to re-run.
+
+### `sanity-privatize.mjs` — move personal data to private ids
+
+- **Purpose:** gives every `comment`, `contactMessage` and `waitlistEntry` a `private.<type>.<id>` id and moves the E-mails singleton to `private.emailStrings` — a public dataset hides dotted ids from anonymous reads. Rewrites references to a moved id (a reply's `parent`).
+- **Invoke:** `pnpm --filter @indiecrafts/web-surfaces-website sanity:privatize` (dry run) · `… -- --apply` · `… -- --dataset tests-e2e --apply`. Needs `SANITY_API_WRITE_TOKEN`.
+- **Touches:** one transaction per run; re-runs move nothing. Run it once on each dataset created before the private ids.
 
 ### `audit-dataset.mjs` — read-only dataset audit
 
@@ -200,7 +213,7 @@ Node scripts in `code/projects/web/surfaces/website/scripts/`. The contrast chec
 - **When:** once, after a release that drops a schema field. Safe to re-run — a no-op when nothing matches.
 
 ::: warning
-`seed-demo.mjs` and `unset-legacy-fields.mjs` both **write** to the dataset. Point them at a dev/demo dataset, not a client's production content, unless you know exactly what they'll change.
+`seed.mjs` and `unset-legacy-fields.mjs` both **write** to the dataset. Point them at a dev/demo dataset, not a client's production content, unless you know exactly what they'll change.
 :::
 
 ---

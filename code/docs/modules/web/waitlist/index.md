@@ -1,13 +1,13 @@
 ---
 title: "Waitlist"
-description: "An editor-droppable early-access signup block (module.waitlist) with a gated API route, a Studio list an editor can also add to by hand, optional confirmatio…"
+description: "An editor-droppable early-access signup block (module.waitlist) with a gated API route, a private Studio list, optional confirmation/owner emails, and a CSV export."
 status: stable
 ---
 
 # Waitlist
 
-An editor-droppable early-access signup block (`module.waitlist`) with a gated API route, a Studio
-list an editor can also add to by hand, optional confirmation/owner emails, and a CSV export. Works
+An editor-droppable early-access signup block (`module.waitlist`) with a gated API route, a private
+Studio list, optional confirmation/owner emails, and a CSV export. Works
 out of the box with **no API keys** — a signup lands as a Sanity `waitlistEntry` you read in the
 Studio. **Collect + export only** — no runtime gating. Modeled on the [newsletter](../newsletter/).
 
@@ -36,9 +36,11 @@ contribution. The public form stays a page-builder block (renderer in `@indiecra
 ## Studio — Liste d'attente
 
 With `features.waitlist` on, the Studio shows a **Liste d'attente** section: the settings singleton +
-the entries. The **"Tous·tes"** list has the native **+ Create** button, so an editor can **add an
-entry by hand** (email + name + status); status sub-lists (**En attente** / **Invité·e·s**) are read
-views. The API fills `source`/`language`/`consent`/`createdAt` (read-only).
+the entries. An editor reads an entry and changes its status; status sub-lists (**En attente** /
+**Invité·e·s**) are read views. The API fills `source`/`language`/`consent`/`createdAt` (read-only).
+Entries come **only from the form**: each one gets a dotted id (`private.waitlistEntry.<uuid>`), which
+a public dataset hides from anonymous reads. The Studio has no **Create** or **Duplicate** for this type,
+because a Studio copy would get a public id. To add someone, use the site's form.
 
 ## Emails (Studio → E-mails)
 

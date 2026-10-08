@@ -9,8 +9,9 @@ import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
 
 /**
  * "Liste d'attente" desk — the settings singleton + the entries. The top
- * "Tous·tes" list is a `documentTypeList`, so it carries the native **+ Create**
- * button (an editor can add a row by hand); the status sub-lists are read views.
+ * "Tous·tes" list is a `documentTypeList`; the status sub-lists are read views.
+ * Entries come only from the site's form (a dotted, private id): the website's
+ * `sanity.config.ts` removes "create" and "duplicate" for this type.
  */
 function entriesItem(S: StructureBuilder) {
   const byStatus = (title: string, status: string) =>

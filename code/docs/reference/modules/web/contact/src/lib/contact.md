@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`submit` is the server-only write path for the contact form. It validates the input, then always stores a `contactMessage` document (no dedupe — a person may write more than once); the owner reads the inbox in Studio. Fields are whitelisted and `_type` is hard-coded. On a stored message, two best-effort emails may fire (configured on the shared `emailStrings` entity): a confirmation to the sender and an owner alert carrying the message with `reply-to` set to the sender. Neither email can fail the submission. A hidden honeypot field marks bot submissions as spam while the caller still returns success.
+`submit` is the server-only write path for the contact form. It validates the input, then always stores a `contactMessage` document (no dedupe — a person may write more than once); the owner reads the inbox in Studio. Fields are whitelisted and `_type` is hard-coded. The document takes a dotted id from `privateId("contactMessage")`, so a public dataset hides it from anonymous reads. On a stored message, two best-effort emails may fire (configured on the shared `emailStrings` entity): a confirmation to the sender and an owner alert carrying the message with `reply-to` set to the sender. Neither email can fail the submission. A hidden honeypot field marks bot submissions as spam while the caller still returns success.
 
 ## Exports
 

@@ -7,8 +7,9 @@
 #
 # CI/CD variables (Settings → CI/CD → Variables; mask + protect the secrets):
 #   build · e2e · csp : NEXT_PUBLIC_SITE_URL, NEXT_PUBLIC_CDN_URL, NEXT_PUBLIC_SANITY_PROJECT_ID,
-#                       NEXT_PUBLIC_SANITY_DATASET, NEXT_PUBLIC_SANITY_API_VERSION,
-#                       SANITY_API_READ_TOKEN, SANITY_API_WRITE_TOKEN (the throwaway `e2e` dataset)
+#                       NEXT_PUBLIC_SANITY_DATASET, NEXT_PUBLIC_SANITY_API_VERSION
+#   build             : SANITY_API_READ_TOKEN (e2e · csp blank both Sanity tokens: they read the
+#                       seeded public `tests-e2e` dataset; nothing in CI writes to Sanity)
 #   auth journeys     : E2E_CLERK_PUBLISHABLE_KEY, E2E_CLERK_SECRET_KEY, E2E_CLERK_ADMIN_EMAIL
 #                       (a Clerk TEST instance; unset → those journeys skip)
 #   backup            : CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, SANITY_API_READ_TOKEN,
@@ -141,13 +142,18 @@ browser-stories:
     - pnpm --filter @indiecrafts/web-tools-storybook storybook:build
     - pnpm --filter @indiecrafts/web-tools-storybook test:stories:website
 
-# Functional journeys: website (seeded `e2e` dataset), app, admin. Auth journeys skip without
-# the Clerk test keys. BLOCKING.
+# Functional journeys: website (the seeded `tests-e2e` dataset), app, admin. Auth journeys skip
+# without the Clerk test keys. BLOCKING. No Sanity token: the journeys stub every form POST
+# and the seed runs on a developer's machine (`pnpm seed:e2e`) — a Sanity token works on every
+# dataset of the project. Project-level variables reach every job, so blank them here.
 browser-e2e-app:
   extends: .browser
   variables:
     NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
-    E2E_SANITY_DATASET: e2e
+    E2E_SANITY_DATASET: tests-e2e
+    E2E_SKIP_SEED: "1"
+    SANITY_API_WRITE_TOKEN: ""
+    SANITY_API_READ_TOKEN: ""
   script:
     - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="$E2E_CLERK_PUBLISHABLE_KEY" CLERK_SECRET_KEY="$E2E_CLERK_SECRET_KEY" pnpm --filter @indiecrafts/web-surfaces-website e2e
     - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="$E2E_CLERK_PUBLISHABLE_KEY" CLERK_SECRET_KEY="$E2E_CLERK_SECRET_KEY" pnpm --filter @indiecrafts/web-surfaces-app e2e
@@ -159,7 +165,10 @@ csp:
   variables:
     E2E_TARGET: app
     NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
-    E2E_SANITY_DATASET: e2e
+    E2E_SANITY_DATASET: tests-e2e
+    E2E_SKIP_SEED: "1"
+    SANITY_API_WRITE_TOKEN: ""
+    SANITY_API_READ_TOKEN: ""
   script:
     - pnpm --filter @indiecrafts/web-surfaces-website exec playwright test journeys/csp-nonce.spec.ts
 

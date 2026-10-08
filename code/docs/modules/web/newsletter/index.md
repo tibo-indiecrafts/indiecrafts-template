@@ -93,6 +93,13 @@ magnet is e-mailed as a **signed, expiring download link** (`/api/download` veri
 the same `NEWSLETTER_SECRET`). A lead-magnet request never subscribes anyone to the newsletter.
 Delivery is best-effort — a failure never blocks the confirmation.
 
+::: warning A Sanity file is public
+The signed link gates the form, not the file. Anyone with a Sanity file URL can download it, and on
+Sanity's free plan (public datasets) anyone can list the dataset's files and the `leadMagnet` docs.
+Use the gate for a freebie that you trade for an email. For a file that must stay private, use a
+private dataset (paid Growth plan) or host the file outside Sanity.
+:::
+
 ## Resend — the only list
 
 On confirm, the website calls the api (`POST /v1/newsletter/subscribers`), which:

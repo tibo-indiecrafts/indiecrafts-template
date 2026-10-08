@@ -12,6 +12,7 @@ import {
   isLocale,
   localeCodes,
 } from "@indiecrafts/packages-shared-config";
+import { privateId } from "@indiecrafts/packages-web-sanity/private-id";
 import { writeClient } from "@indiecrafts/packages-web-sanity/write";
 import { sendEmail } from "@indiecrafts/packages-web-email";
 import {
@@ -91,6 +92,7 @@ export async function submit(
 
   try {
     await writeClient.create({
+      _id: privateId("contactMessage"), // dotted → hidden from anonymous reads
       _type: "contactMessage", // hard-coded — never from the request
       email,
       message: message.slice(0, MAX_MESSAGE),

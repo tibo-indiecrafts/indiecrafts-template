@@ -12,6 +12,14 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Security
+
+- **`@indiecrafts/packages-web-sanity/private-id`** — `privateId(type)` returns
+  `private.<type>.<uuid>`. **Why:** Sanity's free plan has public datasets only, and an anonymous
+  read skips documents with a dot in the id; every runtime write of personal data takes its id
+  from here. The **email** brick's E-mails singleton moved to `private.emailStrings` for the same
+  reason (it holds the alert recipients and the BCC list).
+
 ### Added
 
 - **security: `CspHosts.frameAncestors`.** Lists who may frame the page (default `'none'`);

@@ -45,8 +45,9 @@ enabled = true
 # Sanity read config for GET /v1/announcements (PUBLIC marketing content — same as the
 # website). PROJECT_ID + DATASET are public → safe here / in the dashboard; fill them per
 # deployment (repeat under [env.<env>.vars] if the dataset differs per env). Until set, the
-# route answers 503. SANITY_API_READ_TOKEN is a SECRET → `wrangler secret put
-# SANITY_API_READ_TOKEN --env <env>` (needed only if the dataset is not public-read).
+# route answers 503. SANITY_API_READ_TOKEN is a SECRET (`.dev.vars`, synced on deploy) — set it
+# in every env: the E-mails singleton (`private.emailStrings`: support address, BCC, alert copy)
+# has a private id, so a token-less read gets nothing and the emails fall back to built-in copy.
 # Public vars go PER ENV under `[env.<env>.vars]` below — wrangler does NOT inherit a
 # top-level `[vars]` into named environments (it warns + drops them), so there is no
 # top-level `[vars]` block. The active base vars declared per env:

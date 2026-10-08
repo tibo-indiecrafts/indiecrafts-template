@@ -9,7 +9,8 @@ under here; platform rules live in the root `CLAUDE.md`. This file = _how to bui
 `code-patterns` (❌/✅ for every NEVER below) always, `testing` on test files. Web-wide (root
 `.claude/rules/web/`, shared with admin · app · packages · modules): `accessibility` · `adaptive-design` ·
 `component-architecture` · `design-token-usage` · `figma-handoff` · `visual-verification` ·
-`sanity-images` on `.tsx`/`.css`; `sanity-legends` on Sanity schema files.
+`sanity-images` on `.tsx`/`.css`; `sanity-legends` on Sanity schema files; `sanity-data` (private ids,
+the seed) on Sanity schemas, module writes and `scripts/`.
 
 ## Map
 
