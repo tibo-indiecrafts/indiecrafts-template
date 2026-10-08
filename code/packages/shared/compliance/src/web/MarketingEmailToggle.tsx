@@ -6,7 +6,7 @@
  * @see docs/reference/packages/shared/compliance/src/web/MarketingEmailToggle.md
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useState } from "react";
 import { Switch } from "@indiecrafts/packages-web-ui/web/switch";
 
 export interface MarketingEmailToggleProps {
@@ -40,12 +40,15 @@ export function MarketingEmailToggle({
   const [on, setOn] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  // Read once per api origin. A caller may pass a new `getToken` each render; re-reading
+  // then would race a save and put the old value back on screen.
+  const readToken = useEffectEvent(() => getToken());
   useEffect(() => {
     if (!apiUrl) return;
     let alive = true;
     void (async () => {
       try {
-        const token = await getToken();
+        const token = await readToken();
         if (token) {
           const res = await fetch(`${apiUrl}/v1/consent/marketing-email`, {
             headers: { authorization: `Bearer ${token}` },
@@ -65,7 +68,7 @@ export function MarketingEmailToggle({
     return () => {
       alive = false;
     };
-  }, [apiUrl, getToken]);
+  }, [apiUrl]);
 
   const change = useCallback(
     async (next: boolean) => {

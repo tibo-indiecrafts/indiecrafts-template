@@ -57,6 +57,26 @@ describe("MarketingEmailToggle", () => {
     });
   });
 
+  // The account page passes a new getToken each render: that must not re-read the stored
+  // value, or a read racing the save puts the old state back on screen.
+  it("a new getToken on re-render does not re-read the stored value", async () => {
+    const user = userEvent.setup();
+    const fetchMock = stubApi(true);
+    const { rerender } = render(
+      <MarketingEmailToggle {...props} getToken={async () => "jwt"} />,
+    );
+    const toggle = await screen.findByRole("switch");
+    await waitFor(() => expect(toggle).toBeEnabled());
+    await user.click(toggle);
+    rerender(<MarketingEmailToggle {...props} getToken={async () => "jwt2"} />);
+    await waitFor(() => expect(toggle).toBeEnabled());
+    expect(toggle).toHaveAttribute("aria-checked", "false");
+    const gets = fetchMock.mock.calls.filter(
+      ([, init]) => init?.method !== "POST",
+    );
+    expect(gets).toHaveLength(1);
+  });
+
   it("reverts when the write fails", async () => {
     const user = userEvent.setup();
     vi.spyOn(console, "error").mockImplementation(() => {});

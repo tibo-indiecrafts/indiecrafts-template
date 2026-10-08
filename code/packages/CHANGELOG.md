@@ -119,6 +119,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`packages-shared-compliance` — the "Commercial emails" switch shows what was saved.** It re-read
+  the stored value whenever its `getToken` prop changed, and the account page passes a new one each
+  render. A read racing a save put the old state back on screen (seen in the Android shell: saved
+  "off", shown "on"). It now reads once per api origin (`useEffectEvent`).
+
 - **The CI coverage step no longer times out tests.** That step runs every package at once with v8
   coverage, and tests that take about 1 s alone passed the 5 s default: `web-compliance`
   (`submit.test.ts`, `CookiePreferences`) and `web-sanity` (`client.test.ts`). The shared base
