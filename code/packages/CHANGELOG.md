@@ -95,6 +95,12 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **The CI coverage step no longer times out tests.** That step runs every package at once with v8
+  coverage, and tests that take about 1 s alone passed the 5 s default: `web-compliance`
+  (`submit.test.ts`, `CookiePreferences`) and `web-sanity` (`client.test.ts`). The shared base
+  (`vitest.shared.ts`) now sets `testTimeout: 20_000`, so `web-auth` drops its own copy. `submit.test.ts`
+  also stops resetting modules between tests: each test re-imported the whole email brick.
+
 - **`packages-web-compliance` — the data-request owner alert was French-only.** Its default
   heading, intro, subject and labels were French for every site. `renderDataRequestNotificationEmail`
   takes a `locale` (the site's `defaultLocale`) and uses English or French copy, English for any other

@@ -26,7 +26,6 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.unstubAllGlobals();
-  vi.resetModules();
   vi.clearAllMocks();
   delete process.env.API_URL;
   delete process.env.APP_API_TOKEN;

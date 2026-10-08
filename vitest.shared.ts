@@ -66,6 +66,9 @@ const shared: ViteUserConfig = {
     // A package can carry a `test` script before it has tests (turbo fan-out) —
     // don't fail the gate on an empty package.
     passWithNoTests: true,
+    // The CI coverage step runs every package at once with v8 instrumentation: a cold
+    // dynamic import or a Radix dialog that takes ~1 s alone passed the 5 s default there.
+    testTimeout: 20_000,
     environment: "happy-dom",
     setupFiles: [fileURLToPath(new URL("./vitest.setup.ts", import.meta.url))],
     include: ["**/*.test.{ts,tsx}"],

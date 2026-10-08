@@ -19,6 +19,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **A signed-in account journey (`account-data`).** It exports the data (a single-use link to a bundle
+  that holds the user's email), then deletes the account: a wrong email is refused, the right one
+  erases the Clerk user and signs out. Each run creates its own `+clerk_test` user and removes it.
+  It skips without Clerk keys or an api origin. **Why:** the export and delete paths had no browser
+  check; only the signed-out redirect did.
 - **`forms.*` messages (en · fr).** The fallback copy of the contact, newsletter, waitlist and
   lead-magnet forms when a Studio label is empty. The seed now fills the contact consent label.
   **Why:** the forms fell back to French in every language.

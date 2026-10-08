@@ -178,7 +178,9 @@ Workers: their pool has no v8 coverage). The floors live in one table, `COVERAGE
 `vitest.shared.ts`, keyed by package name: measured value minus 3 points, rounded down
 (measured 2026-10-08). Covered today: `app` · `website` · `admin` · `shared-security` ·
 `shared-compliance` · `shared-config`. A package not in the table has no floor. Raise a floor
-when coverage rises; never lower one to pass a PR. Check one package locally:
+when coverage rises; never lower one to pass a PR. The base `testTimeout` is 20 s: this step runs every
+package at once with v8 instrumentation, and a test that takes 1 s alone can pass the 5 s default there.
+Check one package locally:
 `pnpm --filter <pkg> exec vitest run --coverage`. The tooling gates include `check:secret-leak`
 and a report-only `check:placeholders` (it lists leftover template scaffolding, exit 0).
 

@@ -124,7 +124,10 @@ keys `session-log` 401 signed out and `consent-log` 413 oversize), `contact` · 
 required-field gates, success + error states; the api route is stubbed), `erasure` (`/erasure` and
 `/erasure/confirm` — the worker calls are stubbed, each api answer maps to its message, the emailed token
 travels only in the POST body; self-skips when the build has no `NEXT_PUBLIC_API_URL`), `account` (a
-signed-out visitor never reaches export/delete — the signed-in path is in `sign-in`), `newsletter`, `download` (a gated lead-magnet `/api/download` returns 403 on a bad/missing token, no CDN URL
+signed-out visitor never reaches export/delete), `account-data` (signed in: export answers a
+single-use link to the user's own data, delete refuses a mismatched email, then erases the account and
+signs out — a throwaway `+clerk_test` user per run, created and removed through the Clerk Backend API;
+self-skips without Clerk keys or `NEXT_PUBLIC_API_URL`, and needs the api running, e.g. `pnpm dev`), `newsletter`, `download` (a gated lead-magnet `/api/download` returns 403 on a bad/missing token, no CDN URL
 leaked), `waitlist`, `consent`, `a11y` (skip-link + axe), `theme`, `not-found`, plus content-dependent
 `blog-read` · `comment` · `search` · `i18n` · `route-gate` (a default-off route 404s), plus
 `sign-in` (the **auth** journey — self-skips without Clerk keys; see below). Content journeys rely on
