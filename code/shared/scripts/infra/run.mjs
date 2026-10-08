@@ -69,7 +69,7 @@ if (["plan", "apply", "destroy"].includes(action)) {
 }
 if (!process.env.CLOUDFLARE_API_TOKEN) {
   console.error(
-    "CLOUDFLARE_API_TOKEN is required — a scoped token (Zone: DNS/Cache/WAF edit,\nAccount: Workers/Turnstile edit). See code/docs/shared/infra/cloudflare-iac.md.",
+    "CLOUDFLARE_API_TOKEN is required — a scoped token (Zone: DNS/Cache/WAF edit,\nAccount: Workers/Turnstile/R2/Access edit). See code/docs/shared/infra/cloudflare-iac.md.",
   );
   process.exit(1);
 }
