@@ -36,6 +36,8 @@ const ALLOWLIST = {
     "Clerk auth() — a signed-in, same-origin caller only; forwards server-side to the audit api with APP_API_TOKEN (no secret reaches the browser).",
   "api/consent-log/route.ts":
     "Clerk auth() resolves the signed-in caller server-side (the trust boundary); anonymous logging is gated behind features.compliance.logAnonymousConsent (off by default) + a first-party consent_id cookie; forwards server-side to the consent api with APP_API_TOKEN (no secret reaches the browser). Same pattern as session-log; Turnstile is wrong for a background consent beacon.",
+  "src/app/api/consent-log/route.ts":
+    "Same consent-log route on the `app` surface (its folder name shifts the route key); Clerk auth() — signed-in callers only (anonymous → 204, nothing logged), 4 kB body cap.",
   "src/app/api/session-log/route.ts":
     "Same session-log route on the `app` surface (its folder name shifts the route key); Clerk auth(), signed-in same-origin caller only.",
 };

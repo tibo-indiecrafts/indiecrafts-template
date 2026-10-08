@@ -57,6 +57,7 @@ enabled = true
 #   SANITY_PROJECT_ID / SANITY_DATASET / WEBSITE_URL (set on dev + staging; prod once its domain exists)
 #   EMAIL_ADMIN_BCC = "admin@your-site.example"    # BCC'd on outbound (erasure) emails
 #   SECURITY_ALERT_EMAIL = "soc@your-site.example" # high/critical alert; falls back to EMAIL_ADMIN_BCC
+#   ALLOWED_ORIGINS = "http://localhost:5173"     # browser origins allowed to read bearer routes (comma-separated); unset → none
 # Secrets are NEVER vars → `wrangler secret put <NAME> --env <env>` (or `pnpm secrets:sync:*`).
 
 # ── KV — edge key-value (cache · sessions · flags) ───────────────────────
