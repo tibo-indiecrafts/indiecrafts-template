@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/churn/page.md
  */
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { requireAdminPage } from "@/lib/require-admin";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import {
   Table,
@@ -52,6 +53,7 @@ export default async function ChurnPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  await requireAdminPage(locale);
   setRequestLocale(locale);
   const t = await getTranslations("admin.churn");
   const data = await fetchChurn();

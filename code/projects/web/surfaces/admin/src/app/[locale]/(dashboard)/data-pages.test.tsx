@@ -8,11 +8,13 @@ import messages from "../../../../messages/en.json";
 // async functions and their JSX rendered. Mocks the boundaries only: next-intl's server
 // API (a real translator over en.json), the api (`fetch`), Clerk's email lookup, and the
 // sessions table (a client component with its own test).
-const { fetchMock, fetchEmails } = vi.hoisted(() => ({
+const { fetchMock, fetchEmails, requireAdminPage } = vi.hoisted(() => ({
   fetchMock: vi.fn(),
   fetchEmails: vi.fn(async () => ({}) as Record<string, string>),
+  requireAdminPage: vi.fn(async (_locale: string) => {}),
 }));
 vi.stubGlobal("fetch", fetchMock);
+vi.mock("@/lib/require-admin", () => ({ requireAdminPage }));
 vi.mock("next-intl/server", () => ({
   setRequestLocale: () => {},
   getTranslations: async (arg: string | { namespace: string }) =>
@@ -216,4 +218,24 @@ describe("system page", { timeout: 30_000 }, () => {
     expect(screen.getByRole("cell", { name: "1.2.3" })).toBeTruthy();
     expect(screen.getByText("error")).toBeTruthy();
   });
+});
+
+describe("the page gate", () => {
+  // Real next-intl `redirect` throws; the gate's own test covers who gets redirected.
+  const denied = () => requireAdminPage.mockRejectedValueOnce(new Error("NEXT_REDIRECT"));
+
+  it.each(["./churn/page", "./sessions/page", "./security/page", "./system/page"])(
+    "%s never reads its data without an admin session",
+    async (path) => {
+      configureApi();
+      vi.stubEnv("WEBSITE_URL", "https://www.x.dev");
+      vi.stubEnv("WORKERS_URL", "https://workers.x.dev");
+      denied();
+      await expect(page(path)).rejects.toThrow("NEXT_REDIRECT");
+      expect(requireAdminPage).toHaveBeenCalledWith("en");
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(fetchEmails).not.toHaveBeenCalled();
+    },
+    30_000, // the system page is imported fresh
+  );
 });

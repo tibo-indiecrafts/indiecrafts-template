@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/page.md
  */
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { requireAdminPage } from "@/lib/require-admin";
 import { Link } from "@/i18n/routing";
 import {
   Card,
@@ -51,6 +52,7 @@ export default async function AdminHome({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  await requireAdminPage(locale);
   setRequestLocale(locale);
   const t = await getTranslations("admin");
 

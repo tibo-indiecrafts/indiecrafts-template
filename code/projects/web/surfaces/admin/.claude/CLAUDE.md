@@ -18,8 +18,10 @@ Shared bricks are wired (`transpilePackages` + deps + tsconfig `paths` + `@sourc
 reads yet (`packages-web-sanity` is wired, unused); operator copy lives in `messages/`. Ships its own
 `src/config` (app-instance).
 
-- **Auth gate (fails closed):** Clerk `isAdmin` in `src/proxy.ts` (routing only) **and** the `(dashboard)`
-  layout (the real gate); every server action re-checks with `requireAdmin` and audits via `src/lib/audit.ts`.
+- **Auth gate (fails closed):** Clerk `isAdmin` in `src/proxy.ts` (routing only) **and**
+  `requireAdminPage` (`src/lib/require-admin.ts`) in the `(dashboard)` layout **and every page** before it
+  reads data (Next skips a layout on client navigation; `page-gate.test.ts` enforces it); every server
+  action re-checks with `requireAdmin` and audits via `src/lib/audit.ts`.
   Before go-live, add a Cloudflare Access gate on the subdomain.
 - **Dates:** next-intl `getFormatter`/`useFormatter` only (UTC, set in `src/i18n/request.ts`) — never
   `toLocaleString`, which breaks hydration in client tables.

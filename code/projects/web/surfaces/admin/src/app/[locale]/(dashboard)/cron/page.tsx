@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/cron/page.md
  */
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { requireAdminPage } from "@/lib/require-admin";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 import { fetchCronStatus } from "@/lib/monitoring";
@@ -16,6 +17,7 @@ export default async function CronPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  await requireAdminPage(locale);
   setRequestLocale(locale);
   const t = await getTranslations("admin.cron");
   const status = await fetchCronStatus();

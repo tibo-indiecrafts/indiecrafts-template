@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/settings/page.md
  */
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { requireAdminPage } from "@/lib/require-admin";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 import { SettingsForm, type SettingRow } from "../settings-form";
@@ -36,6 +37,7 @@ export default async function SettingsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  await requireAdminPage(locale);
   setRequestLocale(locale);
   const t = await getTranslations("admin.settings");
   const settings = await fetchSettings();

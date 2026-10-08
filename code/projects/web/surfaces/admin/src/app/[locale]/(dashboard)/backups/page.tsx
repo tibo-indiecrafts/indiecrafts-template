@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/backups/page.md
  */
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { requireAdminPage } from "@/lib/require-admin";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 import { BackupsTable, type BackupsStatus } from "../backups-table";
@@ -41,6 +42,7 @@ export default async function BackupsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  await requireAdminPage(locale);
   setRequestLocale(locale);
   const t = await getTranslations("admin.backups");
   const status = await fetchBackupsStatus();

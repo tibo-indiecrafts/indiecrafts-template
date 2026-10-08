@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/data-requests/page.md
  */
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { requireAdminPage } from "@/lib/require-admin";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 import { fetchDataRequest, fetchDataRequests } from "@/lib/monitoring";
@@ -36,6 +37,7 @@ export default async function DataRequestsPage({
   searchParams: Promise<{ id?: string }>;
 }) {
   const { locale } = await params;
+  await requireAdminPage(locale);
   setRequestLocale(locale);
   const t = await getTranslations("admin.dataRequests");
   const [rows, { id }] = await Promise.all([fetchDataRequests(), searchParams]);

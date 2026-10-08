@@ -98,10 +98,12 @@ both.
 - **Middleware (`src/proxy.ts`)** — `clerkMiddleware` reads the session claims and calls
   `isAdmin` (from `@indiecrafts/packages-shared-auth`). Anything but a verified admin claim
   redirects to `/sign-in`. This is coarse routing, not the trust boundary.
-- **Data layer (`(dashboard)/layout.tsx`)** — every dashboard route re-checks `isAdmin`
-  server-side before rendering. This is the real gate, because middleware is bypassable
-  (Next.js CVE-2025-29927). Each server action (`grantAdmin`, `revokeSession`,
-  `revokeUserSessions`, `saveSetting`) independently calls `requireAdmin`.
+- **Data layer (`src/lib/require-admin.ts`)** — the `(dashboard)` layout **and every page**
+  call `requireAdminPage` server-side before they render or read data. This is the real gate,
+  because middleware is bypassable (Next.js CVE-2025-29927). The pages check too, because
+  Next skips a layout the client already has on a navigation (partial rendering);
+  `page-gate.test.ts` fails when a page does not. Each server action (`grantAdmin`,
+  `revokeSession`, `revokeUserSessions`, `saveSetting`) independently calls `requireAdmin`.
 
 The role grant is the crown jewel. Sign-up is open and passwordless, so `grantAdmin` is the
 only thing between a stranger and admin. It is admin-gated on the server, validates the
@@ -112,7 +114,7 @@ the shared audit sink (`src/lib/audit.ts`), which stores the actor id and edge c
 no IP (GDPR data minimization), with a durable console fallback so an audit is never lost.
 
 **Before shipping.** An unconfigured Clerk (no `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`) leaves
-the middleware ungated — but the `(dashboard)` layout still fails closed and redirects to
+the middleware ungated — but `requireAdminPage` still fails closed and redirects to
 `/sign-in`, so the operator screens stay locked, not exposed. Configure Clerk, then add a
 Cloudflare Access gate on the subdomain as defense-in-depth before the app goes live.
 

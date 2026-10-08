@@ -5,6 +5,7 @@
  */
 import type { Metadata } from "next";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
+import { requireAdminPage } from "@/lib/require-admin";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {
@@ -68,6 +69,7 @@ export default async function SecurityPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  await requireAdminPage(locale);
   setRequestLocale(locale);
   const [t, format, rows] = await Promise.all([
     getTranslations("admin.security"),

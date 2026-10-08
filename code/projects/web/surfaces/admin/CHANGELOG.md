@@ -56,6 +56,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **Security: every dashboard page checks the admin session before it reads data.** Before, only
+  the `(dashboard)` layout checked. Next skips a layout the client already has (partial
+  rendering), so a crafted navigation request could render a page — churn, sessions, security,
+  system and the rest — without the check. The proxy still blocked it when Clerk was configured,
+  but not with Clerk unconfigured or a middleware bypass (the case the layout exists for). The
+  layout and all 12 pages now call one shared `requireAdminPage` (`src/lib/require-admin.ts`),
+  which fails closed. `page-gate.test.ts` fails when a page does not call it.
+
 - **`/api/session-log` sends the visitor IP.** The api rate-limits per visitor; without the IP
   every admin shared the admin server's limit. The app and website routes already sent it. The
   `session-log` and `csp-report` routes now have tests.

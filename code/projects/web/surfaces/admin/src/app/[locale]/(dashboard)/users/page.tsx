@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/users/page.md
  */
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
+import { requireAdminPage } from "@/lib/require-admin";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import {
@@ -84,6 +85,7 @@ export default async function UsersPage({
   searchParams: Promise<{ q?: string; consent?: string }>;
 }) {
   const { locale } = await params;
+  await requireAdminPage(locale);
   setRequestLocale(locale);
   const { q, consent: consentFor } = await searchParams;
   const query = typeof q === "string" ? q : "";
