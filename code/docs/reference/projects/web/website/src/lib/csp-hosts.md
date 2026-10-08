@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-Declares the website's CSP host allowlist so the nonce-based proxy CSP and the static `/studio` CSP always carry the same extra hosts. It covers featured-video frame sources, Sanity-served media, Google Analytics, and an editor-embed host list.
+Declares the website's CSP host allowlist so the nonce-based proxy CSP and the static `/studio` CSP always carry the same extra hosts. It covers featured-video frame sources, Sanity-served media, the shared api origin (`NEXT_PUBLIC_API_URL`, which the erasure, account and email-preference forms call from the browser), Google Analytics, and an editor-embed host list.
 
 ## Exports
 
-- `websiteCspHosts` — a `CspHosts` object listing `frameSrc`, `mediaSrc`, `googleAnalytics`, and `embedHosts`.
+- `websiteCspHosts` — a `CspHosts` object listing `frameSrc`, `mediaSrc`, `connectSrc`, `googleAnalytics`, and `embedHosts`.
 
 ## Usage
 
