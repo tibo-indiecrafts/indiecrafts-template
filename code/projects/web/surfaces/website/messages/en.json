@@ -473,5 +473,30 @@
     "lastReviewed": "Last reviewed: {date}",
     "site": "Site: {url}",
     "otherLanguages": "Other languages: {links}"
+  },
+  "forms": {
+    "emailPlaceholder": "you@example.com",
+    "error": "Something went wrong. Please try again.",
+    "newsletter": {
+      "button": "Subscribe",
+      "success": "Thanks! Your sign-up is saved.",
+      "consent": "I agree to receive the newsletter and that my email address is kept for that purpose."
+    },
+    "waitlist": {
+      "button": "Join the list",
+      "success": "You're on the list — thank you!",
+      "consent": "I agree to be contacted about early access and that my email address is kept for that purpose."
+    },
+    "leadMagnet": {
+      "button": "Get the document",
+      "success": "Thanks! Your document is on its way to your inbox.",
+      "consent": "I agree to receive this document and that my email address is kept for that purpose."
+    },
+    "contact": {
+      "messagePlaceholder": "Your message…",
+      "button": "Send",
+      "success": "Thanks — your message is on its way.",
+      "consent": "I agree that my message and email are stored so you can reply to me."
+    }
   }
 }

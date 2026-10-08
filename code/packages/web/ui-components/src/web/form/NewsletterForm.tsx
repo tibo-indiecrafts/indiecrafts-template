@@ -7,7 +7,7 @@
  */
 
 import { useId, useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Input } from "@indiecrafts/packages-web-ui/web/input";
 import { Checkbox } from "@indiecrafts/packages-web-ui/web/checkbox";
@@ -32,14 +32,24 @@ type Status = "idle" | "submitting" | "success" | "error";
 export function NewsletterForm({
   heading,
   body,
-  emailPlaceholder = "vous@exemple.com",
-  buttonLabel = "S'inscrire",
+  emailPlaceholder,
+  buttonLabel,
   consentText,
-  successMessage = "Merci ! Votre inscription est bien enregistrée.",
-  errorMessage = "Une erreur s'est produite. Merci de réessayer.",
+  successMessage,
+  errorMessage,
   variant = "card",
   anchor,
 }: NewsletterModule) {
+  const t = useTranslations("forms");
+  // Copy the editor left empty falls back to the page language (`forms.*` in the host
+  // app's messages), never to another language's default.
+  const text = {
+    email: emailPlaceholder || t("emailPlaceholder"),
+    button: buttonLabel || t("newsletter.button"),
+    success: successMessage || t("newsletter.success"),
+    error: errorMessage || t("error"),
+    consent: consentText || t("newsletter.consent"),
+  };
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [website, setWebsite] = useState(""); // honeypot
@@ -141,7 +151,7 @@ export function NewsletterForm({
                   : "bg-muted text-muted-foreground",
               )}
             >
-              {successMessage}
+              {text.success}
             </p>
           ) : (
             <form onSubmit={onSubmit} className="space-y-3">
@@ -165,7 +175,7 @@ export function NewsletterForm({
 
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Label htmlFor={`${uid}-email`} className="sr-only">
-                  {emailPlaceholder}
+                  {text.email}
                 </Label>
                 <Input
                   id={`${uid}-email`}
@@ -173,7 +183,7 @@ export function NewsletterForm({
                   required
                   maxLength={254}
                   autoComplete="email"
-                  placeholder={emailPlaceholder}
+                  placeholder={text.email}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={
@@ -192,33 +202,32 @@ export function NewsletterForm({
                   }
                   className="shrink-0"
                 >
-                  {buttonLabel}
+                  {text.button}
                 </Button>
               </div>
 
-              {consentText ? (
-                <div className="flex items-start gap-2.5 text-left">
-                  <Checkbox
-                    id={`${uid}-consent`}
-                    checked={consent}
-                    onCheckedChange={(v) => setConsent(v === true)}
-                    className={
-                      banner ? "border-primary-foreground/40" : undefined
-                    }
-                  />
-                  <Label
-                    htmlFor={`${uid}-consent`}
-                    className={cn(
-                      "text-xs leading-snug font-normal",
-                      banner
-                        ? "text-primary-foreground"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    {consentText}
-                  </Label>
-                </div>
-              ) : null}
+              {/* Always shown: submit stays disabled until it is ticked. */}
+              <div className="flex items-start gap-2.5 text-left">
+                <Checkbox
+                  id={`${uid}-consent`}
+                  checked={consent}
+                  onCheckedChange={(v) => setConsent(v === true)}
+                  className={
+                    banner ? "border-primary-foreground/40" : undefined
+                  }
+                />
+                <Label
+                  htmlFor={`${uid}-consent`}
+                  className={cn(
+                    "text-xs leading-snug font-normal",
+                    banner
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {text.consent}
+                </Label>
+              </div>
 
               <TurnstileWidget key={tsKey} onToken={setTsToken} />
 
@@ -231,7 +240,7 @@ export function NewsletterForm({
                     banner ? "text-primary-foreground" : "text-destructive",
                   )}
                 >
-                  {errorMessage}
+                  {text.error}
                 </p>
               ) : null}
             </form>

@@ -3353,6 +3353,11 @@ const buildContactSettings = () => ({
   ),
   messageLabel: navLabel("Your message…", "Votre message…"),
   buttonLabel: navLabel("Send", "Envoyer"),
+  // Required to send: the form keeps submit disabled until this box is ticked.
+  consentLabel: navLabel(
+    "I agree that my message and email are stored so you can reply to me.",
+    "J'accepte que mon message et mon adresse e-mail soient conservés pour me répondre.",
+  ),
   successMessage: navLabel(
     "Thanks — your message is on its way.",
     "Merci — votre message est bien parti.",

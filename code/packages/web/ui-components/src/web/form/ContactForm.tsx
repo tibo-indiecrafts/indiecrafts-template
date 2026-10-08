@@ -7,7 +7,7 @@
  */
 
 import { useId, useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Input } from "@indiecrafts/packages-web-ui/web/input";
 import { Textarea } from "@indiecrafts/packages-web-ui/web/textarea";
@@ -42,18 +42,29 @@ type Status = "idle" | "submitting" | "success" | "error";
 export function ContactForm({
   heading,
   body,
-  emailPlaceholder = "vous@exemple.com",
+  emailPlaceholder,
   namePlaceholder,
   subjectPlaceholder,
-  messagePlaceholder = "Votre message…",
-  buttonLabel = "Envoyer",
+  messagePlaceholder,
+  buttonLabel,
   consentText,
-  successMessage = "Merci — votre message est bien parti.",
-  errorMessage = "Une erreur s'est produite. Merci de réessayer.",
+  successMessage,
+  errorMessage,
   variant = "card",
   anchor,
   headingAs: Heading = "h3",
 }: ContactFormProps) {
+  const t = useTranslations("forms");
+  // Copy the editor left empty falls back to the page language (`forms.*` in the host
+  // app's messages), never to another language's default.
+  const text = {
+    email: emailPlaceholder || t("emailPlaceholder"),
+    button: buttonLabel || t("contact.button"),
+    success: successMessage || t("contact.success"),
+    error: errorMessage || t("error"),
+    consent: consentText || t("contact.consent"),
+    message: messagePlaceholder || t("contact.messagePlaceholder"),
+  };
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
@@ -151,7 +162,7 @@ export function ContactForm({
                   : "bg-muted text-muted-foreground",
               )}
             >
-              {successMessage}
+              {text.success}
             </p>
           ) : (
             <form onSubmit={onSubmit} className="space-y-3 text-left">
@@ -196,7 +207,7 @@ export function ContactForm({
               ) : null}
 
               <Label htmlFor={`${uid}-email`} className="sr-only">
-                {emailPlaceholder}
+                {text.email}
               </Label>
               <Input
                 id={`${uid}-email`}
@@ -204,7 +215,7 @@ export function ContactForm({
                 required
                 maxLength={254}
                 autoComplete="email"
-                placeholder={emailPlaceholder}
+                placeholder={text.email}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={
@@ -236,14 +247,14 @@ export function ContactForm({
               ) : null}
 
               <Label htmlFor={`${uid}-message`} className="sr-only">
-                {messagePlaceholder}
+                {text.message}
               </Label>
               <Textarea
                 id={`${uid}-message`}
                 required
                 rows={5}
                 maxLength={5000}
-                placeholder={messagePlaceholder}
+                placeholder={text.message}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 className={
@@ -253,29 +264,28 @@ export function ContactForm({
                 }
               />
 
-              {consentText ? (
-                <div className="flex items-start gap-2.5">
-                  <Checkbox
-                    id={`${uid}-consent`}
-                    checked={consent}
-                    onCheckedChange={(v) => setConsent(v === true)}
-                    className={
-                      banner ? "border-primary-foreground/40" : undefined
-                    }
-                  />
-                  <Label
-                    htmlFor={`${uid}-consent`}
-                    className={cn(
-                      "text-xs leading-snug font-normal",
-                      banner
-                        ? "text-primary-foreground"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    {consentText}
-                  </Label>
-                </div>
-              ) : null}
+              {/* Always shown: submit stays disabled until it is ticked. */}
+              <div className="flex items-start gap-2.5">
+                <Checkbox
+                  id={`${uid}-consent`}
+                  checked={consent}
+                  onCheckedChange={(v) => setConsent(v === true)}
+                  className={
+                    banner ? "border-primary-foreground/40" : undefined
+                  }
+                />
+                <Label
+                  htmlFor={`${uid}-consent`}
+                  className={cn(
+                    "text-xs leading-snug font-normal",
+                    banner
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {text.consent}
+                </Label>
+              </div>
 
               <TurnstileWidget key={tsKey} onToken={setTsToken} />
 
@@ -289,7 +299,7 @@ export function ContactForm({
                 }
                 className="w-full"
               >
-                {buttonLabel}
+                {text.button}
               </Button>
 
               {status === "error" ? (
@@ -301,7 +311,7 @@ export function ContactForm({
                     banner ? "text-primary-foreground" : "text-destructive",
                   )}
                 >
-                  {errorMessage}
+                  {text.error}
                 </p>
               ) : null}
             </form>

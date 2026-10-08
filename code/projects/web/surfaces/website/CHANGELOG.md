@@ -19,6 +19,16 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **`forms.*` messages (en · fr).** The fallback copy of the contact, newsletter, waitlist and
+  lead-magnet forms when a Studio label is empty. The seed now fills the contact consent label.
+  **Why:** the forms fell back to French in every language.
+- **Tests for every API route, and wider e2e journeys.** Each `/api/**` handler now has a colocated
+  `route.test.ts` (15 new files). The tests check the feature gate, the `withGuard` boundary
+  (403 · 413 · 400), the Clerk sign-in check and that no secret reaches a response. The `api-guard`
+  journey now covers all seven public `withGuard` routes, not three, and the allowlisted routes assert
+  their own rejection. New journeys: `contact`, `data-request`, `erasure` (request + confirm) and
+  `account` (signed out). Each one stubs its api call, so nothing is written. **Why:** only 4 of 18
+  routes had tests, and the GDPR forms had no browser check.
 - **Post views for the Trending block.** A post page sends one anonymous view to `/api/views`
   (`PostViewBeacon`), which forwards it to the shared api's per-post daily counter (EU D1). No cookie,
   nothing stored on the device, no identity; the IP only rate-limits (`security.views`). Link

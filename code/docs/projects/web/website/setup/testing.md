@@ -12,18 +12,18 @@ yours to grow.
 
 ## Layers
 
-| Layer                 | Tool                                                                     | Lives                                                               | Run                      | CI                    |
-| --------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------- | ------------------------ | --------------------- |
-| **Unit**              | Vitest (happy-dom, per-package via turbo)                                | colocated `*.test.ts` beside source                                 | `pnpm test`              | blocks                |
-| **Component + a11y**  | Storybook stories via `addon-vitest` + `addon-a11y` (browser/Playwright) | the `*.stories.tsx` — run as tests                                  | `pnpm test:stories`      | advisory              |
-| **Integration**       | Vitest                                                                   | colocated (`route-gate.test.ts`, config, GROQ)                      | `pnpm test`              | blocks                |
-| **i18n parity**       | Vitest                                                                   | `messages/messages.test.ts`                                         | `pnpm test`              | blocks                |
-| **E2e journeys**      | Playwright vs the running app                                            | `code/projects/web/surfaces/website/e2e/journeys/*.spec.ts`         | `pnpm e2e`               | blocking (functional) |
-| **Visual regression** | Playwright vs Storybook                                                  | `code/projects/web/surfaces/website/e2e/visual.spec.ts` + baselines | `pnpm e2e:visual`        | advisory              |
-| **A11y**              | Storybook `addon-a11y` (axe) + `@axe-core/playwright`                    | stories + e2e                                                       | `pnpm test` / `pnpm e2e` | —                     |
-| **Contrast**          | `scripts/check-contrast.mjs`                                             | script                                                              | `pnpm verify:contrast`   | blocks                |
-| **Perf / React**      | react-doctor                                                             | —                                                                   | `pnpm doctor`            | advisory              |
-| **Types / lint**      | tsc + eslint                                                             | —                                                                   | `pnpm tsc` / `pnpm lint` | blocks                |
+| Layer                 | Tool                                                                     | Lives                                                                  | Run                      | CI                    |
+| --------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------- | ------------------------ | --------------------- |
+| **Unit**              | Vitest (happy-dom, per-package via turbo)                                | colocated `*.test.ts` beside source                                    | `pnpm test`              | blocks                |
+| **Component + a11y**  | Storybook stories via `addon-vitest` + `addon-a11y` (browser/Playwright) | the `*.stories.tsx` — run as tests                                     | `pnpm test:stories`      | advisory              |
+| **Integration**       | Vitest                                                                   | colocated (`route-gate.test.ts`, config, GROQ, `api/**/route.test.ts`) | `pnpm test`              | blocks                |
+| **i18n parity**       | Vitest                                                                   | `messages/messages.test.ts`                                            | `pnpm test`              | blocks                |
+| **E2e journeys**      | Playwright vs the running app                                            | `code/projects/web/surfaces/website/e2e/journeys/*.spec.ts`            | `pnpm e2e`               | blocking (functional) |
+| **Visual regression** | Playwright vs Storybook                                                  | `code/projects/web/surfaces/website/e2e/visual.spec.ts` + baselines    | `pnpm e2e:visual`        | advisory              |
+| **A11y**              | Storybook `addon-a11y` (axe) + `@axe-core/playwright`                    | stories + e2e                                                          | `pnpm test` / `pnpm e2e` | —                     |
+| **Contrast**          | `scripts/check-contrast.mjs`                                             | script                                                                 | `pnpm verify:contrast`   | blocks                |
+| **Perf / React**      | react-doctor                                                             | —                                                                      | `pnpm doctor`            | advisory              |
+| **Types / lint**      | tsc + eslint                                                             | —                                                                      | `pnpm tsc` / `pnpm lint` | blocks                |
 
 ## Where tests live
 
@@ -54,6 +54,26 @@ pnpm verify            # the full gate — now ends with `pnpm test`
 `pnpm test` is folded into `pnpm verify` (fast + deterministic; per-package via turbo). The
 browser suites — `test:stories`, `e2e`, visual — need a browser, so they stay **out** of
 `verify` (like `pnpm build`), and run in the advisory CI `browser` job.
+
+### API route tests — one per `/api/**` handler
+
+Every route under `src/app/api/` has a colocated `route.test.ts`. Each test calls the exported
+handler (`POST` / `GET`) with a plain `Request` and asserts the **route's own** behaviour, not the
+engine's:
+
+- **Feature gate** — the flag off (or the Studio `enabled` toggle off) → `404`, and the engine is never called.
+- **Boundary** — `withGuard` rejects a cross-site post (`403`), an oversize body (`413`) and malformed JSON (`400`) before the engine.
+- **Outcomes** — `invalid` → `400`; a real and a spam-dropped submit answer the same `201`, so a bot learns nothing.
+- **Auth** — Clerk `auth()` mocked signed out → `401` (`session-log`); the user id comes from `auth()`, never from the body (`consent-log`).
+- **Secrets** — the policy version is the server's (a forged one in the body is ignored); `RESEND_API_KEY` and the Sanity read token never appear in a response.
+
+How they mock:
+
+- The first line is `// @vitest-environment node`. happy-dom's `Request` drops forbidden headers such as `Sec-Fetch-Site`, so the cross-site check would not run.
+- `vi.mock` replaces each module the route calls (the engine, `next/headers`, `@clerk/nextjs/server`, the Sanity reads).
+- `@indiecrafts/packages-shared-security/rate-limit` is mocked to allow.
+- A flag is flipped through a getter on a mocked `@/config` `features`.
+- No test reaches the network, Sanity, Clerk or Resend. `emails/test` stubs the global `fetch` for Sanity's `users/me`.
 
 ### Mobile shell (Capacitor) — `node --test`, not Vitest
 
@@ -96,12 +116,19 @@ no `waitForTimeout`); **mock the boundary, not the middle** — `page.route('**/
 201 so a happy-path submit writes nothing; Turnstile + `RATE_LIMIT_KV` are off by default, so a
 form's submit enables on email + consent alone. `trace: on-first-retry`.
 
-**The journeys** — `api-guard` (403 cross-site · 413 oversize · 400 bad email, all before any Sanity
-write), `download` (a gated lead-magnet `/api/download` returns 403 on a bad/missing token, no CDN URL
+**The journeys** — `api-guard` (every public `withGuard` route — `waitlist` · `newsletter` ·
+`newsletter/confirm` · `comments` · `contact` · `data-request` · `views` — answers 403 cross-site · 413
+oversize · 400 invalid input, all before any write; the allowlisted routes assert their own rejection:
+`comments/moderate` 400 on an unknown action, `emails/test` 401 without an editor token, and with Clerk
+keys `session-log` 401 signed out and `consent-log` 413 oversize), `contact` · `data-request` (consent and
+required-field gates, success + error states; the api route is stubbed), `erasure` (`/erasure` and
+`/erasure/confirm` — the worker calls are stubbed, each api answer maps to its message, the emailed token
+travels only in the POST body; self-skips when the build has no `NEXT_PUBLIC_API_URL`), `account` (a
+signed-out visitor never reaches export/delete — the signed-in path is in `sign-in`), `newsletter`, `download` (a gated lead-magnet `/api/download` returns 403 on a bad/missing token, no CDN URL
 leaked), `waitlist`, `consent`, `a11y` (skip-link + axe), `theme`, `not-found`, plus content-dependent
 `blog-read` · `comment` · `search` · `i18n` · `route-gate` (a default-off route 404s), plus
 `sign-in` (the **auth** journey — self-skips without Clerk keys; see below). Content journeys rely on
-the seeded posts; the deterministic ones (`api-guard`, `download`, `a11y`, `not-found`, `route-gate`)
+the seeded posts; the deterministic ones (`api-guard`, `download`, `account`, `erasure`, `data-request`, `a11y`, `not-found`, `route-gate`)
 need only the app booted.
 
 **Env for `pnpm e2e`:** `NEXT_PUBLIC_SANITY_PROJECT_ID` + `SANITY_API_WRITE_TOKEN` (to seed);

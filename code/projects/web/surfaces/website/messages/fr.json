@@ -473,5 +473,30 @@
     "lastReviewed": "Dernière révision : {date}",
     "site": "Site : {url}",
     "otherLanguages": "Autres langues : {links}"
+  },
+  "forms": {
+    "emailPlaceholder": "vous@exemple.com",
+    "error": "Une erreur s'est produite. Merci de réessayer.",
+    "newsletter": {
+      "button": "S'inscrire",
+      "success": "Merci ! Votre inscription est bien enregistrée.",
+      "consent": "J'accepte de recevoir l'infolettre et que mon adresse e-mail soit conservée à cette fin."
+    },
+    "waitlist": {
+      "button": "Rejoindre la liste",
+      "success": "Vous êtes sur la liste — merci !",
+      "consent": "J'accepte d'être contacté·e au sujet de l'accès anticipé et que mon adresse e-mail soit conservée à cette fin."
+    },
+    "leadMagnet": {
+      "button": "Recevoir le document",
+      "success": "Merci ! Votre document arrive dans votre boîte e-mail.",
+      "consent": "J'accepte de recevoir ce document et que mon adresse e-mail soit conservée à cette fin."
+    },
+    "contact": {
+      "messagePlaceholder": "Votre message…",
+      "button": "Envoyer",
+      "success": "Merci — votre message est bien parti.",
+      "consent": "J'accepte que mon message et mon adresse e-mail soient conservés pour me répondre."
+    }
   }
 }

@@ -15,6 +15,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`modules-web-contact` / `modules-web-waitlist` — confirmation emails fell back to French.** An
+  empty Studio field sent French copy to every visitor. `contactConfirmDefaults(locale)` and
+  `waitlistConfirmDefaults(locale, name)` now give English or French, and English for any other
+  locale. **Why:** a missing string must fall back to English (QA card 31).
 - **`modules-web-newsletter` — consent and confirm gaps.** (1) A lead-magnet sign-up consented to its
   document, not the newsletter, yet landed in the newsletter list: `subscriber.newsletter` now records
   the purpose (`false` for `source: "lead-magnet"`), and only newsletter consent is exported or synced.

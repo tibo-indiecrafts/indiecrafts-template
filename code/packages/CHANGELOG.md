@@ -92,6 +92,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`packages-web-ui-components` — form copy and consent.** `ContactForm`, `NewsletterForm`,
+  `WaitlistForm` and `LeadMagnetForm` fell back to French when an editor left a label empty; they now
+  read the host app's `forms.*` messages (page language). The consent checkbox always shows: without
+  a Studio label, the contact form's submit could never be enabled. **Why:** QA cards 13 and 31.
 - **`packages-web-auth` — no social sign-in in the Capacitor shell.** `authAppearance` hides
   `socialButtonsRoot` and its divider under `html[data-native-shell]` (set by the app's `NativeBridge`).
   In the shell, a social button opened the system browser and the session landed there. The website keeps them.

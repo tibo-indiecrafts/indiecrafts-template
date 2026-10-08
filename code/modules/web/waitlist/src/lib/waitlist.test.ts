@@ -135,6 +135,24 @@ describe("join", () => {
     expect(create).toHaveBeenCalled();
   });
 
+  it.each([
+    ["fr", "Vous êtes sur la liste d'attente"],
+    ["de", "You're on the waitlist"], // no copy for this locale → English
+  ])(
+    "empty Studio copy falls back to the %s default",
+    async (language, subject) => {
+      vi.stubEnv("RESEND_API_KEY", "re_x");
+      getEmailStrings.mockResolvedValueOnce({
+        waitlistConfirm: { enabled: true, from: "hi@site.com" },
+      });
+      fetch.mockResolvedValueOnce(null);
+      await join({ ...input, language }, "2026-01-01");
+      expect(sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({ to: ["a@b.com"], subject }),
+      );
+    },
+  );
+
   it("a write failure returns a server error, not a throw", async () => {
     fetch.mockRejectedValueOnce(new Error("network"));
     expect(await join(input, "2026-01-01")).toEqual({

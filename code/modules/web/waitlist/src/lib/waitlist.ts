@@ -20,7 +20,10 @@ import {
   type ConfirmationConfig,
   type OwnerAlertConfig,
 } from "@indiecrafts/packages-web-email/strings";
-import { renderWaitlistConfirmEmail } from "../emails/waitlist-confirm";
+import {
+  renderWaitlistConfirmEmail,
+  waitlistConfirmDefaults,
+} from "../emails/waitlist-confirm";
 import { renderWaitlistNotificationEmail } from "../emails/waitlist-notification";
 import {
   isSpam,
@@ -153,12 +156,11 @@ async function sendConfirmEmail(
     const from = cfg?.from?.trim();
     if (!cfg?.enabled || !from || !process.env.RESEND_API_KEY) return;
     const locale = language || defaultLocale;
+    const fallback = waitlistConfirmDefaults(locale, name);
     const message = renderWaitlistConfirmEmail({
-      subject: pick(cfg?.subject, locale) || "Vous êtes sur la liste d'attente",
-      heading: pick(cfg?.heading, locale) || "Bienvenue sur la liste",
-      intro:
-        pick(cfg?.intro, locale) ||
-        `Merci${name ? ` ${name}` : ""} ! Votre place sur la liste d'attente est réservée. Nous vous contacterons dès que l'accès sera disponible.`,
+      subject: pick(cfg?.subject, locale) || fallback.subject,
+      heading: pick(cfg?.heading, locale) || fallback.heading,
+      intro: pick(cfg?.intro, locale) || fallback.intro,
       outro: pick(cfg?.outro, locale) || undefined,
       supportEmail,
     });

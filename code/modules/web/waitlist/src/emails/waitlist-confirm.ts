@@ -12,8 +12,8 @@ import {
 
 /**
  * "You're on the list" confirmation → the new waitlist joiner. **Copy-agnostic**:
- * the caller resolves the joiner-locale strings (from Sanity `emailStrings`) and
- * passes them in. No confirm-link — a waitlist just welcomes; `intro`/`outro` may
+ * the caller resolves the joiner-locale strings (from Sanity `emailStrings`, else
+ * `waitlistConfirmDefaults`) and passes them in. No confirm-link — a waitlist just welcomes; `intro`/`outro` may
  * be multi-line (one `<p>` per line).
  */
 export type WaitlistConfirmInput = {
@@ -23,6 +23,30 @@ export type WaitlistConfirmInput = {
   outro?: string;
   supportEmail?: string;
 };
+
+type ConfirmCopy = Pick<WaitlistConfirmInput, "subject" | "heading" | "intro">;
+
+/** Last-resort copy when a Studio field is empty, per locale; any other locale gets English. */
+const CONFIRM_DEFAULTS: Record<string, (name?: string) => ConfirmCopy> = {
+  en: (name) => ({
+    subject: "You're on the waitlist",
+    heading: "Welcome to the list",
+    intro: `Thanks${name ? ` ${name}` : ""}! Your spot on the waitlist is saved. We will contact you as soon as access opens.`,
+  }),
+  fr: (name) => ({
+    subject: "Vous êtes sur la liste d'attente",
+    heading: "Bienvenue sur la liste",
+    intro: `Merci${name ? ` ${name}` : ""} ! Votre place sur la liste d'attente est réservée. Nous vous contacterons dès que l'accès sera disponible.`,
+  }),
+};
+
+/** The fallback welcome copy for `locale` (English when there is none). */
+export function waitlistConfirmDefaults(
+  locale: string,
+  name?: string,
+): ConfirmCopy {
+  return (CONFIRM_DEFAULTS[locale] ?? CONFIRM_DEFAULTS.en!)(name);
+}
 
 const C = EMAIL_COLORS;
 

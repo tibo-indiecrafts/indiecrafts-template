@@ -20,7 +20,10 @@ import {
   type ConfirmationConfig,
   type OwnerAlertConfig,
 } from "@indiecrafts/packages-web-email/strings";
-import { renderContactConfirmEmail } from "../emails/contact-confirm";
+import {
+  contactConfirmDefaults,
+  renderContactConfirmEmail,
+} from "../emails/contact-confirm";
 import { renderContactNotificationEmail } from "../emails/contact-notification";
 import {
   isSpam,
@@ -149,13 +152,11 @@ async function sendConfirmEmail(
     const from = cfg?.from?.trim();
     if (!cfg?.enabled || !from || !process.env.RESEND_API_KEY) return;
     const locale = language || defaultLocale;
+    const fallback = contactConfirmDefaults(locale);
     const message = renderContactConfirmEmail({
-      subject:
-        pick(cfg?.subject, locale) || "Nous avons bien reçu votre message",
-      heading: pick(cfg?.heading, locale) || "Merci de nous avoir écrit",
-      intro:
-        pick(cfg?.intro, locale) ||
-        "Nous avons bien reçu votre message et nous vous répondrons dès que possible.",
+      subject: pick(cfg?.subject, locale) || fallback.subject,
+      heading: pick(cfg?.heading, locale) || fallback.heading,
+      intro: pick(cfg?.intro, locale) || fallback.intro,
       outro: pick(cfg?.outro, locale) || undefined,
       supportEmail,
     });

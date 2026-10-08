@@ -13,7 +13,7 @@ import {
 /**
  * "We got your message" acknowledgement → the person who sent the contact form.
  * **Copy-agnostic**: the caller resolves the sender-locale strings (from Sanity
- * `emailStrings`) and passes them in. No link — a contact ack just reassures;
+ * `emailStrings`, else `contactConfirmDefaults`) and passes them in. No link — a contact ack just reassures;
  * `intro`/`outro` may be multi-line (one `<p>` per line).
  */
 export type ContactConfirmInput = {
@@ -23,6 +23,30 @@ export type ContactConfirmInput = {
   outro?: string;
   supportEmail?: string;
 };
+
+type ConfirmCopy = Pick<ContactConfirmInput, "subject" | "heading" | "intro">;
+
+/** Last-resort copy when a Studio field is empty, per locale; any other locale gets English. */
+const EN: ConfirmCopy = {
+  subject: "We received your message",
+  heading: "Thanks for getting in touch",
+  intro: "We received your message and will reply as soon as we can.",
+};
+
+const CONFIRM_DEFAULTS: Record<string, ConfirmCopy> = {
+  en: EN,
+  fr: {
+    subject: "Nous avons bien reçu votre message",
+    heading: "Merci de nous avoir écrit",
+    intro:
+      "Nous avons bien reçu votre message et nous vous répondrons dès que possible.",
+  },
+};
+
+/** The fallback acknowledgement copy for `locale` (English when there is none). */
+export function contactConfirmDefaults(locale: string): ConfirmCopy {
+  return CONFIRM_DEFAULTS[locale] ?? EN;
+}
 
 const C = EMAIL_COLORS;
 

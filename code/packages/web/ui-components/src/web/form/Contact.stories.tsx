@@ -59,3 +59,30 @@ export const EnablesOnConsent: Story = {
     await expect(submit).toBeEnabled();
   },
 };
+
+/** Copy left empty in Studio falls back to the page language (English here, the Storybook
+ *  default) — never to French — and the consent box still shows and gates submit. */
+export const FallbackCopy: Story = {
+  args: {
+    emailPlaceholder: undefined,
+    buttonLabel: undefined,
+    consentText: undefined,
+    successMessage: undefined,
+    errorMessage: undefined,
+    messagePlaceholder: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const submit = canvas.getByRole("button", { name: "Send" });
+    await expect(submit).toBeDisabled();
+    await userEvent.type(
+      canvas.getByPlaceholderText("you@example.com"),
+      "reader@example.com",
+    );
+    await userEvent.type(canvas.getByPlaceholderText("Your message…"), "Hello");
+    await userEvent.click(
+      canvas.getByRole("checkbox", { name: /stored so you can reply/ }),
+    );
+    await expect(submit).toBeEnabled();
+  },
+};

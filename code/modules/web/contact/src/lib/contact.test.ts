@@ -134,6 +134,23 @@ describe("submit", () => {
     expect(create).toHaveBeenCalled();
   });
 
+  it.each([
+    ["fr", "Nous avons bien reçu votre message"],
+    ["de", "We received your message"], // no copy for this locale → English
+  ])(
+    "empty Studio copy falls back to the %s default",
+    async (language, subject) => {
+      vi.stubEnv("RESEND_API_KEY", "re_x");
+      getEmailStrings.mockResolvedValueOnce({
+        contactConfirm: { enabled: true, from: "hi@site.com" },
+      });
+      await submit({ ...input, language }, "2026-01-01");
+      expect(sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({ to: ["a@b.com"], subject }),
+      );
+    },
+  );
+
   it("a write failure returns a server error, not a throw", async () => {
     create.mockRejectedValueOnce(new Error("network"));
     expect(await submit(input, "2026-01-01")).toEqual({

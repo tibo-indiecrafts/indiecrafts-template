@@ -79,6 +79,10 @@ is e-mailed a **signed, expiring download link** (`/api/download` verifies it). 
 secret — **`LEAD_MAGNET_SECRET`** (env, server-only, HMAC signing); without it the download `403`s.
 Delivery is best-effort — a failure never blocks the confirmation.
 
+Delivery happens **only on confirm**, so it needs the **newsletter confirmation email enabled**
+(`emailStrings.newsletterConfirm`). With it disabled, a lead-magnet subscriber stays `pending` and
+never gets the file.
+
 ## Resend — one list
 
 The Sanity `subscriber` doc is the source of truth; Resend mirrors it so you send from one place.
