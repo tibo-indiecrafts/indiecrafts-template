@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildErasureAdapters } from "./adapters";
+import { buildErasureAdapters, type ErasureAdapterOpts } from "./adapters";
 import type { Env } from "../index";
 
 const full = {
@@ -12,7 +12,7 @@ const full = {
   SANITY_DATASET: "d",
 } as unknown as Env;
 
-const names = (env: Env, opts?: { includeClerk?: boolean }) =>
+const names = (env: Env, opts?: ErasureAdapterOpts) =>
   buildErasureAdapters(env, opts)
     .map((a) => a.name)
     .sort();
@@ -36,5 +36,11 @@ describe("buildErasureAdapters", () => {
       SANITY_API_WRITE_TOKEN: undefined,
     } as unknown as Env;
     expect(names(noSanity)).not.toContain("sanity");
+  });
+  it("adds resend only when RESEND_API_KEY is set and not excluded", () => {
+    const withResend = { ...full, RESEND_API_KEY: "re" } as unknown as Env;
+    expect(names(full)).not.toContain("resend");
+    expect(names(withResend)).toContain("resend");
+    expect(names(withResend, { includeResend: false })).not.toContain("resend");
   });
 });

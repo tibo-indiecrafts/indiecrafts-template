@@ -34,7 +34,7 @@ export default defineType({
       title: "Statut",
       type: "string",
       description:
-        "En attente = inscrit, pas encore confirmé. Désabonné = ne plus contacter.",
+        "En attente = inscrit, pas encore confirmé. Désabonné = ne plus contacter (se met à jour seul quand la personne se désabonne depuis un e-mail Resend).",
       options: {
         list: [
           { title: "En attente", value: "pending" },
@@ -44,6 +44,14 @@ export default defineType({
         layout: "radio",
       },
       initialValue: "pending",
+    }),
+    defineField({
+      name: "newsletter",
+      title: "Infolettre",
+      type: "boolean",
+      readOnly: true,
+      description:
+        "Coché = la personne a demandé l'infolettre. Décoché = elle a seulement demandé un document à télécharger : ne pas lui envoyer l'infolettre.",
     }),
     defineField({
       name: "consent",
@@ -97,10 +105,22 @@ export default defineType({
       hidden: true,
       readOnly: true,
     }),
+    // When the token was issued — it expires after CONFIRM_TOKEN_DAYS (`lib/confirm.ts`).
+    defineField({
+      name: "confirmTokenAt",
+      title: "Jeton émis le",
+      type: "datetime",
+      hidden: true,
+      readOnly: true,
+    }),
   ],
   preview: {
-    select: { title: "email", status: "status" },
-    prepare: ({ title, status }) => ({ title, subtitle: status }),
+    select: { title: "email", status: "status", newsletter: "newsletter" },
+    prepare: ({ title, status, newsletter }) => ({
+      title,
+      subtitle:
+        newsletter === false ? `${status} · document seulement` : status,
+    }),
   },
   orderings: [
     {

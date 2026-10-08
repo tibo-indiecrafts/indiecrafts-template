@@ -30,6 +30,13 @@ vi.mock("@indiecrafts/packages-web-email", () => ({
   EMAIL_COLORS: new Proxy({}, { get: () => "#000000" }),
 }));
 
+const { deliverMagnetsForTags, syncNewsletterContact } = vi.hoisted(() => ({
+  deliverMagnetsForTags: vi.fn(async () => undefined),
+  syncNewsletterContact: vi.fn(async () => undefined),
+}));
+vi.mock("./deliver-magnet", () => ({ deliverMagnetsForTags }));
+vi.mock("./newsletter-contact", () => ({ syncNewsletterContact }));
+
 const { validateSubscribe, subscribe } = await import("./newsletter");
 
 afterEach(() => {
@@ -81,6 +88,46 @@ describe("subscribe", () => {
     });
     expect(patch).not.toHaveBeenCalled();
     expect(create).not.toHaveBeenCalled();
+    expect(syncNewsletterContact).not.toHaveBeenCalled();
+  });
+
+  it("a confirmed address that asks for a lead magnet gets it at once — no newsletter consent added", async () => {
+    fetch.mockResolvedValueOnce({
+      _id: "sub.1",
+      status: "confirmed",
+      tags: ["old"],
+    });
+    const res = await subscribe(
+      { ...input, source: "lead-magnet", tags: ["guide"], language: "fr" },
+      "2026-01-01",
+    );
+    expect(res).toEqual({ ok: true, already: true });
+    expect(set).toHaveBeenCalledWith({ tags: ["old", "guide"] });
+    expect(deliverMagnetsForTags).toHaveBeenCalledWith(
+      "a@b.com",
+      ["guide"],
+      "fr",
+    );
+    expect(syncNewsletterContact).not.toHaveBeenCalled();
+  });
+
+  it("a confirmed lead-magnet-only address that now signs up gains newsletter consent + the Resend sync", async () => {
+    fetch.mockResolvedValueOnce({
+      _id: "sub.1",
+      status: "confirmed",
+      source: "lead-magnet",
+      language: "fr",
+    });
+    await subscribe({ ...input, source: "/blog" }, "2026-01-01", "v3");
+    expect(set).toHaveBeenCalledWith({
+      newsletter: true,
+      consentPolicyVersion: "v3",
+    });
+    expect(syncNewsletterContact).toHaveBeenCalledWith({
+      email: "a@b.com",
+      locale: "fr",
+      granted: true,
+    });
   });
 
   it("a pending email re-arms (patch), never creates a duplicate", async () => {
@@ -97,6 +144,25 @@ describe("subscribe", () => {
       }),
     );
     expect(create).not.toHaveBeenCalled();
+  });
+
+  it("an unsubscribed address re-arms with this request's consent only — a lead magnet never re-subscribes", async () => {
+    fetch.mockResolvedValueOnce({
+      _id: "sub.4",
+      status: "unsubscribed",
+      newsletter: true,
+    });
+    await subscribe(
+      { ...input, source: "lead-magnet", tags: ["guide"] },
+      "2026-01-01",
+    );
+    expect(set).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: "pending",
+        newsletter: false,
+        tags: ["guide"],
+      }),
+    );
   });
 
   it("an unsubscribed email re-arms to pending (never dead-ends)", async () => {
@@ -125,6 +191,18 @@ describe("subscribe", () => {
     expect(doc.consent).toBe(true);
     expect(doc.consentPolicyVersion).toBe("v2");
     expect(doc.confirmToken).toBeUndefined(); // no RESEND key → no token minted
+    expect(doc.newsletter).toBe(true);
+  });
+
+  it("a lead-magnet sign-up is stored without newsletter consent", async () => {
+    fetch.mockResolvedValueOnce(null);
+    await subscribe(
+      { ...input, source: "lead-magnet", tags: ["guide"] },
+      "2026-01-01",
+    );
+    const doc = create.mock.calls[0][0] as Record<string, unknown>;
+    expect(doc.newsletter).toBe(false);
+    expect(doc.tags).toEqual(["guide"]);
   });
 
   it("mints a confirm token only when the confirmation email can be sent", async () => {
@@ -136,6 +214,7 @@ describe("subscribe", () => {
     await subscribe(input, "2026-01-01", "v1");
     const doc = create.mock.calls[0][0] as Record<string, unknown>;
     expect(typeof doc.confirmToken).toBe("string");
+    expect(doc.confirmTokenAt).toBe("2026-01-01"); // the expiry clock starts here
   });
 
   it("a write failure returns a server error, not a throw", async () => {

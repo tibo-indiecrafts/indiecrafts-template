@@ -2500,12 +2500,13 @@ const comments = [
 ];
 
 // ─── Newsletter subscribers — the "Abonnés" moderation desk demo ─
-// Captured via /api/newsletter (destination "sanity"). One per status so
-// each Studio sub-list (En attente / Confirmés / Désabonnés) has a row.
+// Captured via /api/newsletter. One per status so each Studio sub-list (En attente /
+// Confirmés / Désabonnés) has a row, plus a lead-magnet-only sign-up (no newsletter).
 const subscribers = [
   {
     _id: "subscriber.demo-pending",
     _type: "subscriber",
+    newsletter: true,
     email: "alan.turing@example.com",
     status: "pending",
     consent: true,
@@ -2516,6 +2517,7 @@ const subscribers = [
   {
     _id: "subscriber.demo-confirmed",
     _type: "subscriber",
+    newsletter: true,
     email: "grace.hopper@example.com",
     status: "confirmed",
     consent: true,
@@ -2526,12 +2528,27 @@ const subscribers = [
   {
     _id: "subscriber.demo-unsubscribed",
     _type: "subscriber",
+    newsletter: true,
     email: "ada.lovelace@example.com",
     status: "unsubscribed",
     consent: true,
     source: "/fr/blog/fast-proto-nextjs",
     language: "fr",
     createdAt: daysAgo(9),
+  },
+  {
+    // A lead-magnet download only: confirmed address, no newsletter consent — never
+    // exported or synced to the Resend `news` topic.
+    _id: "subscriber.demo-lead-magnet",
+    _type: "subscriber",
+    newsletter: false,
+    email: "katherine.johnson@example.com",
+    status: "confirmed",
+    consent: true,
+    source: "lead-magnet",
+    language: "en",
+    tags: ["guide-2026"],
+    createdAt: daysAgo(5),
   },
 ];
 

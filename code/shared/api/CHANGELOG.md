@@ -7,6 +7,15 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **One newsletter list in Resend.** `POST /v1/newsletter/subscribers` (server bearer, body
+  `{ email, locale, granted }`) mirrors a Sanity newsletter subscriber to Resend: a confirmed
+  subscriber joins the `news` topic (global flag on), an unsubscribe opts out of `news` only.
+  `POST /v1/resend/webhook` (Svix-signed, new secret `RESEND_WEBHOOK_SECRET`) carries a Resend
+  unsubscribe — Broadcast link, preference page, or a deleted contact — back to the Sanity
+  subscriber as `unsubscribed`; it never re-confirms. A new `resend` erasure adapter deletes the
+  subject's Resend contact on an erasure request (only when `RESEND_API_KEY` is set; self-erasure
+  and the Clerk webhook keep their own Resend handling). **Why:** Broadcasts go to one list, an
+  unsubscribe in Resend sticks on our side, and erasure now reaches the copy in Resend.
 - **Anonymous post-view counter for the blog's Trending block.** `POST /v1/views` (server bearer,
   body `{ postId, locale }`) adds 1 to today's counter in a new `post_views` table (`main` D1,
   migration `0015`); `GET /v1/views/top?locale=&limit=&days=` returns the most-viewed post ids.

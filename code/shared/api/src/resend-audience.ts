@@ -108,6 +108,61 @@ export async function syncContactTopics(
   await upsertContact(env, email, {}, subs, doFetch);
 }
 
+/** A confirmed newsletter subscriber: clear the global flag (`unsubscribed: false`) and opt
+ *  INTO the `news` topic in one upsert. No `topicId` → the global flag only. */
+export async function subscribeNewsletterContact(
+  env: ResendAudienceEnv,
+  { email, topicId }: { email: string; topicId?: string },
+  doFetch: typeof fetch = fetch,
+): Promise<void> {
+  if (!env.RESEND_API_KEY || !email) return;
+  const topics: TopicSub[] = topicId
+    ? [{ id: topicId, subscription: "opt_in" }]
+    : [];
+  await upsertContact(env, email, { unsubscribed: false }, topics, doFetch);
+}
+
+/** A newsletter unsubscribe: opt OUT of the `news` topic only — the global flag stays, so
+ *  other topics keep working. PATCH-only: an unknown contact (404) is left uncreated, so an
+ *  opt-out never adds an email to Resend. */
+export async function unsubscribeNewsletterContact(
+  env: ResendAudienceEnv,
+  { email, topicId }: { email: string; topicId: string },
+  doFetch: typeof fetch = fetch,
+): Promise<void> {
+  if (!env.RESEND_API_KEY || !email || !topicId) return;
+  const res = await doFetch(`${RESEND_API}/contacts/${email}/topics`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${env.RESEND_API_KEY}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify([{ id: topicId, subscription: "opt_out" }]),
+  });
+  if (!res.ok && res.status !== 404) throw new Error(`resend ${res.status}`);
+}
+
+/** The contact's topic subscriptions (`GET /contacts/{email}/topics`, first 100 — far
+ *  above any real topic count). Null when the contact is unknown or the call fails. */
+export async function getContactTopics(
+  env: ResendAudienceEnv,
+  { email }: { email: string },
+  doFetch: typeof fetch = fetch,
+): Promise<TopicSub[] | null> {
+  if (!env.RESEND_API_KEY || !email) return null;
+  try {
+    const res = await doFetch(
+      `${RESEND_API}/contacts/${email}/topics?limit=100`,
+      { headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` } },
+    );
+    if (!res.ok) return null;
+    const body = (await res.json()) as { data?: TopicSub[] };
+    return Array.isArray(body.data) ? body.data : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Suppress a departed contact instead of deleting: global unsubscribe, opt OUT of every
  *  marketing topic, opt INTO the churned topic (cohort tag), and stamp the churn reason as a
  *  contact property. Best-effort. */

@@ -18,6 +18,8 @@ vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
   writeClient: { fetch, patch },
 }));
 vi.mock("./deliver-magnet", () => ({ deliverMagnetsForTags }));
+const syncNewsletterContact = vi.hoisted(() => vi.fn(async () => undefined));
+vi.mock("./newsletter-contact", () => ({ syncNewsletterContact }));
 
 const { confirmSubscriber } = await import("./confirm");
 
@@ -41,16 +43,45 @@ describe("confirmSubscriber", () => {
       email: "a@b.com",
       language: "fr",
       tags: ["magnet.1"],
+      source: "lead-magnet",
+      newsletter: false,
     });
     expect(await confirmSubscriber("tok")).toBe("confirmed");
     expect(patch).toHaveBeenCalledWith("sub.1");
     expect(set).toHaveBeenCalledWith({ status: "confirmed" });
-    expect(unset).toHaveBeenCalledWith(["confirmToken"]);
+    expect(unset).toHaveBeenCalledWith(["confirmToken", "confirmTokenAt"]);
     expect(deliverMagnetsForTags).toHaveBeenCalledWith(
       "a@b.com",
       ["magnet.1"],
       "fr",
     );
+    // A lead-magnet-only sign-up never joins the newsletter in Resend.
+    expect(syncNewsletterContact).not.toHaveBeenCalled();
+  });
+
+  it("a confirmed newsletter sign-up is mirrored to Resend's news topic", async () => {
+    fetch.mockResolvedValueOnce({
+      _id: "sub.2",
+      email: "n@b.com",
+      newsletter: true,
+    });
+    expect(await confirmSubscriber("tok")).toBe("confirmed");
+    expect(syncNewsletterContact).toHaveBeenCalledWith({
+      email: "n@b.com",
+      locale: "en",
+      granted: true,
+    });
+  });
+
+  it("only matches a token issued within the last 7 days", async () => {
+    fetch.mockResolvedValueOnce(null);
+    await confirmSubscriber("tok", new Date("2026-10-08T12:00:00Z"));
+    const [query, params] = fetch.mock.calls[0] as [
+      string,
+      Record<string, string>,
+    ];
+    expect(query).toContain("confirmTokenAt > $since");
+    expect(params.since).toBe("2026-10-01T12:00:00.000Z");
   });
 
   it("a write failure is swallowed to invalid, never throws", async () => {

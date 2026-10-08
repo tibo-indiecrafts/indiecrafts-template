@@ -6,17 +6,18 @@ status: stable
 
 # Erasure adapters barrel
 
-> One import path for the D1, Clerk, Sanity, and orders erasure adapters.
+> One import path for the D1, Clerk, Sanity, Resend, and orders erasure adapters.
 
 ## Purpose
 
-Re-exports the erasure adapter factories and their client interfaces so callers import them from a single module. It aggregates the D1, Clerk, Sanity, and orders adapters.
+Re-exports the erasure adapter factories and their client interfaces so callers import them from a single module. It aggregates the D1, Clerk, Sanity, Resend, and orders adapters.
 
 ## Exports
 
 - `createCoreErasureAdapter`, `createAuditErasureAdapter`, `resolveSubject` — from `./d1`.
 - `createClerkErasureAdapter`, `ClerkErasureClient` — from `./clerk`.
 - `createSanityErasureAdapter`, `SanityErasureClient` — from `./sanity`.
+- `createResendErasureAdapter` — from `./resend`.
 - `createOrdersErasureAdapter` — from `./orders`.
 
 ## Usage

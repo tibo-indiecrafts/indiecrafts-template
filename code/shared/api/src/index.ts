@@ -87,6 +87,11 @@ import {
 import { cronStatus, erasureRequests, forwardCronRun } from "./monitoring";
 import { handleErasureClose, handleErasureRetry } from "./erasure/admin";
 import { readSettings } from "./settings-cache";
+import {
+  handleResendContactEvent,
+  isNewsletterEmail,
+  syncNewsletterSubscriber,
+} from "./newsletter/resend-sync";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -139,6 +144,9 @@ export interface Env {
   /** `wrangler secret put CLERK_WEBHOOK_SECRET` — Svix signing secret (`whsec_…`) for
    *  `POST /v1/clerk-webhook`. Optional (503 until set). */
   CLERK_WEBHOOK_SECRET?: string;
+  /** `wrangler secret put RESEND_WEBHOOK_SECRET` — Svix signing secret (`whsec_…`) for
+   *  `POST /v1/resend/webhook`. Optional (503 until set). */
+  RESEND_WEBHOOK_SECRET?: string;
   /** `wrangler secret put CLERK_SECRET_KEY` — Clerk backend secret key for the erasure
    *  route's real Clerk client (find/export/delete a user by email). Optional until the
    *  confirm route runs erasure. */
@@ -937,6 +945,50 @@ async function route(
     return new Response(null, { status: 204, headers: cors });
   }
 
+  // ── Newsletter → Resend — POST /v1/newsletter/subscribers (bearer-gated) ──
+  // The website server calls this when a subscriber confirms (granted) or unsubscribes. The
+  // Sanity `subscriber` doc is the source of truth: a Resend error is logged and still 204.
+  if (url.pathname === "/v1/newsletter/subscribers") {
+    if (request.method === "OPTIONS")
+      return new Response(null, { status: 204, headers: cors });
+    if (request.method !== "POST")
+      return json({ error: "method_not_allowed" }, 405, cors);
+    const denied =
+      requireAdminBearer(request, env, cors) ??
+      (await rateLimit(request, env, cors));
+    if (denied) return denied;
+    if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
+      return json({ error: "too_large" }, 413, cors);
+    let body: { email?: unknown; locale?: unknown; granted?: unknown };
+    try {
+      const text = await request.text();
+      if (new TextEncoder().encode(text).length > BODY_MAX)
+        return json({ error: "too_large" }, 413, cors);
+      body = JSON.parse(text) as typeof body;
+    } catch {
+      return json({ error: "invalid" }, 400, cors);
+    }
+    if (
+      !isNewsletterEmail(body?.email) ||
+      !isValidLocale(body.locale) ||
+      typeof body.granted !== "boolean"
+    )
+      return json({ error: "invalid" }, 400, cors);
+    try {
+      await syncNewsletterSubscriber(env, {
+        email: body.email.trim().toLowerCase(),
+        locale: body.locale,
+        granted: body.granted,
+      });
+    } catch (error) {
+      // Never the email — name only.
+      logger.error("newsletter resend sync failed", {
+        name: (error as Error)?.name,
+      });
+    }
+    return new Response(null, { status: 204, headers: cors });
+  }
+
   // ── Settings — GET (view) / PUT (edit) /v1/settings (bearer-gated; workers read these) ──
   if (url.pathname === "/v1/settings") {
     if (request.method === "OPTIONS")
@@ -1160,6 +1212,55 @@ async function route(
     return url.pathname === "/v1/data-request"
       ? handleDataRequestWrite(request, env)
       : handleDataRequestList(request, env);
+  }
+
+  // ── Resend webhook — POST /v1/resend/webhook (Svix-signed; contact events) ──
+  // Fail-closed: no secret → 503; bad signature → 401. A Resend unsubscribe (global flag,
+  // `news` topic opt-out, or contact deleted) sets the confirmed Sanity subscriber doc(s)
+  // to `unsubscribed`; never back to `confirmed`. D1 `email_preferences` (signed-in users)
+  // is NOT touched here. 200 once handled (Resend retries non-2xx); a failed Sanity write
+  // → 500 so Resend retries.
+  if (url.pathname === "/v1/resend/webhook") {
+    if (request.method !== "POST")
+      return json({ error: "method_not_allowed" }, 405, cors);
+    if (!env.RESEND_WEBHOOK_SECRET)
+      return json({ error: "unavailable" }, 503, cors);
+    if (Number(request.headers.get("content-length") ?? 0) > WEBHOOK_BODY_MAX)
+      return json({ error: "too_large" }, 413, cors);
+    const svixId = request.headers.get("svix-id");
+    const svixTs = request.headers.get("svix-timestamp");
+    const svixSig = request.headers.get("svix-signature");
+    const raw = await request.text();
+    if (new TextEncoder().encode(raw).length > WEBHOOK_BODY_MAX)
+      return json({ error: "too_large" }, 413, cors);
+    if (
+      !svixId ||
+      !svixTs ||
+      !svixSig ||
+      !(await verifySvix(
+        env.RESEND_WEBHOOK_SECRET,
+        svixId,
+        svixTs,
+        svixSig,
+        raw,
+      ))
+    )
+      return json({ error: "unauthorized" }, 401, cors);
+    let evt: Parameters<typeof handleResendContactEvent>[1];
+    try {
+      evt = JSON.parse(raw) as typeof evt;
+    } catch {
+      return json({ error: "invalid" }, 400, cors);
+    }
+    try {
+      await handleResendContactEvent(env, evt ?? {});
+    } catch (error) {
+      logger.error("resend webhook sanity write failed", {
+        name: (error as Error)?.name,
+      });
+      return json({ error: "server" }, 500, cors);
+    }
+    return json({ ok: true }, 200, cors);
   }
 
   // ── Clerk webhook — POST /v1/clerk-webhook (Svix-signed; server-verified events) ──

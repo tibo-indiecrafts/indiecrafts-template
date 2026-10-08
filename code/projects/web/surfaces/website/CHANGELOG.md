@@ -70,6 +70,14 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The subscriber export emailed the wrong people.** `subscribers-export.mjs` exported every
+  `subscriber` — pending, unsubscribed and lead-magnet-only included. It now writes only confirmed
+  newsletter subscribers; `--all` writes an audit file with every status. The Studio "send test"
+  confirmation used French fallback copy and a non-existent `/api/newsletter/confirm?token=` GET link;
+  it now uses the localized confirm page and `confirmEmailDefaults`. The e2e guard journey's
+  invalid-email case answered `201` (its `startedAt` tripped the bot check) and a newsletter journey now
+  covers the block's consent gate and the POST-only confirm page. The demo seed marks subscribers'
+  `newsletter` consent and adds a lead-magnet-only one.
 - **Every page shipped ~2.4 MB of gzipped JavaScript; now ~370 kB.** `NavIcon` resolved editor-typed
   Reicon names at runtime (`import * as ReiconReact`), which bundles all 2,670 icons, and the header
   renders on every page. Nav icons now use the curated `GLYPHS` set (`Icon`, lucide), picked from a

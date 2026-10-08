@@ -244,10 +244,11 @@ lookup-then-use, not a cross-DB join or transaction):
 | `d1-audit` | `admin_audit`                | retain (the accountability trail)                                                                                                                                                             |
 | `clerk`    | the Clerk user               | delete (Clerk holds identity + credentials — there is no pseudonymised form)                                                                                                                  |
 | `sanity`   | `subscriber`/`waitlistEntry` | pseudonymise (email replaced by its fingerprint)                                                                                                                                              |
+| `resend`   | the Resend contact           | delete (a mirror of D1/Sanity consent; a 404 counts as done). Only when `RESEND_API_KEY` is set; self-erasure and the Clerk webhook exclude it (they handle Resend)                           |
 | `orders`   | future commerce D1           | no-op seam — orders/invoices carry a 7–10y anonymised retention duty, deferred until checkout ships                                                                                           |
 
-`runErasure`/`runExport` run five adapters (`d1-core`, `d1-audit`, `clerk`, `sanity`,
-`orders`) — one more than before the D1 split, a no-op change for the orchestrator, which already
+`runErasure`/`runExport` run up to six adapters (`d1-core`, `d1-audit`, `clerk`, `sanity`,
+`resend`, `orders`) — the D1 split added one, a no-op change for the orchestrator, which already
 reports per-store. Every adapter supports a **dry run**: `preview()` reports what an
 erasure would touch without mutating anything, so an operator can inspect the blast radius
 before confirming. `runExport` (Art. 15/20) reads every store the same way, keyed by email.

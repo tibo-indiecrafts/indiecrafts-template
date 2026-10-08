@@ -5,6 +5,7 @@
  */
 import { NextResponse } from "next/server";
 import { defaultLocale, features, site } from "@/config";
+import { localizedPathname } from "@/i18n/routing";
 import { projectId } from "@indiecrafts/packages-web-sanity/env";
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { sendEmail, type RenderedEmail } from "@indiecrafts/packages-web-email";
@@ -17,7 +18,10 @@ import {
 // Templates now live with their owning feature — the aggregator (the app) is the
 // one place allowed to reach into every module, like `sanity.config.ts`.
 import { renderCommentNotificationEmail } from "@indiecrafts/modules-web-blog/emails/comment-notification";
-import { renderNewsletterConfirmEmail } from "@indiecrafts/modules-web-newsletter/emails/newsletter-confirm";
+import {
+  confirmEmailDefaults,
+  renderNewsletterConfirmEmail,
+} from "@indiecrafts/modules-web-newsletter/emails/newsletter-confirm";
 import { renderNewsletterNotificationEmail } from "@indiecrafts/modules-web-newsletter/emails/newsletter-notification";
 import { renderWaitlistConfirmEmail } from "@indiecrafts/modules-web-waitlist/emails/waitlist-confirm";
 import { renderWaitlistNotificationEmail } from "@indiecrafts/modules-web-waitlist/emails/waitlist-notification";
@@ -160,11 +164,13 @@ async function buildSamples(to: string): Promise<Sample[]> {
       label: "newsletterConfirm",
       from: nlConfirm.from.trim(),
       message: renderNewsletterConfirmEmail({
-        subject: pick(nlConfirm.subject, locale) || "Confirmez votre inscription",
-        heading: pick(nlConfirm.heading, locale) || "Plus qu'une étape",
-        intro: pick(nlConfirm.intro, locale) || "Ceci est un e-mail de test.",
-        buttonLabel: pick(nlConfirm.buttonLabel, locale) || "Confirmer mon inscription",
-        confirmUrl: `${site.url}/api/newsletter/confirm?token=TEST`,
+        subject: pick(nlConfirm.subject, locale) || confirmEmailDefaults(locale).subject,
+        heading: pick(nlConfirm.heading, locale) || confirmEmailDefaults(locale).heading,
+        intro: pick(nlConfirm.intro, locale) || confirmEmailDefaults(locale).intro,
+        buttonLabel:
+          pick(nlConfirm.buttonLabel, locale) || confirmEmailDefaults(locale).buttonLabel,
+        // The real email's link: the localized confirm page (its button POSTs the token).
+        confirmUrl: `${site.url}${localizedPathname("/newsletter/confirm", locale)}?token=TEST`,
         outro: pick(nlConfirm.outro, locale) || undefined,
       }),
     });

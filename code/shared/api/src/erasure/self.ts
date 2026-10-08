@@ -19,7 +19,7 @@ import {
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { type Env, PUBLIC_CORS_JWT, safeEqual, clientIp } from "../index";
-import { buildErasureAdapters } from "./adapters";
+import { buildErasureAdapters, type ErasureAdapterOpts } from "./adapters";
 import {
   authenticateClerkJwt,
   requireStepUp,
@@ -64,7 +64,10 @@ export async function handleErasureSelf(
   request: Request,
   env: Env,
   ctx?: ExecutionContext,
-  buildAdapters: (env: Env) => ErasureAdapter[] = buildErasureAdapters,
+  buildAdapters: (
+    env: Env,
+    opts?: ErasureAdapterOpts,
+  ) => ErasureAdapter[] = buildErasureAdapters,
   authenticate: (
     request: Request,
     env: Env,
@@ -150,7 +153,8 @@ export async function handleErasureSelf(
   if (!safeEqual(typedFp, authFp))
     return json({ error: "invalid" }, 400, PUBLIC_CORS_JWT);
 
-  const adapters = buildAdapters(env);
+  // Resend excluded: the suppress below keeps the contact for the win-back cohort.
+  const adapters = buildAdapters(env, { includeResend: false });
   const ts = new Date().toISOString();
   const fingerprint = authFp;
   // Recipient locale for the completion email — read BEFORE the erasure clears the profile.

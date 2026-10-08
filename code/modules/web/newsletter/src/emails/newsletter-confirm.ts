@@ -12,8 +12,8 @@ import {
 
 /**
  * Double opt-in confirmation → the new subscriber. **Copy-agnostic**: the caller
- * resolves the subscriber-locale strings (from Sanity `newsletterSettings`) and
- * passes them in. `intro`/`outro` may be multi-line (rendered one `<p>` per line).
+ * resolves the subscriber-locale strings (Sanity `emailStrings.newsletterConfirm`, else
+ * `confirmEmailDefaults`) and passes them in. `intro`/`outro` may be multi-line (rendered one `<p>` per line).
  */
 export type NewsletterConfirmInput = {
   subject: string;
@@ -24,6 +24,38 @@ export type NewsletterConfirmInput = {
   outro?: string;
   supportEmail?: string;
 };
+
+type ConfirmCopy = Pick<
+  NewsletterConfirmInput,
+  "subject" | "heading" | "intro" | "buttonLabel"
+>;
+
+/**
+ * Last-resort copy when a Studio field is empty (E-mails → newsletter confirmation), per
+ * locale; any other locale gets English. The seed fills the real copy in both languages.
+ */
+const EN: ConfirmCopy = {
+  subject: "Confirm your subscription",
+  heading: "One last step",
+  intro:
+    "Thanks! Confirm your email address to start receiving the newsletter.",
+  buttonLabel: "Confirm my subscription",
+};
+
+const CONFIRM_DEFAULTS: Record<string, ConfirmCopy> = {
+  en: EN,
+  fr: {
+    subject: "Confirmez votre inscription",
+    heading: "Plus qu'une étape",
+    intro: "Merci ! Confirmez votre adresse e-mail pour recevoir l'infolettre.",
+    buttonLabel: "Confirmer mon inscription",
+  },
+};
+
+/** The fallback confirmation copy for `locale` (English when there is none). */
+export function confirmEmailDefaults(locale: string): ConfirmCopy {
+  return CONFIRM_DEFAULTS[locale] ?? EN;
+}
 
 const C = EMAIL_COLORS;
 

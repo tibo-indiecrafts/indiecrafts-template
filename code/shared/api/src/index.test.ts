@@ -76,6 +76,7 @@ describe("/v1 auth contract — bearer-gated mutating routes reject anon", () =>
     ["GET", "/v1/churn"],
     ["POST", "/v1/views"],
     ["GET", "/v1/views/top"],
+    ["POST", "/v1/newsletter/subscribers"],
   ])("%s %s → 401 without a bearer", async (method, path) => {
     const res = await SELF.fetch(`https://api.test${path}`, {
       method,

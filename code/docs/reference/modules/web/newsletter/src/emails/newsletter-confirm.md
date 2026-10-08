@@ -10,11 +10,12 @@ status: stable
 
 ## Purpose
 
-Renders the newsletter double opt-in confirmation email. The file is copy-agnostic: the caller resolves the subscriber-locale strings (from the Sanity `newsletterSettings` / `emailStrings` config) and passes them in. `intro` and `outro` may be multi-line; each non-empty line becomes one escaped paragraph.
+Renders the newsletter double opt-in confirmation email. The file is copy-agnostic: the caller resolves the subscriber-locale strings (from Sanity `emailStrings.newsletterConfirm`, else `confirmEmailDefaults`) and passes them in. `intro` and `outro` may be multi-line; each non-empty line becomes one escaped paragraph.
 
 ## Exports
 
 - `NewsletterConfirmInput` — the render input: `subject`, `heading`, `intro`, `buttonLabel`, `confirmUrl`, plus optional `outro` and `supportEmail`.
+- `confirmEmailDefaults(locale)` — the last-resort subject, heading, intro and button label for a locale (English for any locale without its own).
 - `renderNewsletterConfirmEmail(input)` — returns a `RenderedEmail` (`subject`, `text`, `html`).
 
 ## Usage

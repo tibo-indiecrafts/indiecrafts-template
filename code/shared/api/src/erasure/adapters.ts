@@ -9,6 +9,7 @@ import { createCoreErasureAdapter, createAuditErasureAdapter } from "./d1";
 import { createClerkErasureAdapter } from "./clerk";
 import { createSanityErasureAdapter } from "./sanity";
 import { createOrdersErasureAdapter } from "./orders";
+import { createResendErasureAdapter } from "./resend";
 import { createRealClerkClient } from "./clerk-client";
 import { createRealSanityClient } from "./sanity-client";
 
@@ -19,10 +20,18 @@ import { createRealSanityClient } from "./sanity-client";
  *   webhook path (delete already done in Clerk) passes `{ includeClerk: false }`.
  * - `sanity` is included only when its secrets are all present, so we never construct a
  *   broken client (the webhook runs best-effort without a Sanity preflight).
+ * - `resend` (delete the contact) is included only when `RESEND_API_KEY` is set AND
+ *   `includeResend !== false` — self-erasure and the Clerk webhook pass `false`: they
+ *   handle Resend themselves (a churn keeps a suppressed contact for win-back).
  */
+export type ErasureAdapterOpts = {
+  includeClerk?: boolean;
+  includeResend?: boolean;
+};
+
 export function buildErasureAdapters(
   env: Env,
-  opts: { includeClerk?: boolean } = {},
+  opts: ErasureAdapterOpts = {},
 ): ErasureAdapter[] {
   // The d1-core pseudonymisation (retained user_id/fingerprint) is non-linkable only
   // because the Clerk user is actually deleted — the `clerk` adapter below, gated by
@@ -52,6 +61,8 @@ export function buildErasureAdapters(
         env.GDPR_FINGERPRINT_SALT!,
       ),
     );
+  if (opts.includeResend !== false && env.RESEND_API_KEY)
+    list.push(createResendErasureAdapter(env));
   list.push(createOrdersErasureAdapter());
   return list;
 }

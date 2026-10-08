@@ -18,7 +18,7 @@ import { fetchEmailPreferences } from "../consent/email-preferences-sanity";
 
 /**
  * Out-of-band Clerk deletion → the full erasure engine (clerk adapter excluded — the user
- * is already gone in Clerk). Reads the stored email + fingerprint BEFORE the engine
+ * is already gone in Clerk; resend adapter excluded — the suppress/delete below owns it). Reads the stored email + fingerprint BEFORE the engine
  * pseudonymizes the profile (Clerk's user.deleted payload carries no email). Best-effort:
  * the engine never throws; per-adapter failures land in receipt.errors (logged). No
  * completion email — the subject is deleted. `buildAdapters` is injectable for tests.
@@ -28,7 +28,7 @@ export async function handleClerkUserDeleted(
   userId: string,
   ts: string,
   buildAdapters: (env: Env) => ErasureAdapter[] = (e) =>
-    buildErasureAdapters(e, { includeClerk: false }),
+    buildErasureAdapters(e, { includeClerk: false, includeResend: false }),
   del: typeof deleteResendContact = deleteResendContact,
   suppress: typeof suppressResendContact = suppressResendContact,
   fetchPrefs: typeof fetchEmailPreferences = fetchEmailPreferences,

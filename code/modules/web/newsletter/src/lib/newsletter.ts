@@ -21,7 +21,13 @@ import {
   type ConfirmationConfig,
   type OwnerAlertConfig,
 } from "@indiecrafts/packages-web-email/strings";
-import { renderNewsletterConfirmEmail } from "../emails/newsletter-confirm";
+import {
+  confirmEmailDefaults,
+  renderNewsletterConfirmEmail,
+} from "../emails/newsletter-confirm";
+import { deliverMagnetsForTags } from "./deliver-magnet";
+import { syncNewsletterContact } from "./newsletter-contact";
+import { LEAD_MAGNET_SOURCE, wantsNewsletter } from "./purpose";
 import { renderNewsletterNotificationEmail } from "../emails/newsletter-notification";
 import {
   isSpam,
@@ -85,6 +91,13 @@ export async function subscribe(
   const valid = validateSubscribe(input);
   if (!valid.ok) return valid;
   const email = input.email.trim().toLowerCase();
+  // This request's purpose: the newsletter, or only a lead-magnet document.
+  const newsletter = input.source !== LEAD_MAGNET_SOURCE;
+  const tags = (input.tags ?? []).slice(0, 20).map((t) => t.slice(0, 40));
+  const language =
+    input.language && isLocale(input.language, localeCodes)
+      ? input.language
+      : undefined;
 
   try {
     // ponytail: check-then-create dedupe races under concurrency — two parallel
@@ -93,11 +106,39 @@ export async function subscribe(
     const existing = await writeClient.fetch<{
       _id: string;
       status?: string;
-    } | null>(`*[_type == "subscriber" && email == $email][0]{ _id, status }`, {
-      email,
-    });
-    // Already confirmed → a genuine no-op.
-    if (existing?.status === "confirmed") return { ok: true, already: true };
+      newsletter?: boolean | null;
+      source?: string | null;
+      language?: string | null;
+      tags?: string[] | null;
+    } | null>(
+      `*[_type == "subscriber" && email == $email][0]{ _id, status, newsletter, source, language, tags }`,
+      { email },
+    );
+    const mergedTags = [...new Set([...(existing?.tags ?? []), ...tags])];
+
+    // Already confirmed: the address is verified, so apply this request now — no second
+    // confirmation. A newsletter sign-up after a lead-magnet-only one adds the consent; a
+    // lead-magnet request gets its document. The answer stays identical (no oracle).
+    if (existing?.status === "confirmed") {
+      const addNewsletter = newsletter && !wantsNewsletter(existing);
+      if (addNewsletter || tags.length) {
+        await writeClient
+          .patch(existing._id)
+          .set({
+            ...(addNewsletter ? { newsletter: true } : {}),
+            ...(addNewsletter && policyVersion
+              ? { consentPolicyVersion: policyVersion.slice(0, 120) }
+              : {}),
+            ...(tags.length ? { tags: mergedTags } : {}),
+          })
+          .commit();
+      }
+      const locale = language ?? existing.language ?? defaultLocale;
+      if (addNewsletter)
+        await syncNewsletterContact({ email, locale, granted: true });
+      if (tags.length) await deliverMagnetsForTags(email, tags, locale);
+      return { ok: true, already: true };
+    }
 
     const strings = (await getEmailStrings()) as {
       newsletterConfirm?: ConfirmationConfig;
@@ -122,6 +163,7 @@ export async function subscribe(
     const optIn = {
       status: "pending" as const,
       consent: true,
+      ...(token ? { confirmTokenAt: createdAt } : {}),
       ...(policyVersion
         ? { consentPolicyVersion: policyVersion.slice(0, 120) }
         : {}),
@@ -131,7 +173,17 @@ export async function subscribe(
     if (existing) {
       // `pending` (lost the confirm email) or `unsubscribed` (wants back in) → re-arm
       // to pending + (re)send the confirmation. Never dead-end on the existence check.
-      await writeClient.patch(existing._id).set(optIn).commit();
+      // Newsletter consent carries over only from a still-pending sign-up: after an
+      // unsubscribe, only this request's own consent counts.
+      const keep = existing.status === "pending" && wantsNewsletter(existing);
+      await writeClient
+        .patch(existing._id)
+        .set({
+          ...optIn,
+          newsletter: newsletter || keep,
+          ...(tags.length ? { tags: mergedTags } : {}),
+        })
+        .commit();
       await sendConfirmEmail(
         email,
         token,
@@ -147,13 +199,10 @@ export async function subscribe(
       _type: "subscriber", // hard-coded — never from the request
       email,
       ...optIn,
+      newsletter,
       ...(input.source ? { source: input.source.slice(0, 300) } : {}),
-      ...(input.language && isLocale(input.language, localeCodes)
-        ? { language: input.language }
-        : {}),
-      ...(input.tags?.length
-        ? { tags: input.tags.slice(0, 20).map((t) => t.slice(0, 40)) }
-        : {}),
+      ...(language ? { language } : {}),
+      ...(tags.length ? { tags } : {}),
       createdAt,
     });
 
@@ -195,14 +244,12 @@ async function sendConfirmEmail(
     if (!token || !from) return;
     const locale =
       language && isLocale(language, localeCodes) ? language : defaultLocale;
+    const fallback = confirmEmailDefaults(locale);
     const message = renderNewsletterConfirmEmail({
-      subject: pick(cfg?.subject, locale) || "Confirmez votre inscription",
-      heading: pick(cfg?.heading, locale) || "Plus qu'une étape",
-      intro:
-        pick(cfg?.intro, locale) ||
-        "Merci ! Confirmez votre adresse e-mail pour recevoir l'infolettre.",
-      buttonLabel:
-        pick(cfg?.buttonLabel, locale) || "Confirmer mon inscription",
+      subject: pick(cfg?.subject, locale) || fallback.subject,
+      heading: pick(cfg?.heading, locale) || fallback.heading,
+      intro: pick(cfg?.intro, locale) || fallback.intro,
+      buttonLabel: pick(cfg?.buttonLabel, locale) || fallback.buttonLabel,
       confirmUrl: `${site.url}${localizedPathname("/newsletter/confirm", locale)}?token=${token}`,
       outro: pick(cfg?.outro, locale) || undefined,
       supportEmail,

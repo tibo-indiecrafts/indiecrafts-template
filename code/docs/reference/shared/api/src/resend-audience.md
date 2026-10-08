@@ -17,6 +17,9 @@ Mirrors each marketing-email consent decision to Resend's global Contacts. Resen
 - `ResendAudienceEnv` — the `Env` slice this module needs (`RESEND_API_KEY?`), never the full worker `Env`.
 - `upsertResendContact` — create-or-update the contact with the global `unsubscribed` marketing flag from `granted`.
 - `syncContactTopics` — create-or-update the contact's per-topic subscriptions, mapping `granted` to `opt_in`/`opt_out`.
+- `subscribeNewsletterContact` — a confirmed newsletter subscriber: global `unsubscribed: false` plus `news` topic `opt_in`, in one upsert.
+- `unsubscribeNewsletterContact` — `news` topic `opt_out` only (PATCH; an unknown contact stays uncreated).
+- `getContactTopics` — the contact's topic subscriptions (`GET /contacts/{email}/topics`); null when unknown or on error.
 - `suppressResendContact` — suppress a departed contact: global unsubscribe, opt out of every marketing topic, opt into the churned topic, and stamp the churn reason.
 - `deleteResendContact` — remove the contact (the erasure pure-delete); a 404 counts as success.
 

@@ -12,7 +12,9 @@ const GUARDED = [
   { path: "/api/comments", bodyMax: 12000, emailForm: false },
 ];
 
-const base = { consent: true, honeypot: "", startedAt: Date.now() };
+// A form opened a minute ago: `startedAt` must clear the bot check (`isSpam` drops an
+// instant submit with a silent 201), or the invalid-email case answers 201, not 400.
+const base = { consent: true, honeypot: "", startedAt: Date.now() - 60_000 };
 
 for (const f of GUARDED) {
   test(`${f.path} → 403 on a cross-site POST`, async ({ request }) => {

@@ -15,6 +15,15 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`modules-web-newsletter` — consent and confirm gaps.** (1) A lead-magnet sign-up consented to its
+  document, not the newsletter, yet landed in the newsletter list: `subscriber.newsletter` now records
+  the purpose (`false` for `source: "lead-magnet"`), and only newsletter consent is exported or synced.
+  (2) A confirmed subscriber who asked for a lead magnet got nothing (the engine stopped at "already
+  subscribed"); a confirmed address now gets the document at once, and a lead-magnet-only one that
+  signs up gains newsletter consent. After an unsubscribe, a lead magnet never re-subscribes anyone.
+  (3) Confirm links never expired; they now work for 7 days (`confirmTokenAt`). (4) The confirmation
+  email fell back to French copy for every language; `confirmEmailDefaults(locale)` gives English or
+  French.
 - **blog / contact / waitlist — SEO per language on the shared settings.** `blog` (its `seo` and the
   `indexSeo` pages), `contactSettings` and `waitlistSettings` gain `seoTranslations`
   (`seoTranslationsField`, `@indiecrafts/packages-web-schema`, now a dependency of the three modules), so
@@ -48,6 +57,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`modules-web-newsletter` — one list in Resend.** On confirm, a newsletter sign-up joins Resend's
+  `news` topic through the api (`syncNewsletterContact` → `POST /v1/newsletter/subscribers`), the topic
+  signed-in members' "news" opt-in already uses, so one Broadcast reaches both; a Resend unsubscribe
+  comes back through the api webhook. **Why:** anonymous subscribers lived only in Sanity, so a
+  Resend Broadcast missed them and nothing could unsubscribe them.
 - **`modules-web-blog` — LCP images fetch first.** The blog mosaic's first card, the post-content
   cover and the author photo use `loading="eager"` + `fetchPriority="high"` instead of Next 16's
   deprecated `priority` (preload only); the mosaic's second large card loads eagerly at normal

@@ -10,11 +10,12 @@ status: stable
 
 ## Purpose
 
-`confirmSubscriber` is the double opt-in completion step. It matches a `pending` subscriber by its one-time `confirmToken`, flips the status to `confirmed`, and clears the token (single-use). A bad or already-used token is a no-op. On success, any lead magnets referenced in the subscriber's `tags` are delivered best-effort, so a delivery failure never turns a real confirmation into an error. Server-only; called by the POST `/api/newsletter/confirm` route.
+`confirmSubscriber` is the double opt-in completion step. It matches a `pending` subscriber by its one-time `confirmToken`, flips the status to `confirmed`, and clears the token (single-use). A bad, already-used or expired token (older than `CONFIRM_TOKEN_DAYS`, 7) is a no-op. On success, any lead magnets referenced in the subscriber's `tags` are delivered best-effort, so a delivery failure never turns a real confirmation into an error. A newsletter sign-up (not a lead-magnet-only one, `wantsNewsletter`) is then mirrored to Resend's `news` topic (`syncNewsletterContact`). Server-only; called by the POST `/api/newsletter/confirm` route.
 
 ## Exports
 
-- `confirmSubscriber(token)` — returns `"confirmed"` when the token matched a pending subscriber, else `"invalid"`.
+- `CONFIRM_TOKEN_DAYS` — how many days a confirmation link works.
+- `confirmSubscriber(token, now?)` — returns `"confirmed"` when the token matched a pending subscriber, else `"invalid"`.
 
 ## Usage
 
