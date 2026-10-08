@@ -19,7 +19,7 @@ const meta = {
     write: fn(async () => {}),
     snoozeKey: SNOOZE,
     copy: {
-      title: "Would you like product news and offers by email?",
+      title: "Want occasional emails from us and our partners?",
       yes: "Yes, please",
       no: "No thanks",
       dismiss: "Not now",

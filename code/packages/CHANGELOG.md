@@ -20,6 +20,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`packages-web-email` — the `emailPreferences` seed grants every category at sign-up.** `news`,
+  `offers`, `partners` and `tips` all start with `includeAtSignup` on. **Why:** the sign-up box now
+  asks for "emails from us and our partners", so a yes covers all four.
+
 - **`packages-web-email` — the `emailPreferences` singleton seeds two notices** ("Sign-in and
   security", "Your account and data", English and French). **Why:** the read-only "Account &
   security" section stayed hidden until an editor wrote notices by hand.

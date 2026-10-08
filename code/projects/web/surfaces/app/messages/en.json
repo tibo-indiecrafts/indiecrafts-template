@@ -153,9 +153,9 @@
     "region": "Announcement"
   },
   "auth": {
-    "marketingOptIn": "Send me occasional product news and offers. You can unsubscribe anytime.",
+    "marketingOptIn": "Send me occasional emails from us and our partners. You can unsubscribe anytime.",
     "nudge": {
-      "title": "Want occasional product news and offers by email?",
+      "title": "Want occasional emails from us and our partners?",
       "yes": "Yes, please",
       "no": "No thanks",
       "dismiss": "Dismiss"

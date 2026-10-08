@@ -12,6 +12,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Changed
+
+- **The commercial-email opt-in copy covers every category.** The sign-up box and the sign-in
+  nudge now read "occasional emails from us and our partners" (en/fr). **Why:** a yes grants
+  every email category, partners included, and consent to partner emails must name them.
+
 ### Fixed
 
 - **A signed-out visitor can reach `/sign-up` again.** The proxy let only `/sign-in` through, so

@@ -192,6 +192,7 @@ export const emailPreferencesSchema = defineType({
           en: "Discounts and promotions.",
           fr: "Réductions et promotions.",
         },
+        true,
       ),
       seededCategory(
         "partners",
@@ -200,6 +201,7 @@ export const emailPreferencesSchema = defineType({
           en: "Communications from our third-party partners.",
           fr: "Communications de nos partenaires tiers.",
         },
+        true,
       ),
       seededCategory(
         "tips",
@@ -208,6 +210,7 @@ export const emailPreferencesSchema = defineType({
           en: "Tips and best practices.",
           fr: "Conseils et bonnes pratiques.",
         },
+        true,
       ),
     ],
     // The transactional emails the site sends today, so the read-only section shows.

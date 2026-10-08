@@ -457,9 +457,9 @@
   "auth": {
     "signInTitle": "Se connecter",
     "signUpTitle": "Créer un compte",
-    "marketingOptIn": "Envoyez-moi occasionnellement des nouveautés et des offres. Vous pouvez vous désabonner à tout moment.",
+    "marketingOptIn": "Envoyez-moi occasionnellement des e-mails de notre part et de celle de nos partenaires. Vous pouvez vous désabonner à tout moment.",
     "nudge": {
-      "title": "Souhaitez-vous recevoir nos nouveautés et offres par e-mail ?",
+      "title": "Souhaitez-vous recevoir occasionnellement des e-mails de notre part et de celle de nos partenaires ?",
       "yes": "Oui, avec plaisir",
       "no": "Non merci",
       "dismiss": "Fermer"

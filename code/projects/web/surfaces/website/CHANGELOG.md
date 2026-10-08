@@ -17,6 +17,12 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **The commercial-email opt-in copy covers every category.** The sign-up box and the sign-in
+  nudge now read "occasional emails from us and our partners" (en/fr). **Why:** a yes grants
+  every email category, partners included, and consent to partner emails must name them.
+
 ### Added
 
 - **A signed-in account journey (`account-data`).** It exports the data (a single-use link to a bundle

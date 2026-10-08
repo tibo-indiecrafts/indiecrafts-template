@@ -16,7 +16,7 @@ controls, each mapped to a Resend Topic for real sending.
 - **Categories — Sanity.** The `emailPreferences` singleton (`code/packages/web/email/src/sanity/email-preferences.ts`)
   holds `categories[]` (editor-defined) and `notices[]` (display-only, seeded with two account and security notices). Each category has
   a `key` (locked after first save — code matches on it), a localized `name`/`description`,
-  `includeAtSignup` (pre-checked at sign-up), and `resendTopicId`. Seeded with four
+  `includeAtSignup` (granted when the sign-up box is ticked; never pre-checked), and `resendTopicId`. Seeded with four
   reserved keys: `news`, `offers`, `partners`, `tips`. A notice has no `key` or toggle — it
   lists a transactional email the subscriber always gets (e.g. order confirmations).
 - **State + proof — D1.** `email_preferences` (`main` D1, migration `0009`) holds one row
@@ -104,6 +104,11 @@ the webhook grants every Sanity category with `includeAtSignup: true` (falling b
 chose as defaults, with the same D1 write, proof row and Resend mirror (topics + the
 `newsletter-<locale>` segment) as any other change. An unticked box writes no category and
 never calls Resend.
+
+The seed grants every category, and the sign-up box and the nudge say so in general terms
+("occasional emails from us and our partners"). Partner emails need consent that names them:
+if you turn a category on at sign-up, keep it covered by that copy (`auth.marketingOptIn`,
+`auth.nudge.title` in each surface's `messages/`).
 
 ## Web + mobile
 
