@@ -29,15 +29,16 @@ There is **no provider config**: Resend is the list. To use an external service 
 
 ## What it needs
 
-| Piece                                                    | Where                                                                                      | Without it                                                   |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------ |
-| `NEWSLETTER_SECRET`                                      | website env, server-only                                                                   | the form answers `503`                                       |
-| `RESEND_API_KEY`                                         | website env + api secret                                                                   | the form answers `503`                                       |
-| The confirmation email, enabled with a verified `From`   | Studio → E-mails → newsletter confirmation                                                 | the form answers `503`                                       |
-| `API_URL` + `APP_API_TOKEN`                              | website env                                                                                | the form answers `503` (a lead-magnet request still works)   |
-| `GDPR_FINGERPRINT_SALT` + main D1                        | api                                                                                        | confirm answers `error` (nothing stored)                     |
-| The `locale` contact property                            | Resend, via `pnpm resend:topics:sync`                                                      | confirm answers `error` (Resend refuses an unknown property) |
-| The `news` topic id + the `newsletter-<locale>` segments | Resend, via `pnpm resend:topics:sync`, then the topic id in Studio → E-mails → Préférences | the contact is stored without them                           |
+| Piece                                                  | Where                                                                                 | Without it                                                                                     |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `NEWSLETTER_SECRET`                                    | website env, server-only                                                              | the form answers `503`                                                                         |
+| `RESEND_API_KEY`                                       | website env + api secret                                                              | the form answers `503`                                                                         |
+| The confirmation email, enabled with a verified `From` | Studio → E-mails → newsletter confirmation                                            | the form answers `503`                                                                         |
+| `API_URL` + `APP_API_TOKEN`                            | website env                                                                           | the form answers `503` (a lead-magnet request still works)                                     |
+| `GDPR_FINGERPRINT_SALT` + main D1                      | api                                                                                   | confirm answers `error` (nothing stored)                                                       |
+| The `locale` contact property                          | Resend, via `pnpm resend:topics:sync`                                                 | confirm answers `error` (Resend refuses an unknown property)                                   |
+| The `newsletter-<locale>` segments                     | Resend, via `pnpm resend:topics:sync`                                                 | confirm answers `error` (a subscriber outside every language segment would never get an issue) |
+| The `news` topic id                                    | Studio → E-mails → Préférences → `news` (the id comes from `pnpm resend:topics:sync`) | the contact is stored without the topic                                                        |
 
 A missing piece fails loudly — the visitor sees an error — instead of accepting a sign-up that
 could never be stored.
@@ -67,8 +68,8 @@ Studio → **E-mails**). The `From` must be a **Resend-verified domain**. Verify
   with **copy translated per language** (`subject`, `heading`, `intro`, `buttonLabel`, `outro`) + an
   optional `BCC`. Seeded EN + FR; an empty field falls back to English or French.
 - **Confirmed-subscriber alert → you** (`newsletterOwner`, optional) — `To`/`CC`/`BCC`, `From`, and a
-  <code v-pre>{{email}}</code> subject. Sent on confirm, in the site's default language, with the
-  subscriber's language and source.
+  <code v-pre>{{email}}</code> subject. Sent when a newsletter sign-up is confirmed (not for a
+  lead-magnet-only request), in the site's default language, with the subscriber's language and source.
 
 ### Double opt-in
 
@@ -79,9 +80,10 @@ token stays out of request logs. The page reads the token, drops it from the add
 never does, so a mail scanner or link prefetcher (Outlook SafeLinks, …) can't confirm anyone.
 
 The link works for **7 days** (`CONFIRM_TOKEN_DAYS`); after that the page says it expired, and
-signing up again sends a fresh one. It is not single-use: tapping it again re-applies the same
-consent (the api keeps one proof row per link). When the api can't store the subscriber, the page
-says so and keeps the button, so the visitor can try again.
+signing up again sends a fresh one. The consent is recorded at the tap, not when the link was sent.
+The link is not single-use: a later tap — say, after an unsubscribe — is a new, explicit consent
+with its own proof row. When the api can't store the subscriber, the page says so and keeps the
+button, so the visitor can try again.
 
 ### Lead magnets (gated delivery)
 
@@ -118,13 +120,23 @@ lives where you send from.
 ## Export
 
 ```bash
-pnpm export:web:website:subscribers          # every subscribed contact, per language
-pnpm export:web:website:subscribers --all    # also the unsubscribed ones, for an audit
+pnpm export:web:website:subscribers          # who may receive the newsletter, per language
+pnpm export:web:website:subscribers --all    # also the opted-out contacts, for an audit
 ```
 
-The file lists the `newsletter-<locale>` segments' contacts — columns `email, locale, unsubscribed,
-created_at`. Read-only; needs `RESEND_API_KEY` in `.env.local`. Resend data is not in the R2 backups,
-so keep an export if you need an offline copy.
+The file lists the `newsletter-<locale>` segments' contacts — columns `email, locale, news,
+unsubscribed, created_at`. By default it keeps only contacts opted into the `News` topic and not
+globally unsubscribed: someone who left the topic from Resend's preference page stays in their
+segment but is never in the file. Read-only; needs `RESEND_API_KEY` in `.env.local`; it reads each
+contact's topics, paced for Resend's rate limit. Resend data is not in the R2 backups, so keep an
+export if you need an offline copy.
+
+## Upgrading from Sanity subscribers
+
+An older site kept subscribers as Sanity `subscriber` docs. Before you deploy this version, export
+the ones you want to keep from the old **Abonnés** desk and add them to Resend (they must confirm
+again unless you hold their consent). Then delete the `subscriber` docs: the Studio no longer shows
+them and the erasure engine no longer reads them.
 
 ## External provider
 

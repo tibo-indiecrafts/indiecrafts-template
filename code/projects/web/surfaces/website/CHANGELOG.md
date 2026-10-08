@@ -43,7 +43,8 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 - **Newsletter: Resend is the only list.** `/api/newsletter` stores nothing and answers `503` when the
   newsletter's setup is missing; `/api/newsletter/confirm` answers `502 { status: "error" }` when the
-  subscriber could not be stored (its body cap is now 4000 bytes for the signed token). The confirm
+  subscriber could not be stored (its body cap is now 4000 bytes for the signed token); it forwards
+  the visitor's IP so the api rate-limits per visitor, not per site. The confirm
   page reads the token from the URL fragment, drops it from the address bar, and shows an error state
   with a retry (`pages.newsletterConfirm.errorHeading` / `errorBody`). The forms' success copy now says
   to confirm from the inbox. New secret `NEWSLETTER_SECRET` replaces `LEAD_MAGNET_SECRET`. The seed no

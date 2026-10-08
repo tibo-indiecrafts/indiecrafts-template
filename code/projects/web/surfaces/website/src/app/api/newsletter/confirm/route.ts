@@ -5,7 +5,7 @@
  */
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
-import { withGuard } from "@indiecrafts/packages-shared-security/guard";
+import { clientIp, withGuard } from "@indiecrafts/packages-shared-security/guard";
 import { confirmSubscription } from "@indiecrafts/modules-web-newsletter/lib/confirm";
 
 /**
@@ -17,9 +17,9 @@ import { confirmSubscription } from "@indiecrafts/modules-web-newsletter/lib/con
  * or `502 { status: "error" }` when the subscriber could not be stored (the visitor can
  * tap again).
  */
-const handle = withGuard(async (_req, data) => {
+const handle = withGuard(async (req, data) => {
   const token = String((data as Record<string, unknown> | null)?.token ?? "");
-  const status = await confirmSubscription(token);
+  const status = await confirmSubscription(token, { clientIp: clientIp(req) });
   return NextResponse.json({ status }, { status: status === "error" ? 502 : 200 });
 }, security.confirm);
 

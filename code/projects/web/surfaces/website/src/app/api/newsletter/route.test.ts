@@ -96,7 +96,7 @@ describe("POST /api/newsletter/confirm", () => {
     expect(await (await post(confirmRoute, { token: "expired" })).json()).toEqual({
       status: "invalid",
     });
-    expect(confirmSubscription).toHaveBeenNthCalledWith(1, "good");
+    expect(confirmSubscription).toHaveBeenNthCalledWith(1, "good", expect.any(Object));
   });
 
   it("a subscriber that could not be stored → 502 error, so the visitor can retry", async () => {

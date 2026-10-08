@@ -1,10 +1,13 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   upsertResendContact,
   deleteResendContact,
   syncContactTopics,
   suppressResendContact,
 } from "./resend-audience";
+import { clearSegmentCache } from "./resend-audience";
+
+beforeEach(clearSegmentCache);
 
 const env = { RESEND_API_KEY: "k" };
 

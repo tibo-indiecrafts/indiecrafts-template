@@ -74,11 +74,11 @@ describe("signConfirmToken / verifyConfirmToken", () => {
 
 describe("confirmSubscription", () => {
   it("is invalid without a token, without the secret, or for a bad token", async () => {
-    expect(await confirmSubscription("  ", T0)).toBe("invalid");
-    expect(await confirmSubscription("garbage", T0)).toBe("invalid");
+    expect(await confirmSubscription("  ", { now: T0 })).toBe("invalid");
+    expect(await confirmSubscription("garbage", { now: T0 })).toBe("invalid");
     const token = await signConfirmToken(payload, SECRET);
     vi.stubEnv("NEWSLETTER_SECRET", "");
-    expect(await confirmSubscription(token, T0)).toBe("invalid");
+    expect(await confirmSubscription(token, { now: T0 })).toBe("invalid");
     expect(subscribeContact).not.toHaveBeenCalled();
   });
 
@@ -92,12 +92,18 @@ describe("confirmSubscription", () => {
       },
     });
     const token = await signConfirmToken({ ...payload, tags: ["m1"] }, SECRET);
-    expect(await confirmSubscription(token, T0 + 1000)).toBe("confirmed");
+    expect(
+      await confirmSubscription(token, {
+        now: T0 + 1000,
+        clientIp: "203.0.113.7",
+      }),
+    ).toBe("confirmed");
     expect(subscribeContact).toHaveBeenCalledWith({
       email: "a@b.com",
       locale: "fr",
       policyVersion: "v2",
-      consentAt: ISSUED,
+      consentAt: new Date(T0 + 1000).toISOString(), // the tap is the consent act
+      clientIp: "203.0.113.7",
     });
     expect(deliverMagnetsForTags).toHaveBeenCalledWith("a@b.com", ["m1"], "fr");
     const alert = sendEmail.mock.calls[0]?.[0];
@@ -106,13 +112,22 @@ describe("confirmSubscription", () => {
   });
 
   it("never subscribes a lead-magnet-only request, but sends its document", async () => {
+    vi.stubEnv("RESEND_API_KEY", "re_x");
+    getEmailStrings.mockResolvedValue({
+      newsletterOwner: {
+        enabled: true,
+        to: ["owner@site.test"],
+        from: "hi@site.test",
+      },
+    });
     const token = await signConfirmToken(
       { ...payload, newsletter: false, tags: ["m1"] },
       SECRET,
     );
-    expect(await confirmSubscription(token, T0)).toBe("confirmed");
+    expect(await confirmSubscription(token, { now: T0 })).toBe("confirmed");
     expect(subscribeContact).not.toHaveBeenCalled();
     expect(deliverMagnetsForTags).toHaveBeenCalledWith("a@b.com", ["m1"], "fr");
+    expect(sendEmail).not.toHaveBeenCalled(); // no "new subscriber" alert: nobody subscribed
   });
 
   it("answers error (and sends nothing) when the api fails", async () => {
@@ -120,7 +135,7 @@ describe("confirmSubscription", () => {
       new Error("newsletter/subscribers 502"),
     );
     const token = await signConfirmToken({ ...payload, tags: ["m1"] }, SECRET);
-    expect(await confirmSubscription(token, T0)).toBe("error");
+    expect(await confirmSubscription(token, { now: T0 })).toBe("error");
     expect(deliverMagnetsForTags).not.toHaveBeenCalled();
     expect(sendEmail).not.toHaveBeenCalled();
   });

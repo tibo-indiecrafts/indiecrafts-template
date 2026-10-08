@@ -37,9 +37,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 - **Resend is the only newsletter list.** `POST /v1/newsletter/subscribers` now takes
   `{ email, locale, policyVersion, consentAt }` from the website server after the visitor clicks
   the confirm link. It writes the consent proof to `consent_events` (`consent_type = 'newsletter'`,
-  a `visitor` row keyed by the email fingerprint, deduped on `consentAt`). Then it makes the person
+  a `visitor` row keyed by the email fingerprint, no country or IP, deduped on `consentAt` — the
+  tap). Then it makes the person
   a Resend subscriber: `news` topic, `locale` property and the `newsletter-<locale>` language
-  segment. A Resend failure answers `502`; a missing `RESEND_API_KEY`, `MAIN_DB` or
+  segment — a new contact in one call; a `429` is retried and the segment list cached. A missing
+  language segment or a Resend failure answers `502`; a missing `RESEND_API_KEY`, `MAIN_DB` or
   `GDPR_FINGERPRINT_SALT` answers `503`. The `granted` field is gone: unsubscribe is Resend's own
   link. The signed-in preference centre moves the language segment too when `news` changes. A
   DSAR export now includes the Resend contact. The Sanity erasure no longer looks for `subscriber`

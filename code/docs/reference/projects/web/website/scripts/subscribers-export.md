@@ -10,19 +10,19 @@ status: stable
 
 ## Purpose
 
-Resend is the newsletter's only list, with one `newsletter-<code>` segment per site language. The script pages through each segment (`GET /segments/{id}/contacts?limit=100&after=…`) and writes `backups/subscribers/subscribers-<timestamp>.csv` with the columns `email,locale,unsubscribed,created_at`. The `locale` comes from the segment name. By default it skips `unsubscribed` contacts; `--all` keeps them and writes `subscribers-all-<timestamp>.csv`, for an audit. Read-only on Resend; each cell goes through `csvCell` (CSV formula injection). Needs `RESEND_API_KEY`.
+Resend is the newsletter's only list, with one `newsletter-<code>` segment per site language. The script finds the `News` topic, pages through each segment (`GET /segments/{id}/contacts?limit=100&after=…`), reads each contact's topics, and writes `backups/subscribers/subscribers-<timestamp>.csv` with the columns `email,locale,news,unsubscribed,created_at`. The `locale` comes from the segment name; `news` is the contact's `News` topic subscription. By default it keeps only contacts opted into `News` and not globally unsubscribed — someone who left the topic from Resend's preference page stays in their segment but is never exported; `--all` keeps everyone and writes `subscribers-all-<timestamp>.csv`, for an audit. A `429` is retried (Resend's low rate limit). Read-only on Resend; each cell goes through `csvCell` (CSV formula injection). Needs `RESEND_API_KEY`.
 
 ## Exports
 
 - `FIELDS` — the CSV columns.
-- `fetchSubscribers(key, { all?, doFetch? })` — the rows of every `newsletter-*` segment. Throws on a Resend error.
+- `fetchSubscribers(key, { all?, doFetch?, sleep? })` — the rows of every `newsletter-*` segment. Throws on a Resend error, or when the `News` topic is missing (run `pnpm resend:topics:sync`).
 - `toCsv(fields, rows)` — the CSV text.
 
 ## Usage
 
 ```bash
 pnpm export:web:website:subscribers          # newsletter subscribers
-pnpm export:web:website:subscribers --all    # unsubscribed included (audit)
+pnpm export:web:website:subscribers --all    # opted-out included (audit)
 ```
 
 ## Source

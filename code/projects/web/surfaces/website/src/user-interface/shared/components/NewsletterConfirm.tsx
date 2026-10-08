@@ -25,8 +25,9 @@ export type NewsletterConfirmLabels = {
   homeCta: string;
 };
 
-/** The signed token from the `#t=` fragment, read once per visit: the page then drops it
- *  from the address bar, and the snapshot must not change when it does. */
+/** The signed token from the `#t=` fragment, read once per page load: the page then drops
+ *  it from the address bar, and the snapshot must not change when it does (React re-runs
+ *  effects in dev). A confirm link always opens a fresh page load from the email. */
 let captured: string | undefined;
 function readToken(): string {
   captured ??= new URLSearchParams(window.location.hash.slice(1)).get("t")?.trim() ?? "";
@@ -55,9 +56,6 @@ export function NewsletterConfirm({ labels }: { labels: NewsletterConfirmLabels 
         "",
         window.location.pathname + window.location.search,
       );
-    return () => {
-      captured = undefined; // a later visit reads its own link
-    };
   }, [token]);
 
   async function confirm() {

@@ -35,7 +35,7 @@ export const CONFIRM_TOKEN_DAYS = 7;
 /**
  * Everything a confirmation needs, carried by the signed link — nothing is stored at
  * sign-up. `newsletter` is false for a lead-magnet-only request: its consent covers the
- * document, not the newsletter. `issuedAt` is the consent time recorded on confirm.
+ * document, not the newsletter. `issuedAt` starts the link's validity.
  */
 export type ConfirmPayload = {
   email: string;
@@ -94,14 +94,25 @@ export async function verifyConfirmToken(
  * the confirm page — a bare page load never confirms). A bad or expired token is
  * `invalid`. A newsletter sign-up becomes a Resend subscriber through the api; when that
  * fails, the answer is `error` (nothing confirmed — the visitor can tap again). Then any
- * lead magnet is e-mailed and the owner is alerted, both best-effort.
+ * lead magnet is e-mailed and, for a newsletter sign-up, the owner is alerted — both
+ * best-effort.
  *
- * The token is not single-use: tapping the same link again re-applies the same consent
- * (the api dedupes the consent proof on `issuedAt`).
+ * The consent is recorded at the tap (`now`), not when the link was sent: the tap is the
+ * consent act. The token is not single-use — a later tap (say, after an unsubscribe) is a
+ * new, explicit consent and gets its own proof row.
+ * ponytail: a repeat tap re-sends the lead magnet and the owner alert; add a consumed-token
+ * store if that ever matters.
  */
 export async function confirmSubscription(
   token: string,
-  now: number = Date.now(),
+  {
+    clientIp,
+    now = Date.now(),
+  }: {
+    /** The visitor's IP — forwarded so the api rate-limits per visitor, not per site. */
+    clientIp?: string;
+    now?: number;
+  } = {},
 ): Promise<"confirmed" | "invalid" | "error"> {
   const secret = process.env.NEWSLETTER_SECRET;
   if (!secret || !token.trim()) return "invalid";
@@ -113,7 +124,8 @@ export async function confirmSubscription(
         email: p.email,
         locale: p.locale,
         policyVersion: p.policyVersion,
-        consentAt: p.issuedAt,
+        consentAt: new Date(now).toISOString(),
+        clientIp,
       });
     } catch (error) {
       logger.error("newsletter confirm failed", { error });
@@ -121,7 +133,7 @@ export async function confirmSubscription(
     }
   }
   await deliverMagnetsForTags(p.email, p.tags, p.locale);
-  await notifyOwner(p);
+  if (p.newsletter) await notifyOwner(p);
   return "confirmed";
 }
 

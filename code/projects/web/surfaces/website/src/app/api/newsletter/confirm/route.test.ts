@@ -37,6 +37,6 @@ describe("POST /api/newsletter/confirm — boundary", () => {
   it("a missing token reaches the engine as an empty string (never `undefined`)", async () => {
     confirmSubscription.mockResolvedValueOnce("invalid");
     expect(await (await post({})).json()).toEqual({ status: "invalid" });
-    expect(confirmSubscription).toHaveBeenCalledWith("");
+    expect(confirmSubscription).toHaveBeenCalledWith("", expect.any(Object));
   });
 });

@@ -13,7 +13,7 @@ status: stable
 The website stores nothing at sign-up. It emails a signed confirm link; on the click its server calls `POST /v1/newsletter/subscribers`. The route uses this module in two steps:
 
 1. `recordNewsletterConsent` appends the proof to `consent_events`: `subject_type = 'visitor'`, `subject_id` and `email_fingerprint` = the salted email fingerprint, `consent_type = 'newsletter'`, `surface = 'website'`, `source = 'double_opt_in'`, `ts` = the confirm-token issue time. The email itself is never stored. `INSERT OR IGNORE` on `newsletter:<fp>:<consentAt>`, so a repeat click on the same link adds no row.
-2. `syncNewsletterSubscriber` upserts the Resend contact: `unsubscribed: false`, `properties.locale`, the `news` topic `opt_in` and the `newsletter-<locale>` segment (via `subscribeNewsletterContact`). The `news` topic id comes from the Studio `emailPreferences` singleton; none set → no topic.
+2. `syncNewsletterSubscriber` upserts the Resend contact: `unsubscribed: false`, `properties.locale`, the `news` topic `opt_in` and the `newsletter-<locale>` segment (via `subscribeNewsletterContact`). The `news` topic id comes from the Studio `emailPreferences` singleton; none set → no topic. A missing `newsletter-<locale>` segment throws (the route answers `502`).
 
 Unsubscribe is Resend's own link; nothing here handles it.
 

@@ -4,8 +4,9 @@ import {
   waitOnExecutionContext,
 } from "cloudflare:test";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import worker, { type Env } from "../index";
+import { clearSegmentCache } from "../resend-audience";
 
 const TOPIC = "topic-news";
 const EMAIL = "reader@example.com";
@@ -17,6 +18,7 @@ const SEGMENTS = [
   { id: "seg-other", name: "vip" },
 ];
 
+beforeEach(clearSegmentCache);
 afterEach(() => vi.unstubAllGlobals());
 
 type Call = { url: string; method: string; body: unknown };
@@ -28,8 +30,13 @@ function stubFetch(
     resendStatus?: number;
     segments?: { id: string; name: string }[];
     contactSegments?: { id: string; name: string }[];
+    /** The contact already exists: `POST /contacts` answers 409. */
+    exists?: boolean;
+    /** Resend answers the first call 429 (rate limit), then normally. */
+    rateLimitOnce?: boolean;
   } = {},
 ) {
+  let limited = !!opts.rateLimitOnce;
   const calls: Call[] = [];
   const reply = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status });
@@ -59,6 +66,15 @@ function stubFetch(
             ],
           },
         });
+      if (limited && url.startsWith("https://api.resend.com")) {
+        limited = false;
+        return new Response("{}", {
+          status: 429,
+          headers: { "retry-after": "1" },
+        });
+      }
+      if (url === "https://api.resend.com/contacts" && opts.exists)
+        return reply({}, 409);
       if (url === "https://api.resend.com/segments?limit=100")
         return reply({ data: opts.segments ?? SEGMENTS, has_more: false });
       if (url.endsWith("/segments?limit=100"))
@@ -192,7 +208,9 @@ describe("POST /v1/newsletter/subscribers", () => {
       },
     ]);
 
+    // A new contact: the segment list, then ONE create carrying topic, locale and segment.
     expect(resendCalls(calls)).toEqual([
+      { url: "/segments?limit=100", method: "GET", body: undefined },
       {
         url: "/contacts",
         method: "POST",
@@ -201,31 +219,38 @@ describe("POST /v1/newsletter/subscribers", () => {
           unsubscribed: false,
           properties: { locale: "fr" },
           topics: [{ id: TOPIC, subscription: "opt_in" }],
+          segments: [{ id: "seg-fr" }],
         },
       },
-      { url: "/segments?limit=100", method: "GET", body: undefined },
-      {
-        url: `/contacts/${EMAIL}/segments?limit=100`,
-        method: "GET",
-        body: undefined,
-      },
-      {
-        url: `/contacts/${EMAIL}/segments/seg-fr`,
-        method: "POST",
-        body: undefined,
-      },
-      {
-        url: `/contacts/${EMAIL}/segments/seg-en`,
-        method: "DELETE",
-        body: undefined,
-      },
     ]);
+  });
+
+  it("an existing contact is updated, then moved to its language segment", async () => {
+    const calls = stubFetch({
+      exists: true,
+      contactSegments: [SEGMENTS[0], SEGMENTS[2]],
+    });
+    expect((await post(VALID)).status).toBe(204);
+    expect(resendCalls(calls).map((c) => `${c.method} ${c.url}`)).toEqual([
+      "GET /segments?limit=100",
+      "POST /contacts",
+      `PATCH /contacts/${EMAIL}`,
+      `PATCH /contacts/${EMAIL}/topics`,
+      `GET /contacts/${EMAIL}/segments?limit=100`,
+      `POST /contacts/${EMAIL}/segments/seg-fr`,
+      `DELETE /contacts/${EMAIL}/segments/seg-en`,
+    ]);
+  });
+
+  it("a Resend rate limit (429) is retried", async () => {
+    stubFetch({ rateLimitOnce: true });
+    expect((await post(VALID)).status).toBe(204);
   });
 
   it("a repeat click with the same consentAt keeps one row and changes no segment", async () => {
     stubFetch();
     expect((await post(VALID)).status).toBe(204);
-    const calls = stubFetch({ contactSegments: [SEGMENTS[1]] });
+    const calls = stubFetch({ exists: true, contactSegments: [SEGMENTS[1]] });
     expect((await post(VALID)).status).toBe(204);
     expect(await consentRows()).toHaveLength(1);
     expect(
@@ -244,18 +269,20 @@ describe("POST /v1/newsletter/subscribers", () => {
   it("no news topic configured: the contact is created without topics", async () => {
     const calls = stubFetch({ topicId: "" });
     expect((await post(VALID)).status).toBe(204);
-    expect(resendCalls(calls)[0].body).toEqual({
-      email: EMAIL,
-      unsubscribed: false,
-      properties: { locale: "fr" },
-    });
+    expect(resendCalls(calls).find((c) => c.url === "/contacts")?.body).toEqual(
+      {
+        email: EMAIL,
+        unsubscribed: false,
+        properties: { locale: "fr" },
+        segments: [{ id: "seg-fr" }],
+      },
+    );
   });
 
-  it("no newsletter-<locale> segment (setup not run): still 204, segments untouched", async () => {
+  it("no newsletter-<locale> segment (setup not run): 502, no contact written", async () => {
     const calls = stubFetch({ segments: [SEGMENTS[0]] });
-    expect((await post(VALID)).status).toBe(204);
+    expect((await post(VALID)).status).toBe(502);
     expect(resendCalls(calls).map((c) => `${c.method} ${c.url}`)).toEqual([
-      "POST /contacts",
       "GET /segments?limit=100",
     ]);
   });

@@ -25,6 +25,19 @@ const RESEND_API = "https://api.resend.com";
 type Subscription = "opt_in" | "opt_out";
 type TopicSub = { id: string; subscription: Subscription };
 
+/** Resend's team rate limit is low (a few requests a second) and a newsletter upsert is a short
+ *  chain of calls: retry a 429 twice, after `Retry-After` (capped at 2 s). */
+function retrying(doFetch: typeof fetch): typeof fetch {
+  return async (input, init) => {
+    for (let attempt = 0; ; attempt++) {
+      const res = await doFetch(input, init);
+      if (res.status !== 429 || attempt === 2) return res;
+      const wait = Math.min(Number(res.headers.get("retry-after")) || 1, 2);
+      await new Promise((r) => setTimeout(r, wait * 1000));
+    }
+  };
+}
+
 /** Upsert a global contact. `POST /contacts` creates it (with inline `fields` + `topics`); if
  *  the email already exists (Resend 409/422), `PATCH /contacts/{email}` updates the fields and
  *  `PATCH /contacts/{email}/topics` sets the topics — topics are NOT a `/contacts` PATCH-body
@@ -37,7 +50,9 @@ async function upsertContact(
   fields: Record<string, unknown>,
   topics: TopicSub[],
   doFetch: typeof fetch,
-): Promise<void> {
+  /** Segment ids for a NEW contact only (an existing one moves via `syncNewsletterSegments`). */
+  segmentIds: string[] = [],
+): Promise<"created" | "updated"> {
   const base = `${RESEND_API}/contacts`;
   const headers = {
     Authorization: `Bearer ${env.RESEND_API_KEY}`,
@@ -51,9 +66,12 @@ async function upsertContact(
       email,
       ...fields,
       ...(topics.length ? { topics } : {}),
+      ...(segmentIds.length
+        ? { segments: segmentIds.map((id) => ({ id })) }
+        : {}),
     }),
   });
-  if (res.ok) return;
+  if (res.ok) return "created";
   if (res.status !== 409 && res.status !== 422)
     throw new Error(`resend ${res.status}`);
 
@@ -74,6 +92,7 @@ async function upsertContact(
     });
     if (!patch.ok) throw new Error(`resend ${patch.status}`);
   }
+  return "updated";
 }
 
 /** Create-or-update the contact with `unsubscribed = !granted` (Resend's global marketing
@@ -112,17 +131,14 @@ export async function syncContactTopics(
       id: t.topicId,
       subscription: t.granted ? "opt_in" : "opt_out",
     }));
+  const f = retrying(doFetch);
   const fields = newsletterLocale
     ? { properties: { locale: newsletterLocale } }
     : {};
   if (subs.length || newsletterLocale)
-    await upsertContact(env, email, fields, subs, doFetch);
+    await upsertContact(env, email, fields, subs, f);
   if (newsletterLocale !== undefined)
-    await syncNewsletterSegments(
-      env,
-      { email, locale: newsletterLocale },
-      doFetch,
-    );
+    await syncNewsletterSegments(env, { email, locale: newsletterLocale }, f);
 }
 
 /** A confirmed newsletter subscriber: clear the global flag (`unsubscribed: false`), set the
@@ -138,66 +154,117 @@ export async function subscribeNewsletterContact(
   doFetch: typeof fetch = fetch,
 ): Promise<void> {
   if (!env.RESEND_API_KEY || !email) return;
+  const f = retrying(doFetch);
+  const target = await newsletterSegment(env, locale, f);
   const topics: TopicSub[] = topicId
     ? [{ id: topicId, subscription: "opt_in" }]
     : [];
-  await upsertContact(
+  // A new contact gets everything in one call; an existing one is updated, then moved.
+  const done = await upsertContact(
     env,
     email,
     { unsubscribed: false, properties: { locale } },
     topics,
-    doFetch,
+    f,
+    [target.id],
   );
-  await syncNewsletterSegments(env, { email, locale }, doFetch);
+  if (done === "updated")
+    await syncNewsletterSegments(env, { email, locale }, f, target);
 }
 
 type Segment = { id: string; name: string };
 /** One segment per site language, named `newsletter-<code>` (created by `resend:topics:sync`). */
 const NEWSLETTER_SEGMENT = "newsletter-";
+const SEGMENT_TTL_MS = 10 * 60_000;
+// ponytail: per-isolate cache of the account's segment list (it changes only when the sync
+// script runs); a miss refetches once, so a new segment shows up without waiting the TTL.
+let segmentCache: { at: number; list: Segment[] } | undefined;
+
+/** Test seam: forget the cached segment list. */
+export function clearSegmentCache(): void {
+  segmentCache = undefined;
+}
+
+async function listNewsletterSegments(
+  env: ResendAudienceEnv,
+  doFetch: typeof fetch,
+): Promise<Segment[]> {
+  const res = await doFetch(`${RESEND_API}/segments?limit=100`, {
+    headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` },
+  });
+  if (!res.ok) throw new Error(`resend ${res.status}`);
+  const { data } = (await res.json()) as { data?: Segment[] };
+  return (data ?? []).filter((s) => s.name?.startsWith(NEWSLETTER_SEGMENT));
+}
+
+/** The `newsletter-<locale>` segment. Missing (the sync script never ran, or a new locale) →
+ *  throws: a subscriber outside every language segment would never get an issue. */
+async function newsletterSegment(
+  env: ResendAudienceEnv,
+  locale: string,
+  doFetch: typeof fetch,
+): Promise<Segment> {
+  const name = `${NEWSLETTER_SEGMENT}${locale}`;
+  const fresh = segmentCache && Date.now() - segmentCache.at < SEGMENT_TTL_MS;
+  let hit = fresh ? segmentCache!.list.find((s) => s.name === name) : undefined;
+  if (!hit) {
+    segmentCache = {
+      at: Date.now(),
+      list: await listNewsletterSegments(env, doFetch),
+    };
+    hit = segmentCache.list.find((s) => s.name === name);
+  }
+  if (!hit) throw new Error(`resend segment ${name} missing`);
+  return hit;
+}
 
 /** Put the contact in `newsletter-<locale>` and out of every other `newsletter-*` segment;
  *  `locale` null → out of all of them. Reads the contact's own segments first, so a repeat
- *  call adds and removes nothing. No `newsletter-<locale>` segment (setup not run) → no-op.
- *  An unknown contact (404) has no segments. Throws on any other Resend error. */
+ *  call adds and removes nothing. A missing `newsletter-<locale>` segment throws. An unknown
+ *  contact (404) has no segments. Throws on any other Resend error. */
 async function syncNewsletterSegments(
   env: ResendAudienceEnv,
   { email, locale }: { email: string; locale: string | null },
   doFetch: typeof fetch = fetch,
+  resolved?: Segment,
 ): Promise<void> {
   if (!env.RESEND_API_KEY || !email) return;
   const headers = { Authorization: `Bearer ${env.RESEND_API_KEY}` };
-  const newsletterSegments = async (path: string): Promise<Segment[]> => {
-    const res = await doFetch(`${RESEND_API}${path}`, { headers });
-    if (res.status === 404) return [];
-    if (!res.ok) throw new Error(`resend ${res.status}`);
-    const { data } = (await res.json()) as { data?: Segment[] };
-    return (data ?? []).filter((s) => s.name?.startsWith(NEWSLETTER_SEGMENT));
-  };
-
-  let target: Segment | undefined;
-  if (locale) {
-    target = (await newsletterSegments("/segments?limit=100")).find(
-      (s) => s.name === `${NEWSLETTER_SEGMENT}${locale}`,
-    );
-    if (!target) return;
-  }
-  const current = await newsletterSegments(
-    `/contacts/${email}/segments?limit=100`,
+  const target =
+    resolved ??
+    (locale ? await newsletterSegment(env, locale, doFetch) : undefined);
+  const res = await doFetch(
+    `${RESEND_API}/contacts/${email}/segments?limit=100`,
+    {
+      headers,
+    },
   );
+  if (!res.ok && res.status !== 404) throw new Error(`resend ${res.status}`);
+  const current = res.ok
+    ? (((await res.json()) as { data?: Segment[] }).data ?? []).filter((s) =>
+        s.name?.startsWith(NEWSLETTER_SEGMENT),
+      )
+    : [];
   if (target && !current.some((s) => s.id === target.id)) {
-    const res = await doFetch(
+    const add = await doFetch(
       `${RESEND_API}/contacts/${email}/segments/${target.id}`,
-      { method: "POST", headers },
+      {
+        method: "POST",
+        headers,
+      },
     );
-    if (!res.ok) throw new Error(`resend ${res.status}`);
+    if (!add.ok) throw new Error(`resend ${add.status}`);
   }
   for (const s of current) {
     if (s.id === target?.id) continue;
-    const res = await doFetch(
+    const del = await doFetch(
       `${RESEND_API}/contacts/${email}/segments/${s.id}`,
-      { method: "DELETE", headers },
+      {
+        method: "DELETE",
+        headers,
+      },
     );
-    if (!res.ok && res.status !== 404) throw new Error(`resend ${res.status}`);
+    if (!del.ok && del.status !== 404) throw new Error(`resend ${del.status}`);
   }
 }
 

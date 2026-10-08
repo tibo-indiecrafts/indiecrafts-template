@@ -61,14 +61,17 @@ Changed · Deprecated · Removed · Fixed**.
 - **`modules-web-newsletter` — Resend is the only subscriber list.** The Sanity `subscriber` doc, its
   Abonnés desk and the re-arm logic are gone. `subscribe()` stores nothing: it signs the sign-up
   (address, language, purpose, tags, policy version) with `NEWSLETTER_SECRET` and emails the confirm
-  link. `confirmSubscription()` verifies it and calls the api, which records the consent proof in D1
-  and upserts the Resend contact with the `locale` property and the `newsletter-<locale>` segment — so
-  each issue goes to the right language. The token rides in the URL fragment (`#t=`), so the address
-  never reaches a request log. The owner alert fires on confirm. `LEAD_MAGNET_SECRET` became
-  `NEWSLETTER_SECRET` (one key for both links). A missing setup answers `unavailable` instead of
-  dropping the sign-up. A lead-magnet request never subscribes anyone, and an empty Studio field in
-  the confirm email falls back to English or French (`confirmEmailDefaults`). A lead-magnet request never subscribes anyone, and an empty Studio field in the confirm email falls back to English or French (`confirmEmailDefaults`). **Why:** two lists
-  drifted apart, and Resend had no language to send by.
+  link. The token rides in the URL fragment (`#t=`), so the address never reaches a request log.
+  `confirmSubscription()` verifies it and calls the api, which records the consent proof in D1 (at
+  the tap — a later tap is a new consent with its own row) and upserts the Resend contact with the
+  `locale` property and the `newsletter-<locale>` segment, so each issue goes to the right language.
+  The visitor's IP is forwarded, so the api rate-limits per visitor. The owner alert fires on a
+  confirmed newsletter sign-up only. A lead-magnet request never subscribes anyone. A missing setup
+  answers `unavailable`, and a failed save `error`, instead of dropping the sign-up.
+  `LEAD_MAGNET_SECRET` became `NEWSLETTER_SECRET` (one key for both links). **Upgrade:** export any
+  real subscribers from the old Studio desk first, then delete the `subscriber` docs (the erasure
+  engine no longer reads them). **Why:** two lists drifted apart, and Resend had no language to
+  send by.
 - **`modules-web-blog` — LCP images fetch first.** The blog mosaic's first card, the post-content
   cover and the author photo use `loading="eager"` + `fetchPriority="high"` instead of Next 16's
   deprecated `priority` (preload only); the mosaic's second large card loads eagerly at normal

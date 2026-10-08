@@ -30,11 +30,14 @@ describe("subscribeContact", () => {
     vi.stubEnv("APP_API_TOKEN", "tok");
     fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
     expect(newsletterApiConfigured()).toBe(true);
-    await subscribeContact(input);
+    await subscribeContact({ ...input, clientIp: "203.0.113.7" });
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe("https://api.test/v1/newsletter/subscribers");
     expect(init.method).toBe("POST");
-    expect(new Headers(init.headers).get("authorization")).toBe("Bearer tok");
+    const headers = new Headers(init.headers);
+    expect(headers.get("authorization")).toBe("Bearer tok");
+    // The visitor, not the website server, is the rate-limit key.
+    expect(headers.get("x-client-ip")).toBe("203.0.113.7");
     expect(JSON.parse(String(init.body))).toEqual(input);
   });
 

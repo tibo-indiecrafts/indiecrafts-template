@@ -25,20 +25,25 @@ export async function subscribeContact(input: {
   email: string;
   locale: string;
   policyVersion: string;
-  /** The confirm token's issue time — the moment the visitor gave consent. */
+  /** The confirm tap — the moment the visitor gave consent. */
   consentAt: string;
+  /** The visitor's IP: the api rate-limits per visitor (`x-client-ip`), not per website. */
+  clientIp?: string;
 }): Promise<void> {
   const url = process.env.API_URL;
   const token = process.env.APP_API_TOKEN;
   if (!url || !token) throw new Error("newsletter api unconfigured");
+  const { clientIp, ...body } = input;
   const res = await apiFetch(`${url}/v1/newsletter/subscribers`, {
     method: "POST",
     headers: {
       authorization: `Bearer ${token}`,
       "content-type": "application/json",
+      ...(clientIp ? { "x-client-ip": clientIp } : {}),
     },
-    body: JSON.stringify(input),
-    timeoutMs: 5000,
+    body: JSON.stringify(body),
+    // A confirm is a short Resend chain (a few calls, 429s retried): give it room.
+    timeoutMs: 10_000,
   });
   if (!res.ok) throw new Error(`newsletter/subscribers ${res.status}`);
 }
