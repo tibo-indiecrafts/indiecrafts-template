@@ -15,6 +15,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **`modules-web-newsletter` — a repeat sign-up kept the old language.** A pending or unsubscribed
+  address that signed up again from another language got the confirm email in the new language, but
+  `subscriber.language` kept the old one, so the lead-magnet email and the Resend sync after confirm
+  used it. The re-arm now stores the new language (an unknown code is never stored).
 - **`modules-web-contact` / `modules-web-waitlist` — confirmation emails fell back to French.** An
   empty Studio field sent French copy to every visitor. `contactConfirmDefaults(locale)` and
   `waitlistConfirmDefaults(locale, name)` now give English or French, and English for any other

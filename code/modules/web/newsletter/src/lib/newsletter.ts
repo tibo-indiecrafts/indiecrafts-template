@@ -168,6 +168,8 @@ export async function subscribe(
         ? { consentPolicyVersion: policyVersion.slice(0, 120) }
         : {}),
       ...(token ? { confirmToken: token } : {}),
+      // The latest sign-up's language: confirm, magnet and Resend follow it.
+      ...(language ? { language } : {}),
     };
 
     if (existing) {
@@ -201,7 +203,6 @@ export async function subscribe(
       ...optIn,
       newsletter,
       ...(input.source ? { source: input.source.slice(0, 300) } : {}),
-      ...(language ? { language } : {}),
       ...(tags.length ? { tags } : {}),
       createdAt,
     });

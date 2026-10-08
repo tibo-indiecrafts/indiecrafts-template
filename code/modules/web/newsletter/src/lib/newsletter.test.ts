@@ -22,8 +22,11 @@ vi.mock("@indiecrafts/packages-web-email/strings", () => ({
   getEmailStrings,
   pick: () => "",
 }));
+const { sendEmail } = vi.hoisted(() => ({
+  sendEmail: vi.fn(async (_m: { subject: string; text: string }) => undefined),
+}));
 vi.mock("@indiecrafts/packages-web-email", () => ({
-  sendEmail: async () => undefined,
+  sendEmail,
   renderEmailLayout: () => "",
   escapeHtml: (s: string) => s,
   // Templates read `const C = EMAIL_COLORS` at load; a Proxy answers any token key.
@@ -144,6 +147,46 @@ describe("subscribe", () => {
       }),
     );
     expect(create).not.toHaveBeenCalled();
+  });
+
+  it("a re-arm stores the new sign-up's language, so later emails follow it", async () => {
+    fetch.mockResolvedValueOnce({
+      _id: "sub.4",
+      status: "pending",
+      language: "fr",
+    });
+    await subscribe({ ...input, language: "en" }, "2026-01-01");
+    expect(set).toHaveBeenCalledWith(
+      expect.objectContaining({ language: "en" }),
+    );
+  });
+
+  it.each([
+    ["fr", "Confirmez votre inscription", "/fr/newsletter/confirm?token="],
+    ["en", "Confirm your subscription", "/newsletter/confirm?token="],
+  ])(
+    "a %s sign-up gets the confirm email and link in its language",
+    async (language, subject, path) => {
+      vi.stubEnv("RESEND_API_KEY", "re_x");
+      getEmailStrings.mockResolvedValueOnce({
+        newsletterConfirm: { enabled: true, from: "hi@site.com" },
+      });
+      fetch.mockResolvedValueOnce(null);
+      await subscribe({ ...input, language }, "2026-01-01");
+      const mail = sendEmail.mock.calls.at(-1)?.[0];
+      expect(mail?.subject).toBe(subject);
+      expect(mail?.text).toContain(path);
+      if (language === "en") expect(mail?.text).not.toContain("/fr/");
+      vi.unstubAllEnvs();
+    },
+  );
+
+  it("an unknown language is never stored", async () => {
+    fetch.mockResolvedValueOnce(null);
+    await subscribe({ ...input, language: "xx" }, "2026-01-01");
+    expect(create).toHaveBeenCalledWith(
+      expect.not.objectContaining({ language: expect.anything() }),
+    );
   });
 
   it("an unsubscribed address re-arms with this request's consent only — a lead magnet never re-subscribes", async () => {
