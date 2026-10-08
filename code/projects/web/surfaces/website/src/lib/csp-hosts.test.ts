@@ -29,7 +29,13 @@ describe("websiteCspHosts.frameAncestors", () => {
     expect((await hosts()).frameAncestors).toEqual([
       "'self'",
       "https://acme.sanity.studio",
+      "https://www.sanity.io", // Sanity's dashboard wraps every *.sanity.studio Studio
     ]);
+  });
+
+  it("adds no dashboard for a self-hosted Studio", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SANITY_STUDIO_URL", "https://studio.acme.com");
+    expect((await hosts()).frameAncestors).toEqual(["'self'", "https://studio.acme.com"]);
   });
 
   it("keeps only the site itself without a valid Studio URL", async () => {

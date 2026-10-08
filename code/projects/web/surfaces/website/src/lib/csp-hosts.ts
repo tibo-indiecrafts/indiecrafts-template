@@ -24,11 +24,15 @@ function apiOrigin(): string[] {
 }
 
 // The hosted Studio (`*.sanity.studio`, where `/studio` redirects on Cloudflare) frames the
-// site in its "Aperçu" tab, so it is an allowed frame ancestor next to the site itself.
-function hostedStudioOrigin(): string[] {
+// site in its "Aperçu" tab. Sanity serves it inside its dashboard on www.sanity.io, and
+// `frame-ancestors` checks every ancestor, so that origin is allowed too.
+const SANITY_DASHBOARD = "https://www.sanity.io";
+function hostedStudioOrigins(): string[] {
   try {
     const url = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL;
-    return url ? [new URL(url).origin] : [];
+    if (!url) return [];
+    const { origin, hostname } = new URL(url);
+    return hostname.endsWith(".sanity.studio") ? [origin, SANITY_DASHBOARD] : [origin];
   } catch {
     return [];
   }
@@ -55,5 +59,5 @@ export const websiteCspHosts: CspHosts = {
   embedHosts: EMBED_HOSTS,
   // The Studio's "Aperçu" tab shows the site in an iframe: the embedded Studio (same origin)
   // or the hosted one. Nobody else may frame it.
-  frameAncestors: features.studio ? ["'self'", ...hostedStudioOrigin()] : [],
+  frameAncestors: features.studio ? ["'self'", ...hostedStudioOrigins()] : [],
 };
