@@ -37,7 +37,8 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   hosted Studio — it is the one editors use.
 - **The hosted Studio's Aperçu tab previews the deployed sites.** `sanity.cli.ts` passes each
   env's site URL (prod first, then local dev); each site lets `NEXT_PUBLIC_SANITY_STUDIO_URL`
-  frame it. **Why:** a relative preview URL pointed at `*.sanity.studio`, and the sites
+  frame it, plus `https://www.sanity.io` for a `*.sanity.studio` Studio (Sanity's dashboard
+  wraps it, and `frame-ancestors` checks every ancestor). **Why:** a relative preview URL pointed at `*.sanity.studio`, and the sites
   refused to be framed by it.
 - **A published post now goes live; a deleted one goes offline.** New signed route
   `POST /api/revalidate` (Sanity webhook, `SANITY_REVALIDATE_SECRET`) purges every cached page.
