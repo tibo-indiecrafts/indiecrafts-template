@@ -12,6 +12,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **Prod admin has no `workers.dev` URL.** Cloudflare Access fronts the admin's custom host only,
+  so `<worker>.workers.dev` and preview URLs reached the Worker without it (Clerk only). Prod sets
+  `workers_dev = false` and `preview_urls = false`; `wrangler-parity.test.mjs` fails for any env
+  whose tfvars attach a real host without them. **Why:** QA card 41.
+
 ### Added
 
 - **Access allow-list by email (`access_emails`).** The Zero Trust Access policy took only an email

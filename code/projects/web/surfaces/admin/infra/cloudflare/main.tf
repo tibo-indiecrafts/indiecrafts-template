@@ -1,7 +1,8 @@
 # Cloudflare edge config for the `admin` app — CO-LOCATED + SELF-CONTAINED (the app owns
 # its whole deploy surface: `wrangler.toml` ships the Worker, this owns the edge).
 # admin is SSO-GATED: a Cloudflare Zero Trust Access gate fronts the host, so only the
-# allowed email domain (var.access_email_domain) reaches the Worker.
+# listed emails (var.access_emails) or email domain (var.access_email_domain) reach the Worker.
+# The gate fronts this host only: wrangler.toml turns off workers.dev for an attached env.
 # One instance = one app, one environment. Provisions the EDGE config wrangler can't:
 #   · auto custom domain (CF makes the DNS record + cert)
 #   · rate-limit on /api/* — tiered (tighter on the form/report endpoints), the `withGuard` PRIMARY limiter
@@ -10,7 +11,7 @@
 #   · cache rules (immutable /_next/static, bypass /api + /studio) + Tiered Cache
 #   · zone hardening (SSL strict, min TLS 1.2, Always-HTTPS)
 #   · a Turnstile widget → outputs the site + secret keys for the app env
-#   · Zero Trust Access — SSO gate on the admin host (only var.access_email_domain reaches the Worker)
+#   · Zero Trust Access — SSO gate on the admin host (only var.access_emails / var.access_email_domain pass)
 #
 # PER APP (this dir) × PER ENV (one Terraform workspace + tfvars per env). Apply with
 # the `infra:web:admin:*:<env>` delegators (root package.json):
@@ -48,7 +49,7 @@ terraform {
 }
 
 # Reads CLOUDFLARE_API_TOKEN from the environment (scoped token — Zone: DNS/Cache/WAF
-# edit; Account: Workers/Turnstile edit). See code/docs/shared/infra/cloudflare-iac.md.
+# edit; Account: Workers/Turnstile/R2/Access edit). See code/docs/shared/infra/cloudflare-iac.md.
 provider "cloudflare" {}
 
 # ── Inputs (per app · per env — set in env/<env>.tfvars) ─────────────────────

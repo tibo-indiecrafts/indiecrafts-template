@@ -123,8 +123,18 @@ still applies after it. To add an admin, append the address to `access_emails` i
 `infra/cloudflare/env/<env>.tfvars` (or set `access_email_domain` for a whole domain) and apply.
 The sign-in method is the account's one-time PIN (Cloudflare emails a code), created by the
 `account` stack (`pnpm infra:shared:account:apply:staging`) — apply it before the admin stack.
-An attached host with no email and no domain fails the plan. Dev (`*.workers.dev`) has no
-Access gate: Clerk only.
+Before the first apply, open Zero Trust once in the Cloudflare dashboard: pick a team name and
+the Free plan. Terraform cannot do this step.
+An attached host with no email and no domain fails the plan.
+
+Access fronts the custom host only. A `workers.dev` or preview URL reaches the Worker without it,
+so an attached env sets `workers_dev = false` and `preview_urls = false` in `wrangler.toml`. Prod
+does now. Staging still runs on `workers.dev`: flip both keys in the change that fills its
+`zone_id` and `domain`, and point the website's staging `ADMIN_URL` at the new host.
+`wrangler-parity.test.mjs` fails until you do.
+
+Dev (`*.workers.dev`) has no Access gate: Clerk only. Dev holds test data only, and Access on
+`workers.dev` is a per-Worker dashboard switch that Terraform does not manage.
 
 ## Wired baseline
 

@@ -4,11 +4,17 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { wranglerEnvSection } from "./project.mjs";
 import { APPS, isCloudflare } from "./apps.mjs";
+import { preflight } from "./tfvars-preflight.mjs";
 
 const read = (p) =>
   readFileSync(fileURLToPath(new URL(p, import.meta.url)), "utf8");
 const API = read("../../api/wrangler.toml");
 const CRON = read("../../cron/wrangler.toml");
+const ADMIN = read("../../../projects/web/surfaces/admin/wrangler.toml");
+const adminTfvars = (env) =>
+  read(
+    `../../../projects/web/surfaces/admin/infra/cloudflare/env/${env}.tfvars`,
+  );
 
 /** The `bucket_name` of the `EXPORT_BUCKET` R2 binding in one env section, or null. Reads each
  *  `[[…r2_buckets]]` block on its own: keys in any order, any spacing, trailing comments. */
@@ -119,6 +125,21 @@ for (const env of ["dev", "staging", "prod"]) {
       cronService(wranglerEnvSection(API, env)),
       workerName(wranglerEnvSection(CRON, env)),
     );
+  });
+}
+
+// Cloudflare Access fronts the admin's custom host only: a workers.dev or preview URL would
+// reach the Worker without it. Prod always; another env once its tfvars attach a real host.
+for (const env of ["dev", "staging", "prod"]) {
+  const tfvars = adminTfvars(env);
+  const gated =
+    env === "prod" ||
+    (/^\s*attach_domain\s*=\s*true/m.test(tfvars) &&
+      preflight(tfvars).length === 0);
+  if (!gated) continue;
+  test(`${env}: the Access-gated admin has no workers.dev or preview URL`, () => {
+    assert.match(wranglerEnvSection(ADMIN, env), /^workers_dev\s*=\s*false/m);
+    assert.match(wranglerEnvSection(ADMIN, env), /^preview_urls\s*=\s*false/m);
   });
 }
 

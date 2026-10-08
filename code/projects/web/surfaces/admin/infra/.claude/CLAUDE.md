@@ -6,7 +6,9 @@ Cloudflare **edge** (domain · WAF · rate-limit `/api/*` · cache · Turnstile 
 
 **admin is SSO-gated.** This stack is the website stack PLUS an active Cloudflare Zero Trust Access gate on the
 admin host — only the listed emails (`access_emails`) or email domain (`access_email_domain`) reach the Worker.
-Set them in the tfvars (an attached host with both empty fails the plan), and configure Cloudflare Zero Trust (an IdP) on the account before the first apply.
+Set them in the tfvars (an attached host with both empty fails the plan). The sign-in method (one-time PIN) comes from
+the `account` stack (`code/shared/infra/cloudflare/account`): apply it first. The gate fronts the custom host only, so an
+attached env turns off `workers_dev` + `preview_urls` in `wrangler.toml` (`wrangler-parity.test.mjs` checks).
 
 **Stack:** Terraform (`cloudflare/cloudflare ~> 5`). **Self-contained** — one `main.tf` holds the provider,
 the per-app/per-env variables, and all the edge resources directly (no shared module). A next-cf sibling of
@@ -34,13 +36,13 @@ pnpm infra:web:admin:apply:<env>     # provision
 pnpm infra:web:admin:output:prod     # read outputs (Turnstile keys)
 ```
 
-Needs a **scoped** `CLOUDFLARE_API_TOKEN` (Zone: DNS/Cache/WAF edit · Account: Workers/Turnstile/Access edit).
+Needs a **scoped** `CLOUDFLARE_API_TOKEN` (Zone: DNS/Cache/WAF edit · Account: Workers/Turnstile/R2/Access edit).
 `shared/scripts/infra/run.mjs` selects a Terraform **workspace per env** (state isolated per env).
 
 ## Rules
 
 - **admin is SSO-gated** — the Zero Trust Access gate is active; list the admins in `access_emails` (or set
-  `access_email_domain`) in every attached-domain tfvars, and set up Cloudflare Zero Trust (an IdP) on the account first, or the apply fails.
+  `access_email_domain`) in every attached-domain tfvars, and apply the `account` stack (the IdP) first.
 - **NEVER commit state** — `terraform.tfstate*` holds the Turnstile secret + resource ids (gitignored here).
 - **Turnstile keys flow to the app env** — `output turnstile_site_key` → `NEXT_PUBLIC_TURNSTILE_SITE_KEY`;
   `turnstile_secret` → `TURNSTILE_SECRET` (set via `wrangler secret put` / the app's secrets sync, never committed).

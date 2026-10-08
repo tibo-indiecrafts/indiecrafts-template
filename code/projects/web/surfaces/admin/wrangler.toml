@@ -46,6 +46,9 @@ APP_URL = "https://indiecrafts-dev-web-surfaces-app.thibault-montaufray.workers.
 
 [env.staging]
 name = "indiecrafts-staging-web-surfaces-admin"
+# Staging still runs on workers.dev. When its Access host goes live (zone_id + domain in
+# infra/cloudflare/env/staging.tfvars), set workers_dev + preview_urls = false here, as prod
+# does: wrangler-parity.test.mjs fails until you do.
 
 [env.staging.vars]
 # Per-env origins (config, not secrets — the secret sync skips keys set here). The System
@@ -56,6 +59,9 @@ APP_URL = "https://indiecrafts-staging-web-surfaces-app.thibault-montaufray.work
 
 [env.prod]
 name = "indiecrafts-prod-web-surfaces-admin"
+# Only the Access-gated host serves prod: a workers.dev or preview URL skips Cloudflare Access.
+workers_dev = false
+preview_urls = false
 
 # [env.prod.vars]
 # API_URL = "https://api.your-domain.com"
