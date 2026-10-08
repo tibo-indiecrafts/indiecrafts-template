@@ -74,7 +74,11 @@ for (const f of GUARDED) {
     // vector) and runs the handler, which rejects the input before any write.
     const res = await request.post(f.path, {
       headers: { "content-type": "application/json" },
-      data: typeof f.invalid === "string" ? f.invalid : { ...base, ...f.invalid },
+      // A string goes as raw bytes: Playwright would JSON-encode it into a valid JSON string.
+      data:
+        typeof f.invalid === "string"
+          ? Buffer.from(f.invalid)
+          : { ...base, ...f.invalid },
     });
     expect(res.status()).toBe(400);
   });

@@ -80,6 +80,10 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The erasure, account and email-preference forms failed outside dev.** They call the shared api
+  from the browser, but the production CSP `connect-src` allowed only `'self'`, so the browser
+  blocked the request and the form showed "Something went wrong". `websiteCspHosts.connectSrc` now
+  lists the `NEXT_PUBLIC_API_URL` origin, as the app already does. The `erasure` journey caught it.
 - **The subscriber export emailed the wrong people.** `subscribers-export.mjs` exported every
   `subscriber` — pending, unsubscribed and lead-magnet-only included. It now writes only confirmed
   newsletter subscribers; `--all` writes an audit file with every status. The Studio "send test"

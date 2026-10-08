@@ -155,7 +155,7 @@ Every PR runs these (all **blocking** except `browser`):
 
 | Job                 | What                                                                                                                        |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `verify`            | tsc · lint · format · WCAG contrast · unit tests · script tests · tooling gates                                             |
+| `verify`            | tsc · lint · format · WCAG contrast · unit tests + coverage floors · script tests · tooling gates                           |
 | `build`             | the real OpenNext `build:cf` for every affected next-cf app                                                                 |
 | `infra`             | `terraform fmt -check` + `init -backend=false` + `validate` on the Cloudflare edge (creds-free; `plan`/`apply` stay manual) |
 | `wrangler`          | `wrangler deploy --dry-run` for each bare worker (api · cron · workers) — validates the toml + bundle, no auth              |
@@ -163,6 +163,15 @@ Every PR runs these (all **blocking** except `browser`):
 | `dependency-review` | GitHub-native — flags vulnerable / disallowed deps                                                                          |
 | `secrets-scan`      | gitleaks — fails on a committed credential                                                                                  |
 | `browser`           | advisory — Storybook a11y + Playwright e2e/visual                                                                           |
+
+**Coverage floors.** `verify` re-runs the Vitest suites with `--coverage` (all but the three
+Workers: their pool has no v8 coverage). The floors live in one table, `COVERAGE_FLOORS` in
+`vitest.shared.ts`, keyed by package name: measured value minus 3 points, rounded down
+(measured 2026-10-08). Covered today: `app` · `website` · `admin` · `shared-security` ·
+`shared-compliance` · `shared-config`. A package not in the table has no floor. Raise a floor
+when coverage rises; never lower one to pass a PR. Check one package locally:
+`pnpm --filter <pkg> exec vitest run --coverage`. The tooling gates include `check:secret-leak`
+and a report-only `check:placeholders` (it lists leftover template scaffolding, exit 0).
 
 ## Local preview + manual deploy
 

@@ -143,6 +143,43 @@ Cloudflare Access gate on the subdomain as defense-in-depth before the app goes 
   `reset`). `[locale]/layout.tsx` renders the shared `SkipLink` (`@indiecrafts/packages-web-ui-components`) as the first focusable element; it
   targets the `<main id="main">` of the shell or of `/sign-in`.
 
+## Testing
+
+**Unit (vitest)** — colocated `*.test.{ts,tsx}`, run with
+`pnpm --filter @indiecrafts/web-surfaces-admin test`. They cover:
+
+- **The gate** — `src/proxy.ts`, the `(dashboard)` layout, `src/lib/require-admin.ts`
+  (unconfigured Clerk, signed out, non-admin and admin), and every server action failing
+  closed for a non-admin.
+- **The api routes** — `/api/csp-report` through the real shared handler (204 valid and
+  anonymous, 415 wrong content-type, 413 oversize, 429 rate-limited, 204 for bad JSON) and
+  `/api/session-log` (401 signed out without reading the body, 204 with a `web` fallback for a
+  bad body).
+- **The data pages** — churn, sessions, security and system (`data-pages.test.tsx`), called as
+  functions with the api mocked: the bearer goes only to the api, an unconfigured or failing
+  api shows its alert or empty state (security never reads "all clear" on an error), and
+  unknown codes render as "Unknown" or raw text.
+- **Libraries and tables** — monitoring, Clerk emails, consent history, nav, and the client
+  tables and sheets.
+
+**End to end (Playwright)** — `e2e/journeys/`, against a built admin on port 3012:
+
+```bash
+pnpm --filter @indiecrafts/web-surfaces-admin exec playwright install chromium   # once
+pnpm --filter @indiecrafts/web-surfaces-admin e2e
+```
+
+- `gate.spec.ts` needs no credentials. Signed out, `/en`, `/en/users`, `/en/sessions`,
+  `/en/security`, `/en/churn` and `/en/system` each land on `/sign-in`, and no served HTML
+  document carries the dashboard shell. `/en/sign-in` renders. The CSP sink answers 204, 415
+  and 413, and `/api/session-log` refuses a signed-out caller. It passes with Clerk
+  unconfigured (the layout redirects) and with Clerk wired (the proxy redirects first).
+- `sign-in.spec.ts` self-skips without `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` +
+  `CLERK_SECRET_KEY` (a Clerk test instance, never prod keys). It uses Clerk Testing Tokens and
+  a `+clerk_test` identity: a signed-in non-admin stays on sign-in with the "not an admin"
+  notice. The admin case also needs `E2E_CLERK_ADMIN_EMAIL`: a test user with
+  `publicMetadata.role = "admin"`, on an instance whose session token carries `metadata`.
+
 ## Deploy
 
 ```bash

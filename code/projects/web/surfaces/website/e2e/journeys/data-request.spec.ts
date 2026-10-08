@@ -38,7 +38,9 @@ test("a data request needs a right and consent, then confirms receipt", async ({
   await expect(submit).toBeEnabled();
   await submit.click();
 
-  await expect(page.getByRole("status").filter({ hasText: copy.success })).toBeVisible();
+  // Sanity `uiMessages` may overlay the JSON copy, so assert the state, not the words.
+  await expect(page.getByRole("status")).toBeVisible();
+  await expect(submit).toBeHidden();
   expect(posts).toHaveLength(1);
   expect(posts[0]).toMatchObject({
     email: "e2e@example.com",

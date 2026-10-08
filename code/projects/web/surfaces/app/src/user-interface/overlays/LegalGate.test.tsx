@@ -55,7 +55,9 @@ async function mountGate() {
   return { root, render, legalStore };
 }
 
-describe("SignedInLegalGate", () => {
+// Each test re-imports the gate cold (`vi.resetModules`), which a `--coverage` run slows past
+// the 5 s default on a busy runner.
+describe("SignedInLegalGate", { timeout: 15_000 }, () => {
   // Sign-in is a client-side navigation: the gate stays mounted. Without a re-check, a
   // user who already accepted on another surface keeps seeing the banner until a reload.
   it("re-reads the server acceptance when the user signs in", async () => {

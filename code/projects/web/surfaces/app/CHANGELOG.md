@@ -14,6 +14,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The not-found e2e journey runs again.** An unknown route already answered 404 with the
+  branded page (the `[locale]/[...rest]` catch-all calls `notFound()`), but
+  `e2e/journeys/not-found.spec.ts` still carried a stale `test.fixme`. It now asserts the 404
+  status and the "Page not found" heading; with the Clerk keys set, it signs in first, because
+  the proxy sends a signed-out visitor to `/sign-in`. New unit tests cover the catch-all, the
+  proxy's signed-out redirect, and the `(app)` layout's server-side sign-in gate. **Why:** the
+  gap was closed in code but not in the gate, so a regression to a soft 200 went unseen.
+
 - **A skip link and a loading state.** A "Skip to main content" link is now the first tab stop on
   every page (the shared `SkipLink` from `packages-web-ui-components`, targets `#main`); the sign-in and sign-up pages gained the `#main`
   target they lacked. An `(app)` page shows a status spinner inside the shell while it loads

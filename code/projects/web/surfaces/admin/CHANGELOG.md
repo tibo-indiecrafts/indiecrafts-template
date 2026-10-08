@@ -14,6 +14,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Admin e2e and more unit tests.** `pnpm --filter @indiecrafts/web-surfaces-admin e2e` runs
+  Playwright journeys against a built admin on port 3012 (`playwright.config.ts`,
+  `e2e/journeys/`). `gate.spec.ts` needs no credentials: signed out, every dashboard route lands
+  on sign-in without the dashboard shell, sign-in renders, and the CSP sink answers 204/415/413.
+  `sign-in.spec.ts` (Clerk Testing Tokens) self-skips until the Clerk test keys are set. New
+  vitest suites cover the CSP and session-log routes (status codes through the real handler), the
+  churn/sessions/security/system pages (bearer, empty and error states), and the shared
+  `requireAdminPage` check (`src/lib/require-admin.ts`). Why: the gate is the admin's one
+  security boundary, and it had no browser test.
 - **Loading and error states inside the shell, and a skip link.** A dashboard page now shows a
   status spinner while it loads (`(dashboard)/loading.tsx`). A failed page shows a short message
   and a Retry button (`(dashboard)/error.tsx`), with the sidebar still usable; before, Next's

@@ -39,12 +39,20 @@ jobs:
       - run: pnpm lint:scripts
       - run: pnpm test:scripts
       - run: pnpm test
+      # Coverage floors: per-package thresholds in vitest.shared.ts fail the job on a real
+      # drop. Skips the three Workers: their pool has no v8 coverage (no `node:inspector`);
+      # `pnpm test` above still runs them.
+      - run: pnpm exec turbo run test --concurrency=50% --filter='!@indiecrafts/shared-api' --filter='!@indiecrafts/shared-cron' --filter='!@indiecrafts/shared-workers' -- --coverage --coverage.reporter=text-summary
       - run: pnpm check:api-guards
       - run: pnpm check:typed-routing
       - run: pnpm tokens:check
       - run: pnpm brands:check
       - run: pnpm check:tasks
       - run: pnpm check:secret-leak
+      # Report-only (always exit 0): lists leftover template scaffolding in the job log.
+      # `-- --strict` (exit 1 on a HARD hit) runs before a client site goes live, not here:
+      # the template ships its own fill-me tokens.
+      - run: pnpm check:placeholders
       - run: pnpm check:lint-no-types
       - run: pnpm check:doc-coverage
       - run: pnpm check:claude-md
@@ -117,6 +125,14 @@ jobs:
         env:
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.E2E_CLERK_PUBLISHABLE_KEY }}
           CLERK_SECRET_KEY: ${{ secrets.E2E_CLERK_SECRET_KEY }}
+      # Admin auth-gate journeys (gate · sign-in). The gate journeys need no credentials and
+      # prove the admin fails closed. The signed-in journeys skip without the Clerk keys; the
+      # admin case also needs E2E_CLERK_ADMIN_EMAIL (a test user with the admin role).
+      - run: pnpm --filter @indiecrafts/web-surfaces-admin e2e
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.E2E_CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY: ${{ secrets.E2E_CLERK_SECRET_KEY }}
+          E2E_CLERK_ADMIN_EMAIL: ${{ secrets.E2E_CLERK_ADMIN_EMAIL }}
 
   # Playwright visual regression against the built Storybook. ADVISORY (`continue-on-error`)
   # until the linux baselines are committed — then drop `continue-on-error` to graduate it.

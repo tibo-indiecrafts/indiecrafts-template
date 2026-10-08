@@ -84,7 +84,10 @@ unshelled — no sidebar, no header.
 
 **Boundaries + skip link.** `(app)/loading.tsx` shows a status spinner inside the shell while
 a page streams in. `[locale]/error.tsx` and `[locale]/not-found.tsx` are full-screen and
-branded. `[locale]/layout.tsx` renders the shared `SkipLink` (`@indiecrafts/packages-web-ui-components`) as the first focusable element; every page
+branded. An unknown path hits the `[locale]/[...rest]` catch-all, which calls `notFound()`, so
+it renders `[locale]/not-found.tsx` with a real 404 status (no Suspense boundary above it, so the
+response is not streamed). With Clerk on, the proxy first sends a signed-out visitor to
+`/sign-in`, so an unknown URL does not reveal which routes exist. `[locale]/layout.tsx` renders the shared `SkipLink` (`@indiecrafts/packages-web-ui-components`) as the first focusable element; every page
 has a `<main id="main" tabIndex={-1}>` for it (the shell's `SidebarInset`, the auth pages, and
 the error and 404 screens).
 
@@ -140,7 +143,7 @@ Run them with `pnpm e2e`; CI runs them in the `browser-e2e-app` job.
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `boot`      | `/en` returns 2xx and shows the app shell **or** the sign-in form.                                                                                              |
 | `version`   | `GET /api/version` returns 200 with a string `version`.                                                                                                         |
-| `not-found` | `test.fixme` — records a known gap: the app ships no `[locale]/not-found.tsx`, so an unknown route soft-returns 200, not a branded 404.                         |
+| `not-found` | An unknown route answers **404** with the branded page. With the Clerk keys it signs in first: a signed-out visitor goes to `/sign-in`.                         |
 | `sign-in`   | Clerk Testing Token flow — sign-in establishes a session, the gated `/account` stays reachable, sign-out clears it. **Self-skips** without the Clerk test keys. |
 
 There is **no dataset seed** — the home's one Sanity read falls back to a message-file

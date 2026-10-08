@@ -18,6 +18,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 
 ## [Unreleased]
 
+- **CI enforces coverage floors and lists leftover placeholders.** `verify` re-runs the Vitest
+  suites with `--coverage` against per-package floors (`COVERAGE_FLOORS` in `vitest.shared.ts`:
+  `app`, `website`, `admin`, `shared-security`, `shared-compliance`, `shared-config`; measured
+  minus 3 points). It also runs `check:placeholders` report-only. The coverage `exclude` now
+  keeps Vitest's defaults, so a local `.next/` no longer crashes the report. **Why:** coverage
+  was configured but never checked, so a drop went unseen.
 - **`pnpm dev:doctor` warns before a keyless deploy does.** It now checks each surface's registry
   `requiredEnv` in its `.env.local` (`app` and `admin`), next to the workers' `.dev.vars`
   (`missingLocalEnv`, `lib/deploy-shared.mjs`, tested). **Why:** only `website` had an env

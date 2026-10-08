@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { auth } = vi.hoisted(() => ({ auth: vi.fn() }));
@@ -8,10 +9,14 @@ vi.mock("@indiecrafts/packages-web-auth/session-log", () => ({ logSession }));
 
 const { POST } = await import("./route");
 
-function request(init: { body?: object; headers?: Record<string, string> } = {}) {
+function request(init: { body?: object | string; headers?: Record<string, string> } = {}) {
+  const body =
+    init.body === undefined
+      ? {}
+      : { body: typeof init.body === "string" ? init.body : JSON.stringify(init.body) };
   return new Request("https://x.dev/api/session-log", {
     method: "POST",
-    ...(init.body !== undefined ? { body: JSON.stringify(init.body) } : {}),
+    ...body,
     headers: init.headers,
   });
 }
@@ -59,5 +64,21 @@ describe("POST /api/session-log", () => {
       country: "FR",
       clientIp: "203.0.113.9",
     });
+  });
+
+  it("answers 204 for invalid JSON and a non-string surface, logging 'web'", async () => {
+    auth.mockResolvedValue({ userId: "user_3", sessionId: "sess_3" });
+    for (const body of ["{not json", { surface: 42 }, { surface: ["admin"] }]) {
+      expect((await POST(request({ body }))).status, JSON.stringify(body)).toBe(204);
+    }
+    expect(logSession).toHaveBeenCalledTimes(3);
+    for (const [input] of logSession.mock.calls) expect(input.surface).toBe("web");
+  });
+
+  it("never reads the body for a signed-out caller", async () => {
+    auth.mockResolvedValue({ userId: null, sessionId: null });
+    const req = request({ body: { surface: "admin" } });
+    expect((await POST(req)).status).toBe(401);
+    expect(req.bodyUsed).toBe(false);
   });
 });

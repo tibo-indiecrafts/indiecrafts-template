@@ -11,6 +11,17 @@ import type { CspHosts } from "@indiecrafts/packages-shared-security";
 // form can submit + load past the CSP. See code/docs/modules/web/newsletter.
 const EMBED_HOSTS: string[] = [];
 
+// The browser calls the shared api Worker directly (erasure, account, email
+// preferences). The production `connect-src` allows only `'self'`, so list its origin.
+function apiOrigin(): string[] {
+  try {
+    const url = process.env.NEXT_PUBLIC_API_URL;
+    return url ? [new URL(url).origin] : [];
+  } catch {
+    return [];
+  }
+}
+
 /**
  * The website's CSP host allowlist — single source of truth shared by
  * `next.config.ts` (`securityHeaders` + `studioCspRule`) and `src/proxy.ts`
@@ -27,6 +38,7 @@ export const websiteCspHosts: CspHosts = {
   ],
   // Uploaded featured videos are served as Sanity file assets.
   mediaSrc: ["https://cdn.sanity.io"],
+  connectSrc: apiOrigin(),
   googleAnalytics: true,
   embedHosts: EMBED_HOSTS,
 };
