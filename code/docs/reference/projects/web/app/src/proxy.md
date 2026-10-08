@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The Next.js proxy (middleware) for the `app` surface. It runs next-intl locale detection and redirection, and, when Clerk is configured, gates every route except sign-in behind a signed-in user. It generates a per-request CSP nonce, passes it to the layout via `x-nonce`, and stamps the strict nonce CSP (enforce by default, `report-only` via `CSP_MODE`). With no Clerk key it is next-intl only. Gating here is coarse; the real enforcement is the server-side layout gate.
+The Next.js proxy (middleware) for the `app` surface. It runs next-intl locale detection and redirection, and, when Clerk is configured, gates every route except sign-in and sign-up behind a signed-in user. It generates a per-request CSP nonce, passes it to the layout via `x-nonce`, and stamps the strict nonce CSP (enforce by default, `report-only` via `CSP_MODE`). With no Clerk key it is next-intl only. Gating here is coarse; the real enforcement is the server-side layout gate.
 
 ## Exports
 

@@ -43,7 +43,7 @@ describe("proxy — Clerk-authenticated api routes", () => {
 });
 
 // Page paths: a signed-out visitor bounces to /sign-in (coarse routing; the (app) layout is
-// the real gate). Sign-in itself and any path for a signed-in user go through next-intl,
+// the real gate). Sign-in/up and any path for a signed-in user go through next-intl,
 // so an unknown path reaches the `[...rest]` catch-all and 404s.
 describe("proxy — signed-out redirect", () => {
   it("redirects a signed-out visitor on a page path to /sign-in", async () => {
@@ -54,12 +54,15 @@ describe("proxy — signed-out redirect", () => {
     expect(res.headers.get("content-security-policy")).toBeTruthy();
   });
 
-  it("lets the sign-in page through without a session", async () => {
-    authMock.mockResolvedValue({ userId: null });
-    const res = await run("/fr/sign-in");
-    expect(res.headers.get("location")).toBeNull();
-    expect(res.headers.get("x-intl")).toBe("1");
-  });
+  it.each(["/fr/sign-in", "/sign-in", "/fr/sign-up", "/sign-up/verify"])(
+    "lets %s through without a session",
+    async (path) => {
+      authMock.mockResolvedValue({ userId: null });
+      const res = await run(path);
+      expect(res.headers.get("location")).toBeNull();
+      expect(res.headers.get("x-intl")).toBe("1");
+    },
+  );
 
   it("hands a signed-in user's unknown path to next-intl (no redirect)", async () => {
     authMock.mockResolvedValue({ userId: "user_1" });

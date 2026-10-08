@@ -14,6 +14,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **A signed-out visitor can reach `/sign-up` again.** The proxy let only `/sign-in` through, so
+  Clerk's "Sign up" link bounced back to sign-in, on the web and in the mobile shell. Nobody could
+  create an account on the app, and its commercial-email checkbox never showed. `/sign-up` (with or
+  without a locale) is now public, like the docs say; the `(app)` layout still guards the rest.
+
 - **The not-found e2e journey runs again.** An unknown route already answered 404 with the
   branded page (the `[locale]/[...rest]` catch-all calls `notFound()`), but
   `e2e/journeys/not-found.spec.ts` still carried a stale `test.fixme`. It now asserts the 404
