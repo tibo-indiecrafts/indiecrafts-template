@@ -12,6 +12,8 @@ status: stable
 
 `WaitlistForm` is the client half of `module.waitlist`, rendered by the server `<Waitlist>` wrapper. Every label is a resolved, per-locale string from the block. It posts to `/api/waitlist`, which creates a `waitlistEntry` document. The name field appears only when `namePlaceholder` is set. A hidden honeypot, a render timestamp, and Turnstile block bots. A `201` response means success; new and already-on are deliberately indistinguishable so membership cannot be enumerated.
 
+An empty label falls back to the host app's `forms.*` messages, in the page language. The consent checkbox always shows, and submit stays disabled until it is ticked.
+
 ## Exports
 
 - `WaitlistFormProps` — type: the resolved copy, `Omit<WaitlistModule, "_type" | "_key" | "hidden">`.

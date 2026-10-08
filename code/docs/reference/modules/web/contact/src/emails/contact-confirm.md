@@ -10,11 +10,12 @@ status: stable
 
 ## Purpose
 
-This template renders the "we got your message" acknowledgement sent to the person who submitted the contact form. It is copy-agnostic: the caller resolves the sender-locale strings (from Sanity `emailStrings`) and passes them in. There is no link — a contact acknowledgement just reassures. `intro` and `outro` may be multi-line (one paragraph per line).
+This template renders the "we got your message" acknowledgement sent to the person who submitted the contact form. It is copy-agnostic: the caller resolves the sender-locale strings (from Sanity `emailStrings`, else `contactConfirmDefaults`) and passes them in. There is no link — a contact acknowledgement just reassures. `intro` and `outro` may be multi-line (one paragraph per line).
 
 ## Exports
 
 - `renderContactConfirmEmail` — takes `ContactConfirmInput`, returns a `RenderedEmail` (`{ subject, text, html }`).
+- `contactConfirmDefaults(locale)` — the fallback `subject`, `heading` and `intro` for an empty Studio field: English or French, English for any other locale.
 - `ContactConfirmInput` — type `{ subject, heading, intro, outro?, supportEmail? }`.
 
 ## Usage

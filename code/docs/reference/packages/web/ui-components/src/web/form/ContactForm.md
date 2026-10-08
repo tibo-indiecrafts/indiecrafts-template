@@ -12,6 +12,8 @@ status: stable
 
 `ContactForm` is the client half of `module.contact`, rendered by the server `<Contact>` wrapper. Every label is a resolved, per-locale string from the block. It posts to `/api/contact`, which creates a `contactMessage` document. Name and subject fields appear only when their placeholder is set; the message textarea is always present. A hidden honeypot, a render timestamp, and Turnstile block bots. A `201` response means success; anything else is an error.
 
+An empty label falls back to the host app's `forms.*` messages, in the page language. The consent checkbox always shows, and submit stays disabled until it is ticked.
+
 ## Exports
 
 - `ContactFormProps` — type: the resolved copy, `Omit<ContactModule, "_type" | "_key" | "hidden">`, plus `headingAs` (`"h1" | "h2" | "h3"`, default `"h3"`; `"h1"` when the form is the whole page).
