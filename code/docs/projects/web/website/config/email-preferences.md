@@ -30,7 +30,7 @@ controls, each mapped to a Resend Topic for real sending.
   (`applyMarketingDecision`): yes grants the `includeAtSignup` categories, no turns every
   category off. So the switch and the Emails page never disagree.
 - **The api is the single reader.** `fetchEmailPreferences` (`code/shared/api/src/consent/email-preferences-sanity.ts`)
-  reads the Sanity singleton over GROQ, locale-resolved. Every surface calls the api;
+  reads the Sanity singleton over GROQ from the live API (not the CDN, whose copy can be an hour old), locale-resolved. Every surface calls the api;
   none reads Sanity directly. It **never throws** — an unset, unreachable, or empty
   Studio falls back to a seeded `news`-only default, so the preference centre is never blank.
 
@@ -73,7 +73,8 @@ Resend Topics are the per-category primitive — Resend's `unsubscribed` flag is
 per-category, so per-category state needs Topics. Setup, per environment:
 
 1. Create **one Resend Topic per Sanity category**, with `default_subscription: opt_out`
-   (run `pnpm resend:topics:sync`, which is idempotent).
+   (run `pnpm resend:topics:sync`, which is idempotent). Every topic is private and
+   `opt_out`: there is no catch-all topic, so nobody is subscribed without a decision.
 2. Paste each Topic's id into the matching category's `resendTopicId` field in Sanity.
 3. Set `RESEND_API_KEY` (also used for `email_preferences`'s sibling, the `marketing_email`
    contact mirror) and verify the sending domain in Resend. Contacts are global — Resend

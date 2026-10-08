@@ -7,6 +7,13 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The email categories come from the live Sanity API, not its CDN.** A sign-up read a stale copy
+  (up to an hour old in some regions), so a category an editor had just added to the sign-up
+  grant was not granted. These reads are rare (sign-ups and preference saves).
+- **`resend:topics:sync` no longer creates the `general` topic.** Nothing used it, and its
+  `opt_in` default subscribed every contact, including users who said no. Every topic is now
+  private and `opt_out`.
+
 - **The "Commercial emails" switch and the Emails page no longer disagree.** `POST
 /v1/consent/marketing-email` (the account switch and the sign-in nudge) now writes through the
   email-preference categories (`applyMarketingDecision`): yes grants the `includeAtSignup`

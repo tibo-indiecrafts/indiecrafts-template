@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Reads the Studio `emailPreferences` singleton over raw GROQ-over-HTTP and resolves its categories and notices to a locale. This is the api's single runtime reader of the category definitions — web and mobile consume the api rather than reading Sanity. It never throws: an unset, unreachable, or empty Studio resolves to a seeded `news`-only default so the preference centre is never blank.
+Reads the Studio `emailPreferences` singleton over raw GROQ-over-HTTP and resolves its categories and notices to a locale. It reads the live API (`api.sanity.io`), never the CDN: the categories decide what a sign-up grants, and the CDN can serve a copy up to an hour old. This is the api's single runtime reader of the category definitions — web and mobile consume the api rather than reading Sanity. It never throws: an unset, unreachable, or empty Studio resolves to a seeded `news`-only default so the preference centre is never blank.
 
 ## Exports
 

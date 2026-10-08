@@ -23,17 +23,6 @@ test("topicPayload defaults to private + opt_out", () => {
   assert.equal(p.name, "News");
 });
 
-test("topicPayload honours per-topic overrides (general = public + opt_in)", () => {
-  const p = topicPayload({
-    key: "general",
-    name: "General",
-    default_subscription: "opt_in",
-    visibility: "public",
-  });
-  assert.equal(p.visibility, "public");
-  assert.equal(p.default_subscription, "opt_in");
-});
-
 test("findTopicId matches by name", () => {
   const list = {
     data: [
@@ -45,10 +34,9 @@ test("findTopicId matches by name", () => {
   assert.equal(findTopicId(list, "Nope"), undefined);
 });
 
-test("TOPICS covers the four categories + churned + general", () => {
+test("TOPICS covers the four categories + churned", () => {
   assert.deepEqual(TOPICS.map((t) => t.key).sort(), [
     "churned",
-    "general",
     "news",
     "offers",
     "partners",

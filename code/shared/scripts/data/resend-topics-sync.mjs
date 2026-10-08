@@ -29,23 +29,14 @@ const I18N_SOURCE = new URL(
   import.meta.url,
 );
 
-// The 4 categories + churned are `private` (users manage them in the app's own
-// localised preference centre) and default `opt_out`. `general` is the exception:
-// a standalone marketing topic for existing/imported contacts (NOT a Sanity
-// category), `public` so recipients can self-unsubscribe on Resend's hosted page,
-// and `opt_in` per the operator's choice.
+// Every topic is `private` (users manage them in the app's own localised preference
+// centre) and default `opt_out`: no contact is ever subscribed without a decision.
 export const TOPICS = [
   { key: "news", name: "News" },
   { key: "offers", name: "Offers" },
   { key: "partners", name: "Partners" },
   { key: "tips", name: "Tips" },
   { key: "churned", name: "Win-back (former members)" },
-  {
-    key: "general",
-    name: "general",
-    default_subscription: "opt_in",
-    visibility: "public",
-  },
 ];
 
 export function resolveKey(env) {
@@ -56,8 +47,8 @@ export function resolveKey(env) {
 export function topicPayload(topic) {
   return {
     name: topic.name,
-    default_subscription: topic.default_subscription ?? "opt_out",
-    visibility: topic.visibility ?? "private",
+    default_subscription: "opt_out",
+    visibility: "private",
   };
 }
 
@@ -155,13 +146,9 @@ async function main() {
 
   console.log("\nPaste these into Sanity emailPreferences (resendTopicId):");
   for (const topic of TOPICS) {
-    if (topic.key !== "general" && ids[topic.key])
+    if (ids[topic.key])
       console.log(`${topic.key.toUpperCase()}=${ids[topic.key]}`);
   }
-  if (ids.general)
-    console.log(
-      `\nGENERAL=${ids.general}  (standalone marketing topic for imported contacts — not a Sanity category)`,
-    );
 
   process.exit(failed ? 1 : 0);
 }

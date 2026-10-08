@@ -297,6 +297,7 @@ describe("clerk webhook → user_profiles", () => {
     stubSanityCategories([
       { key: "news", includeAtSignup: true },
       { key: "offers", includeAtSignup: false },
+      { key: "tips", includeAtSignup: true },
     ]);
     await postWebhook(
       {
@@ -317,6 +318,12 @@ describe("clerk webhook → user_profiles", () => {
       .bind("user_signup_grant", "news")
       .first<{ granted: number }>();
     expect(news?.granted).toBe(1);
+    const tips = await env.AUDIT_DB.prepare(
+      "SELECT granted FROM email_preferences WHERE user_id = ? AND category_key = ?",
+    )
+      .bind("user_signup_grant", "tips")
+      .first<{ granted: number }>();
+    expect(tips?.granted).toBe(1);
 
     // Not includeAtSignup → no row written for it.
     const offers = await env.AUDIT_DB.prepare(

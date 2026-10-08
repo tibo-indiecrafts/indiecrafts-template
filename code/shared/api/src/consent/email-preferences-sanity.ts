@@ -107,9 +107,9 @@ export async function fetchEmailPreferences(
   try {
     const version = env.SANITY_API_VERSION || "2025-01-01";
     const token = env.SANITY_API_READ_TOKEN;
-    const host = token
-      ? `${env.SANITY_PROJECT_ID}.api.sanity.io`
-      : `${env.SANITY_PROJECT_ID}.apicdn.sanity.io`;
+    // The live API, never the CDN: these categories decide consent (what a sign-up grants),
+    // and the CDN can serve a copy up to an hour old in some regions. Reads are rare.
+    const host = `${env.SANITY_PROJECT_ID}.api.sanity.io`;
     const query =
       '*[_type=="emailPreferences"][0]{ categories[]{ key, name, description, includeAtSignup, resendTopicId }, notices[]{ name, description }, churned{ name, description, resendTopicId } }';
     const endpoint = `https://${host}/v${version}/data/query/${env.SANITY_DATASET}?query=${encodeURIComponent(query)}`;

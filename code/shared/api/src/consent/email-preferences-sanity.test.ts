@@ -65,6 +65,8 @@ describe("fetchEmailPreferences", () => {
       { name: "Commandes", description: "Confirmations de commande." },
     ]);
     expect(String(f.mock.calls[0][0])).toContain("emailPreferences");
+    // Live API, not the CDN: a stale copy would grant the wrong categories at sign-up.
+    expect(String(f.mock.calls[0][0])).toContain(".api.sanity.io/");
   });
 
   it("returns the churned topic id and every category's topic id as optOutTopicIds", async () => {
