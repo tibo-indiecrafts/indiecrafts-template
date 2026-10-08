@@ -84,10 +84,10 @@ Never commit `.env.local` — `.gitignore` already blocks every `.env*` except `
 
 Sanity's free plan gives each project **2 datasets, public only**. The template uses both:
 
-| Dataset      | Holds                                  | Read by                                                              |
-| ------------ | -------------------------------------- | -------------------------------------------------------------------- |
-| `production` | The real content, edited in the Studio | Every deployed site (dev, staging, prod) and local dev               |
-| `tests-e2e`  | Demo content (`pnpm seed:e2e`)         | Only the Playwright journeys (`pnpm e2e`); CI reads it with no token |
+| Dataset      | Holds                                  | Read by                                                                      |
+| ------------ | -------------------------------------- | ---------------------------------------------------------------------------- |
+| `production` | The real content, edited in the Studio | Every deployed site (dev, staging, prod) and local dev                       |
+| `tests-e2e`  | Demo content (`pnpm seed:e2e`)         | Only the Playwright journeys (`pnpm e2e`); CI reads it with the Viewer token |
 
 There is no `staging` dataset: the dev and staging sites read `production`, and the Studio's **Aperçu** tab previews drafts before they go live.
 
@@ -315,7 +315,7 @@ Without the baseline the site has no cookie-banner text, empty legal pages, no f
 
 **The guard.** `pnpm seed` refuses a dataset that already has content (a `siteSettings` document): a re-seed replaces every seeded document and erases the editors' work. Add `-- --force` only on a dataset you can lose.
 
-**The test dataset.** `pnpm e2e` on your machine re-seeds `tests-e2e` before the journeys. CI holds **no** Sanity token: a token works on every dataset of the project, so a CI token could write `production`. The journeys stub every form POST, and CI only reads the seeded `tests-e2e` dataset. **After you change the seed, run `pnpm seed:e2e` before you push**, or the CI journeys read stale content. `scripts/seed.test.mjs` checks the seed itself in CI with no token: the baseline holds no demo content, every reference resolves, and personal data has a private id.
+**The test dataset.** `pnpm e2e` on your machine re-seeds `tests-e2e` before the journeys. CI holds only the read-only Viewer token, never the write token: a token works on every dataset of the project, so a CI write token could write `production`. The journeys stub every form POST, and CI only reads the seeded `tests-e2e` dataset. **After you change the seed, run `pnpm seed:e2e` before you push**, or the CI journeys read stale content. `scripts/seed.test.mjs` checks the seed itself in CI with no token: the baseline holds no demo content, every reference resolves, and personal data has a private id.
 
 #### Re-seed semantics — read once
 

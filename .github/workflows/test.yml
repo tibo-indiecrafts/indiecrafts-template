@@ -97,10 +97,11 @@ jobs:
       - run: pnpm --filter @indiecrafts/web-tools-storybook test:stories:website
 
   # App e2e journeys — real browser, built app, the throwaway `tests-e2e` Sanity dataset. CI holds
-  # NO Sanity token: the journeys stub every form POST (no runtime write), and the seed runs
-  # on a developer's machine (`pnpm seed:e2e`) — a Sanity token works on every dataset of the
-  # project, so a CI token could write production. The seed itself is checked by
-  # `scripts/seed.test.mjs` (dry run, no token) in the `verify` job.
+  # only the read-only Viewer token (the build job already has it): the seeded documents have dotted
+  # ids, which an anonymous read skips. No write token: the journeys stub every form POST, and the
+  # seed runs on a developer's machine (`pnpm seed:e2e`) — a Sanity token works on every dataset of
+  # the project, so a CI write token could write production. `scripts/seed.test.mjs` (dry run, no
+  # token) checks the seed itself.
   # BLOCKING: the functional journeys don't use visual baselines (the visual suite is the
   # separate advisory job below), so they gate like `csp`. The auth journey
   # (`sign-in.spec.ts`) self-skips unless the Clerk TEST-instance keys are set, so this stays
@@ -116,6 +117,7 @@ jobs:
         env:
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
           NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
+          SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }} # Viewer: read-only
           E2E_SANITY_DATASET: tests-e2e
           E2E_SKIP_SEED: "1" # read the seeded dataset; never write from CI
           # Auth journey (self-skips when unset): a Clerk TEST/dev instance's keys —
@@ -165,7 +167,7 @@ jobs:
   # policy is the enforced header, the nonce reaches the served <script>, nothing is
   # blocked, and /studio keeps its permissive static CSP. Split from `browser` so the
   # untrusted visual baselines stay advisory while this stays a gate. Reads the seeded
-  # throwaway `tests-e2e` dataset with no Sanity token (see `browser-e2e-app`).
+  # throwaway `tests-e2e` dataset with the read-only token (see `browser-e2e-app`).
   csp:
     runs-on: ubuntu-latest
     steps:
@@ -177,6 +179,7 @@ jobs:
           E2E_TARGET: app
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
           NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
+          SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
           E2E_SANITY_DATASET: tests-e2e
           E2E_SKIP_SEED: "1"
 

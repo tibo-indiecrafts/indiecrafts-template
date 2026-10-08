@@ -145,9 +145,11 @@ with `--force`), `E2E_SKIP_SEED=1` reuses an already-seeded one.
 
 **No Sanity write in the journeys.** Every form journeys stubs its POST (`/api/contact`,
 `/api/waitlist`, `/api/comments`, `/api/newsletter`), so a run writes to Sanity only through the
-seed. **CI holds no Sanity token:** a token works on every dataset of the project (a token limited
-to one dataset needs Sanity Enterprise), so a CI token could write `production`. CI sets
-`E2E_SKIP_SEED=1` and reads the public `tests-e2e` dataset. **After you change the seed, run
+seed. **CI holds only the read-only Viewer token** (`SANITY_API_READ_TOKEN`, which the build job
+already has): the seeded documents have dotted ids (`post.en.…`, `siteMeta.en`, `legal.…`), which an
+anonymous read skips. No write token: a token works on every dataset of the project (a token
+limited to one dataset needs Sanity Enterprise), so a CI write token could write `production`. CI
+sets `E2E_SKIP_SEED=1` and reads the seeded `tests-e2e` dataset. **After you change the seed, run
 `pnpm seed:e2e` before you push** — the CI journeys read what you seeded last. The seed itself is
 checked in CI by `scripts/seed.test.mjs` (a dry run: no token, no network).
 

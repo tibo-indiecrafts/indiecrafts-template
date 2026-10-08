@@ -39,8 +39,10 @@ Server reads use a token, so a dotted id changes nothing for the site.
 - **Never seed a live dataset.** The guard refuses a dataset with a `siteSettings` document; only the
   throwaway `tests-e2e` dataset (any `tests-…` name) is re-seeded with `--force` (`pnpm seed:e2e`, and `pnpm e2e` locally).
 - **CI never writes to Sanity.** A token works on every dataset of the project (one-dataset tokens are
-  Enterprise only), so CI holds none: the journeys stub every form POST and read the seeded `tests-e2e`
-  dataset. After a seed change, run `pnpm seed:e2e` before you push.
+  Enterprise only), so CI holds only the read-only Viewer token: the journeys stub every form POST and
+  read the seeded `tests-e2e` dataset. After a seed change, run `pnpm seed:e2e` before you push.
+- **A dotted id hides public content too.** Seeded ids like `post.en.…` and `siteMeta.en` are not
+  readable without a token: a reader of that content (the site, CI) needs the read token.
 
 ## Why
 

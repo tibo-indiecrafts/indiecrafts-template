@@ -27,10 +27,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   moved to `private.emailStrings`, and the Studio cannot create or duplicate the personal types
   (a Studio copy would get a public id). New `pnpm sanity:privatize` moves existing documents
   (dry run by default). **Why:** an anonymous count showed none leaked yet; `emailStrings` was public.
-- **CI holds no Sanity token for the browser tests.** A Sanity token works on every dataset of
-  the project (one-dataset tokens are Enterprise only), so the e2e token could write `production`.
-  The journeys already stub every form POST; CI now reads the seeded test dataset with no token
-  (`E2E_SKIP_SEED=1`), and `pnpm seed:e2e` re-seeds it from a developer's machine. The test
+- **CI holds no Sanity write token for the browser tests.** A Sanity token works on every dataset
+  of the project (one-dataset tokens are Enterprise only), so the e2e token could write
+  `production`. The journeys already stub every form POST; CI now reads the seeded test dataset
+  with only the read-only Viewer token (`E2E_SKIP_SEED=1`), and `pnpm seed:e2e` re-seeds it from a
+  developer's machine. The read token is required: seeded ids are dotted (`post.en.…`,
+  `siteMeta.en`), so an anonymous read sees no posts — the old e2e job had only the write token,
+  which the site never reads with. The test
   dataset is renamed `e2e` → `tests-e2e`, and the e2e setup accepts only a `tests-…` name, since it
   seeds with `--force`.
 
