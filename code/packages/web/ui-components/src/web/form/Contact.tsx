@@ -4,7 +4,7 @@
  * @see docs/reference/packages/web/ui-components/src/web/form/Contact.md
  */
 import type { ContactModule } from "@indiecrafts/packages-web-ui-components/shared/types";
-import { blockFeatures } from "../features";
+import { formBlock } from "./formBlock";
 import { ContactForm } from "./ContactForm";
 
 /**
@@ -12,18 +12,9 @@ import { ContactForm } from "./ContactForm";
  * app-injected `contact` flag off (`configureBlocks`) the block renders nothing
  * (the `/api/contact` route 404s in lockstep). Otherwise hands the resolved copy
  * to the client `<ContactForm>` (needs `useState` for the submit flow).
+ * `formBlock` also hides it when the feature's Studio switch is off.
  */
 export function Contact(props: ContactModule) {
-  // The code flag, then the Studio switch (`enabled`, projected by the page query).
-  if (!blockFeatures().contact || props.enabled === false) return null;
-  // `renderBlock` injects `components` + `inline` at runtime; strip them — a
-  // client child can't receive the non-serializable render-function map.
-  const { components, inline, enabled, ...rest } = props as ContactModule & {
-    components?: unknown;
-    inline?: boolean;
-  };
-  void components;
-  void inline;
-  void enabled;
-  return <ContactForm {...rest} />;
+  const form = formBlock("contact", props);
+  return form ? <ContactForm {...form} /> : null;
 }

@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`LeadMagnet` is the server half of the `module.lead-magnet` block. It shares the `newsletter` feature gate: with that app-injected flag off (`configureBlocks`) it renders nothing, in lockstep with the `/api/newsletter` route returning 404. Otherwise it strips the runtime-injected `components` / `inline` props and hands the resolved copy to the client `<LeadMagnetForm>`.
+`LeadMagnet` is the server half of the `module.lead-magnet` block. It shares the `newsletter` feature gate: with that app-injected flag off (`configureBlocks`) it renders nothing, in lockstep with the `/api/newsletter` route returning 404. Otherwise it strips the runtime-injected `components` / `inline` props and hands the resolved copy to the client `<LeadMagnetForm>`. The Studio switch (`newsletterSettings.enabled`, projected by `MODULES_FRAGMENT`) hides it too; both checks live in `formBlock`.
 
 ## Exports
 

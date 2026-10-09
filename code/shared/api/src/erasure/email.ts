@@ -54,8 +54,9 @@ type ErasureEmailStrings = {
   bccAll?: string;
 };
 
-/** The support address when the email's group opts in (`copySupport`), else undefined. Always
- *  the site's own published address, never a free field, so `resend` sends it ungated. */
+/** The support address when the email's group opts in (`copySupport`), else undefined. It is
+ *  the address every footer shows, so a change to it is visible in each email; no group that
+ *  carries a code or a one-time link offers the copy. Not behind `EMAIL_BCC_ALL_ENABLED`. */
 export function supportCopyOf(
   group: { copySupport?: boolean } | null | undefined,
   supportEmail: string | null | undefined,
@@ -192,8 +193,9 @@ export async function resend(
     text: string;
     /** Extra blind copy (the Studio-editable global `bccAll`), merged with `EMAIL_ADMIN_BCC`. */
     bcc?: string;
-    /** The support address, when the email's group opts in (`supportCopyOf`). Not gated:
-     *  it is the site's own address, and no group that carries a code or link offers it. */
+    /** The support address, when the email's group opts in (`supportCopyOf`). Not behind the
+     *  `bccAll` gate: it is the address the footer shows, and no group with a code or a
+     *  one-time link offers it. */
     supportCopy?: string;
     /** Resend sends one email per key for 24 h — for a send a retry may repeat. */
     idempotencyKey?: string;

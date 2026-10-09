@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`Newsletter` is the server half of the `module.newsletter` block. With the app-injected `newsletter` flag off (`configureBlocks`) it renders nothing, in lockstep with the `/api/newsletter` route returning 404. Otherwise it strips the runtime-injected `components` / `inline` props (functions cannot cross the server-to-client boundary) and hands the resolved copy to the client `<NewsletterForm>`.
+`Newsletter` is the server half of the `module.newsletter` block. With the app-injected `newsletter` flag off (`configureBlocks`) it renders nothing, in lockstep with the `/api/newsletter` route returning 404. Otherwise it strips the runtime-injected `components` / `inline` props (functions cannot cross the server-to-client boundary) and hands the resolved copy to the client `<NewsletterForm>`. The Studio switch (`newsletterSettings.enabled`, projected by `MODULES_FRAGMENT`) hides it too; both checks live in `formBlock`.
 
 ## Exports
 

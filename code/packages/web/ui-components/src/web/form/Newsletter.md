@@ -24,7 +24,7 @@
 
 ## Notes
 
-- **Gated.** The server `<Newsletter>` wrapper renders `null` when `features.newsletter` is off; the `/api/newsletter` route 404s in lockstep.
+- **Gated.** The server `<Newsletter>` wrapper renders `null` when `features.newsletter` is off; the `/api/newsletter` route 404s in lockstep. It also renders `null` when the Studio switch (`newsletterSettings.enabled`) is off — `formBlock`, fed by `MODULES_FRAGMENT`.
 - **Honeypot.** A hidden off-screen `website` field. Bots that fill it still get `201`, so they cannot tell they were dropped.
 - The client half posts `{ email, consent, source: location.pathname, honeypot }`. `source` records the page the signup came from.
 - No refs, no images → passes straight through `MODULES_FRAGMENT`'s leading spread; no query projection.

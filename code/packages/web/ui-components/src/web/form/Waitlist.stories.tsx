@@ -5,7 +5,7 @@ import docs from "./Waitlist.md?raw";
 
 /**
  * Stories target the client `<WaitlistForm>` (the visual half). The registered
- * `<Waitlist>` wrapper only adds the `features.waitlist` gate. The submit
+ * `<Waitlist>` wrapper only adds the gates (`features.waitlist` + the Studio switch). The submit
  * `fetch("/api/waitlist")` is inert in Storybook — pick a variant to compare
  * layouts; set `namePlaceholder` to show the optional name field.
  */

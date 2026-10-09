@@ -25,7 +25,7 @@ Early-access signup block. Server `<Waitlist>` wrapper (feature gate) → client
 
 ## Notes
 
-- **Gated.** The server `<Waitlist>` wrapper renders `null` when `features.waitlist` is off; the `/api/waitlist` route 404s in lockstep.
+- **Gated.** The server `<Waitlist>` wrapper renders `null` when `features.waitlist` is off; the `/api/waitlist` route 404s in lockstep. It also renders `null` when the Studio switch (`waitlistSettings.enabled`) is off — `formBlock`, fed by `MODULES_FRAGMENT`.
 - **Honeypot.** A hidden off-screen `website` field — bots that fill it still get `201`.
 - The client half posts `{ email, name?, consent, source: location.pathname, honeypot }`. `name` is only sent when a `namePlaceholder` is configured.
 - No refs, no images → passes straight through `MODULES_FRAGMENT`.

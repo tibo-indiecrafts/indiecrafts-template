@@ -6,7 +6,7 @@ status: stable
 
 # General contacts
 
-> A waitlist join or a contact message also becomes a Resend contact, on the General topic.
+> A waitlist join or a contact message also becomes a Resend contact; a waitlist join also joins the General topic.
 
 ## Purpose
 
@@ -18,13 +18,14 @@ server bearer `APP_API_TOKEN`, one safe retry). The api upserts the Resend conta
 - `source: "contact"` — stores the contact only, with no topic. That consent covers a reply, not
   broadcasts.
 
-An existing Resend contact keeps its own fields: a newsletter subscriber's language and a global
-unsubscribe never change. The Sanity document stays the record, so the call is best-effort: it
-never throws, and an unconfigured api skips it. Server-only.
+An existing Resend contact is left untouched: its language, its global unsubscribe and its topic
+choices never change. The Sanity document stays the record, so the call is best-effort: it never
+throws, an unconfigured api skips it, and it waits at most 4 s with no retry. It sends the
+visitor's IP as `x-client-ip`, so the api rate-limits per visitor. Server-only.
 
 ## Exports
 
-- `addGeneralContact({ email, locale, source, policyVersion?, consentAt? })` — returns
+- `addGeneralContact({ email, locale, source, policyVersion?, consentAt?, clientIp? })` — returns
   `"added"`, `"skipped"` (no `API_URL`/`APP_API_TOKEN`) or `"failed"`. The caller logs a failure
   without the address.
 - `GeneralContact` — the input type.

@@ -14,6 +14,10 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **`POST /v1/contacts/general` never changes an existing Resend contact.** The topic rides on the
+  create call only. **Why:** a single-opt-in waitlist join must not override a General opt-out made
+  in the preference centre.
+
 - **The security alert ends with the support line** (`Need help? <address>`, English like its
   body), read with its Studio copy. **Why:** it was the one email without it.
 - **The email categories come from the live Sanity API, not its CDN.** A sign-up read a stale copy
@@ -42,7 +46,7 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   waitlist join records its consent (`consent_type: "waitlist"`) and opts into the new private
   `General` topic (`pnpm resend:topics:sync` creates it; Studio → Préférences → `general` holds its
   id). A contact message is stored with no topic: that consent covers a reply. An existing contact
-  keeps its language and its global unsubscribe. **Why:** Resend is the mailing tool; a launch
+  is left untouched, so a single-opt-in form never overrides a General opt-out. **Why:** Resend is the mailing tool; a launch
   email needs the waitlist there.
 - **Service emails can copy the support address.** `erasureComplete`, the two data-request emails,
   the Clerk notices and the welcome email send a blind copy to `emailStrings.supportEmail` when

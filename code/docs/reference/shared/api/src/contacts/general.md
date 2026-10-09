@@ -18,10 +18,13 @@ join also needs `policyVersion` and `consentAt`), then:
    keyed by the email fingerprint, never the email; a repeat with the same `consentAt` adds no row).
 2. Upserts the Resend contact with `syncGeneralContact`. A waitlist join opts into the `general`
    topic, whose id comes from the Studio `emailPreferences` singleton (category `general`). A
-   contact message stores the contact with no topic. An existing contact keeps its fields.
+   contact message stores the contact with no topic. An existing contact is left untouched — its
+   language, its global unsubscribe and its topic choices: a single-opt-in form never overrides
+   an opt-out made in the preference centre.
 
 A Resend error answers `502`; a missing `RESEND_API_KEY`, `MAIN_DB` or `GDPR_FINGERPRINT_SALT`
-answers `503`. Erasure already deletes the Resend contact and the consent rows by email.
+answers `503`. Erasure deletes the Resend contact; the consent rows stay as pseudonymised proof
+(keyed by the email fingerprint), like every visitor consent row.
 
 ## Exports
 
@@ -31,9 +34,13 @@ answers `503`. Erasure already deletes the Resend contact and the consent rows b
 
 ## Setup
 
-Run `pnpm resend:topics:sync` once: it creates the private `General` topic. Paste its id into
-Studio → E-mails → Préférences → category `general` → "Identifiant de topic Resend". Without an id,
-a waitlist join is stored as a contact with no topic.
+1. Run `pnpm resend:topics:sync` once: it creates the private `General` topic and prints its id.
+2. Studio → Préférences e-mail → Catégories. A new document has the `general` category already. An
+   existing one does not: add a category with "Identifiant" `general`, the names (General /
+   Général), and "Cochée par défaut à l'inscription" off.
+3. Paste the topic id into that category's "Identifiant de topic Resend".
+
+Without the category or its id, a waitlist join is stored as a contact with no topic and no error.
 
 ## Source
 

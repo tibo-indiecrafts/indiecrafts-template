@@ -60,6 +60,8 @@ export type JoinInput = {
   honeypot?: string;
   /** Client form-render time (ms) — a near-instant submit is a bot. */
   startedAt?: number;
+  /** The visitor's IP, server-derived (never from the body): the api's per-visitor rate limit. */
+  clientIp?: string;
 };
 
 export type JoinResult =
@@ -121,6 +123,7 @@ export async function join(
         source: "waitlist",
         policyVersion: policyVersion ?? "",
         consentAt: createdAt,
+        clientIp: input.clientIp,
       })) === "failed"
     )
       logger.error("waitlist resend contact failed");

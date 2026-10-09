@@ -5,7 +5,7 @@ import docs from "./LeadMagnet.md?raw";
 
 /**
  * Stories target the client `<LeadMagnetForm>` (the visual half). The registered
- * `<LeadMagnet>` wrapper only adds the `features.newsletter` gate. The submit
+ * `<LeadMagnet>` wrapper only adds the gates (`features.newsletter` + the Studio switch). The submit
  * `fetch("/api/newsletter")` is inert in Storybook — pick a variant to compare
  * layouts; the success/error states show against the live route.
  */

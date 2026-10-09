@@ -25,7 +25,7 @@
 
 ## Notes
 
-- **Gated.** The server `<LeadMagnet>` wrapper renders `null` when `features.newsletter` is off (it shares the newsletter gate); the `/api/newsletter` route 404s in lockstep.
+- **Gated.** The server `<LeadMagnet>` wrapper renders `null` when `features.newsletter` is off (it shares the newsletter gate); the `/api/newsletter` route 404s in lockstep. It also renders `null` when the Studio switch (`newsletterSettings.enabled`) is off — `formBlock`, fed by `MODULES_FRAGMENT`.
 - **Honeypot.** A hidden off-screen `website` field. Bots that fill it still get `201`, so they cannot tell they were dropped.
 - The client half posts `{ email, consent, source: "lead-magnet", tags, honeypot }`. `tags` is `[magnet.id]` when a magnet is set — the signal for gated delivery.
 - Has one reference (`magnet`) → `MODULES_FRAGMENT` dereferences it to `{ id }`.

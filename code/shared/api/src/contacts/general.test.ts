@@ -157,13 +157,14 @@ describe("POST /v1/contacts/general", () => {
     ]);
   });
 
-  it("an existing contact keeps its fields and global unsubscribe; only the topic changes", async () => {
+  it("an existing contact is left untouched — its topic choices and unsubscribe stand", async () => {
     const calls = stubFetch({ exists: true });
     expect((await post(WAITLIST)).status).toBe(204);
+    // The create is refused (409); no PATCH may override a General opt-out.
     expect(resendCalls(calls).map((c) => `${c.method} ${c.url}`)).toEqual([
       "POST /contacts",
-      `PATCH /contacts/${EMAIL}/topics`,
     ]);
+    expect(await consentRows()).toHaveLength(1); // the join's own consent is still recorded
   });
 
   it("a contact message: stored without a topic or a consent row", async () => {

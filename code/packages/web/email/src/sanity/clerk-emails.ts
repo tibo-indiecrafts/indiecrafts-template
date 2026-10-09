@@ -34,7 +34,6 @@ const codeGroup = (
     name,
     heading: false,
     addressFields: false,
-    copySupport: true,
     title,
     description,
     enabledHint:
@@ -56,6 +55,8 @@ const noticeGroup = (
     name,
     heading: false,
     addressFields: false,
+    // A notice carries no code and no link, so the support inbox may get a copy.
+    copySupport: true,
     title,
     description,
     enabledHint:

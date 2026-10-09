@@ -486,7 +486,8 @@
     "waitlist": {
       "button": "Join the list",
       "success": "You're on the list — thank you!",
-      "consent": "I agree to be contacted about early access and that my email address is kept for that purpose."
+      "consent": "I agree to be contacted about early access and that my email address is kept for that purpose.",
+      "heading": "Join the early access"
     },
     "leadMagnet": {
       "button": "Get the document",
@@ -497,7 +498,8 @@
       "messagePlaceholder": "Your message…",
       "button": "Send",
       "success": "Thanks — your message is on its way.",
-      "consent": "I agree that my message and email are stored so you can reply to me."
+      "consent": "I agree that my message and email are stored so you can reply to me.",
+      "heading": "Get in touch"
     }
   }
 }

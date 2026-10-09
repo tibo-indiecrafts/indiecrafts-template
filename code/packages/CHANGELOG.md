@@ -38,6 +38,13 @@ copySupport: true })` offers it; senders spread `supportCopy(cfg, supportEmail)`
 
 ### Fixed
 
+- **email: the support-copy checkbox sat on the sign-in code emails, not the notices.** It is now on
+  the Clerk notices and welcome only; a schema test pins the list. The worker's fixed list had
+  stopped any copy of a code.
+- **email: `addGeneralContact` sends the visitor's IP and waits at most 4 s.** **Why:** without
+  `x-client-ip` every join shared the website's rate-limit bucket (20 a minute), and a slow Resend
+  held the visitor's submit for up to 20 s.
+
 - **page-builder / ui-components: a form's Studio switch hides its blocks too.** `MODULES_FRAGMENT`
   adds `enabled` to the contact, waitlist, newsletter and lead-magnet blocks, and their renderers
   hide when it is `false`. **Why:** turning a form off hid its page only; a block on another page
@@ -84,6 +91,16 @@ copySupport: true })` offers it; senders spread `supportCopy(cfg, supportEmail)`
   centre takes its heading and intro from `messages/`), so an editor's text changed nothing.
 
 ### Changed
+
+- **ui-components: one frame for every public form.** `useGuardedSubmit`, `FormFrame`,
+  `GuardedFields` (+ `FormInput`, `SubmitButton`) and the server-side `formBlock` hold what the
+  contact, waitlist, newsletter and lead-magnet forms repeated: the guarded POST, the card, the
+  honeypot, consent, Turnstile and the gates. Each form now keeps only its fields (≈ 90 lines
+  instead of ≈ 270). **Why:** a new form, multistep included, should not copy 250 lines; the
+  recipe is in Storybook → UI Components/FormFrame.
+- **ui-components: `/contact` and `/waitlist` always have an `h1`.** When the form is the page and
+  the Studio heading is empty in that language, it shows `forms.contact.heading` /
+  `forms.waitlist.heading`.
 
 - **announcement: the dismiss and copy-code controls use the shadcn `Button`** (`ghost`,
   `icon-xs` / `xs`) instead of raw `<button>`s with their own focus ring. Ported from the

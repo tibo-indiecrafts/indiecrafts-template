@@ -5,7 +5,7 @@ import docs from "./Contact.md?raw";
 
 /**
  * Stories target the client `<ContactForm>` (the visual half). The registered
- * `<Contact>` wrapper only adds the `features.contact` gate. The submit
+ * `<Contact>` wrapper only adds the gates (`features.contact` + the Studio switch). The submit
  * `fetch("/api/contact")` is inert in Storybook — pick a variant to compare
  * layouts; set `namePlaceholder` / `subjectPlaceholder` to show those fields.
  */

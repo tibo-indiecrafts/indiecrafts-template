@@ -23,7 +23,9 @@ Auto-loads under `code/packages/web/ui-components/**`. Generic block renderers +
   site's `siteSettings.share`); intent URLs from `@indiecrafts/packages-shared-utils/share` · **PostHero** — a full-width lead-post hero (image/video, category chip, author/date)
   for the blog frontpage (`blog-hero`) · **TopicCards** — one to three large clickable category/tag
   cards (`blog-topic-cards`)) · `form/` (shared form
-  controls — PhoneInput, TurnstileWidget, Newsletter, Waitlist, LeadMagnet, DataRequestForm). Web infra (`registry.tsx`,
+  controls — PhoneInput, TurnstileWidget, Newsletter, Waitlist, LeadMagnet, DataRequestForm; every public
+  form is built on `useGuardedSubmit` + `FormFrame` + `GuardedFields`, its server wrapper on `formBlock` —
+  recipe in `form/FormFrame.md`). Web infra (`registry.tsx`,
   `portable-text-components.tsx`, story helpers) sits at `src/web/`. `src/shared/types.ts` is the
   **DOM-free contract** (block types) — also home to **`PostCardItem`**, the resolved
   post-card shape every collection primitive above shares. Consumers import

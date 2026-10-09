@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`Waitlist` is the server half of the `module.waitlist` block. With the app-injected `waitlist` flag off (`configureBlocks`) it renders nothing, in lockstep with the `/api/waitlist` route returning 404. Otherwise it strips the runtime-injected `components` / `inline` props and hands the resolved copy to the client `<WaitlistForm>`.
+`Waitlist` is the server half of the `module.waitlist` block. With the app-injected `waitlist` flag off (`configureBlocks`) it renders nothing, in lockstep with the `/api/waitlist` route returning 404. Otherwise it strips the runtime-injected `components` / `inline` props and hands the resolved copy to the client `<WaitlistForm>`. The Studio switch (`waitlistSettings.enabled`, projected by `MODULES_FRAGMENT`) hides it too; both checks live in `formBlock`.
 
 ## Exports
 

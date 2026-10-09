@@ -27,7 +27,7 @@ sender and the team.
 
 ## Notes
 
-- **Gated.** The server `<Contact>` wrapper renders `null` when `features.contact` is off; the `/api/contact` route 404s in lockstep.
+- **Gated.** The server `<Contact>` wrapper renders `null` when `features.contact` is off; the `/api/contact` route 404s in lockstep. It also renders `null` when the Studio switch (`contactSettings.enabled`) is off — `formBlock`, fed by `MODULES_FRAGMENT`.
 - **Honeypot.** A hidden off-screen `website` field — bots that fill it still get `201`.
 - The client half posts `{ email, message, name?, subject?, consent, source: location.pathname, honeypot }`. `name`/`subject` are only sent when their placeholder is configured.
 - The owner alert email sets `reply-to` to the sender, so hitting Reply answers the person.

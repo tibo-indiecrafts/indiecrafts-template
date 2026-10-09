@@ -55,6 +55,12 @@ resolved Sanity data.
   `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set, reports the token via `onToken` (the newsletter / waitlist /
   comment forms send it as `cf-turnstile-response` and gate submit on `turnstileActive()`), `siteKey`
   prop override for tests/Storybook.
+- **One frame for every public form.** `useGuardedSubmit` (the POST with consent, language,
+  honeypot, timing and the Turnstile token) · `FormFrame` (section, card, heading, success line) ·
+  `GuardedFields` (honeypot, consent, Turnstile, error) + `FormInput` / `SubmitButton`, and
+  `formBlock` for the server wrapper (code flag + Studio switch). The contact, waitlist,
+  newsletter and lead-magnet forms keep only their own fields. A new form, multistep included,
+  follows the recipe in Storybook → UI Components/FormFrame (`FormFrame.md`).
 - **Mixed `.ts`/`.tsx`.** Like the blog module, `exports` is `"./*": "./src/*"` (no extension
   in the map; Next + TS resolve `.ts`/`.tsx`/dir-index), and Tailwind scans it via a `@source`
   line in `ui-tokens/globals.css`.

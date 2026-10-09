@@ -4,7 +4,7 @@
  * @see docs/reference/packages/web/ui-components/src/web/form/Waitlist.md
  */
 import type { WaitlistModule } from "@indiecrafts/packages-web-ui-components/shared/types";
-import { blockFeatures } from "../features";
+import { formBlock } from "./formBlock";
 import { WaitlistForm } from "./WaitlistForm";
 
 /**
@@ -12,18 +12,9 @@ import { WaitlistForm } from "./WaitlistForm";
  * app-injected `waitlist` flag off (`configureBlocks`) the block renders nothing
  * (the `/api/waitlist` route 404s in lockstep). Otherwise hands the resolved copy
  * to the client `<WaitlistForm>` (needs `useState` for the submit flow).
+ * `formBlock` also hides it when the feature's Studio switch is off.
  */
 export function Waitlist(props: WaitlistModule) {
-  // The code flag, then the Studio switch (`enabled`, projected by the page query).
-  if (!blockFeatures().waitlist || props.enabled === false) return null;
-  // `renderBlock` injects `components` + `inline` at runtime; strip them — a
-  // client child can't receive the non-serializable render-function map.
-  const { components, inline, enabled, ...rest } = props as WaitlistModule & {
-    components?: unknown;
-    inline?: boolean;
-  };
-  void components;
-  void inline;
-  void enabled;
-  return <WaitlistForm {...rest} />;
+  const form = formBlock("waitlist", props);
+  return form ? <WaitlistForm {...form} /> : null;
 }

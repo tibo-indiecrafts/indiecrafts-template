@@ -62,6 +62,8 @@ export type SubmitInput = {
   honeypot?: string;
   /** Client form-render time (ms) — a near-instant submit is a bot. */
   startedAt?: number;
+  /** The visitor's IP, server-derived (never from the body): the api's per-visitor rate limit. */
+  clientIp?: string;
 };
 
 export type SubmitResult =
@@ -119,6 +121,7 @@ export async function submit(
         email,
         locale: toSiteLocale(input.language),
         source: "contact",
+        clientIp: input.clientIp,
       })) === "failed"
     )
       logger.error("contact resend contact failed");

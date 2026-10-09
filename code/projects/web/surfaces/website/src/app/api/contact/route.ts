@@ -5,7 +5,7 @@
  */
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
-import { withGuard } from "@indiecrafts/packages-shared-security/guard";
+import { clientIp, withGuard } from "@indiecrafts/packages-shared-security/guard";
 import { submit } from "@indiecrafts/modules-web-contact/lib/contact";
 import { getContactSettings } from "@indiecrafts/modules-web-contact/lib/settings";
 import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sanity/policy-version";
@@ -17,7 +17,7 @@ import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sa
  * best-effort emails. A honeypot-flagged submission returns `201` too, so bots
  * can't tell it was dropped.
  */
-const handle = withGuard(async (_req, data) => {
+const handle = withGuard(async (req, data) => {
   const body = (data ?? {}) as Record<string, unknown>;
   const result = await submit(
     {
@@ -30,6 +30,7 @@ const handle = withGuard(async (_req, data) => {
       language: body.language ? String(body.language) : undefined,
       honeypot: body.honeypot ? String(body.honeypot) : undefined,
       startedAt: typeof body.startedAt === "number" ? body.startedAt : undefined,
+      clientIp: clientIp(req),
     },
     new Date().toISOString(),
     await getConsentPolicyVersion(),

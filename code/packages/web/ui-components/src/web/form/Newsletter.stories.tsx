@@ -5,7 +5,7 @@ import docs from "./Newsletter.md?raw";
 
 /**
  * Stories target the client `<NewsletterForm>` (the visual half). The registered
- * `<Newsletter>` wrapper only adds the `features.newsletter` gate. The submit
+ * `<Newsletter>` wrapper only adds the gates (`features.newsletter` + the Studio switch). The submit
  * `fetch("/api/newsletter")` is inert in Storybook — pick a variant to compare
  * layouts; the success/error states show against the live route.
  */

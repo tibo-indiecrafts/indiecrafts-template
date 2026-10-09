@@ -4,7 +4,7 @@
  * @see docs/reference/packages/web/ui-components/src/web/form/LeadMagnet.md
  */
 import type { LeadMagnetModule } from "@indiecrafts/packages-web-ui-components/shared/types";
-import { blockFeatures } from "../features";
+import { formBlock } from "./formBlock";
 import { LeadMagnetForm } from "./LeadMagnetForm";
 
 /**
@@ -13,18 +13,9 @@ import { LeadMagnetForm } from "./LeadMagnetForm";
  * renders nothing (the `/api/newsletter` route it posts to 404s in lockstep).
  * Otherwise hands the resolved copy to the client `<LeadMagnetForm>` (needs
  * `useState` for the submit flow).
+ * `formBlock` also hides it when the feature's Studio switch is off.
  */
 export function LeadMagnet(props: LeadMagnetModule) {
-  // The code flag, then the Studio switch (`enabled`, projected by the page query).
-  if (!blockFeatures().newsletter || props.enabled === false) return null;
-  // `renderBlock` injects `components` + `inline` at runtime; strip them — a
-  // client child can't receive the non-serializable render-function map.
-  const { components, inline, enabled, ...rest } = props as LeadMagnetModule & {
-    components?: unknown;
-    inline?: boolean;
-  };
-  void components;
-  void inline;
-  void enabled;
-  return <LeadMagnetForm {...rest} />;
+  const form = formBlock("newsletter", props);
+  return form ? <LeadMagnetForm {...form} /> : null;
 }

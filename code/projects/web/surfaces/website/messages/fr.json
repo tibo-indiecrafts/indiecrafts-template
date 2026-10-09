@@ -486,7 +486,8 @@
     "waitlist": {
       "button": "Rejoindre la liste",
       "success": "Vous êtes sur la liste — merci !",
-      "consent": "J'accepte d'être contacté·e au sujet de l'accès anticipé et que mon adresse e-mail soit conservée à cette fin."
+      "consent": "J'accepte d'être contacté·e au sujet de l'accès anticipé et que mon adresse e-mail soit conservée à cette fin.",
+      "heading": "Rejoignez l'accès anticipé"
     },
     "leadMagnet": {
       "button": "Recevoir le document",
@@ -497,7 +498,8 @@
       "messagePlaceholder": "Votre message…",
       "button": "Envoyer",
       "success": "Merci — votre message est bien parti.",
-      "consent": "J'accepte que mon message et mon adresse e-mail soient conservés pour me répondre."
+      "consent": "J'accepte que mon message et mon adresse e-mail soient conservés pour me répondre.",
+      "heading": "Contactez-nous"
     }
   }
 }

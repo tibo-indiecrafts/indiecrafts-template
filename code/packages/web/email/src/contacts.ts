@@ -16,13 +16,16 @@ export type GeneralContact = {
   /** Waitlist only: the consent proof the api records in D1. */
   policyVersion?: string;
   consentAt?: string;
+  /** The visitor's IP: the api rate-limits per visitor (`x-client-ip`), not per website. */
+  clientIp?: string;
 };
 
 /**
- * `POST /v1/contacts/general` — the api upserts the Resend contact on the General topic (and,
- * for a waitlist join, records the consent). The Sanity document is the record of truth, so
- * this is best-effort: it never throws, and an unconfigured api (`API_URL`/`APP_API_TOKEN`)
- * skips it. Logs nothing itself — the caller logs a failure without the address.
+ * `POST /v1/contacts/general` — the api upserts the Resend contact (and, for a waitlist join,
+ * records the consent). The Sanity document is the record of truth, so this is best-effort: it
+ * never throws, an unconfigured api (`API_URL`/`APP_API_TOKEN`) skips it, and it waits at most
+ * 4 s with no retry, so a slow Resend never holds the visitor's submit for long. Logs nothing
+ * itself — the caller logs a failure without the address.
  */
 export async function addGeneralContact(
   input: GeneralContact,
@@ -30,16 +33,19 @@ export async function addGeneralContact(
   const url = process.env.API_URL;
   const token = process.env.APP_API_TOKEN;
   if (!url || !token) return "skipped";
+  const { clientIp, ...body } = input;
   try {
     const res = await apiFetch(`${url}/v1/contacts/general`, {
       method: "POST",
       headers: {
         authorization: `Bearer ${token}`,
         "content-type": "application/json",
+        ...(clientIp ? { "x-client-ip": clientIp } : {}),
       },
-      body: JSON.stringify(input),
-      // An upsert is idempotent (same contact, same topic state), so one retry is safe.
-      idempotent: true,
+      body: JSON.stringify(body),
+      // ponytail: bounded and not retried — runs inside the visitor's request. Move it to
+      // `after()` (from `next/server`) once the Workers adapter is verified to honour it.
+      timeoutMs: 4_000,
     });
     return res.ok ? "added" : "failed";
   } catch {

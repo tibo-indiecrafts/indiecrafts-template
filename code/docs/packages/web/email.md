@@ -137,7 +137,9 @@ passes `supportCopy` to `resend()` (`supportCopyOf`, and `authSupportCopy` for C
   `newsletterConfirm` · `leadMagnetConfirm` · `erasureToken` · Clerk codes, magic link, invitation,
   new device. A copy would hand that access to whoever reads the support inbox. The Clerk worker
   also keeps a fixed list, so a value written outside the Studio cannot copy one either.
-- **Not gated** like `bccAll`: the address is the site's own published one, never a free field.
+- **Not gated** like `bccAll`. The trade-off: the support address is a Studio field, so an editor
+  who changes it redirects the copies. It is the address every footer shows, so the change is
+  visible in each email, and the copied emails carry no code or one-time link.
 
 ## Verify deliverability — the "Send test" action
 

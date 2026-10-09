@@ -5,7 +5,7 @@
  */
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
-import { withGuard } from "@indiecrafts/packages-shared-security/guard";
+import { clientIp, withGuard } from "@indiecrafts/packages-shared-security/guard";
 import { join } from "@indiecrafts/modules-web-waitlist/lib/waitlist";
 import { getWaitlistSettings } from "@indiecrafts/modules-web-waitlist/lib/settings";
 import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sanity/policy-version";
@@ -17,7 +17,7 @@ import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sa
  * `201` too, so bots can't tell it was dropped. New + already-on both answer `201`
  * with an identical body, so membership can't be enumerated.
  */
-const handle = withGuard(async (_req, data) => {
+const handle = withGuard(async (req, data) => {
   const body = (data ?? {}) as Record<string, unknown>;
   const result = await join(
     {
@@ -28,6 +28,7 @@ const handle = withGuard(async (_req, data) => {
       language: body.language ? String(body.language) : undefined,
       honeypot: body.honeypot ? String(body.honeypot) : undefined,
       startedAt: typeof body.startedAt === "number" ? body.startedAt : undefined,
+      clientIp: clientIp(req),
     },
     new Date().toISOString(),
     await getConsentPolicyVersion(),
