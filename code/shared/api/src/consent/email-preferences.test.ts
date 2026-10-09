@@ -140,6 +140,52 @@ describe("GET/POST /v1/consent/email-preferences", () => {
     });
   });
 
+  it("GET shows General on for an address that joined the waitlist, until the user decides", async () => {
+    const userId = "user_ep_waitlist";
+    await seed(userId);
+    await ENV.MAIN_DB!.prepare(
+      "INSERT INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, idempotency_key) VALUES (?, 'visitor', ?, ?, 'waitlist', 1, 'v1', 'website', 'waitlist', ?)",
+    )
+      .bind(
+        new Date().toISOString(),
+        `fp_${userId}`,
+        `fp_${userId}`,
+        `waitlist:fp_${userId}:1`,
+      )
+      .run();
+    const withGeneral = async () => ({
+      categories: [
+        ...CATEGORIES,
+        {
+          key: "general",
+          name: "General",
+          description: "Launch news.",
+          includeAtSignup: false,
+          resendTopicId: "topic_general",
+        },
+      ],
+      notices: NOTICES,
+    });
+    const general = async () => {
+      const res = await handleEmailPreferences(get(), ENV, undefined, {
+        authenticate: async () => userId,
+        fetchCategories: withGeneral,
+      });
+      const body = (await res.json()) as {
+        categories: { key: string; granted: boolean }[];
+      };
+      return body.categories.find((c) => c.key === "general")?.granted;
+    };
+    expect(await general()).toBe(true);
+    // Their own choice wins.
+    await ENV.MAIN_DB!.prepare(
+      "INSERT OR REPLACE INTO email_preferences (user_id, category_key, granted, updated_at) VALUES (?, 'general', 0, ?)",
+    )
+      .bind(userId, new Date().toISOString())
+      .run();
+    expect(await general()).toBe(false);
+  });
+
   it("POST an unknown key returns 400 invalid_category", async () => {
     await seed("user_ep_http");
     const res = await handleEmailPreferences(

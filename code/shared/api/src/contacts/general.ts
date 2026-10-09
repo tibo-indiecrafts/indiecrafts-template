@@ -10,29 +10,36 @@
 import type { Env } from "../index";
 import { fetchWithTimeout } from "../http";
 import { fetchEmailPreferences } from "../consent/email-preferences-sanity";
-import { addGeneralContact } from "../resend-audience";
 
 export type GeneralSource = "waitlist" | "contact";
 
 export const isGeneralSource = (value: unknown): value is GeneralSource =>
   value === "waitlist" || value === "contact";
 
-/** Upsert the Resend contact. The `general` topic id comes from the Studio `emailPreferences`
- *  singleton (none set → no topic). Throws on a Resend error. */
-export async function syncGeneralContact(
+/** The `general` topic id from the Studio `emailPreferences` singleton, or undefined (no
+ *  category, no id, or Sanity unreachable — the reader falls back to the news-only default). */
+export async function generalTopicId(
   env: Env,
-  {
-    email,
-    locale,
-    source,
-  }: { email: string; locale: string; source: GeneralSource },
+  locale: string,
   doFetch: typeof fetch = fetchWithTimeout,
-): Promise<void> {
-  const topicId =
-    source === "waitlist"
-      ? (await fetchEmailPreferences(env, locale, doFetch)).categories.find(
-          (c) => c.key === "general",
-        )?.resendTopicId
-      : undefined;
-  await addGeneralContact(env, { email, locale, topicId }, doFetch);
+): Promise<string | undefined> {
+  const { categories } = await fetchEmailPreferences(env, locale, doFetch);
+  return categories.find((c) => c.key === "general")?.resendTopicId;
+}
+
+/** The person's own General choice in the preference centre (an account's
+ *  `email_preferences` row, found by the email fingerprint), or undefined when they never
+ *  made one. Resend topics are private, so this is the only place they can turn it off. */
+export async function generalChoice(
+  db: D1Database,
+  fingerprint: string,
+): Promise<boolean | undefined> {
+  const row = await db
+    .prepare(
+      "SELECT p.granted FROM email_preferences p JOIN user_profiles u ON u.user_id = p.user_id " +
+        "WHERE u.email_fingerprint = ? AND p.category_key = 'general' LIMIT 1",
+    )
+    .bind(fingerprint)
+    .first<{ granted: number }>();
+  return row ? row.granted === 1 : undefined;
 }

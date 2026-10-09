@@ -116,15 +116,15 @@ export async function submit(
     });
 
     // Also a Resend contact, stored only: this consent covers a reply, not broadcasts.
-    if (
-      (await addGeneralContact({
-        email,
-        locale: toSiteLocale(input.language),
-        source: "contact",
-        clientIp: input.clientIp,
-      })) === "failed"
-    )
-      logger.error("contact resend contact failed");
+    // Best-effort (never throws); runs alongside the emails.
+    const resend = addGeneralContact({
+      email,
+      locale: toSiteLocale(input.language),
+      source: "contact",
+      clientIp: input.clientIp,
+    }).then((result) => {
+      if (result === "failed") logger.error("contact resend contact failed");
+    });
 
     const strings = (await getEmailStrings()) as {
       contactConfirm?: ConfirmationConfig;
@@ -150,6 +150,7 @@ export async function submit(
       strings?.supportEmail,
       bccAll,
     );
+    await resend;
 
     return { ok: true };
   } catch (error) {

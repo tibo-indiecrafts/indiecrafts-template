@@ -53,4 +53,38 @@ describe("form blocks carry their feature's Studio switch", () => {
       "module.lead-magnet": true,
     });
   });
+
+  it("reaches a form inside a container's rich text (prose, card)", async () => {
+    const nested = {
+      ...page,
+      sections: [
+        {
+          _key: "p",
+          _type: "module.prose",
+          content: [{ _key: "c", _type: "module.contact" }],
+        },
+        {
+          _key: "k",
+          _type: "module.card-list",
+          cards: [{ _key: "1", content: [{ _key: "w", _type: "module.waitlist" }] }],
+        },
+      ],
+    };
+    const result = (await (
+      await evaluate(parse(pageBySlugQuery), {
+        dataset: [
+          nested,
+          { _id: "contactSettings", _type: "contactSettings", enabled: false },
+        ],
+        params: { slug: "p", locale: "en" },
+      })
+    ).get()) as {
+      sections: [
+        { content: { enabled?: boolean }[] },
+        { cards: { content: { enabled?: boolean }[] }[] },
+      ];
+    };
+    expect(result.sections[0].content[0]?.enabled).toBe(false);
+    expect(result.sections[1].cards[0]?.content[0]?.enabled).toBe(true);
+  });
 });

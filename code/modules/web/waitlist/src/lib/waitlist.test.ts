@@ -107,14 +107,17 @@ describe("validateJoin", () => {
 describe("join", () => {
   const input = { email: "a@b.com", consent: true };
 
-  it("an existing email is a no-op (already, no write)", async () => {
+  it("an existing email writes nothing to Sanity, but re-sends the Resend contact (a repair)", async () => {
     fetch.mockResolvedValueOnce("wl.1");
     expect(await join(input, "2026-01-01", "v1")).toEqual({
       ok: true,
       already: true,
     });
     expect(create).not.toHaveBeenCalled();
-    expect(addGeneralContact).not.toHaveBeenCalled();
+    expect(sendEmail).not.toHaveBeenCalled();
+    expect(addGeneralContact).toHaveBeenCalledWith(
+      expect.objectContaining({ email: "a@b.com", source: "waitlist" }),
+    );
   });
 
   it("a new entry joins the Resend General topic with its consent proof", async () => {

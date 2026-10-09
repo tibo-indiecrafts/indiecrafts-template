@@ -164,11 +164,11 @@ export async function subscribeNewsletterContact(
     await syncNewsletterSegments(env, { email, locale }, f, target);
 }
 
-/** A waitlist or contact-form person (`POST /v1/contacts/general`). A NEW contact gets the
- *  `locale` property and, with a `topicId` (a waitlist join), the General topic `opt_in`. An
- *  existing contact is left exactly as it is: its language, its global unsubscribe and its topic
- *  choices — a single-opt-in form never overrides an opt-out made in the preference centre. */
-export async function addGeneralContact(
+/** A waitlist or contact-form person (`POST /v1/contacts/general`). A new contact gets the
+ *  `locale` property; an existing one keeps its fields (its language, its global unsubscribe).
+ *  With a `topicId` the contact opts into that topic, new or existing — the caller passes none
+ *  for a contact message, or when the person turned the topic off in the preference centre. */
+export async function upsertGeneralContact(
   env: ResendAudienceEnv,
   {
     email,
@@ -181,10 +181,8 @@ export async function addGeneralContact(
   const topics: TopicSub[] = topicId
     ? [{ id: topicId, subscription: "opt_in" }]
     : [];
-  // Everything rides on the create; an existing contact (409) gets no PATCH at all.
-  await upsertContact(env, email, {}, [], retrying(doFetch), [], {
+  await upsertContact(env, email, {}, topics, retrying(doFetch), [], {
     properties: { locale },
-    ...(topics.length ? { topics } : {}),
   });
 }
 

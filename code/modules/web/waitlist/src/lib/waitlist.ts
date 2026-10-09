@@ -87,6 +87,21 @@ export async function join(
   const email = input.email.trim().toLowerCase();
   const name = input.name?.trim();
 
+  // Also a Resend contact on the General topic: the waitlist consent covers early-access news.
+  // Best-effort (never throws) — the Sanity entry is the record. Started early so it runs
+  // alongside the emails, not before them.
+  const toResend = () =>
+    addGeneralContact({
+      email,
+      locale: toSiteLocale(input.language),
+      source: "waitlist",
+      policyVersion: policyVersion ?? "",
+      consentAt: createdAt,
+      clientIp: input.clientIp,
+    }).then((result) => {
+      if (result === "failed") logger.error("waitlist resend contact failed");
+    });
+
   try {
     // ponytail: check-then-create dedupe races under concurrency — two parallel
     // joins for the same new email could both create an entry. Marketing-site scale,
@@ -95,7 +110,11 @@ export async function join(
       `*[_type == "waitlistEntry" && email == $email][0]._id`,
       { email },
     );
-    if (existing) return { ok: true, already: true };
+    if (existing) {
+      // A re-join repairs a Resend contact an earlier join could not write.
+      await toResend();
+      return { ok: true, already: true };
+    }
 
     await writeClient.create({
       _id: privateId("waitlistEntry"), // dotted → hidden from anonymous reads
@@ -114,19 +133,7 @@ export async function join(
       createdAt,
     });
 
-    // Also a Resend contact on the General topic: the waitlist consent covers early-access
-    // news. Best-effort — the Sanity entry is the record.
-    if (
-      (await addGeneralContact({
-        email,
-        locale: toSiteLocale(input.language),
-        source: "waitlist",
-        policyVersion: policyVersion ?? "",
-        consentAt: createdAt,
-        clientIp: input.clientIp,
-      })) === "failed"
-    )
-      logger.error("waitlist resend contact failed");
+    const resend = toResend();
 
     const strings = (await getEmailStrings()) as {
       waitlistConfirm?: ConfirmationConfig;
@@ -156,6 +163,7 @@ export async function join(
       strings?.supportEmail,
       bccAll,
     );
+    await resend;
 
     return { ok: true, already: false };
   } catch (error) {

@@ -133,9 +133,9 @@ Changed · Deprecated · Removed · Fixed**.
 - **Waitlist and contact: every saved submission is also a Resend contact.** A waitlist join opts
   into the General topic; a contact message is stored with no topic. **Why:** Resend is the mailing
   tool. The Sanity entry stays the record, so a Resend failure only logs.
-- **Contact, waitlist and lead-magnet emails can copy the support address** (Studio checkbox per
-  email). The lead-magnet email now also honours its own group's BCC and Reply-To, which it
-  ignored.
+- **Contact and waitlist confirmations can copy the support address** (Studio checkbox per email).
+  The lead-magnet email never does (it carries a signed download link); it now honours its own
+  group's BCC and Reply-To, which it ignored.
 
 - **blog — GROQ public-filter test coverage, via `groq-js`.** `sanity/queries.test.ts` evaluates the
   real exported query strings (not a mock) against an in-memory fixture dataset, so a regression that

@@ -76,7 +76,9 @@ per-category, so per-category state needs Topics. Setup, per environment:
    (run `pnpm resend:topics:sync`, which is idempotent). Every topic is private and
    `opt_out`: there is no catch-all topic, so nobody is subscribed without a decision. The
    `general` category is the waitlist's topic: a waitlist join opts in, a contact-form sender is
-   stored with no topic (`POST /v1/contacts/general`). It is never granted at account sign-up.
+   stored with no topic (`POST /v1/contacts/general`). It is never granted at account sign-up. The
+   preference centre shows it on for an account whose email joined the waitlist, until the person
+   chooses; a later join never overrides their choice.
 2. Paste each Topic's id into the matching category's `resendTopicId` field in Sanity.
 3. Set `RESEND_API_KEY` (also used for `email_preferences`'s sibling, the `marketing_email`
    contact mirror) and verify the sending domain in Resend. Contacts are global — Resend

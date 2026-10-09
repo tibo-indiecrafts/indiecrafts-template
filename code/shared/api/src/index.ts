@@ -91,7 +91,12 @@ import {
   recordNewsletterConsent,
   syncNewsletterSubscriber,
 } from "./newsletter/resend-sync";
-import { isGeneralSource, syncGeneralContact } from "./contacts/general";
+import {
+  generalChoice,
+  generalTopicId,
+  isGeneralSource,
+} from "./contacts/general";
+import { upsertGeneralContact } from "./resend-audience";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -1001,8 +1006,9 @@ async function route(
 
   // ── Form contacts — POST /v1/contacts/general (bearer-gated) ──
   // The website server calls this after it saves a waitlist entry or a contact message. A
-  // waitlist join appends its consent proof (D1) and opts into the General topic; a contact
-  // message is stored as a Resend contact only. A Resend error → 502 (the website logs it).
+  // waitlist join appends its consent proof (D1) and opts into the General topic, unless the
+  // person turned General off in the preference centre; a contact message is stored as a
+  // Resend contact only. No General topic id → 503 and nothing written, so a re-join repairs it.
   if (url.pathname === "/v1/contacts/general") {
     if (request.method === "OPTIONS")
       return new Response(null, { status: 204, headers: cors });
@@ -1012,8 +1018,7 @@ async function route(
       requireAdminBearer(request, env, cors) ??
       (await rateLimit(request, env, cors));
     if (denied) return denied;
-    if (!env.RESEND_API_KEY || !env.MAIN_DB || !env.GDPR_FINGERPRINT_SALT)
-      return json({ error: "unavailable" }, 503, cors);
+    if (!env.RESEND_API_KEY) return json({ error: "unavailable" }, 503, cors);
     if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
       return json({ error: "too_large" }, 413, cors);
     let body: {
@@ -1044,7 +1049,13 @@ async function route(
     )
       return json({ error: "invalid" }, 400, cors);
     const email = body.email.trim().toLowerCase();
-    if (waitlist)
+    let topicId: string | undefined;
+    if (waitlist) {
+      // The consent proof and the opt-out lookup need D1 — a contact message does not.
+      if (!env.MAIN_DB || !env.GDPR_FINGERPRINT_SALT)
+        return json({ error: "unavailable" }, 503, cors);
+      topicId = await generalTopicId(env, body.locale);
+      if (!topicId) return json({ error: "no_topic" }, 503, cors);
       await recordNewsletterConsent(env.MAIN_DB, env.GDPR_FINGERPRINT_SALT, {
         email,
         policyVersion: body.policyVersion as string,
@@ -1052,11 +1063,14 @@ async function route(
         consentType: "waitlist",
         source: "waitlist",
       });
+      const fp = await fingerprintEmail(email, env.GDPR_FINGERPRINT_SALT);
+      if ((await generalChoice(env.MAIN_DB, fp)) === false) topicId = undefined;
+    }
     try {
-      await syncGeneralContact(env, {
+      await upsertGeneralContact(env, {
         email,
         locale: body.locale,
-        source: body.source,
+        topicId,
       });
     } catch (error) {
       // Never the email — name only.

@@ -101,17 +101,33 @@ async function readState(opts: {
   const { categories, notices } = await fetchCategories(env, locale);
   const stored = await readPreferences(db, userId);
   const row = await db
-    .prepare("SELECT marketing_email FROM user_profiles WHERE user_id = ?")
+    .prepare(
+      "SELECT marketing_email, email_fingerprint FROM user_profiles WHERE user_id = ?",
+    )
     .bind(userId)
-    .first<{ marketing_email: number | null }>();
+    .first<{
+      marketing_email: number | null;
+      email_fingerprint: string | null;
+    }>();
   const marketingEmail = row?.marketing_email;
+  // A waitlist join opted this address into `general` (POST /v1/contacts/general): with no
+  // choice of their own stored yet, show it on, as Resend has it.
+  const joinedWaitlist =
+    stored.general === undefined && row?.email_fingerprint
+      ? !!(await db
+          .prepare(
+            "SELECT 1 FROM consent_events WHERE email_fingerprint = ? AND consent_type = 'waitlist' AND granted = 1 LIMIT 1",
+          )
+          .bind(row.email_fingerprint)
+          .first())
+      : false;
   return {
     categories: categories.map((c) => ({
       key: c.key,
       name: c.name,
       description: c.description,
       includeAtSignup: c.includeAtSignup,
-      granted: stored[c.key] ?? false,
+      granted: stored[c.key] ?? (c.key === "general" && joinedWaitlist),
     })),
     notices,
     marketing_email: marketingEmail == null ? null : marketingEmail === 1,

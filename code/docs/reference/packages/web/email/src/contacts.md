@@ -18,8 +18,8 @@ server bearer `APP_API_TOKEN`, one safe retry). The api upserts the Resend conta
 - `source: "contact"` — stores the contact only, with no topic. That consent covers a reply, not
   broadcasts.
 
-An existing Resend contact is left untouched: its language, its global unsubscribe and its topic
-choices never change. The Sanity document stays the record, so the call is best-effort: it never
+An existing Resend contact keeps its language and its global unsubscribe; a waitlist join still
+opts it into General, unless the person turned General off in the preference centre. The Sanity document stays the record, so the call is best-effort: it never
 throws, an unconfigured api skips it, and it waits at most 4 s with no retry. It sends the
 visitor's IP as `x-client-ip`, so the api rate-limits per visitor. Server-only.
 

@@ -14,9 +14,12 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
-- **`POST /v1/contacts/general` never changes an existing Resend contact.** The topic rides on the
-  create call only. **Why:** a single-opt-in waitlist join must not override a General opt-out made
-  in the preference centre.
+- **`POST /v1/contacts/general` respects a General opt-out and never half-writes.** A waitlist join
+  opts a new or existing contact into General unless the person turned it off in the preference
+  centre (D1). No topic id answers `503 no_topic` before any write, and a re-join repairs it. A
+  contact message no longer needs D1. The preference centre shows General on for an address that
+  joined the waitlist. **Why:** the code review found waitlist people who could never reach
+  General, and a centre that showed them as off.
 
 - **The security alert ends with the support line** (`Need help? <address>`, English like its
   body), read with its Studio copy. **Why:** it was the one email without it.
@@ -48,7 +51,7 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   id). A contact message is stored with no topic: that consent covers a reply. An existing contact
   is left untouched, so a single-opt-in form never overrides a General opt-out. **Why:** Resend is the mailing tool; a launch
   email needs the waitlist there.
-- **Service emails can copy the support address.** `erasureComplete`, the two data-request emails,
+- **Service emails can copy the support address.** The two data-request emails,
   the Clerk notices and the welcome email send a blind copy to `emailStrings.supportEmail` when
   their Studio group ticks "Copie cachée à l'adresse de support". **Why:** the support team asked to
   see what users receive. Codes, magic links, invitations, device sign-out and the erasure confirm

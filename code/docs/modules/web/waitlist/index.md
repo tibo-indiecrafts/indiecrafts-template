@@ -29,7 +29,8 @@ contribution. The public form stays a page-builder block (renderer in `@indiecra
    fields, `_type` hard-coded).
 4. On a **new** entry, the person also becomes a **Resend contact on the General topic**
    (`addGeneralContact` → `POST /v1/contacts/general`; the api records the consent proof in D1).
-   Best-effort: the Sanity entry is the record. Setup: `pnpm resend:topics:sync`, then paste the
+   Best-effort: the Sanity entry is the record. A re-join with a known email sends it again, which
+   repairs a join the api could not complete (e.g. before the topic was set up). Setup: `pnpm resend:topics:sync`, then paste the
    `General` topic id into Studio → E-mails → Préférences → category `general`.
 5. On a **new** entry, two **best-effort** emails may fire (see below) — a failure only logs, never
    fails the signup.

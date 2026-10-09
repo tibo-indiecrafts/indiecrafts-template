@@ -77,23 +77,23 @@ Two group factories cover every email:
 
 Groups today:
 
-| Group                 | Owner module            | To               | Translated? | Extras                                          |
-| --------------------- | ----------------------- | ---------------- | ----------- | ----------------------------------------------- |
-| `commentNotification` | blog                    | site team        | no          | reply-to · moderation buttons                   |
-| `newsletterConfirm`   | newsletter              | subscriber       | **yes**     | button · bcc                                    |
-| `leadMagnetConfirm`   | newsletter              | visitor          | **yes**     | button (copy only)                              |
-| `leadMagnet`          | newsletter              | visitor          | **yes**     | button (the download link) · bcc · support copy |
-| `newsletterOwner`     | newsletter              | site team        | no          | —                                               |
-| `waitlistConfirm`     | waitlist                | joiner           | **yes**     | bcc · support copy                              |
-| `waitlistOwner`       | waitlist                | site team        | no          | —                                               |
-| `contactConfirm`      | contact                 | sender           | **yes**     | bcc · support copy                              |
-| `contactOwner`        | contact                 | site team        | no          | reply-to = the sender                           |
-| `dataRequestOwner`    | compliance              | controller / DPO | no          | —                                               |
-| `erasureToken`        | compliance (api worker) | requester        | **yes**     | —                                               |
-| `erasureComplete`     | compliance (api worker) | requester        | **yes**     | support copy                                    |
-| `dataRequestReceipt`  | compliance (api worker) | requester        | **yes**     | support copy                                    |
-| `dataRequestClosed`   | compliance (api worker) | requester        | **yes**     | support copy                                    |
-| `securityAlert`       | the brick               | site team        | no          | no on/off; plain text                           |
+| Group                 | Owner module            | To               | Translated? | Extras                           |
+| --------------------- | ----------------------- | ---------------- | ----------- | -------------------------------- |
+| `commentNotification` | blog                    | site team        | no          | reply-to · moderation buttons    |
+| `newsletterConfirm`   | newsletter              | subscriber       | **yes**     | button · bcc                     |
+| `leadMagnetConfirm`   | newsletter              | visitor          | **yes**     | button (copy only)               |
+| `leadMagnet`          | newsletter              | visitor          | **yes**     | button (the download link) · bcc |
+| `newsletterOwner`     | newsletter              | site team        | no          | —                                |
+| `waitlistConfirm`     | waitlist                | joiner           | **yes**     | bcc · support copy               |
+| `waitlistOwner`       | waitlist                | site team        | no          | —                                |
+| `contactConfirm`      | contact                 | sender           | **yes**     | bcc · support copy               |
+| `contactOwner`        | contact                 | site team        | no          | reply-to = the sender            |
+| `dataRequestOwner`    | compliance              | controller / DPO | no          | —                                |
+| `erasureToken`        | compliance (api worker) | requester        | **yes**     | —                                |
+| `erasureComplete`     | compliance (api worker) | requester        | **yes**     | —                                |
+| `dataRequestReceipt`  | compliance (api worker) | requester        | **yes**     | support copy                     |
+| `dataRequestClosed`   | compliance (api worker) | requester        | **yes**     | support copy                     |
+| `securityAlert`       | the brick               | site team        | no          | no on/off; plain text            |
 
 A sender reads the whole entity once (`getEmailStrings()` — a **generic read**, no field projection,
 so a feature adding a group never edits this brick), **narrows to its own group** with the exported
@@ -130,13 +130,15 @@ de support"**. Ticked, the support address (E-mails → "Adresse de support") ge
 each send. The website senders spread `supportCopy(cfg, supportEmail)` into `bcc`; the api worker
 passes `supportCopy` to `resend()` (`supportCopyOf`, and `authSupportCopy` for Clerk).
 
-- **Offered on:** `contactConfirm` · `waitlistConfirm` · `leadMagnet` · `erasureComplete` ·
-  `dataRequestReceipt` · `dataRequestClosed` · the Clerk notices (password, passkey, two-step,
-  primary email, account locked) · `welcome`.
+- **Offered on:** `contactConfirm` · `waitlistConfirm` · `dataRequestReceipt` ·
+  `dataRequestClosed` · the Clerk notices (password, passkey, two-step, primary email, account
+  locked) · `welcome`.
 - **Never offered** (the default): an email that carries a one-time code or action link —
-  `newsletterConfirm` · `leadMagnetConfirm` · `erasureToken` · Clerk codes, magic link, invitation,
-  new device. A copy would hand that access to whoever reads the support inbox. The Clerk worker
-  also keeps a fixed list, so a value written outside the Studio cannot copy one either.
+  `newsletterConfirm` · `leadMagnetConfirm` · `leadMagnet` (a signed download link) ·
+  `erasureToken` · Clerk codes, magic link, invitation, new device. A copy would hand that access
+  to whoever reads the support inbox. The Clerk worker also keeps a fixed list, so a value written
+  outside the Studio cannot copy one either. `erasureComplete` never copies either: the copy would
+  keep the erased person's data in the support inbox.
 - **Not gated** like `bccAll`. The trade-off: the support address is a Studio field, so an editor
   who changes it redirects the copies. It is the address every footer shows, so the change is
   visible in each email, and the copied emails carry no code or one-time link.

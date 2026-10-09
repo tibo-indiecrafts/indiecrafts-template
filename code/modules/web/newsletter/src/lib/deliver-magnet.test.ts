@@ -107,7 +107,7 @@ describe("deliverMagnetsForTags", () => {
     expect(sent).toContain("/api/download?token=");
   });
 
-  it("honours the group's own bcc and reply-to, and the support copy", async () => {
+  it("honours the group's own bcc and reply-to, never a support copy (it carries a signed link)", async () => {
     strings.value = {
       newsletterConfirm: { from: "hi@site.test" },
       supportEmail: "help@site.test",
@@ -122,7 +122,7 @@ describe("deliverMagnetsForTags", () => {
     await deliverMagnetsForTags("a@b.com", ["magnet.1"], "en");
     expect(sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
-        bcc: ["me@site.test", "help@site.test"],
+        bcc: ["me@site.test"],
         replyTo: "team@site.test",
       }),
     );

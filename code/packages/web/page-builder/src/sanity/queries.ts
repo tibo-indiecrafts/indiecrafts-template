@@ -26,13 +26,34 @@ export const CTA_FRAGMENT = `
 `;
 
 /**
+ * A form block's Studio switch (`contactSettings` · `waitlistSettings` · `newsletterSettings`),
+ * so turning a form off hides every block of it, not only its page. A missing settings doc
+ * reads as on.
+ */
+const FORM_SWITCH = `
+  _type == "module.contact" => {
+    "enabled": *[_type == "contactSettings"][0].enabled != false
+  },
+  _type == "module.waitlist" => {
+    "enabled": *[_type == "waitlistSettings"][0].enabled != false
+  },
+  _type in ["module.newsletter", "module.lead-magnet"] => {
+    "enabled": *[_type == "newsletterSettings"][0].enabled != false
+  }
+`;
+
+/** The rich-text field of a container module: its inline blocks get their form switch too. */
+const NESTED = `content[]{ ..., ${FORM_SWITCH} }`;
+
+/**
  * Generic modules fragment — expands every referenced field per generic module
  * type. `quote-list` dereferences its quotes; `person-list` its people. The blog
  * appends `module.blog-post-list` to this in its own `MODULES_FRAGMENT`.
  *
- * The form blocks carry `enabled` — their feature's Studio switch
- * (`contactSettings` · `waitlistSettings` · `newsletterSettings`), so turning a form
- * off hides every block of it, not only its page. A missing settings doc reads as on.
+ * The form blocks carry `enabled` (`FORM_SWITCH`), at the top level and inside a container's
+ * rich text (prose, callout, card, accordion item, step).
+ * ponytail: GROQ cannot recurse — a form inside a container inside a container gets no
+ * switch and stays visible; project one more level here if editors ever nest that deep.
  */
 export const MODULES_FRAGMENT = `
   ...,
@@ -41,10 +62,13 @@ export const MODULES_FRAGMENT = `
   _type == "module.pricing" => {
     tiers[] { ..., cta { ${CTA_FRAGMENT} } }
   },
-  _type == "module.callout" => { cta { ${CTA_FRAGMENT} } },
+  _type == "module.prose" => { ${NESTED} },
+  _type == "module.callout" => { cta { ${CTA_FRAGMENT} }, ${NESTED} },
   _type == "module.card-list" => {
-    cards[] { ..., cta { ${CTA_FRAGMENT} } }
+    cards[] { ..., cta { ${CTA_FRAGMENT} }, ${NESTED} }
   },
+  _type == "module.accordion-list" => { items[] { ..., ${NESTED} } },
+  _type == "module.step-list" => { steps[] { ..., ${NESTED} } },
   _type == "module.gallery" => {
     images[]{
       _key,
@@ -70,13 +94,5 @@ export const MODULES_FRAGMENT = `
     }
   },
   _type == "module.lead-magnet" => { magnet->{ "id": _id } },
-  _type == "module.contact" => {
-    "enabled": *[_type == "contactSettings"][0].enabled != false
-  },
-  _type == "module.waitlist" => {
-    "enabled": *[_type == "waitlistSettings"][0].enabled != false
-  },
-  _type in ["module.newsletter", "module.lead-magnet"] => {
-    "enabled": *[_type == "newsletterSettings"][0].enabled != false
-  }
+  ${FORM_SWITCH}
 `;

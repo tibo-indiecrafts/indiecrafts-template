@@ -56,7 +56,8 @@ type ErasureEmailStrings = {
 
 /** The support address when the email's group opts in (`copySupport`), else undefined. It is
  *  the address every footer shows, so a change to it is visible in each email; no group that
- *  carries a code or a one-time link offers the copy. Not behind `EMAIL_BCC_ALL_ENABLED`. */
+ *  carries a code or a one-time link offers the copy. Not behind `EMAIL_BCC_ALL_ENABLED`.
+ *  The erasure emails never copy: a copy would keep the erased person's data in the inbox. */
 export function supportCopyOf(
   group: { copySupport?: boolean } | null | undefined,
   supportEmail: string | null | undefined,
@@ -311,6 +312,5 @@ export async function sendErasureCompleteEmail(
     html,
     text,
     bcc: copy?.bccAll,
-    supportCopy: supportCopyOf(copy?.erasureComplete, copy?.supportEmail),
   });
 }

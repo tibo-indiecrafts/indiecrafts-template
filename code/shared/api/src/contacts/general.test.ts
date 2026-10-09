@@ -17,7 +17,9 @@ afterEach(() => vi.unstubAllGlobals());
 type Call = { url: string; method: string; body: unknown };
 
 /** One stubbed `fetch` for Sanity + Resend, routed by URL. Records every call. */
-function stubFetch(opts: { exists?: boolean; resendStatus?: number } = {}) {
+function stubFetch(
+  opts: { exists?: boolean; resendStatus?: number; noGeneral?: boolean } = {},
+) {
   const calls: Call[] = [];
   const reply = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status });
@@ -35,7 +37,9 @@ function stubFetch(opts: { exists?: boolean; resendStatus?: number } = {}) {
           result: {
             categories: [
               { key: "news", name: "News", resendTopicId: "topic-news" },
-              { key: "general", name: "General", resendTopicId: TOPIC },
+              ...(opts.noGeneral
+                ? []
+                : [{ key: "general", name: "General", resendTopicId: TOPIC }]),
             ],
           },
         });
@@ -157,14 +161,56 @@ describe("POST /v1/contacts/general", () => {
     ]);
   });
 
-  it("an existing contact is left untouched — its topic choices and unsubscribe stand", async () => {
+  it("an existing contact gains the topic; its fields and global unsubscribe stay", async () => {
     const calls = stubFetch({ exists: true });
     expect((await post(WAITLIST)).status).toBe(204);
-    // The create is refused (409); no PATCH may override a General opt-out.
     expect(resendCalls(calls).map((c) => `${c.method} ${c.url}`)).toEqual([
       "POST /contacts",
+      `PATCH /contacts/${EMAIL}/topics`, // no PATCH /contacts/{email}: fields untouched
     ]);
-    expect(await consentRows()).toHaveLength(1); // the join's own consent is still recorded
+  });
+
+  it("a General opt-out made in the preference centre is never overridden", async () => {
+    const email = "optout@example.com";
+    const fp = await fingerprintEmail(email, SALT);
+    await env
+      .MAIN_DB!.prepare(
+        "INSERT OR IGNORE INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES ('user_optout', ?, ?, ?)",
+      )
+      .bind(email, fp, new Date().toISOString())
+      .run();
+    await env
+      .MAIN_DB!.prepare(
+        "INSERT OR REPLACE INTO email_preferences (user_id, category_key, granted, updated_at) VALUES ('user_optout', 'general', 0, ?)",
+      )
+      .bind(new Date().toISOString())
+      .run();
+    const calls = stubFetch({ exists: true });
+    expect((await post({ ...WAITLIST, email })).status).toBe(204);
+    expect(resendCalls(calls).map((c) => `${c.method} ${c.url}`)).toEqual([
+      "POST /contacts", // 409, and no topics PATCH
+    ]);
+  });
+
+  it("no General topic id: 503, nothing written, so a later re-join can complete it", async () => {
+    const calls = stubFetch({ noGeneral: true });
+    const res = await post(WAITLIST);
+    expect(res.status).toBe(503);
+    expect(await res.json()).toMatchObject({ error: "no_topic" });
+    expect(resendCalls(calls)).toHaveLength(0);
+    expect(await consentRows()).toHaveLength(0);
+  });
+
+  it("a contact message needs no D1", async () => {
+    stubFetch();
+    expect(
+      (
+        await post(
+          CONTACT,
+          testEnv({ MAIN_DB: undefined, GDPR_FINGERPRINT_SALT: undefined }),
+        )
+      ).status,
+    ).toBe(204);
   });
 
   it("a contact message: stored without a topic or a consent row", async () => {

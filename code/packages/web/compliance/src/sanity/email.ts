@@ -55,7 +55,6 @@ export const emailGroups = [
   }),
   confirmationGroup({
     name: "erasureComplete",
-    copySupport: true,
     addressFields: false,
     title: "RGPD — effacement terminé",
     description:

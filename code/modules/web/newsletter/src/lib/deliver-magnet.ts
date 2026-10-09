@@ -13,7 +13,6 @@ import { cleanList } from "@indiecrafts/packages-shared-utils/form";
 import {
   getEmailStrings,
   pick,
-  supportCopy,
   type ConfirmationConfig,
 } from "@indiecrafts/packages-web-email/strings";
 import {
@@ -143,11 +142,7 @@ async function sendMagnetEmail(
   await sendEmail({
     from,
     to: [email],
-    bcc: cleanList([
-      ...(lead?.bcc ?? []),
-      bccAll ?? "",
-      ...supportCopy(lead, strings?.supportEmail),
-    ]),
+    bcc: cleanList([...(lead?.bcc ?? []), bccAll ?? ""]),
     replyTo: lead?.replyTo?.trim(),
     ...message,
   });
