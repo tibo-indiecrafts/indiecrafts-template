@@ -33,7 +33,7 @@ export default defineType({
       title: "Fichier à télécharger",
       type: "file",
       description:
-        "Le document envoyé après confirmation de l'e-mail (PDF, ZIP, etc.).",
+        "Envoyé après confirmation de l'e-mail (PDF, ZIP…). Attention : ce fichier reste public pour qui trouve son adresse — rien de confidentiel.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({

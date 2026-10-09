@@ -94,6 +94,7 @@ export async function subscribe(
   try {
     const strings = (await getEmailStrings()) as {
       newsletterConfirm?: ConfirmationConfig;
+      leadMagnetConfirm?: ConfirmationConfig;
       supportEmail?: string;
       bccAll?: string;
     } | null;
@@ -131,16 +132,22 @@ export async function subscribe(
       },
       secret,
     );
-    const fallback = confirmEmailDefaults(locale);
+    // Sender + on/off come from the newsletter confirmation; the words follow the purpose —
+    // a lead-magnet request must not read "start receiving the newsletter".
+    const copy = newsletter ? cfg : strings?.leadMagnetConfirm;
+    const fallback = confirmEmailDefaults(
+      locale,
+      newsletter ? "newsletter" : "lead-magnet",
+    );
     const message = renderNewsletterConfirmEmail({
-      subject: pick(cfg.subject, locale) || fallback.subject,
-      heading: pick(cfg.heading, locale) || fallback.heading,
-      intro: pick(cfg.intro, locale) || fallback.intro,
-      buttonLabel: pick(cfg.buttonLabel, locale) || fallback.buttonLabel,
+      subject: pick(copy?.subject, locale) || fallback.subject,
+      heading: pick(copy?.heading, locale) || fallback.heading,
+      intro: pick(copy?.intro, locale) || fallback.intro,
+      buttonLabel: pick(copy?.buttonLabel, locale) || fallback.buttonLabel,
       // The token rides in the fragment: browsers never send it to a server, so the
       // address it carries stays out of request logs. The page reads it client-side.
       confirmUrl: `${site.url}${localizedPathname("/newsletter/confirm", locale)}#t=${token}`,
-      outro: pick(cfg.outro, locale) || undefined,
+      outro: pick(copy?.outro, locale) || pick(cfg.outro, locale) || undefined,
       supportEmail: strings?.supportEmail,
     });
     // CMS bcc honored only behind the infra gate (unset in prod). QA-only.

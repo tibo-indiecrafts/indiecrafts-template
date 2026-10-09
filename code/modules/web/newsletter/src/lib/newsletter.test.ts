@@ -9,7 +9,9 @@ const { getEmailStrings, sendEmail } = vi.hoisted(() => ({
 }));
 vi.mock("@indiecrafts/packages-web-email/strings", () => ({
   getEmailStrings,
-  pick: () => "",
+  // The real resolver, minus the default-locale fallback: a localized value → its string.
+  pick: (v: unknown, locale: string) =>
+    (v as Record<string, string> | undefined)?.[locale] ?? "",
 }));
 vi.mock("@indiecrafts/packages-web-email", () => ({
   sendEmail,
@@ -139,6 +141,37 @@ describe("subscribe", () => {
       NOW,
     );
     expect((await sentLink()).payload?.newsletter).toBe(false);
+  });
+
+  it("a lead-magnet request reads as a document request, never the newsletter", async () => {
+    await subscribe(
+      { ...input, source: "lead-magnet", language: "fr", tags: ["m1"] },
+      "v2",
+      NOW,
+    );
+    const { mail } = await sentLink();
+    expect(mail?.subject).toBe("Confirmez votre demande");
+    expect(mail?.text).toContain("Cela ne vous inscrit pas à l'infolettre.");
+    expect(mail?.text).not.toContain("recevoir l'infolettre");
+  });
+
+  it("the Studio copy overrides each purpose's defaults, never the other's", async () => {
+    getEmailStrings.mockResolvedValue({
+      newsletterConfirm: {
+        enabled: true,
+        from: "hi@site.test",
+        subject: { en: "Join us" },
+      },
+      leadMagnetConfirm: { subject: { en: "Your guide awaits" } },
+    });
+    await subscribe(
+      { ...input, source: "lead-magnet", tags: ["m1"] },
+      "v2",
+      NOW,
+    );
+    expect((await sentLink()).mail?.subject).toBe("Your guide awaits");
+    await subscribe(input, "v2", NOW);
+    expect((await sentLink()).mail?.subject).toBe("Join us");
   });
 
   it.each([

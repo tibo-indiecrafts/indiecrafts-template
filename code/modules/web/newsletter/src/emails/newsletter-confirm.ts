@@ -52,9 +52,34 @@ const CONFIRM_DEFAULTS: Record<string, ConfirmCopy> = {
   },
 };
 
-/** The fallback confirmation copy for `locale` (English when there is none). */
-export function confirmEmailDefaults(locale: string): ConfirmCopy {
-  return CONFIRM_DEFAULTS[locale] ?? EN;
+/** A lead-magnet request asks for a document, not the newsletter: its copy says so. */
+const LEAD_EN: ConfirmCopy = {
+  subject: "Confirm your request",
+  heading: "One last step",
+  intro:
+    "Thanks! Confirm your email address to receive the document you asked for. This does not subscribe you to the newsletter.",
+  buttonLabel: "Get the document",
+};
+
+const LEAD_DEFAULTS: Record<string, ConfirmCopy> = {
+  en: LEAD_EN,
+  fr: {
+    subject: "Confirmez votre demande",
+    heading: "Plus qu'une étape",
+    intro:
+      "Merci ! Confirmez votre adresse e-mail pour recevoir le document demandé. Cela ne vous inscrit pas à l'infolettre.",
+    buttonLabel: "Recevoir le document",
+  },
+};
+
+/** The fallback confirmation copy for `locale` (English when there is none), per purpose. */
+export function confirmEmailDefaults(
+  locale: string,
+  purpose: "newsletter" | "lead-magnet" = "newsletter",
+): ConfirmCopy {
+  return purpose === "lead-magnet"
+    ? (LEAD_DEFAULTS[locale] ?? LEAD_EN)
+    : (CONFIRM_DEFAULTS[locale] ?? EN);
 }
 
 const C = EMAIL_COLORS;

@@ -67,6 +67,10 @@ Studio → **E-mails**). The `From` must be a **Resend-verified domain**. Verify
 - **Confirmation → the subscriber** (`newsletterConfirm`, **required**) — the double opt-in email,
   with **copy translated per language** (`subject`, `heading`, `intro`, `buttonLabel`, `outro`) + an
   optional `BCC`. Seeded EN + FR; an empty field falls back to English or French.
+- **Document request → the visitor** (`leadMagnetConfirm`, optional copy) — the confirmation a
+  lead-magnet request gets instead: it promises the document and says it does **not** subscribe to
+  the newsletter. Same sender and switch as `newsletterConfirm`; an empty field falls back to the
+  built-in EN/FR copy (never to the newsletter's).
 - **Confirmed-subscriber alert → you** (`newsletterOwner`, optional) — `To`/`CC`/`BCC`, `From`, and a
   <code v-pre>{{email}}</code> subject. Sent when a newsletter sign-up is confirmed (not for a
   lead-magnet-only request), in the site's default language, with the subscriber's language and source.
@@ -90,12 +94,13 @@ button, so the visitor can try again.
 A **`leadMagnet`** doc (Studio) pairs a tag with an uploaded file. Drop a **`module.lead-magnet`**
 block instead of the plain newsletter block: on **confirm**, the request's tags are checked and each
 magnet is e-mailed as a **signed, expiring download link** (`/api/download` verifies it, signed with
-the same `NEWSLETTER_SECRET`). A lead-magnet request never subscribes anyone to the newsletter.
+the same `NEWSLETTER_SECRET`, then streams the file — the visitor never gets the CDN URL, so the link
+really expires after 7 days). A lead-magnet request never subscribes anyone to the newsletter.
 Delivery is best-effort — a failure never blocks the confirmation.
 
 ::: warning A Sanity file is public
-The signed link gates the form, not the file. Anyone with a Sanity file URL can download it, and on
-Sanity's free plan (public datasets) anyone can list the dataset's files and the `leadMagnet` docs.
+The signed link gates the form, not the file. On Sanity's free plan (public datasets) anyone can list
+the dataset's files with their CDN URLs, and download them. The Studio's file field says so.
 Use the gate for a freebie that you trade for an email. For a file that must stay private, use a
 private dataset (paid Growth plan) or host the file outside Sanity.
 :::

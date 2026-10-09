@@ -71,6 +71,7 @@ Groups today:
 | --------------------- | ------------ | ---------------- | ----------- | ----------------------------- |
 | `commentNotification` | blog         | site team        | no          | reply-to · moderation buttons |
 | `newsletterConfirm`   | newsletter   | subscriber       | **yes**     | button · bcc                  |
+| `leadMagnetConfirm`   | newsletter   | visitor          | **yes**     | button (copy only)            |
 | `newsletterOwner`     | newsletter   | site team        | no          | —                             |
 | `waitlistConfirm`     | waitlist     | joiner           | **yes**     | bcc                           |
 | `waitlistOwner`       | waitlist     | site team        | no          | —                             |

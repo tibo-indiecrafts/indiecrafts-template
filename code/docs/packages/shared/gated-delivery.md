@@ -43,7 +43,9 @@ const result = await resolveGatedDownload(token, secret, (id) =>
   getAssetUrl(id),
 );
 if (!result.ok) return new Response("forbidden", { status: 403 });
-return Response.redirect(result.url);
+// Stream, don't redirect: a redirect hands out the permanent file URL, so the
+// token's expiry would no longer protect anything.
+return new Response((await fetch(result.url)).body);
 ```
 
 The lead-magnet wiring lives in the newsletter module

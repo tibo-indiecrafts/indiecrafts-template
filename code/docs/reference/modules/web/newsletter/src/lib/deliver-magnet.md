@@ -24,7 +24,7 @@ Handles lead-magnet delivery after the visitor confirms their email. A `module.l
 import { resolveMagnetDownload } from "@indiecrafts/modules-web-newsletter/lib/deliver-magnet";
 
 const result = await resolveMagnetDownload(token);
-if (result.ok) redirect(result.url);
+if (result.ok) return new Response((await fetch(`${result.url}?dl=`)).body); // stream, never redirect
 ```
 
 ## Source

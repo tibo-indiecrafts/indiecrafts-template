@@ -59,6 +59,16 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **A document request no longer reads as a newsletter sign-up.** A lead-magnet request got the
+  newsletter's confirmation ("Thanks for subscribing! … start receiving the newsletter"), yet
+  confirming does not subscribe anyone — the email misstated what the person agreed to. It now gets
+  its own copy ("Confirm your request … This does not subscribe you to the newsletter."), editable
+  in Studio → E-mails (`leadMagnetConfirm`); "Envoyer un test" samples it.
+- **The lead-magnet link really expires.** `/api/download` redirected to the file's permanent
+  CDN URL, so anyone who opened the "expires in 7 days" link kept a URL that never expired and
+  could share it. It now streams the file (`cache-control: private, no-store`, the original file
+  name), fetches only from `cdn.sanity.io`, and answers `502` on a CDN failure. On the free plan the
+  file stays listable from the public dataset — the docs and the Studio field now say so.
 - **The hosted Studio no longer crashes on load.** `sanity build` passes only `SANITY_STUDIO_*`
   to the browser, so the shared config's `NEXT_PUBLIC_SANITY_PROJECT_ID` was empty and the
   Studio threw "Missing NEXT_PUBLIC_SANITY_PROJECT_ID". `sanity.cli.ts` now inlines every

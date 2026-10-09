@@ -122,6 +122,7 @@ type Sample = { label: string; from: string; message: RenderedEmail };
 type EmailConfig = {
   commentNotification?: OwnerAlertConfig;
   newsletterConfirm?: ConfirmationConfig;
+  leadMagnetConfirm?: ConfirmationConfig;
   newsletterOwner?: OwnerAlertConfig;
   leadMagnet?: ConfirmationConfig;
   waitlistConfirm?: ConfirmationConfig;
@@ -173,6 +174,25 @@ async function buildSamples(to: string): Promise<Sample[]> {
         // The real email's link: the localized confirm page (its button POSTs the token).
         confirmUrl: `${site.url}${localizedPathname("/newsletter/confirm", locale)}#t=TEST`,
         outro: pick(nlConfirm.outro, locale) || undefined,
+      }),
+    });
+  }
+
+  // A lead-magnet request's confirmation: the newsletter's sender + switch, its own words.
+  if (nlConfirm?.enabled && nlConfirm.from?.trim()) {
+    const leadCopy = strings?.leadMagnetConfirm;
+    const fallback = confirmEmailDefaults(locale, "lead-magnet");
+    samples.push({
+      label: "leadMagnetConfirm",
+      from: nlConfirm.from.trim(),
+      message: renderNewsletterConfirmEmail({
+        subject: pick(leadCopy?.subject, locale) || fallback.subject,
+        heading: pick(leadCopy?.heading, locale) || fallback.heading,
+        intro: pick(leadCopy?.intro, locale) || fallback.intro,
+        buttonLabel: pick(leadCopy?.buttonLabel, locale) || fallback.buttonLabel,
+        confirmUrl: `${site.url}${localizedPathname("/newsletter/confirm", locale)}#t=TEST`,
+        outro:
+          pick(leadCopy?.outro, locale) || pick(nlConfirm.outro, locale) || undefined,
       }),
     });
   }

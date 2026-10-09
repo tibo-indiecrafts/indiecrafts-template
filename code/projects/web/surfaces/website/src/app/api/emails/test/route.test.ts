@@ -4,6 +4,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const RESEND_KEY = "re_test_secret_never_shown";
 const flags = vi.hoisted(() => ({ studio: true }));
 const sendEmail = vi.hoisted(() => vi.fn(async (_message: unknown) => {}));
+const CONTACT_ONLY = {
+  contactConfirm: { enabled: true, from: "Site <hello@site.test>" },
+};
+const strings = vi.hoisted(() => ({ value: {} as Record<string, unknown> }));
 vi.mock("@/config", async (importOriginal) => {
   const real = await importOriginal<typeof import("@/config")>();
   return {
@@ -28,9 +32,7 @@ vi.mock("@indiecrafts/packages-web-email", async (importOriginal) => ({
 // The real module reads Sanity — replace it whole. One enabled email → one sample.
 vi.mock("@indiecrafts/packages-web-email/strings", () => ({
   pick: () => "",
-  getEmailStrings: async () => ({
-    contactConfirm: { enabled: true, from: "Site <hello@site.test>" },
-  }),
+  getEmailStrings: async () => strings.value,
 }));
 
 const { POST } = await import("./route");
@@ -51,6 +53,7 @@ const sanityUsersMe = vi.fn(async (_url: string, init?: RequestInit) => {
 });
 
 beforeEach(() => {
+  strings.value = CONTACT_ONLY;
   flags.studio = true;
   sendEmail.mockClear();
   sanityUsersMe.mockClear();
@@ -78,6 +81,20 @@ describe("POST /api/emails/test", () => {
     expect(sanityUsersMe.mock.calls[0]?.[0]).toBe(
       "https://proj.api.sanity.io/v1/users/me",
     );
+  });
+
+  it("samples the lead-magnet confirmation with its own words, not the newsletter's", async () => {
+    strings.value = {
+      newsletterConfirm: { enabled: true, from: "Site <hello@site.test>" },
+    };
+    const res = await post(JSON.stringify({ to: "me@site.test" }));
+    const { results } = (await res.json()) as { results: { label: string }[] };
+    const labels = results.map((r) => r.label);
+    expect(labels).toContain("leadMagnetConfirm");
+    const subjects = sendEmail.mock.calls.map(
+      (c) => (c[0] as { subject: string }).subject,
+    );
+    expect(subjects).toContain("Confirm your request"); // samples use the default locale
   });
 
   it("is a 401 without a Bearer token or for a non-member, and sends nothing", async () => {

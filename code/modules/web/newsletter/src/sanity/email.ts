@@ -30,6 +30,21 @@ export const emailGroups = [
       "Petit texte sous le bouton (ex. « Vous n'avez pas demandé ceci ? Ignorez cet e-mail. »). Vide = masqué.",
     button: true,
   }),
+  confirmationGroup({
+    name: "leadMagnetConfirm",
+    title: "Infolettre — confirmation d'une demande de document",
+    description:
+      "E-mail envoyé quand quelqu'un demande un document (aimant à prospects) : le lien de confirmation envoie le document, sans inscrire à l'infolettre. Expéditeur et activation : ceux de la confirmation de l'infolettre.",
+    enabledHint:
+      "Informatif — l'envoi suit la case de la confirmation de l'infolettre. Vide sur les textes = valeurs par défaut.",
+    subjectHint: "Vide = « Confirmez votre demande ».",
+    introHint:
+      "Le message au-dessus du bouton. Dites que la personne recevra le document, sans être inscrite à l'infolettre.",
+    outroHint:
+      "Petit texte sous le bouton. Vide = celui de la confirmation de l'infolettre.",
+    button: true,
+    addressFields: false,
+  }),
   ownerAlertGroup({
     name: "newsletterOwner",
     title: "Infolettre — nouvel abonné (alerte à l'équipe)",

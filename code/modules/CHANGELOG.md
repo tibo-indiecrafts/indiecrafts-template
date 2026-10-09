@@ -13,6 +13,14 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Changed
+
+- **Newsletter: a lead-magnet request has its own confirmation copy** (`leadMagnetConfirm` group,
+  `confirmEmailDefaults(locale, "lead-magnet")`). **Why:** it reused the newsletter's "start
+  receiving the newsletter" text, though confirming a document request subscribes no one.
+- **Newsletter: the lead-magnet file field warns the editor** that the file stays public for anyone
+  who finds its address. **Why:** on Sanity's free plan anyone can list a public dataset's files.
+
 ### Security
 
 - **Contact messages, waitlist entries and comments get private ids** (`privateId` from
