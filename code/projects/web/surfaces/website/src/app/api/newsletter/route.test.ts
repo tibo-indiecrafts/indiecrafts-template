@@ -1,7 +1,10 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const flags = vi.hoisted(() => ({ newsletter: true }));
+const flags = vi.hoisted(() => ({
+  newsletter: true,
+  enabled: true as boolean | undefined,
+}));
 const subscribe = vi.hoisted(() => vi.fn());
 const confirmSubscription = vi.hoisted(() => vi.fn());
 vi.mock("@/config", async (importOriginal) => {
@@ -14,6 +17,9 @@ vi.mock("@/config", async (importOriginal) => {
   };
 });
 vi.mock("@indiecrafts/modules-web-newsletter/lib/newsletter", () => ({ subscribe }));
+vi.mock("@indiecrafts/modules-web-newsletter/lib/settings", () => ({
+  getNewsletterSettings: async () => ({ enabled: flags.enabled }),
+}));
 vi.mock("@indiecrafts/modules-web-newsletter/lib/confirm", () => ({
   confirmSubscription,
 }));
@@ -38,6 +44,7 @@ const post = (handler: (r: Request) => Promise<Response>, body: unknown) =>
 
 beforeEach(() => {
   flags.newsletter = true;
+  flags.enabled = true;
   subscribe.mockReset();
   confirmSubscription.mockReset();
 });
@@ -82,6 +89,22 @@ describe("POST /api/newsletter", () => {
     expect((await post(confirmRoute, { token: "t" })).status).toBe(404);
     expect(subscribe).not.toHaveBeenCalled();
     expect(confirmSubscription).not.toHaveBeenCalled();
+  });
+
+  it("both routes are a 404 with the Studio switch off; an unset switch stays on", async () => {
+    flags.enabled = false;
+    expect((await post(subscribeRoute, { email: "a@b.com", consent: true })).status).toBe(
+      404,
+    );
+    expect((await post(confirmRoute, { token: "t" })).status).toBe(404);
+    expect(subscribe).not.toHaveBeenCalled();
+    expect(confirmSubscription).not.toHaveBeenCalled();
+
+    flags.enabled = undefined;
+    subscribe.mockResolvedValueOnce({ ok: true });
+    expect((await post(subscribeRoute, { email: "a@b.com", consent: true })).status).toBe(
+      201,
+    );
   });
 });
 

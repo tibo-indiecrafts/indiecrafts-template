@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { features, security } from "@/config";
 import { withGuard } from "@indiecrafts/packages-shared-security/guard";
 import { subscribe } from "@indiecrafts/modules-web-newsletter/lib/newsletter";
+import { getNewsletterSettings } from "@indiecrafts/modules-web-newsletter/lib/settings";
 import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sanity/policy-version";
 
 /**
@@ -42,6 +43,12 @@ const handle = withGuard(async (_req, data) => {
 
 export async function POST(request: Request) {
   if (!features.newsletter) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+  // The Studio `enabled` toggle is a live kill switch (no deploy), as for contact
+  // and waitlist: off → refuse, in lockstep with the blocks hiding.
+  const settings = await getNewsletterSettings();
+  if (settings?.enabled === false) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   return handle(request);

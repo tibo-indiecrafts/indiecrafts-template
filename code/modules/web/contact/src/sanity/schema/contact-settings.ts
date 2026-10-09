@@ -26,13 +26,21 @@ export default defineType({
       title: "Activer le formulaire de contact",
       type: "boolean",
       initialValue: true,
-      description: "Décoche pour masquer le formulaire sans toucher au code.",
+      description:
+        "Décoche pour masquer la page et tous les formulaires de contact du site, sans toucher au code.",
     }),
     defineField({ name: "heading", title: "Titre", type: "localeString" }),
     defineField({
       name: "description",
       title: "Description",
       type: "localeString",
+    }),
+    defineField({
+      name: "emailPlaceholder",
+      title: "Texte d'exemple « E-mail »",
+      type: "localeString",
+      description:
+        "Texte grisé dans le champ e-mail, ex. « vous@exemple.com ». Vide = texte par défaut du site.",
     }),
     defineField({
       name: "nameLabel",
@@ -63,6 +71,13 @@ export default defineType({
       name: "successMessage",
       title: "Message de succès",
       type: "localeString",
+    }),
+    defineField({
+      name: "errorMessage",
+      title: "Message d'erreur",
+      type: "localeString",
+      description:
+        "Affiché si l'envoi échoue, ex. « Une erreur s'est produite. Merci de réessayer. » Vide = texte par défaut du site.",
     }),
     defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),
     seoTranslationsField(),

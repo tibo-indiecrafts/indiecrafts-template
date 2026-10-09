@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`ContactLanding` is the contact module's full-page surface. It reads the `contactSettings` singleton, resolves each copy field for the active locale, and renders the shared `ContactForm` in its `card` variant inside a centered `<section>`, with the heading as the page's `<h1>`. The app route wraps it in the site chrome and owns the feature gate and SEO.
+`ContactLanding` is the contact module's full-page surface. It reads the `contactSettings` singleton, resolves each copy field for the active locale only (an empty field falls back to the form's `forms.*` text in that language, never to another language's Studio copy), and renders the shared `ContactForm` in its `card` variant inside a centered `<section>`, with the heading as the page's `<h1>`. The app route wraps it in the site chrome and owns the feature gate and SEO.
 
 ## Exports
 

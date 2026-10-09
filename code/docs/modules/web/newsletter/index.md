@@ -12,7 +12,8 @@ their confirm click makes them a Resend contact on the **`news` topic** — the 
 members opt into — with their language, so each issue goes to the right people.
 
 Lives in the **`@indiecrafts/modules-web-newsletter`** module (`code/modules/web/newsletter`): the
-sign-up and confirm engine, the lead magnets, and an editable **`newsletterSettings`** singleton —
+sign-up and confirm engine, the lead magnets, and a **`newsletterSettings`** singleton (its `enabled` switch: off hides every newsletter and
+lead-magnet block and refuses sign-ups and confirmations, without a deploy) —
 shipped as a one-line `composeStudio`-group contribution. The public form stays a page-builder block
 (renderer in `@indiecrafts/packages-web-ui-components`). The emails' config + copy live on the shared
 **E-mails** entity (`@indiecrafts/packages-web-email`). The api (`@indiecrafts/shared-api`) owns the

@@ -10,7 +10,7 @@ import { defineQuery } from "next-sanity";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 
 const waitlistSettingsQuery = defineQuery(
-  `*[_type == "waitlistSettings"][0]{ enabled, heading, description, nameLabel, buttonLabel, consentLabel, successMessage }`,
+  `*[_type == "waitlistSettings"][0]{ enabled, heading, description, emailPlaceholder, nameLabel, buttonLabel, consentLabel, successMessage, errorMessage }`,
 );
 
 /** Editor-configurable waitlist form copy + the Studio `enabled` toggle. */

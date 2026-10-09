@@ -171,6 +171,8 @@ export type NewsletterModule = ModuleBase & {
   successMessage?: string;
   errorMessage?: string;
   variant?: "card" | "inline" | "banner";
+  /** The feature's Studio switch, projected by `MODULES_FRAGMENT`; `false` hides the block. */
+  enabled?: boolean;
 };
 
 export type WaitlistModule = ModuleBase & {
@@ -184,6 +186,8 @@ export type WaitlistModule = ModuleBase & {
   successMessage?: string;
   errorMessage?: string;
   variant?: "card" | "inline" | "banner";
+  /** The feature's Studio switch, projected by `MODULES_FRAGMENT`; `false` hides the block. */
+  enabled?: boolean;
 };
 
 export type ContactModule = ModuleBase & {
@@ -199,6 +203,8 @@ export type ContactModule = ModuleBase & {
   successMessage?: string;
   errorMessage?: string;
   variant?: "card" | "banner";
+  /** The feature's Studio switch, projected by `MODULES_FRAGMENT`; `false` hides the block. */
+  enabled?: boolean;
 };
 
 export type LeadMagnetModule = ModuleBase & {
@@ -212,6 +218,8 @@ export type LeadMagnetModule = ModuleBase & {
   errorMessage?: string;
   variant?: "card" | "inline" | "banner";
   magnet?: { id?: string };
+  /** The feature's Studio switch, projected by `MODULES_FRAGMENT`; `false` hides the block. */
+  enabled?: boolean;
 };
 
 // ── Marketing / page blocks ──────────────────────────────────

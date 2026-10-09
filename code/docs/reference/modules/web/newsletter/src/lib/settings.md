@@ -6,15 +6,15 @@ status: stable
 
 # Newsletter settings reader
 
-> Reads the newsletter form copy and enabled toggle from Sanity.
+> Reads the newsletter's Studio `enabled` switch from Sanity.
 
 ## Purpose
 
-`getNewsletterSettings` reads the editor-configurable `newsletterSettings` singleton — the form copy (`heading`, `description`, `buttonLabel`, `consentLabel`, `successMessage`) plus the Studio `enabled` toggle. It is wrapped in React `cache`, so repeated calls in one render share a single fetch. Server-only.
+`getNewsletterSettings` reads the editor-configurable `newsletterSettings` singleton's `enabled` switch. `/api/newsletter`, `/api/newsletter/confirm` and the confirm page answer 404 when it is `false`; unset reads as on. It is wrapped in React `cache`, so repeated calls in one render share a single fetch. Server-only.
 
 ## Exports
 
-- `getNewsletterSettings()` — async, React-cached; returns the `newsletterSettings` document fields.
+- `getNewsletterSettings()` — async, React-cached; returns `{ enabled }` (or `null`).
 
 ## Usage
 

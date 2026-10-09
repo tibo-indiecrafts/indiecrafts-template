@@ -3,16 +3,15 @@
  *
  * @see docs/reference/modules/web/waitlist/src/user-interface/WaitlistLanding.md
  */
-import {
-  defaultLocale,
-  type Locale,
-} from "@indiecrafts/packages-shared-config";
+import type { Locale } from "@indiecrafts/packages-shared-config";
 import { WaitlistForm } from "@indiecrafts/packages-web-ui-components/web/form/WaitlistForm";
 import { getWaitlistSettings } from "../lib/settings";
 
 type LocaleString = Record<string, string | undefined> | null | undefined;
+// The page language only: an empty field falls back to the form's own `forms.*`
+// text in that language, never to another language's Studio copy.
 const pick = (value: LocaleString, locale: string) =>
-  value?.[locale] ?? value?.[defaultLocale] ?? undefined;
+  value?.[locale] || undefined;
 
 /**
  * Waitlist landing view — the module owns the page's content: copy resolved from
@@ -31,11 +30,14 @@ export async function WaitlistLanding({ locale }: { locale: Locale }) {
       <WaitlistForm
         heading={pick(settings?.heading, locale)}
         body={pick(settings?.description, locale)}
+        emailPlaceholder={pick(settings?.emailPlaceholder, locale)}
         namePlaceholder={pick(settings?.nameLabel, locale)}
         buttonLabel={pick(settings?.buttonLabel, locale)}
         consentText={pick(settings?.consentLabel, locale)}
         successMessage={pick(settings?.successMessage, locale)}
+        errorMessage={pick(settings?.errorMessage, locale)}
         variant="card"
+        headingAs="h1"
       />
     </section>
   );

@@ -31,6 +31,16 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **Newsletter: the Studio switch "Activer l'infolettre" works.** `newsletterSettings` now holds
+  only `enabled`; its five copy fields are gone. **Why:** nothing read the singleton, so turning
+  the newsletter off changed nothing. The form copy lives on each newsletter and lead-magnet block.
+- **Contact and waitlist pages: the email placeholder and the error message are editable in
+  Studio** (`emailPlaceholder`, `errorMessage` on `contactSettings` and `waitlistSettings`).
+  **Why:** the blocks had both fields, the two pages only had the code's fallback text.
+- **Contact and waitlist pages show the page language only.** An empty Studio field now falls
+  back to the form's own text in that language. **Why:** a French page with an empty field showed
+  the English Studio copy. The `/waitlist` heading is now the page's `h1`.
+
 - **Contact · waitlist · newsletter: a visitor's email is in their language from top to bottom.**
   The four visitor templates (`contact-confirm`, `waitlist-confirm`, `newsletter-confirm`,
   `lead-magnet`) now take a required `locale`, which sets `<html lang>` and the footer. A page

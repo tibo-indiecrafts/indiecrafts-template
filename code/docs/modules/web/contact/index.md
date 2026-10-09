@@ -56,8 +56,8 @@ language, consent, consentPolicyVersion, createdAt`. Same escape hatch as `waitl
 
 `features.contact` (code, `@/config`) is the master switch; the Studio `contactSettings.enabled` toggle
 is a **live** switch (no deploy): off → the `/contact` page 404s **and** `/api/contact` refuses
-submissions, in lockstep. (The block still renders on any page it was dropped into — gate it by the
-code flag, like every block.) Once activated, `/contact` **auto-appears in the navigation editor**
+submissions, in lockstep, and every contact block on other pages hides (the page query carries the
+switch, `MODULES_FRAGMENT`). Once activated, `/contact` **auto-appears in the navigation editor**
 (Studio → Navigation → a menu link's "Page du site" dropdown), because that dropdown is built from the
 `pages` map filtered to enabled routes — the generic pattern every page follows.
 

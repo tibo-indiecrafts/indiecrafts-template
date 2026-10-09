@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`getWaitlistSettings` reads the editor-configurable `waitlistSettings` singleton — the form copy (`heading`, `description`, `nameLabel`, `buttonLabel`, `consentLabel`, `successMessage`) plus the Studio `enabled` toggle. It is wrapped in React `cache`, so repeated calls in one render share a single fetch. Server-only.
+`getWaitlistSettings` reads the editor-configurable `waitlistSettings` singleton — the form copy (`heading`, `description`, `emailPlaceholder`, `nameLabel`, `buttonLabel`, `consentLabel`, `successMessage`, `errorMessage`) plus the Studio `enabled` toggle. It is wrapped in React `cache`, so repeated calls in one render share a single fetch. Server-only.
 
 ## Exports
 

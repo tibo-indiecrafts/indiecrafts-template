@@ -14,16 +14,18 @@ import { NewsletterForm } from "./NewsletterForm";
  * resolved copy to the client `<NewsletterForm>` (needs `useState` for submit).
  */
 export function Newsletter(props: NewsletterModule) {
-  if (!blockFeatures().newsletter) return null;
+  // The code flag, then the Studio switch (`enabled`, projected by the page query).
+  if (!blockFeatures().newsletter || props.enabled === false) return null;
   // `renderBlock` also injects `components` (the portable-text render-function
   // map) + `inline` at runtime for nested-content blocks. `NewsletterForm` is a
   // client component, so those must NOT cross the boundary — functions can't be
   // serialized to a client child. Strip them; the form needs neither.
-  const { components, inline, ...rest } = props as NewsletterModule & {
+  const { components, inline, enabled, ...rest } = props as NewsletterModule & {
     components?: unknown;
     inline?: boolean;
   };
   void components;
   void inline;
+  void enabled;
   return <NewsletterForm {...rest} />;
 }

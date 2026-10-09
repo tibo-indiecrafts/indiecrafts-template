@@ -14,14 +14,16 @@ import { WaitlistForm } from "./WaitlistForm";
  * to the client `<WaitlistForm>` (needs `useState` for the submit flow).
  */
 export function Waitlist(props: WaitlistModule) {
-  if (!blockFeatures().waitlist) return null;
+  // The code flag, then the Studio switch (`enabled`, projected by the page query).
+  if (!blockFeatures().waitlist || props.enabled === false) return null;
   // `renderBlock` injects `components` + `inline` at runtime; strip them — a
   // client child can't receive the non-serializable render-function map.
-  const { components, inline, ...rest } = props as WaitlistModule & {
+  const { components, inline, enabled, ...rest } = props as WaitlistModule & {
     components?: unknown;
     inline?: boolean;
   };
   void components;
   void inline;
+  void enabled;
   return <WaitlistForm {...rest} />;
 }

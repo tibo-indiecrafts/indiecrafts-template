@@ -6,6 +6,9 @@ const confirmSubscription = vi.hoisted(() => vi.fn());
 vi.mock("@indiecrafts/modules-web-newsletter/lib/confirm", () => ({
   confirmSubscription,
 }));
+vi.mock("@indiecrafts/modules-web-newsletter/lib/settings", () => ({
+  getNewsletterSettings: async () => ({ enabled: true }),
+}));
 vi.mock("@indiecrafts/packages-shared-security/rate-limit", () => ({
   rateLimit: async () => ({ ok: true }),
 }));

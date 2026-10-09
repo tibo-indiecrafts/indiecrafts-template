@@ -29,6 +29,10 @@ export const CTA_FRAGMENT = `
  * Generic modules fragment — expands every referenced field per generic module
  * type. `quote-list` dereferences its quotes; `person-list` its people. The blog
  * appends `module.blog-post-list` to this in its own `MODULES_FRAGMENT`.
+ *
+ * The form blocks carry `enabled` — their feature's Studio switch
+ * (`contactSettings` · `waitlistSettings` · `newsletterSettings`), so turning a form
+ * off hides every block of it, not only its page. A missing settings doc reads as on.
  */
 export const MODULES_FRAGMENT = `
   ...,
@@ -65,5 +69,14 @@ export const MODULES_FRAGMENT = `
       image { asset->{ url } }
     }
   },
-  _type == "module.lead-magnet" => { magnet->{ "id": _id } }
+  _type == "module.lead-magnet" => { magnet->{ "id": _id } },
+  _type == "module.contact" => {
+    "enabled": *[_type == "contactSettings"][0].enabled != false
+  },
+  _type == "module.waitlist" => {
+    "enabled": *[_type == "waitlistSettings"][0].enabled != false
+  },
+  _type in ["module.newsletter", "module.lead-magnet"] => {
+    "enabled": *[_type == "newsletterSettings"][0].enabled != false
+  }
 `;

@@ -6,11 +6,11 @@ status: stable
 
 # Newsletter settings schema
 
-> The editor layer on top of the `features.newsletter` code flag.
+> The newsletter's live Studio switch, on top of the `features.newsletter` code flag.
 
 ## Purpose
 
-Defines the `newsletterSettings` Sanity singleton. The code flag `features.newsletter` is the hard on/off; this document is the editor-configurable layer — an `enabled` toggle plus per-locale form copy (`heading`, `description`, `buttonLabel`, `consentLabel`, `successMessage`). The subscribe emails live separately on the shared `emailStrings` singleton. Read at runtime via `getNewsletterSettings()`.
+Defines the `newsletterSettings` Sanity singleton. The code flag `features.newsletter` is the hard on/off; this document holds one field, `enabled`, the live editor switch. Off hides every newsletter and lead-magnet block and refuses sign-ups and confirmations (the routes and the confirm page answer 404). The form copy lives on each block; the subscribe emails on the shared `emailStrings` singleton. Read at runtime via `getNewsletterSettings()`.
 
 ## Exports
 

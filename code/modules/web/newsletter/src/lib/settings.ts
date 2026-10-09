@@ -10,10 +10,10 @@ import { defineQuery } from "next-sanity";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 
 const newsletterSettingsQuery = defineQuery(
-  `*[_type == "newsletterSettings"][0]{ enabled, heading, description, buttonLabel, consentLabel, successMessage }`,
+  `*[_type == "newsletterSettings"][0]{ enabled }`,
 );
 
-/** Editor-configurable newsletter copy + the Studio `enabled` toggle. */
+/** The Studio `enabled` toggle — the live newsletter kill switch. */
 export const getNewsletterSettings = cache(async () =>
   client.fetch(newsletterSettingsQuery),
 );

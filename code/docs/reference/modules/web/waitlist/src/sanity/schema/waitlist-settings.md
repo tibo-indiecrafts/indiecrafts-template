@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Defines the `waitlistSettings` singleton. The code flag `features.waitlist` is the hard on/off; this document adds an `enabled` toggle plus per-locale form copy (heading, description, labels, consent text, success message) and an SEO block. The join emails live on the shared `emailStrings` singleton, not here. Read via `getWaitlistSettings()`.
+Defines the `waitlistSettings` singleton. The code flag `features.waitlist` is the hard on/off; this document adds an `enabled` toggle plus per-locale form copy (heading, description, email placeholder, labels, consent text, success and error messages) and an SEO block. Off hides the page and every waitlist block (`MODULES_FRAGMENT` carries the switch). The join emails live on the shared `emailStrings` singleton, not here. Read via `getWaitlistSettings()`.
 
 ## Exports
 

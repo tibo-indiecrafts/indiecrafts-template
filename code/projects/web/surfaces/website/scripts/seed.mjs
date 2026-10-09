@@ -2559,24 +2559,11 @@ const emailStrings = {
 };
 
 // ─── Waitlist — settings singleton + demo entries ───────────────
+// The newsletter's live switch. Its form copy lives on each newsletter / lead-magnet block.
 const newsletterSettings = {
   _id: "newsletterSettings",
   _type: "newsletterSettings",
   enabled: true,
-  heading: { en: "Get the newsletter", fr: "Recevez l'infolettre" },
-  description: {
-    en: "Occasional articles and updates — no spam, unsubscribe anytime.",
-    fr: "Des articles et actualités de temps en temps — sans spam, désinscription à tout moment.",
-  },
-  buttonLabel: { en: "Subscribe", fr: "S'abonner" },
-  consentLabel: {
-    en: "I agree to receive the newsletter and to my email being stored for that purpose.",
-    fr: "J'accepte de recevoir l'infolettre et que mon adresse e-mail soit conservée à cette fin.",
-  },
-  successMessage: {
-    en: "Almost there — check your inbox to confirm your subscription.",
-    fr: "Presque terminé — vérifiez votre boîte mail pour confirmer votre inscription.",
-  },
 };
 
 const waitlistSettings = {
@@ -2591,6 +2578,7 @@ const waitlistSettings = {
     en: "Be the first to know when we launch.",
     fr: "Soyez les premiers prévenus au lancement.",
   },
+  emailPlaceholder: { en: "you@example.com", fr: "vous@exemple.com" },
   nameLabel: { en: "Your name", fr: "Votre nom" },
   buttonLabel: { en: "Join the list", fr: "Rejoindre la liste" },
   consentLabel: {
@@ -2600,6 +2588,10 @@ const waitlistSettings = {
   successMessage: {
     en: "You're on the list — thanks! We'll keep you posted.",
     fr: "Vous êtes sur la liste — merci ! Nous vous tiendrons au courant.",
+  },
+  errorMessage: {
+    en: "Something went wrong. Please try again.",
+    fr: "Une erreur s'est produite. Merci de réessayer.",
   },
 };
 
@@ -3254,6 +3246,7 @@ const buildContactSettings = () => ({
     "Tell us about your project. We reply within two working days.",
     "Parlez-nous de votre projet. Nous répondons sous deux jours ouvrés.",
   ),
+  emailPlaceholder: navLabel("you@example.com", "vous@exemple.com"),
   messageLabel: navLabel("Your message…", "Votre message…"),
   buttonLabel: navLabel("Send", "Envoyer"),
   // Required to send: the form keeps submit disabled until this box is ticked.
@@ -3264,6 +3257,10 @@ const buildContactSettings = () => ({
   successMessage: navLabel(
     "Thanks — your message is on its way.",
     "Merci — votre message est bien parti.",
+  ),
+  errorMessage: navLabel(
+    "Something went wrong. Please try again.",
+    "Une erreur s'est produite. Merci de réessayer.",
   ),
 });
 

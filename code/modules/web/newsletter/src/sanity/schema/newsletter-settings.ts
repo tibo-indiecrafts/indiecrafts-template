@@ -8,10 +8,10 @@ import { EnvelopeIcon } from "@sanity/icons/Envelope";
 
 /**
  * Newsletter settings (singleton). The code flag `features.newsletter` is the
- * hard on/off; this is the editor-configurable layer — an `enabled` toggle +
- * per-locale **form** copy. The subscribe **emails** (double opt-in + owner
- * alert) live in the shared `emailStrings` singleton (Studio → E-mails), owned by
- * `@indiecrafts/packages-web-email`. Read via `getNewsletterSettings()`.
+ * hard on/off; `enabled` is the live editor switch on top of it: off hides the
+ * newsletter and lead-magnet blocks and refuses sign-ups and confirmations. The
+ * form copy lives on each block; the emails on the shared `emailStrings`
+ * singleton (Studio → E-mails). Read via `getNewsletterSettings()`.
  */
 export default defineType({
   name: "newsletterSettings",
@@ -25,28 +25,8 @@ export default defineType({
       title: "Activer l'infolettre",
       type: "boolean",
       initialValue: true,
-      description: "Décoche pour masquer le formulaire sans toucher au code.",
-    }),
-    defineField({ name: "heading", title: "Titre", type: "localeString" }),
-    defineField({
-      name: "description",
-      title: "Description",
-      type: "localeString",
-    }),
-    defineField({
-      name: "buttonLabel",
-      title: "Libellé du bouton",
-      type: "localeString",
-    }),
-    defineField({
-      name: "consentLabel",
-      title: "Texte de consentement",
-      type: "localeString",
-    }),
-    defineField({
-      name: "successMessage",
-      title: "Message de succès",
-      type: "localeString",
+      description:
+        "Décoche pour masquer les formulaires d'inscription et de document sur tout le site, sans toucher au code. Les inscriptions en attente ne peuvent plus être confirmées.",
     }),
   ],
   preview: { prepare: () => ({ title: "Infolettre — réglages" }) },

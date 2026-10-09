@@ -15,14 +15,16 @@ import { LeadMagnetForm } from "./LeadMagnetForm";
  * `useState` for the submit flow).
  */
 export function LeadMagnet(props: LeadMagnetModule) {
-  if (!blockFeatures().newsletter) return null;
+  // The code flag, then the Studio switch (`enabled`, projected by the page query).
+  if (!blockFeatures().newsletter || props.enabled === false) return null;
   // `renderBlock` injects `components` + `inline` at runtime; strip them — a
   // client child can't receive the non-serializable render-function map.
-  const { components, inline, ...rest } = props as LeadMagnetModule & {
+  const { components, inline, enabled, ...rest } = props as LeadMagnetModule & {
     components?: unknown;
     inline?: boolean;
   };
   void components;
   void inline;
+  void enabled;
   return <LeadMagnetForm {...rest} />;
 }

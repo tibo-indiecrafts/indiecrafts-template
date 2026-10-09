@@ -28,6 +28,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **page-builder / ui-components: a form's Studio switch hides its blocks too.** `MODULES_FRAGMENT`
+  adds `enabled` to the contact, waitlist, newsletter and lead-magnet blocks, and their renderers
+  hide when it is `false`. **Why:** turning a form off hid its page only; a block on another page
+  stayed, and every submit failed.
+- **ui-components: `WaitlistForm` takes `headingAs`**, like `ContactForm`. **Why:** the
+  `/waitlist` page had no `h1`.
+
 - **Email: every email carries the support line, in the recipient's language.** The shared footer
   was hard-coded French ("Envoyé par… Besoin d'aide ?") whatever the email's language, and the
   plain-text body had no support line. The footer now follows `lang`, and the new `renderEmail`

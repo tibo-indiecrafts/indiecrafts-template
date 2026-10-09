@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`getContactSettings` reads the editor-configurable `contactSettings` singleton from Sanity: the form copy fields (heading, description, field labels, button, consent text, success message) and the Studio `enabled` toggle. It is server-only and wrapped in React `cache` so repeated reads within a request hit once.
+`getContactSettings` reads the editor-configurable `contactSettings` singleton from Sanity: the form copy fields (heading, description, email placeholder, field labels, button, consent text, success and error messages) and the Studio `enabled` toggle. It is server-only and wrapped in React `cache` so repeated reads within a request hit once.
 
 ## Exports
 

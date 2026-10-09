@@ -10,7 +10,7 @@ import { defineQuery } from "next-sanity";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 
 const contactSettingsQuery = defineQuery(
-  `*[_type == "contactSettings"][0]{ enabled, heading, description, nameLabel, subjectLabel, messageLabel, buttonLabel, consentLabel, successMessage }`,
+  `*[_type == "contactSettings"][0]{ enabled, heading, description, emailPlaceholder, nameLabel, subjectLabel, messageLabel, buttonLabel, consentLabel, successMessage, errorMessage }`,
 );
 
 /** Editor-configurable contact form copy + the Studio `enabled` toggle. */

@@ -59,6 +59,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Newsletter: the Studio switch gates sign-up and confirmation.** With
+  `newsletterSettings.enabled` off, `/api/newsletter`, `/api/newsletter/confirm` and the confirm page
+  answer 404. **Why:** contact and waitlist had a live switch; the newsletter's did nothing. The seed
+  fills the new contact and waitlist fields (email placeholder, error message) in both languages.
+
 - **The footer credit's preview card has an accessible name** (the same localized label as its
   button). Screen readers announced an unnamed dialog; the new `MadeByCredit` story's axe check
   found it.

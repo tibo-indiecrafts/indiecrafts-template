@@ -20,7 +20,10 @@ import { TurnstileWidget, turnstileActive } from "./TurnstileWidget";
 export type WaitlistFormProps = Omit<
   WaitlistModule,
   "_type" | "_key" | "hidden"
->;
+> & {
+  /** Heading element — `h3` inside a page's blocks; `h1` when the form IS the page. */
+  headingAs?: "h1" | "h2" | "h3";
+};
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -46,6 +49,7 @@ export function WaitlistForm({
   errorMessage,
   variant = "card",
   anchor,
+  headingAs: Heading = "h3",
 }: WaitlistFormProps) {
   const t = useTranslations("forms");
   // Copy the editor left empty falls back to the page language (`forms.*` in the host
@@ -119,7 +123,7 @@ export function WaitlistForm({
           className={variant === "inline" ? "md:max-w-sm" : "mx-auto max-w-lg"}
         >
           {heading ? (
-            <h3
+            <Heading
               className={cn(
                 "font-sans font-semibold text-balance",
                 banner
@@ -128,7 +132,7 @@ export function WaitlistForm({
               )}
             >
               {heading}
-            </h3>
+            </Heading>
           ) : null}
           {body ? (
             <p

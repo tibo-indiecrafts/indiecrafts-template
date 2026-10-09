@@ -77,7 +77,7 @@ The same `WaitlistForm` renders two ways:
   The **view lives in the module** (`src/user-interface/WaitlistLanding.tsx`); the app route
   (`[locale]/waitlist/page.tsx`) is a thin shell (gate + `DefaultLayout` + SEO). Registered in the
   `pages` map (sitemap + routing), gated by `features.waitlist` **and** the editor `enabled` toggle
-  (both 404 it when off).
+  (both 404 it when off; the toggle also hides every waitlist block).
 - **Block** — `module.waitlist`, droppable anywhere (see below).
 
 ## The block

@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-This schema defines the `contactSettings` singleton. The code flag `features.contact` is the hard on/off; this is the editor-configurable layer — an `enabled` toggle plus per-locale form copy for the `/contact` page (heading, description, field labels, button, consent text, success message) and a `seo` block. The two emails (confirmation to the sender and owner alert) live on the shared `emailStrings` singleton, not here. Read via `getContactSettings()`.
+This schema defines the `contactSettings` singleton. The code flag `features.contact` is the hard on/off; this is the editor-configurable layer — an `enabled` toggle plus per-locale form copy for the `/contact` page (heading, description, email placeholder, field labels, button, consent text, success and error messages) and a `seo` block. Off hides the page and every contact block (`MODULES_FRAGMENT` carries the switch). The two emails (confirmation to the sender and owner alert) live on the shared `emailStrings` singleton, not here. Read via `getContactSettings()`.
 
 ## Exports
 
