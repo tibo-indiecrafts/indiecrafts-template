@@ -16,7 +16,12 @@ vi.mock("@indiecrafts/packages-web-email/strings", () => ({
 }));
 vi.mock("@indiecrafts/packages-web-email", () => ({
   sendEmail,
-  renderEmailLayout: () => "",
+  // The html is just `<html lang>`, so a test can check the recipient's language reached the layout.
+  renderEmail: (e: { subject: string; text: string; lang?: string }) => ({
+    subject: e.subject,
+    text: e.text,
+    html: `<html lang="${e.lang}">`,
+  }),
   escapeHtml: (s: string) => s,
   EMAIL_COLORS: new Proxy({}, { get: () => "#000000" }),
 }));

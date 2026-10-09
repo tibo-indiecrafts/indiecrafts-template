@@ -14,7 +14,7 @@ Renders the double opt-in confirmation email — for a newsletter sign-up and fo
 
 ## Exports
 
-- `NewsletterConfirmInput` — the render input: `subject`, `heading`, `intro`, `buttonLabel`, `confirmUrl`, plus optional `outro` and `supportEmail`.
+- `NewsletterConfirmInput` — the render input: `subject`, `heading`, `intro`, `buttonLabel`, `confirmUrl`, `locale` (the recipient's language: the layout's `<html lang>` and footer), plus optional `outro` and `supportEmail`.
 - `confirmEmailDefaults(locale, purpose?)` — the last-resort subject, heading, intro and button label for a locale (English for any locale without its own). `purpose` is `"newsletter"` (default) or `"lead-magnet"`: the document-request copy says it does not subscribe to the newsletter.
 - `renderNewsletterConfirmEmail(input)` — returns a `RenderedEmail` (`subject`, `text`, `html`).
 

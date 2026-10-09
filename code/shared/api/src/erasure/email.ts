@@ -4,7 +4,7 @@
  * @see docs/reference/shared/api/src/erasure/email.md
  */
 // Worker-side Resend sender for the erasure flow's two transactional emails.
-// `@indiecrafts/packages-web-email` (`sendEmail`/`renderEmailLayout`) is
+// `@indiecrafts/packages-web-email` (`sendEmail`/`renderEmail`) is
 // `import "server-only"` + Next-coupled — unusable in this bare Worker, so this
 // inlines the same ~15-line Resend POST + a local `escapeHtml`. Copy is read from
 // the Studio-editable `emailStrings` singleton (raw GROQ-over-HTTP, mirroring
@@ -70,7 +70,7 @@ function pick(value: LocaleValue, locale: string): string | undefined {
 
 /** The editor-owned support-address footer, appended to every worker-sent email (erasure,
  *  data requests, the Clerk take-over), in the recipient's language (`fr…` → French, else
- *  English). Worker-safe — the shared `renderEmailLayout` is `server-only`/Next-coupled,
+ *  English). Worker-safe — the shared `renderEmail` is `server-only`/Next-coupled,
  *  unusable here. Empty when no address is set; the value is escaped though it is
  *  email-validated in Studio. */
 export function supportFooter(

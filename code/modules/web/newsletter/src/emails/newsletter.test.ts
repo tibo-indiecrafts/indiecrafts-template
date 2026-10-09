@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { renderLeadMagnetEmail } from "./lead-magnet";
 import { renderNewsletterConfirmEmail } from "./newsletter-confirm";
 import { renderNewsletterNotificationEmail } from "./newsletter-notification";
 
@@ -9,6 +10,7 @@ describe("renderNewsletterConfirmEmail", () => {
     intro: "Merci !\nConfirmez votre adresse pour recevoir l'infolettre.",
     buttonLabel: "Confirmer",
     confirmUrl: "https://x.com/api/newsletter/confirm#t=abc",
+    locale: "fr",
   };
 
   it("puts the confirm URL in the button + text and renders intro lines as paragraphs", () => {
@@ -31,6 +33,42 @@ describe("renderNewsletterConfirmEmail", () => {
     expect(html).toContain("&lt;script&gt;");
     expect(html).not.toContain("<script>alert(1)</script>");
   });
+});
+
+describe("visitor emails are in the recipient's language, support line included", () => {
+  const support = { locale: "fr", supportEmail: "aide@x.com" };
+  it.each([
+    [
+      "newsletter-confirm",
+      renderNewsletterConfirmEmail({ ...base(), ...support }),
+    ],
+    [
+      "lead-magnet",
+      renderLeadMagnetEmail({
+        subject: "S",
+        heading: "H",
+        intro: "I",
+        buttonLabel: "B",
+        downloadUrl: "https://x.com/api/download?token=t",
+        ...support,
+      }),
+    ],
+  ])("%s", (_name, mail) => {
+    expect(mail.html).toContain('<html lang="fr">');
+    expect(mail.html).toContain("Envoyé par");
+    expect(mail.html).toContain("mailto:aide@x.com");
+    expect(mail.text.endsWith("\n\nBesoin d'aide ? aide@x.com")).toBe(true);
+  });
+
+  function base() {
+    return {
+      subject: "S",
+      heading: "H",
+      intro: "I",
+      buttonLabel: "B",
+      confirmUrl: "https://x.com/c#t=t",
+    };
+  }
 });
 
 describe("renderNewsletterNotificationEmail", () => {

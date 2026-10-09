@@ -24,7 +24,7 @@ Three domains under one Sanity barrel:
   `validate.ts`, `request-types.ts` (the 7 rights). The form UI (`DataRequestForm`) is in
   `@indiecrafts/packages-web-ui-components`; operators read requests in the admin "Data requests" screen.
 - **`src/emails/`** — the compliance email templates (`data-request-notification`), rendering via
-  `@indiecrafts/packages-web-email`'s `renderEmailLayout`. This brick owns its email end-to-end (group in
+  `@indiecrafts/packages-web-email`'s `renderEmail`. This brick owns its email end-to-end (group in
   `src/sanity/email.ts`, template here, send in `src/requests/submit.ts`).
 - **`src/sanity/`** — the **one** `complianceSanity` **`SanityModule`** barrel: `cookieConsent` +
   `cookieCategory`/`cookieEntry` + `legalConsent` + `legalPage` schema, their desk sections

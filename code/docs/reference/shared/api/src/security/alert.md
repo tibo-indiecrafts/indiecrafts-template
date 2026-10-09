@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Sends the internal security-alert email for a high or critical incident. It reuses the inlined Resend POST from the erasure module, because the server-only email package is unusable in this bare Worker. The subject prefix and intro line are Studio-editable (the `securityAlert` `emailStrings` group), read over raw GROQ-HTTP with a fallback to hard-coded English. There is no on/off toggle: a security alert can never be silenced from Studio, and a missing or unreachable Sanity only falls back, never skips the send.
+Sends the internal security-alert email for a high or critical incident. It reuses the inlined Resend POST from the erasure module, because the server-only email package is unusable in this bare Worker. The subject prefix and intro line are Studio-editable (the `securityAlert` `emailStrings` group), read over raw GROQ-HTTP with a fallback to hard-coded English. The same read takes the global `emailStrings.supportEmail`: when set, the alert ends with `Need help? <address>` (English, like the body). There is no on/off toggle: a security alert can never be silenced from Studio, and a missing or unreachable Sanity only falls back, never skips the send.
 
 ## Exports
 

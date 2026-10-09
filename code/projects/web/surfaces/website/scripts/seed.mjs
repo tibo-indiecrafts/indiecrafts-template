@@ -2512,7 +2512,9 @@ const comments = [
 ];
 
 // ─── E-mails singleton — config + translated copy for every email ─
-// Owner alerts ship OFF (fill recipients + a Resend-verified From to enable).
+// Owner alerts ship OFF (fill recipients + a Resend-verified From to enable) and
+// with no subject: the template's own, in the site's default locale (a plain
+// subject is one language — a seeded French one gave an English site mixed alerts).
 // The subscriber double opt-in copy is translated + ready; toggle it on + set a
 // verified From. Secrets: RESEND_API_KEY + NEWSLETTER_SECRET (env).
 const emailStrings = {
@@ -2520,7 +2522,6 @@ const emailStrings = {
   _type: "emailStrings",
   commentNotification: {
     enabled: false,
-    subject: "Nouveau commentaire à modérer : {{post}}",
   },
   newsletterConfirm: {
     enabled: false,
@@ -2538,7 +2539,6 @@ const emailStrings = {
   },
   newsletterOwner: {
     enabled: false,
-    subject: "Nouvel abonné à l'infolettre : {{email}}",
   },
   waitlistConfirm: {
     enabled: false,
@@ -2555,7 +2555,6 @@ const emailStrings = {
   },
   waitlistOwner: {
     enabled: false,
-    subject: "Nouvelle inscription à la liste d'attente : {{email}}",
   },
 };
 

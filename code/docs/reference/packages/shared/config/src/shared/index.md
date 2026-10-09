@@ -14,7 +14,7 @@ The `/shared` barrel of `@indiecrafts/packages-shared-config`. It is pure TypeSc
 
 ## Exports
 
-- Values and functions: `i18n`, `locales`, `defaultLocale`, `localeCodes`, `localeMap`, `localePrefix`, `localizedPathname`, `localeDir`, `isLocale`, `pickSuggestedLocale`, `pickLocale`, `formatDefaults`, `localeFormat`, and everything from `./settings`.
+- Values and functions: `i18n`, `locales`, `defaultLocale`, `localeCodes`, `localeMap`, `localePrefix`, `localizedPathname`, `localeDir`, `isLocale`, `toSiteLocale`, `localeCopy`, `pickSuggestedLocale`, `pickLocale`, `formatDefaults`, `localeFormat`, and everything from `./settings`.
 - Types: `Locale`, `ThemeName`, `ThemeMode`, `FontKey`, `FontRoles`, `Environment`, `LogLevel`.
 
 ## Usage

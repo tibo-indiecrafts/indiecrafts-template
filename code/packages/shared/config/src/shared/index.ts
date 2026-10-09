@@ -18,6 +18,8 @@ export {
   localizedPathname,
   localeDir,
   isLocale,
+  toSiteLocale,
+  localeCopy,
   pickSuggestedLocale,
   pickLocale,
 } from "./i18n";

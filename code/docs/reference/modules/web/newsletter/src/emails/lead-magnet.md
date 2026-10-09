@@ -14,7 +14,8 @@ Renders the lead-magnet delivery email — the message a confirmed subscriber re
 
 ## Exports
 
-- `LeadMagnetInput` — the render input: `subject`, `heading`, `intro`, `buttonLabel`, `downloadUrl`, plus optional `outro` and `supportEmail`.
+- `LeadMagnetInput` — the render input: `subject`, `heading`, `intro`, `buttonLabel`, `downloadUrl`, `locale` (the recipient's language: the layout's `<html lang>` and footer), plus optional `outro` and `supportEmail`.
+- `leadMagnetDefaults(locale, title)` — the fallback `subject`, `heading`, `intro` (with the magnet's title) and `buttonLabel` for an empty Studio field: English or French, English for any other locale.
 - `renderLeadMagnetEmail(input)` — returns a `RenderedEmail` (`subject`, `text`, `html`).
 
 ## Usage

@@ -17,6 +17,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **Email pages: the support line and email languages.** The email brick page documents
+  `renderEmail`, the localized footer, the support address as the on/off switch, and lists every
+  email group (contact, document delivery and the api worker's compliance emails were missing).
+  The contact and waitlist pages state the email language rule; the template, test-route and
+  security-alert reference pages follow the code.
 - **New-client runbook §4 and §8 rewritten** for the Sanity free plan (2 public datasets, private
   ids), `pnpm sanity:setup`, the baseline/`--demo` seed and the hosted Studio app id. Testing,
   scripts, environment, launch checklist, blog Sanity setup/tokens, waitlist and newsletter pages

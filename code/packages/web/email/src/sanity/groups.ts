@@ -5,6 +5,7 @@
  */
 
 import { defineField, type FieldDefinition } from "sanity";
+import { defaultLocale } from "@indiecrafts/packages-shared-config";
 
 /**
  * Generic factories for the `emailStrings` groups. Each transactional email is
@@ -181,7 +182,8 @@ export function ownerAlertGroup(opts: {
       defineField({
         name: "subject",
         title: "Objet",
-        description: opts.subjectHint,
+        // One language only: an owner alert goes out in the site's default locale.
+        description: `${opts.subjectHint} Une seule langue : celle du site par défaut (${defaultLocale.toUpperCase()}).`,
         type: "string",
       }),
       defineField({

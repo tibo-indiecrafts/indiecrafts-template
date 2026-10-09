@@ -69,6 +69,8 @@ Verify delivery with the **Send test** action (Studio → E-mails → ⋯).
 
 - **Acknowledgement → the sender** (`contactConfirm`) — a "we got your message" reply, **copy
   translated per language** (subject/heading/intro/outro) + an optional `BCC`. No link.
+  Sent in the language of the page the form was on; a language the site does not have → the
+  default locale.
 - **New-message alert → you** (`contactOwner`) — `To`/`CC`/`BCC`, `From`, and a
   <code v-pre>{{email}}</code>/<code v-pre>{{name}}</code>/<code v-pre>{{subject}}</code> subject. The alert **carries the message body** and sets
   `reply-to` to the sender, so hitting Reply answers the person.

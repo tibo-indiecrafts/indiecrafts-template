@@ -93,3 +93,14 @@ for (const [name, set] of [
     );
   });
 }
+
+test("emails: no seeded plain subject — the template's default-locale one applies", () => {
+  const strings = baseline.find((d) => d._type === "emailStrings");
+  for (const [group, value] of Object.entries(strings))
+    if (value && typeof value === "object")
+      assert.notEqual(
+        typeof value.subject,
+        "string",
+        `${group}: a plain subject is one language, and the site's default may differ`,
+      );
+});

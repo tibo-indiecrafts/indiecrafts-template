@@ -6,9 +6,10 @@
 import {
   EMAIL_COLORS,
   escapeHtml,
-  renderEmailLayout,
+  renderEmail,
   type RenderedEmail,
 } from "@indiecrafts/packages-web-email";
+import { localeCopy } from "@indiecrafts/packages-shared-config";
 
 /**
  * Lead-magnet delivery → a subscriber who just confirmed their e-mail. Sends the
@@ -24,8 +25,40 @@ export type LeadMagnetInput = {
   buttonLabel: string;
   downloadUrl: string;
   outro?: string;
+  /** The recipient's language — the layout's `<html lang>` and footer. */
+  locale: string;
   supportEmail?: string;
 };
+
+type DeliveryCopy = Pick<
+  LeadMagnetInput,
+  "subject" | "heading" | "intro" | "buttonLabel"
+>;
+
+/** Last-resort copy when a Studio field is empty, per locale; another locale gets the default locale's, else English (`localeCopy`).
+ *  The magnet's title is interpolated into the intro. */
+const DEFAULTS: Record<string, (title: string) => DeliveryCopy> = {
+  en: (title) => ({
+    subject: "Your download is ready",
+    heading: "Thanks — here's your download",
+    intro: `Click the button below to download “${title}”. The link expires in 7 days.`,
+    buttonLabel: "Download the file",
+  }),
+  fr: (title) => ({
+    subject: "Votre document est prêt",
+    heading: "Merci — voici votre document",
+    intro: `Cliquez sur le bouton ci-dessous pour télécharger « ${title} ». Le lien expire dans 7 jours.`,
+    buttonLabel: "Télécharger le document",
+  }),
+};
+
+/** The fallback delivery copy for `locale` (else the default locale's, else English). */
+export function leadMagnetDefaults(
+  locale: string,
+  title: string,
+): DeliveryCopy {
+  return localeCopy(DEFAULTS, locale)(title);
+}
 
 const C = EMAIL_COLORS;
 
@@ -58,12 +91,13 @@ export function renderLeadMagnetEmail(input: LeadMagnetInput): RenderedEmail {
       : "",
   ].join("");
 
-  const html = renderEmailLayout({
+  return renderEmail({
+    subject: input.subject,
+    text,
     title: input.heading,
     preheader: input.intro.slice(0, 100),
     contentHtml,
+    lang: input.locale,
     supportEmail: input.supportEmail,
   });
-
-  return { subject: input.subject, text, html };
 }

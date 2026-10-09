@@ -4,13 +4,7 @@
  * @see docs/reference/projects/web/website/src/app/maintenance/locale.md
  */
 import { cookies } from "next/headers";
-import {
-  defaultLocale,
-  isLocale,
-  localeCodes,
-  localeCookieName,
-  type Locale,
-} from "@/config";
+import { localeCookieName, type Locale, toSiteLocale } from "@/config";
 
 /**
  * Best-effort locale for the standalone `/maintenance` route. It lives
@@ -21,5 +15,5 @@ import {
  */
 export async function maintenanceLocale(): Promise<Locale> {
   const cookie = (await cookies()).get(localeCookieName)?.value ?? "";
-  return isLocale(cookie, localeCodes) ? cookie : defaultLocale;
+  return toSiteLocale(cookie);
 }

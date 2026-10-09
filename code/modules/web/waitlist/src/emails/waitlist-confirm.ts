@@ -6,9 +6,10 @@
 import {
   EMAIL_COLORS,
   escapeHtml,
-  renderEmailLayout,
+  renderEmail,
   type RenderedEmail,
 } from "@indiecrafts/packages-web-email";
+import { localeCopy } from "@indiecrafts/packages-shared-config";
 
 /**
  * "You're on the list" confirmation → the new waitlist joiner. **Copy-agnostic**:
@@ -21,12 +22,14 @@ export type WaitlistConfirmInput = {
   heading: string;
   intro: string;
   outro?: string;
+  /** The recipient's language — the layout's `<html lang>` and footer. */
+  locale: string;
   supportEmail?: string;
 };
 
 type ConfirmCopy = Pick<WaitlistConfirmInput, "subject" | "heading" | "intro">;
 
-/** Last-resort copy when a Studio field is empty, per locale; any other locale gets English. */
+/** Last-resort copy when a Studio field is empty, per locale; another locale gets the default locale's, else English (`localeCopy`). */
 const CONFIRM_DEFAULTS: Record<string, (name?: string) => ConfirmCopy> = {
   en: (name) => ({
     subject: "You're on the waitlist",
@@ -40,12 +43,12 @@ const CONFIRM_DEFAULTS: Record<string, (name?: string) => ConfirmCopy> = {
   }),
 };
 
-/** The fallback welcome copy for `locale` (English when there is none). */
+/** The fallback welcome copy for `locale` (else the default locale's, else English). */
 export function waitlistConfirmDefaults(
   locale: string,
   name?: string,
 ): ConfirmCopy {
-  return (CONFIRM_DEFAULTS[locale] ?? CONFIRM_DEFAULTS.en!)(name);
+  return localeCopy(CONFIRM_DEFAULTS, locale)(name);
 }
 
 const C = EMAIL_COLORS;
@@ -76,12 +79,13 @@ export function renderWaitlistConfirmEmail(
       : "",
   ].join("");
 
-  const html = renderEmailLayout({
+  return renderEmail({
+    subject: input.subject,
+    text,
     title: input.heading,
     preheader: input.intro.slice(0, 100),
     contentHtml,
+    lang: input.locale,
     supportEmail: input.supportEmail,
   });
-
-  return { subject: input.subject, text, html };
 }

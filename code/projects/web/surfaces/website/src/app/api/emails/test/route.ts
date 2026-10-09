@@ -4,7 +4,7 @@
  * @see docs/reference/projects/web/website/src/app/api/emails/test/route.md
  */
 import { NextResponse } from "next/server";
-import { defaultLocale, features, site } from "@/config";
+import { defaultLocale, features, localeCodes, site, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
 import { projectId } from "@indiecrafts/packages-web-sanity/env";
 import { logger } from "@indiecrafts/packages-shared-logger";
@@ -23,15 +23,26 @@ import {
   renderNewsletterConfirmEmail,
 } from "@indiecrafts/modules-web-newsletter/emails/newsletter-confirm";
 import { renderNewsletterNotificationEmail } from "@indiecrafts/modules-web-newsletter/emails/newsletter-notification";
-import { renderWaitlistConfirmEmail } from "@indiecrafts/modules-web-waitlist/emails/waitlist-confirm";
+import {
+  renderWaitlistConfirmEmail,
+  waitlistConfirmDefaults,
+} from "@indiecrafts/modules-web-waitlist/emails/waitlist-confirm";
 import { renderWaitlistNotificationEmail } from "@indiecrafts/modules-web-waitlist/emails/waitlist-notification";
-import { renderContactConfirmEmail } from "@indiecrafts/modules-web-contact/emails/contact-confirm";
+import {
+  contactConfirmDefaults,
+  renderContactConfirmEmail,
+} from "@indiecrafts/modules-web-contact/emails/contact-confirm";
 import { renderContactNotificationEmail } from "@indiecrafts/modules-web-contact/emails/contact-notification";
-import { renderLeadMagnetEmail } from "@indiecrafts/modules-web-newsletter/emails/lead-magnet";
+import {
+  leadMagnetDefaults,
+  renderLeadMagnetEmail,
+} from "@indiecrafts/modules-web-newsletter/emails/lead-magnet";
 import { renderDataRequestNotificationEmail } from "@indiecrafts/packages-web-compliance/emails/data-request-notification";
 import { adminReviewUrl } from "@indiecrafts/packages-web-compliance/requests/submit";
+import { requestTypeLabel } from "@indiecrafts/packages-web-compliance/requests/request-types";
 
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const SEND_SPACING_MS = 550; // under Resend's default 2 requests/s
 
 /**
  * Studio "Send test" endpoint — sends a sample of every **enabled** email to a
@@ -83,17 +94,20 @@ export async function POST(request: Request) {
   }
 
   const samples = await buildSamples(to);
-  const results = await Promise.all(
-    samples.map(async ({ label, from, message }) => {
-      try {
-        await sendEmail({ from, to: [to], ...message });
-        return { label, ok: true };
-      } catch (error) {
-        logger.error("email test send failed", { label, error });
-        return { label, ok: false };
-      }
-    }),
-  );
+  // One at a time, spaced: a sample per email × locale is ~15 sends, and Resend's default
+  // team limit is 2 requests/s — sent at once, the extra ones failed with a 429.
+  // ponytail: fixed spacing; switch to Resend's batch endpoint if the sample count grows.
+  const results: { label: string; ok: boolean }[] = [];
+  for (const [i, { label, from, message }] of samples.entries()) {
+    if (i > 0) await new Promise((resolve) => setTimeout(resolve, SEND_SPACING_MS));
+    try {
+      await sendEmail({ from, to: [to], ...message });
+      results.push({ label, ok: true });
+    } catch (error) {
+      logger.error("email test send failed", { label, error });
+      results.push({ label, ok: false });
+    }
+  }
 
   return NextResponse.json({ results });
 }
@@ -130,12 +144,39 @@ type EmailConfig = {
   contactConfirm?: ConfirmationConfig;
   contactOwner?: OwnerAlertConfig;
   dataRequestOwner?: OwnerAlertConfig;
+  supportEmail?: string;
 };
 
+/**
+ * The samples, as the real emails go out: an owner alert once, in the default locale;
+ * a visitor email once per site locale, labelled `<group> · <locale>`. Every sample
+ * carries the support line, as every real email does.
+ */
 async function buildSamples(to: string): Promise<Sample[]> {
   const strings = (await getEmailStrings()) as EmailConfig | null;
+  return [
+    ...ownerSamples(strings, to),
+    ...localeCodes.flatMap((locale) =>
+      visitorSamples(strings, locale).map((sample) => ({
+        ...sample,
+        label: `${sample.label} · ${locale}`,
+      })),
+    ),
+  ];
+}
+
+/** The internal alerts to the site team — sent in the site's default locale. */
+function ownerSamples(strings: EmailConfig | null, to: string): Sample[] {
   const locale = defaultLocale;
+  const supportEmail = strings?.supportEmail;
   const studioUrl = `${site.url}/studio`;
+  const copy = (cfg: OwnerAlertConfig | undefined) => ({
+    subjectTemplate: cfg?.subject ?? undefined,
+    heading: pick(cfg?.heading, locale) || undefined,
+    intro: pick(cfg?.intro, locale) || undefined,
+    outro: pick(cfg?.outro, locale) || undefined,
+    supportEmail,
+  });
   const samples: Sample[] = [];
 
   const comment = strings?.commentNotification;
@@ -145,54 +186,13 @@ async function buildSamples(to: string): Promise<Sample[]> {
       from: comment.from.trim(),
       message: renderCommentNotificationEmail({
         locale,
-        author: "Jean Test",
+        author: "Test Author",
         authorEmail: to,
-        postTitle: "Article de démonstration",
+        postTitle: "Demo post",
         postUrl: `${site.url}/blog`,
         studioUrl,
-        excerpt:
-          "Ceci est un commentaire de test — vérification de l'e-mail de modération.",
-        subjectTemplate: comment.subject ?? undefined,
-        heading: pick(comment.heading, locale) || undefined,
-        intro: pick(comment.intro, locale) || undefined,
-        outro: pick(comment.outro, locale) || undefined,
-      }),
-    });
-  }
-
-  const nlConfirm = strings?.newsletterConfirm;
-  if (nlConfirm?.enabled && nlConfirm.from?.trim()) {
-    samples.push({
-      label: "newsletterConfirm",
-      from: nlConfirm.from.trim(),
-      message: renderNewsletterConfirmEmail({
-        subject: pick(nlConfirm.subject, locale) || confirmEmailDefaults(locale).subject,
-        heading: pick(nlConfirm.heading, locale) || confirmEmailDefaults(locale).heading,
-        intro: pick(nlConfirm.intro, locale) || confirmEmailDefaults(locale).intro,
-        buttonLabel:
-          pick(nlConfirm.buttonLabel, locale) || confirmEmailDefaults(locale).buttonLabel,
-        // The real email's link: the localized confirm page (its button POSTs the token).
-        confirmUrl: `${site.url}${localizedPathname("/newsletter/confirm", locale)}#t=TEST`,
-        outro: pick(nlConfirm.outro, locale) || undefined,
-      }),
-    });
-  }
-
-  // A lead-magnet request's confirmation: the newsletter's sender + switch, its own words.
-  if (nlConfirm?.enabled && nlConfirm.from?.trim()) {
-    const leadCopy = strings?.leadMagnetConfirm;
-    const fallback = confirmEmailDefaults(locale, "lead-magnet");
-    samples.push({
-      label: "leadMagnetConfirm",
-      from: nlConfirm.from.trim(),
-      message: renderNewsletterConfirmEmail({
-        subject: pick(leadCopy?.subject, locale) || fallback.subject,
-        heading: pick(leadCopy?.heading, locale) || fallback.heading,
-        intro: pick(leadCopy?.intro, locale) || fallback.intro,
-        buttonLabel: pick(leadCopy?.buttonLabel, locale) || fallback.buttonLabel,
-        confirmUrl: `${site.url}${localizedPathname("/newsletter/confirm", locale)}#t=TEST`,
-        outro:
-          pick(leadCopy?.outro, locale) || pick(nlConfirm.outro, locale) || undefined,
+        excerpt: "This is a test comment — checking the moderation email.",
+        ...copy(comment),
       }),
     });
   }
@@ -207,43 +207,7 @@ async function buildSamples(to: string): Promise<Sample[]> {
         subscriberEmail: to,
         subscriberLocale: locale,
         source: "test",
-        subjectTemplate: nlOwner.subject ?? undefined,
-        heading: pick(nlOwner.heading, locale) || undefined,
-        intro: pick(nlOwner.intro, locale) || undefined,
-        outro: pick(nlOwner.outro, locale) || undefined,
-      }),
-    });
-  }
-
-  const lead = strings?.leadMagnet;
-  const leadFrom = lead?.from?.trim() || nlConfirm?.from?.trim();
-  if (leadFrom) {
-    samples.push({
-      label: "leadMagnet",
-      from: leadFrom,
-      message: renderLeadMagnetEmail({
-        subject: pick(lead?.subject, locale) || "Votre document est prêt",
-        heading: pick(lead?.heading, locale) || "Merci — voici votre document",
-        intro: (
-          pick(lead?.intro, locale) || "Ceci est un e-mail de test. {{title}}"
-        ).replaceAll("{{title}}", "Document de démonstration"),
-        buttonLabel: pick(lead?.buttonLabel, locale) || "Télécharger le document",
-        downloadUrl: `${site.url}/api/download?token=TEST`,
-        outro: pick(lead?.outro, locale) || undefined,
-      }),
-    });
-  }
-
-  const wlConfirm = strings?.waitlistConfirm;
-  if (wlConfirm?.enabled && wlConfirm.from?.trim()) {
-    samples.push({
-      label: "waitlistConfirm",
-      from: wlConfirm.from.trim(),
-      message: renderWaitlistConfirmEmail({
-        subject: pick(wlConfirm.subject, locale) || "Vous êtes sur la liste d'attente",
-        heading: pick(wlConfirm.heading, locale) || "Bienvenue sur la liste",
-        intro: pick(wlConfirm.intro, locale) || "Ceci est un e-mail de test.",
-        outro: pick(wlConfirm.outro, locale) || undefined,
+        ...copy(nlOwner),
       }),
     });
   }
@@ -259,24 +223,7 @@ async function buildSamples(to: string): Promise<Sample[]> {
         name: "Test",
         source: "test",
         studioUrl,
-        subjectTemplate: wlOwner.subject ?? undefined,
-        heading: pick(wlOwner.heading, locale) || undefined,
-        intro: pick(wlOwner.intro, locale) || undefined,
-        outro: pick(wlOwner.outro, locale) || undefined,
-      }),
-    });
-  }
-
-  const ctConfirm = strings?.contactConfirm;
-  if (ctConfirm?.enabled && ctConfirm.from?.trim()) {
-    samples.push({
-      label: "contactConfirm",
-      from: ctConfirm.from.trim(),
-      message: renderContactConfirmEmail({
-        subject: pick(ctConfirm.subject, locale) || "Nous avons bien reçu votre message",
-        heading: pick(ctConfirm.heading, locale) || "Merci de nous avoir écrit",
-        intro: pick(ctConfirm.intro, locale) || "Ceci est un e-mail de test.",
-        outro: pick(ctConfirm.outro, locale) || undefined,
+        ...copy(wlOwner),
       }),
     });
   }
@@ -290,14 +237,11 @@ async function buildSamples(to: string): Promise<Sample[]> {
         locale,
         email: to,
         name: "Test",
-        subject: "Message de démonstration",
-        message: "Ceci est un e-mail de test — vérification de l'alerte contact.",
+        subject: "Demo message",
+        message: "This is a test email — checking the contact alert.",
         source: "test",
         studioUrl,
-        subjectTemplate: ctOwner.subject ?? undefined,
-        heading: pick(ctOwner.heading, locale) || undefined,
-        intro: pick(ctOwner.intro, locale) || undefined,
-        outro: pick(ctOwner.outro, locale) || undefined,
+        ...copy(ctOwner),
       }),
     });
   }
@@ -309,15 +253,115 @@ async function buildSamples(to: string): Promise<Sample[]> {
       from: drOwner.from.trim(),
       message: renderDataRequestNotificationEmail({
         locale,
-        requestTypeLabel: "Effacement",
+        requestTypeLabel: requestTypeLabel("erasure", locale),
         email: to,
-        message: "Ceci est un e-mail de test.",
+        message: "This is a test email.",
         source: "test",
         reviewUrl: adminReviewUrl(),
-        subjectTemplate: drOwner.subject ?? undefined,
-        heading: pick(drOwner.heading, locale) || undefined,
-        intro: pick(drOwner.intro, locale) || undefined,
-        outro: pick(drOwner.outro, locale) || undefined,
+        ...copy(drOwner),
+      }),
+    });
+  }
+
+  return samples;
+}
+
+/** The emails a visitor receives — rendered in `locale`, as a visitor on that locale gets them. */
+function visitorSamples(strings: EmailConfig | null, locale: Locale): Sample[] {
+  const supportEmail = strings?.supportEmail;
+  const samples: Sample[] = [];
+  // The real email's link: the localized confirm page (its button POSTs the token).
+  const confirmUrl = `${site.url}${localizedPathname("/newsletter/confirm", locale)}#t=TEST`;
+
+  const nlConfirm = strings?.newsletterConfirm;
+  if (nlConfirm?.enabled && nlConfirm.from?.trim()) {
+    const fallback = confirmEmailDefaults(locale);
+    samples.push({
+      label: "newsletterConfirm",
+      from: nlConfirm.from.trim(),
+      message: renderNewsletterConfirmEmail({
+        subject: pick(nlConfirm.subject, locale) || fallback.subject,
+        heading: pick(nlConfirm.heading, locale) || fallback.heading,
+        intro: pick(nlConfirm.intro, locale) || fallback.intro,
+        buttonLabel: pick(nlConfirm.buttonLabel, locale) || fallback.buttonLabel,
+        confirmUrl,
+        outro: pick(nlConfirm.outro, locale) || undefined,
+        locale,
+        supportEmail,
+      }),
+    });
+
+    // A lead-magnet request's confirmation: the newsletter's sender + switch, its own words.
+    const leadCopy = strings?.leadMagnetConfirm;
+    const leadFallback = confirmEmailDefaults(locale, "lead-magnet");
+    samples.push({
+      label: "leadMagnetConfirm",
+      from: nlConfirm.from.trim(),
+      message: renderNewsletterConfirmEmail({
+        subject: pick(leadCopy?.subject, locale) || leadFallback.subject,
+        heading: pick(leadCopy?.heading, locale) || leadFallback.heading,
+        intro: pick(leadCopy?.intro, locale) || leadFallback.intro,
+        buttonLabel: pick(leadCopy?.buttonLabel, locale) || leadFallback.buttonLabel,
+        confirmUrl,
+        outro:
+          pick(leadCopy?.outro, locale) || pick(nlConfirm.outro, locale) || undefined,
+        locale,
+        supportEmail,
+      }),
+    });
+  }
+
+  const lead = strings?.leadMagnet;
+  const leadFrom = lead?.from?.trim() || nlConfirm?.from?.trim();
+  if (leadFrom) {
+    const title = "Demo document";
+    const fallback = leadMagnetDefaults(locale, title);
+    samples.push({
+      label: "leadMagnet",
+      from: leadFrom,
+      message: renderLeadMagnetEmail({
+        subject: pick(lead?.subject, locale) || fallback.subject,
+        heading: pick(lead?.heading, locale) || fallback.heading,
+        intro: pick(lead?.intro, locale).replaceAll("{{title}}", title) || fallback.intro,
+        buttonLabel: pick(lead?.buttonLabel, locale) || fallback.buttonLabel,
+        downloadUrl: `${site.url}/api/download?token=TEST`,
+        outro: pick(lead?.outro, locale) || undefined,
+        locale,
+        supportEmail,
+      }),
+    });
+  }
+
+  const wlConfirm = strings?.waitlistConfirm;
+  if (wlConfirm?.enabled && wlConfirm.from?.trim()) {
+    const fallback = waitlistConfirmDefaults(locale, "Test");
+    samples.push({
+      label: "waitlistConfirm",
+      from: wlConfirm.from.trim(),
+      message: renderWaitlistConfirmEmail({
+        subject: pick(wlConfirm.subject, locale) || fallback.subject,
+        heading: pick(wlConfirm.heading, locale) || fallback.heading,
+        intro: pick(wlConfirm.intro, locale) || fallback.intro,
+        outro: pick(wlConfirm.outro, locale) || undefined,
+        locale,
+        supportEmail,
+      }),
+    });
+  }
+
+  const ctConfirm = strings?.contactConfirm;
+  if (ctConfirm?.enabled && ctConfirm.from?.trim()) {
+    const fallback = contactConfirmDefaults(locale);
+    samples.push({
+      label: "contactConfirm",
+      from: ctConfirm.from.trim(),
+      message: renderContactConfirmEmail({
+        subject: pick(ctConfirm.subject, locale) || fallback.subject,
+        heading: pick(ctConfirm.heading, locale) || fallback.heading,
+        intro: pick(ctConfirm.intro, locale) || fallback.intro,
+        outro: pick(ctConfirm.outro, locale) || undefined,
+        locale,
+        supportEmail,
       }),
     });
   }

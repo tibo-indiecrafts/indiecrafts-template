@@ -18,7 +18,7 @@ sender (the newsletter's double opt-in) could never reach a helper stuck in the 
 
 | Import                                    | Side   | What it is                                                                                                                                               |
 | ----------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@indiecrafts/packages-web-email`         | pure   | `sendEmail` · `renderEmailLayout` · `escapeHtml` · the `RenderedEmail` render contract (templates live with their feature)                               |
+| `@indiecrafts/packages-web-email`         | pure   | `sendEmail` · `renderEmail` · `escapeHtml` · the `RenderedEmail` render contract (templates live with their feature)                                     |
 | `@indiecrafts/packages-web-email/strings` | server | `getEmailStrings()` (React-`cache`d generic read) + `pick(value, locale)` + the `OwnerAlertConfig`/`ConfirmationConfig` read shapes                      |
 | `@indiecrafts/packages-web-email/sanity`  | Studio | `emailSanity(modules)` (builds the singleton) · `confirmationGroup`/`ownerAlertGroup` (group factories) · `sendTestEmailAction` (the "Send test" action) |
 
@@ -27,15 +27,20 @@ sender (the newsletter's double opt-in) could never reach a helper stuck in the 
 - `sendEmail(input)` — server-only. `{ from, to[], cc?, bcc?, replyTo?, subject, text, html? }` →
   `POST https://api.resend.com/emails`. Reads `RESEND_API_KEY`. **Throws** on a missing key or
   non-2xx — callers treat sending as best-effort.
-- `renderEmailLayout({ title, preheader?, contentHtml, lang? })` — the shared shell: a full,
-  table-based, inline-styled document (the only layout technique email clients render reliably).
+- `renderEmailLayout({ title, preheader?, contentHtml, lang?, supportEmail? })` — internal (not exported): the shared shell, a
+  full, table-based, inline-styled document (the only layout technique email clients render reliably).
+  `lang` is the recipient's language: it sets `<html lang>` and the footer words (`localeCopy`: the
+  language's own, else the default locale's, else English — "Sent by …" / "Need help? …").
+- `renderEmail({ subject, text, …layout })` — how every template finishes: the shell above plus the
+  plain-text body, **both** ending with the support line. Return through it, never build `html`
+  alone, so neither copy of an email can miss the support address.
   `escapeHtml(value)` — escape any user value before it goes in `contentHtml`. Palette hex is inlined
   on purpose (oklch tokens never reach an inbox — same exception as the PWA manifest).
 - **Templates live with their owning feature**, not in this brick. Each
   `render…Email(input) => RenderedEmail` (from plain resolved strings) sits in that feature's
   `src/emails/` — `comment-notification` (blog) · `newsletter-confirm`/`newsletter-notification`/
   `lead-magnet` (newsletter) · `waitlist-confirm`/`waitlist-notification` (waitlist) ·
-  `data-request-notification` (compliance) — and imports `renderEmailLayout`/`escapeHtml`/
+  `data-request-notification` (compliance) — and imports `renderEmail`/`escapeHtml`/
   `RenderedEmail` from `@indiecrafts/packages-web-email`. The brick owns the shared _system_ (send + layout + the
   render contract + the Sanity group factories) and names **no feature**.
 
@@ -44,7 +49,11 @@ sender (the newsletter's double opt-in) could never reach a helper stuck in the 
 `emailSanity(modules)` contributes one **`emailStrings` singleton** (Studio → **E-mails**) — the one
 place that configures every transactional email: who receives it, the sender, and the copy. Its only
 built-in field is a global **`supportEmail`** (the editor-owned support address shown in every email
-footer). A second built-in is **`bccAll`** — a QA global blind-copy address that receives a copy of
+footer, in the HTML and the plain text, in the recipient's language). **It is the on/off switch:** set
+it in Studio → E-mails → "Adresse de support" and every email carries `Need help? <address>` (website
+emails, the Studio test samples, and the api worker's erasure, data-request and Clerk emails); leave it
+empty and no email shows a support line. The internal security alert carries it too (in English, like
+its body). A second built-in is **`bccAll`** — a QA global blind-copy address that receives a copy of
 **every** transactional email (all surfaces + the Clerk take-over + the erasure emails), merged into
 `bcc` alongside the `EMAIL_ADMIN_BCC` env value and any per-group bcc. Because it copies auth codes and
 magic links, it is **infra-gated**: honored only when the runtime env flag `EMAIL_BCC_ALL_ENABLED` is set
@@ -67,15 +76,23 @@ Two group factories cover every email:
 
 Groups today:
 
-| Group                 | Owner module | To               | Translated? | Extras                        |
-| --------------------- | ------------ | ---------------- | ----------- | ----------------------------- |
-| `commentNotification` | blog         | site team        | no          | reply-to · moderation buttons |
-| `newsletterConfirm`   | newsletter   | subscriber       | **yes**     | button · bcc                  |
-| `leadMagnetConfirm`   | newsletter   | visitor          | **yes**     | button (copy only)            |
-| `newsletterOwner`     | newsletter   | site team        | no          | —                             |
-| `waitlistConfirm`     | waitlist     | joiner           | **yes**     | bcc                           |
-| `waitlistOwner`       | waitlist     | site team        | no          | —                             |
-| `dataRequestOwner`    | compliance   | controller / DPO | no          | —                             |
+| Group                 | Owner module            | To               | Translated? | Extras                        |
+| --------------------- | ----------------------- | ---------------- | ----------- | ----------------------------- |
+| `commentNotification` | blog                    | site team        | no          | reply-to · moderation buttons |
+| `newsletterConfirm`   | newsletter              | subscriber       | **yes**     | button · bcc                  |
+| `leadMagnetConfirm`   | newsletter              | visitor          | **yes**     | button (copy only)            |
+| `leadMagnet`          | newsletter              | visitor          | **yes**     | button (the download link)    |
+| `newsletterOwner`     | newsletter              | site team        | no          | —                             |
+| `waitlistConfirm`     | waitlist                | joiner           | **yes**     | bcc                           |
+| `waitlistOwner`       | waitlist                | site team        | no          | —                             |
+| `contactConfirm`      | contact                 | sender           | **yes**     | bcc                           |
+| `contactOwner`        | contact                 | site team        | no          | reply-to = the sender         |
+| `dataRequestOwner`    | compliance              | controller / DPO | no          | —                             |
+| `erasureToken`        | compliance (api worker) | requester        | **yes**     | —                             |
+| `erasureComplete`     | compliance (api worker) | requester        | **yes**     | —                             |
+| `dataRequestReceipt`  | compliance (api worker) | requester        | **yes**     | —                             |
+| `dataRequestClosed`   | compliance (api worker) | requester        | **yes**     | —                             |
+| `securityAlert`       | the brick               | site team        | no          | no on/off; plain text         |
 
 A sender reads the whole entity once (`getEmailStrings()` — a **generic read**, no field projection,
 so a feature adding a group never edits this brick), **narrows to its own group** with the exported
@@ -89,11 +106,14 @@ matching template. Seeded EN + FR by `pnpm seed`. **Order in the Studio = module
    `emailGroups` (the module's `SanityModule` barrel spreads it in). Reuse `confirmationGroup` /
    `ownerAlertGroup`; a genuinely new shape earns a new factory here, not a per-module one-off.
 2. In the **same module**, add `src/emails/<name>.ts` exporting
-   `render<Name>Email(input) => RenderedEmail` — build the HTML via `renderEmailLayout` (imported from
-   `@indiecrafts/packages-web-email`), escape every value. Colocate a `*.test.ts`. No brick edit, no re-export.
+   `render<Name>Email(input) => RenderedEmail` — return through `renderEmail` (imported from
+   `@indiecrafts/packages-web-email`) with the recipient's `lang` and the `supportEmail`; escape every
+   value. Colocate a `*.test.ts`. No brick edit, no re-export.
 3. Call it from the feature: `getEmailStrings()`, narrow to your group (`OwnerAlertConfig` /
-   `ConfirmationConfig`), `pick(...)` the locale strings, `sendEmail`.
-4. Add the render to `buildSamples` in `code/projects/web/surfaces/website/src/app/api/emails/test/route.ts`
+   `ConfirmationConfig`), `pick(...)` the locale strings, `sendEmail`. A visitor's email uses the page
+   language the form sent, through `toSiteLocale` (anything else → `defaultLocale`); an owner alert
+   uses `defaultLocale`.
+4. Add the render, with `supportEmail`, to `buildSamples` in `code/projects/web/surfaces/website/src/app/api/emails/test/route.ts`
    (importing it from your module) so the "Send test" action covers it.
 
 ## BCC — per email, editor-owned

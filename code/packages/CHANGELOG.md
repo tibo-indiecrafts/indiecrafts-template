@@ -28,6 +28,21 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **Email: every email carries the support line, in the recipient's language.** The shared footer
+  was hard-coded French ("Envoyé par… Besoin d'aide ?") whatever the email's language, and the
+  plain-text body had no support line. The footer now follows `lang`, and the new `renderEmail`
+  returns the HTML and the text with the support line in both; every template returns through it,
+  and the bare shell (`renderEmailLayout`) is no longer exported. The support address stays the
+  on/off switch (`emailStrings.supportEmail`).
+- **Config: `toSiteLocale(value)` and `localeCopy(table, locale)`.** `toSiteLocale` turns a
+  client-sent language into a site locale (else the default); five senders had their own copy of
+  that rule. `localeCopy` picks built-in copy: the locale's own, else the default locale's, else
+  English — the order `pickLocale` uses for Studio copy. **Why:** on a site with a locale that
+  has no built-in copy (a `de` page on an fr/de site), an email mixed default-locale Studio text
+  with an English button and footer.
+- **Email (Studio): an owner alert's subject names its language.** The plain subject is one
+  language, the site's default; the field hint now says which. **Why:** the seed wrote French
+  subjects on an English site, so the alerts mixed a French subject with an English body.
 - **ui-tokens: bottom overlays clear a fixed bottom bar.** With a `data-bottom-bar` element on
   the page, `bottom-safe-4` adds `--bottom-bar` (3.5rem) and the body gets matching padding.
   **Why:** the website's draft-preview bar covered the cookie and legal banners on phones.

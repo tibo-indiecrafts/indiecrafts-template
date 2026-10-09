@@ -126,6 +126,21 @@ export function isLocale<L extends string>(
   return (supported as readonly string[]).includes(value);
 }
 
+/** `value` when it is a site locale, else the default — for a locale a client sent us
+ *  (a form's page language, a cookie). Every email to a visitor resolves its language here. */
+export function toSiteLocale(value: string | null | undefined): Locale {
+  return value && isLocale(value, localeCodes) ? value : defaultLocale;
+}
+
+/** Built-in copy for `locale`: its own, else the default locale's, else English — the order
+ *  `pickLocale` uses for Studio copy, so a fallback never mixes languages with it. */
+export function localeCopy<T>(
+  table: Readonly<Record<string, T>>,
+  locale: string,
+): T {
+  return table[locale] ?? table[defaultLocale] ?? table.en!;
+}
+
 /**
  * The first RANKED preference that's supported and differs from the `active` locale —
  * the "should we suggest a language switch?" decision. Returns `null` when the top

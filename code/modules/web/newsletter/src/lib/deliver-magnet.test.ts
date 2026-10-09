@@ -10,7 +10,12 @@ vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
 }));
 vi.mock("@indiecrafts/packages-web-email", () => ({
   sendEmail,
-  renderEmailLayout: () => "",
+  // The html is just `<html lang>`, so a test can check the recipient's language reached the layout.
+  renderEmail: (e: { subject: string; text: string; lang?: string }) => ({
+    subject: e.subject,
+    text: e.text,
+    html: `<html lang="${e.lang}">`,
+  }),
   escapeHtml: (s: string) => s,
   EMAIL_COLORS: new Proxy({}, { get: () => "#000000" }),
 }));
@@ -94,4 +99,19 @@ describe("deliverMagnetsForTags", () => {
     const sent = JSON.stringify(sendEmail.mock.calls[0]);
     expect(sent).toContain("/api/download?token=");
   });
+
+  it.each([
+    ["fr", "Votre document est prêt", "fr"],
+    ["de", "Your download is ready", "en"], // not a site locale → the default (en)
+  ])(
+    "a %s request gets the delivery email in its language",
+    async (language, subject, lang) => {
+      const { deliverMagnetsForTags } = await load(SECRET);
+      fetch.mockResolvedValueOnce({ _id: "magnet.1", title: "Guide" });
+      await deliverMagnetsForTags("a@b.com", ["magnet.1"], language);
+      expect(sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({ subject, html: `<html lang="${lang}">` }),
+      );
+    },
+  );
 });

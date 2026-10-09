@@ -71,10 +71,13 @@ describe("POST /api/emails/test", () => {
     expect(res.status).toBe(200);
     const text = await res.text();
     expect(JSON.parse(text)).toEqual({
-      results: [{ label: "contactConfirm", ok: true }],
+      results: [
+        { label: "contactConfirm · en", ok: true },
+        { label: "contactConfirm · fr", ok: true },
+      ],
     });
     expect(text).not.toContain(RESEND_KEY);
-    expect(sendEmail).toHaveBeenCalledOnce();
+    expect(sendEmail).toHaveBeenCalledTimes(2);
     expect(sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({ to: ["me@site.test"] }),
     );
@@ -90,11 +93,55 @@ describe("POST /api/emails/test", () => {
     const res = await post(JSON.stringify({ to: "me@site.test" }));
     const { results } = (await res.json()) as { results: { label: string }[] };
     const labels = results.map((r) => r.label);
-    expect(labels).toContain("leadMagnetConfirm");
+    expect(labels).toContain("leadMagnetConfirm · en");
     const subjects = sendEmail.mock.calls.map(
       (c) => (c[0] as { subject: string }).subject,
     );
-    expect(subjects).toContain("Confirm your request"); // samples use the default locale
+    expect(subjects).toContain("Confirm your request");
+    expect(subjects).toContain("Confirmez votre demande");
+  });
+
+  it("sends a visitor email in each language and an owner alert once, all with the support line", async () => {
+    strings.value = {
+      ...CONTACT_ONLY,
+      contactOwner: {
+        enabled: true,
+        from: "Site <hello@site.test>",
+        to: ["team@site.test"],
+      },
+      supportEmail: "help@site.test",
+    };
+    const res = await post(JSON.stringify({ to: "me@site.test" }));
+    const { results } = (await res.json()) as { results: { label: string }[] };
+    expect(results.map((r) => r.label)).toEqual([
+      "contactOwner",
+      "contactConfirm · en",
+      "contactConfirm · fr",
+    ]);
+    const sent = sendEmail.mock.calls.map(
+      (c) => c[0] as { subject: string; text: string; html: string },
+    );
+    expect(sent[1]?.subject).toBe("We received your message");
+    expect(sent[1]?.html).toContain('<html lang="en">');
+    expect(sent[2]?.subject).toBe("Nous avons bien reçu votre message");
+    expect(sent[2]?.html).toContain('<html lang="fr">');
+    expect(sent[2]?.text).toContain("Besoin d'aide ? help@site.test");
+    for (const mail of sent) {
+      expect(mail.html).toContain("mailto:help@site.test");
+      expect(mail.text).toContain("help@site.test");
+    }
+  });
+
+  it("reports a failed send and still sends the rest, one at a time", async () => {
+    sendEmail.mockRejectedValueOnce(new Error("429"));
+    const res = await post(JSON.stringify({ to: "me@site.test" }));
+    expect(await res.json()).toEqual({
+      results: [
+        { label: "contactConfirm · en", ok: false },
+        { label: "contactConfirm · fr", ok: true },
+      ],
+    });
+    expect(sendEmail).toHaveBeenCalledTimes(2);
   });
 
   it("is a 401 without a Bearer token or for a non-member, and sends nothing", async () => {

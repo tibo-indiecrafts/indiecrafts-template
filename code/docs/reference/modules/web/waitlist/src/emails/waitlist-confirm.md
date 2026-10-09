@@ -14,7 +14,7 @@ Renders the waitlist confirmation email a new joiner receives. The file is copy-
 
 ## Exports
 
-- `WaitlistConfirmInput` — the render input: `subject`, `heading`, `intro`, plus optional `outro` and `supportEmail`.
+- `WaitlistConfirmInput` — the render input: `subject`, `heading`, `intro`, `locale` (the recipient's language: the layout's `<html lang>` and footer), plus optional `outro` and `supportEmail`.
 - `waitlistConfirmDefaults(locale, name?)` — the fallback `subject`, `heading` and `intro` for an empty Studio field: English or French, English for any other locale.
 - `renderWaitlistConfirmEmail(input)` — returns a `RenderedEmail` (`subject`, `text`, `html`).
 

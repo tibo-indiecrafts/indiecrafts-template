@@ -16,7 +16,7 @@ The email brick's main entry point. It re-exports the shared email SYSTEM — se
 
 - `sendEmail` — send one email through the Resend REST API.
 - `SendEmailInput` — the input type for `sendEmail`.
-- `renderEmailLayout` — wrap body HTML in the branded, mail-client-safe shell.
+- `renderEmail` — finish a template: the shell plus the plain text, both with the support line.
 - `escapeHtml` — escape untrusted text before interpolating it into the layout.
 - `EmailLayoutInput` / `RenderedEmail` — the layout input and the shared template return shape.
 - `EMAIL_COLORS` — the token-derived email palette (resolved hex).
@@ -25,7 +25,7 @@ The email brick's main entry point. It re-exports the shared email SYSTEM — se
 
 ```ts
 import {
-  renderEmailLayout,
+  renderEmail,
   sendEmail,
   type RenderedEmail,
 } from "@indiecrafts/packages-web-email";

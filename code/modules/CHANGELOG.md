@@ -31,6 +31,12 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **Contact · waitlist · newsletter: a visitor's email is in their language from top to bottom.**
+  The four visitor templates (`contact-confirm`, `waitlist-confirm`, `newsletter-confirm`,
+  `lead-magnet`) now take a required `locale`, which sets `<html lang>` and the footer. A page
+  language the site does not have now gives the default locale (it mixed default-locale Studio
+  copy with English fallbacks). The lead-magnet fallback copy moved next to its template as
+  `leadMagnetDefaults(locale, title)`, like `contactConfirmDefaults` and `waitlistConfirmDefaults`.
 - **blog: "Slug" fields read "Adresse web".** Post, author, category, series and tag explain the
   field in plain French with an example; the "Mis en avant" and tag help no longer name code.
   **Why:** a non-technical editor could not tell what "Slug" or `featuredPostsQuery` meant.

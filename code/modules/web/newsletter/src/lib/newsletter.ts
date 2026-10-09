@@ -8,10 +8,8 @@ import "server-only";
 import { logger } from "@indiecrafts/packages-shared-logger";
 import {
   site,
-  defaultLocale,
-  isLocale,
-  localeCodes,
   localizedPathname,
+  toSiteLocale,
 } from "@indiecrafts/packages-shared-config";
 import { sendEmail } from "@indiecrafts/packages-web-email";
 import {
@@ -86,10 +84,7 @@ export async function subscribe(
   const valid = validateSubscribe(input);
   if (!valid.ok) return valid;
   const newsletter = input.source !== LEAD_MAGNET_SOURCE;
-  const locale =
-    input.language && isLocale(input.language, localeCodes)
-      ? input.language
-      : defaultLocale;
+  const locale = toSiteLocale(input.language);
 
   try {
     const strings = (await getEmailStrings()) as {
@@ -148,6 +143,7 @@ export async function subscribe(
       // address it carries stays out of request logs. The page reads it client-side.
       confirmUrl: `${site.url}${localizedPathname("/newsletter/confirm", locale)}#t=${token}`,
       outro: pick(copy?.outro, locale) || pick(cfg.outro, locale) || undefined,
+      locale,
       supportEmail: strings?.supportEmail,
     });
     // CMS bcc honored only behind the infra gate (unset in prod). QA-only.

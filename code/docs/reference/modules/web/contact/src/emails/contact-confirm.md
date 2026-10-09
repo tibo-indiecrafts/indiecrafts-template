@@ -16,7 +16,7 @@ This template renders the "we got your message" acknowledgement sent to the pers
 
 - `renderContactConfirmEmail` — takes `ContactConfirmInput`, returns a `RenderedEmail` (`{ subject, text, html }`).
 - `contactConfirmDefaults(locale)` — the fallback `subject`, `heading` and `intro` for an empty Studio field: English or French, English for any other locale.
-- `ContactConfirmInput` — type `{ subject, heading, intro, outro?, supportEmail? }`.
+- `ContactConfirmInput` — type `{ subject, heading, intro, locale, outro?, supportEmail? }`; `locale` is the recipient's language (the layout's `<html lang>` and footer).
 
 ## Usage
 

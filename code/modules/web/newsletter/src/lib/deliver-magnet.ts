@@ -6,7 +6,7 @@
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";
-import { site, defaultLocale } from "@indiecrafts/packages-shared-config";
+import { site, toSiteLocale } from "@indiecrafts/packages-shared-config";
 import { writeClient } from "@indiecrafts/packages-web-sanity/write";
 import { sendEmail } from "@indiecrafts/packages-web-email";
 import {
@@ -14,7 +14,10 @@ import {
   pick,
   type ConfirmationConfig,
 } from "@indiecrafts/packages-web-email/strings";
-import { renderLeadMagnetEmail } from "../emails/lead-magnet";
+import {
+  leadMagnetDefaults,
+  renderLeadMagnetEmail,
+} from "../emails/lead-magnet";
 import {
   resolveGatedDownload,
   signDownloadToken,
@@ -33,24 +36,6 @@ import {
  */
 const secret = () => process.env.NEWSLETTER_SECRET;
 const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-/** Fallback delivery copy when the Sanity `leadMagnet` group is empty; a magnet's title is interpolated. */
-const COPY = {
-  fr: {
-    subject: "Votre document est prêt",
-    heading: "Merci — voici votre document",
-    intro: (title: string) =>
-      `Cliquez sur le bouton ci-dessous pour télécharger « ${title} ». Le lien expire dans 7 jours.`,
-    buttonLabel: "Télécharger le document",
-  },
-  en: {
-    subject: "Your download is ready",
-    heading: "Thanks — here's your download",
-    intro: (title: string) =>
-      `Click the button below to download “${title}”. The link expires in 7 days.`,
-    buttonLabel: "Download the file",
-  },
-} as const;
 
 type Magnet = { _id: string; title?: string };
 
@@ -130,15 +115,10 @@ async function sendMagnetEmail(
   if (!from) return;
 
   // Editor copy (translated, resolved to the subscriber's language) with the
-  // hardcoded COPY as the per-field fallback — an empty group keeps today's mail.
+  // template defaults as the per-field fallback — an empty group keeps today's mail.
   const title = magnet.title ?? "";
-  const locale = language || defaultLocale;
-  // Resolve the hardcoded fallback copy by locale, else the default locale — a new locale
-  // with no COPY entry falls back to the default, not silently to French.
-  const fallback =
-    COPY[locale as keyof typeof COPY] ??
-    COPY[defaultLocale as keyof typeof COPY] ??
-    COPY.en;
+  const locale = toSiteLocale(language);
+  const fallback = leadMagnetDefaults(locale, title);
   const intro = pick(lead?.intro, locale);
   const token = await signDownloadToken(
     { assetId: magnet._id, exp: Date.now() + TTL_MS },
@@ -147,10 +127,11 @@ async function sendMagnetEmail(
   const message = renderLeadMagnetEmail({
     subject: pick(lead?.subject, locale) || fallback.subject,
     heading: pick(lead?.heading, locale) || fallback.heading,
-    intro: intro ? intro.replaceAll("{{title}}", title) : fallback.intro(title),
+    intro: intro ? intro.replaceAll("{{title}}", title) : fallback.intro,
     buttonLabel: pick(lead?.buttonLabel, locale) || fallback.buttonLabel,
     outro: pick(lead?.outro, locale) || undefined,
     downloadUrl: `${site.url}/api/download?token=${encodeURIComponent(token)}`,
+    locale,
     supportEmail: strings?.supportEmail,
   });
   // CMS bcc honored only behind the infra gate (unset in prod). QA-only.

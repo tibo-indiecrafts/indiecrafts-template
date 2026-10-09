@@ -51,6 +51,8 @@ Verify delivery with the **Send test** action (Studio → E-mails → ⋯).
 - **Confirmation → the joiner** (`waitlistConfirm`) — a "you're on the list" welcome, **copy
   translated per language** (subject/heading/intro/outro) + an optional `BCC`, seeded EN + FR. No
   confirm-link.
+  Sent in the language of the page the form was on; a language the site does not have → the
+  default locale.
 - **New-entry alert → you** (`waitlistOwner`) — `To`/`CC`/`BCC`, `From`, and a <code v-pre>{{email}}</code>/<code v-pre>{{name}}</code>
   subject.
 

@@ -14,6 +14,8 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The security alert ends with the support line** (`Need help? <address>`, English like its
+  body), read with its Studio copy. **Why:** it was the one email without it.
 - **The email categories come from the live Sanity API, not its CDN.** A sign-up read a stale copy
   (up to an hour old in some regions), so a category an editor had just added to the sign-up
   grant was not granted. These reads are rare (sign-ups and preference saves).

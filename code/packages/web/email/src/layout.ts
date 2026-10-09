@@ -4,7 +4,11 @@
  * @see docs/reference/packages/web/email/src/layout.md
  */
 
-import { site, defaultLocale } from "@indiecrafts/packages-shared-config";
+import {
+  site,
+  defaultLocale,
+  localeCopy,
+} from "@indiecrafts/packages-shared-config";
 import { EMAIL_COLORS } from "./theme";
 
 /**
@@ -42,6 +46,15 @@ export function escapeHtml(value: string): string {
     .replaceAll("'", "&#39;");
 }
 
+/** Footer words per language; `footerCopy` falls back like the email's own copy. */
+const FOOTER: Record<string, { sentBy: string; help: string }> = {
+  en: { sentBy: "Sent by", help: "Need help?" },
+  fr: { sentBy: "Envoyé par", help: "Besoin d'aide ?" },
+};
+
+/** Footer words in the email's language, else the default locale's, else English. */
+const footerCopy = (lang: string) => localeCopy(FOOTER, lang);
+
 export type EmailLayoutInput = {
   /** The `<h1>` shown at the top of the card. */
   title: string;
@@ -72,6 +85,9 @@ export function renderEmailLayout({
 }: EmailLayoutInput): string {
   const brand = escapeHtml(brandLabel());
   const url = escapeHtml(site.url);
+  const words = footerCopy(lang);
+  const help = escapeHtml(words.help).replace(" ?", "&nbsp;?");
+  const support = supportEmail?.trim();
   return `<!doctype html>
 <html lang="${escapeHtml(lang)}">
 <head>
@@ -93,11 +109,36 @@ ${preheader ? `<span style="display:none;max-height:0;overflow:hidden;opacity:0"
 ${contentHtml}
 </td></tr>
 <tr><td style="padding:20px 4px 0;color:${C.muted};font-size:12px;line-height:1.5">
-Envoyé par <a href="${url}" style="color:${C.muted}">${brand}</a>${supportEmail ? `<br>Besoin d'aide&nbsp;? <a href="mailto:${escapeHtml(supportEmail)}" style="color:${C.muted}">${escapeHtml(supportEmail)}</a>` : ""}
+${words.sentBy} <a href="${url}" style="color:${C.muted}">${brand}</a>${support ? `<br>${help} <a href="mailto:${escapeHtml(support)}" style="color:${C.muted}">${escapeHtml(support)}</a>` : ""}
 </td></tr>
 </table>
 </td></tr>
 </table>
 </body>
 </html>`;
+}
+
+/** The support line for an email's plain-text body: `""` when no address is set. */
+function supportText(
+  supportEmail: string | undefined,
+  lang: string = defaultLocale,
+): string {
+  const email = supportEmail?.trim();
+  return email ? `\n\n${footerCopy(lang).help} ${email}` : "";
+}
+
+/**
+ * Finish a template: the branded HTML document plus the plain-text body, both with the
+ * support line. Every template returns through this, so neither copy can miss it.
+ */
+export function renderEmail({
+  subject,
+  text,
+  ...layout
+}: EmailLayoutInput & { subject: string; text: string }): RenderedEmail {
+  return {
+    subject,
+    text: text + supportText(layout.supportEmail, layout.lang),
+    html: renderEmailLayout(layout),
+  };
 }

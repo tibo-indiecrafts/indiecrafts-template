@@ -7,7 +7,9 @@
 export { sendEmail } from "./resend";
 export type { SendEmailInput } from "./resend";
 
-export { renderEmailLayout, escapeHtml } from "./layout";
+// `renderEmail` only: the bare shell (`renderEmailLayout`) stays internal, so a template
+// cannot return HTML without the plain-text support line.
+export { renderEmail, escapeHtml } from "./layout";
 export type { EmailLayoutInput, RenderedEmail } from "./layout";
 
 // The token-derived email palette (resolved hex). Templates import it so every
@@ -15,6 +17,6 @@ export type { EmailLayoutInput, RenderedEmail } from "./layout";
 export { EMAIL_COLORS } from "./theme";
 
 // Templates live with the feature that owns them (blog · newsletter · waitlist ·
-// compliance), each importing `renderEmailLayout`/`escapeHtml`/`RenderedEmail`
+// compliance), each importing `renderEmail`/`escapeHtml`/`RenderedEmail`
 // from here. This brick owns only the shared email SYSTEM — send + layout + the
 // render contract + the Sanity group factories — and names no feature.

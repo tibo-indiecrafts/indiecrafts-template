@@ -74,7 +74,8 @@ export default defineConfig({
             command: "pnpm build && pnpm start --keepAliveTimeout 70000",
             url: `http://localhost:${APP_PORT}`,
             reuseExistingServer: !process.env.CI,
-            timeout: 300_000, // a cold Next build is slow
+            // A cold Next build is slow: 259 s on a dev machine, longer on a shared CI runner.
+            timeout: 600_000,
             env: {
               NEXT_PUBLIC_SANITY_DATASET: E2E_DATASET,
               NEXT_PUBLIC_ENVIRONMENT: "development",

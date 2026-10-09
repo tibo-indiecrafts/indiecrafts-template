@@ -6,9 +6,10 @@
 import {
   EMAIL_COLORS,
   escapeHtml,
-  renderEmailLayout,
+  renderEmail,
   type RenderedEmail,
 } from "@indiecrafts/packages-web-email";
+import { localeCopy } from "@indiecrafts/packages-shared-config";
 
 /**
  * Double opt-in confirmation → the new subscriber. **Copy-agnostic**: the caller
@@ -22,6 +23,8 @@ export type NewsletterConfirmInput = {
   buttonLabel: string;
   confirmUrl: string;
   outro?: string;
+  /** The recipient's language — the layout's `<html lang>` and footer. */
+  locale: string;
   supportEmail?: string;
 };
 
@@ -32,7 +35,7 @@ type ConfirmCopy = Pick<
 
 /**
  * Last-resort copy when a Studio field is empty (E-mails → newsletter confirmation), per
- * locale; any other locale gets English. The seed fills the real copy in both languages.
+ * locale; another locale gets the default locale's, else English. The seed fills the real copy in both languages.
  */
 const EN: ConfirmCopy = {
   subject: "Confirm your subscription",
@@ -72,14 +75,14 @@ const LEAD_DEFAULTS: Record<string, ConfirmCopy> = {
   },
 };
 
-/** The fallback confirmation copy for `locale` (English when there is none), per purpose. */
+/** The fallback confirmation copy for `locale` (else the default locale's, else English), per purpose. */
 export function confirmEmailDefaults(
   locale: string,
   purpose: "newsletter" | "lead-magnet" = "newsletter",
 ): ConfirmCopy {
   return purpose === "lead-magnet"
-    ? (LEAD_DEFAULTS[locale] ?? LEAD_EN)
-    : (CONFIRM_DEFAULTS[locale] ?? EN);
+    ? localeCopy(LEAD_DEFAULTS, locale)
+    : localeCopy(CONFIRM_DEFAULTS, locale);
 }
 
 const C = EMAIL_COLORS;
@@ -115,12 +118,13 @@ export function renderNewsletterConfirmEmail(
       : "",
   ].join("");
 
-  const html = renderEmailLayout({
+  return renderEmail({
+    subject: input.subject,
+    text,
     title: input.heading,
     preheader: input.intro.slice(0, 100),
     contentHtml,
+    lang: input.locale,
     supportEmail: input.supportEmail,
   });
-
-  return { subject: input.subject, text, html };
 }

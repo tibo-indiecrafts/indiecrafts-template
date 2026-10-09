@@ -19,7 +19,12 @@ vi.mock("@indiecrafts/packages-web-email/strings", () => ({
 }));
 vi.mock("@indiecrafts/packages-web-email", () => ({
   sendEmail,
-  renderEmailLayout: () => "",
+  // The html is just `<html lang>`, so a test can check the recipient's language reached the layout.
+  renderEmail: (e: { subject: string; text: string; lang?: string }) => ({
+    subject: e.subject,
+    text: e.text,
+    html: `<html lang="${e.lang}">`,
+  }),
   escapeHtml: (s: string) => s,
   // Templates read `const C = EMAIL_COLORS` at load; a Proxy answers any token key.
   EMAIL_COLORS: new Proxy({}, { get: () => "#000000" }),
@@ -136,18 +141,22 @@ describe("submit", () => {
   });
 
   it.each([
-    ["fr", "Nous avons bien reçu votre message"],
-    ["de", "We received your message"], // no copy for this locale → English
+    ["fr", "Nous avons bien reçu votre message", "fr"],
+    ["de", "We received your message", "en"], // not a site locale → the default (en)
   ])(
     "empty Studio copy falls back to the %s default",
-    async (language, subject) => {
+    async (language, subject, lang) => {
       vi.stubEnv("RESEND_API_KEY", "re_x");
       getEmailStrings.mockResolvedValueOnce({
         contactConfirm: { enabled: true, from: "hi@site.com" },
       });
       await submit({ ...input, language }, "2026-01-01");
       expect(sendEmail).toHaveBeenCalledWith(
-        expect.objectContaining({ to: ["a@b.com"], subject }),
+        expect.objectContaining({
+          to: ["a@b.com"],
+          subject,
+          html: `<html lang="${lang}">`,
+        }),
       );
     },
   );

@@ -15,7 +15,12 @@ vi.mock("@indiecrafts/packages-web-email/strings", () => ({
 }));
 vi.mock("@indiecrafts/packages-web-email", () => ({
   sendEmail,
-  renderEmailLayout: () => "",
+  // The html is just `<html lang>`, so a test can check the recipient's language reached the layout.
+  renderEmail: (e: { subject: string; text: string; lang?: string }) => ({
+    subject: e.subject,
+    text: e.text,
+    html: `<html lang="${e.lang}">`,
+  }),
   escapeHtml: (s: string) => s,
   // Templates read `const C = EMAIL_COLORS` at load; a Proxy answers any token key.
   EMAIL_COLORS: new Proxy({}, { get: () => "#000000" }),
@@ -118,6 +123,7 @@ describe("subscribe", () => {
       await subscribe({ ...input, language }, "v2", NOW);
       const { mail, link } = await sentLink();
       expect(mail?.subject).toBe(subject);
+      expect(mail?.html).toBe(`<html lang="${language}">`);
       expect(link).toContain(path);
       if (language === "en") expect(link).not.toContain("/fr/");
     },

@@ -55,11 +55,22 @@ export const sendTestEmailAction: DocumentActionComponent = () => {
         setStatus(`Échec : ${data.error ?? `HTTP ${res.status}`}`);
         return;
       }
-      const sent = (data.results ?? []).filter((r) => r.ok).length;
+      const results = data.results ?? [];
+      const sent = results.filter((r) => r.ok).length;
+      const failed = results.filter((r) => !r.ok).map((r) => r.label);
+      if (results.length === 0) {
+        setStatus(
+          "Aucun e-mail activé à envoyer — activez au moins un e-mail ci-dessus.",
+        );
+        return;
+      }
       setStatus(
-        sent > 0
-          ? `${sent} e-mail(s) de test envoyé(s) à ${to}. Vérifiez la boîte de réception.`
-          : "Aucun e-mail activé à envoyer — activez au moins un e-mail ci-dessus.",
+        [
+          `${sent} e-mail(s) de test envoyé(s) à ${to}. Vérifiez la boîte de réception.`,
+          ...(failed.length
+            ? [`Échec pour ${failed.length} : ${failed.join(", ")}.`]
+            : []),
+        ].join(" "),
       );
     } catch (error) {
       setStatus(`Échec : ${String(error)}`);

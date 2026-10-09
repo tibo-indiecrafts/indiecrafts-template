@@ -88,6 +88,22 @@ describe("sendSecurityAlertEmail", () => {
     expect(body.subject).toBe("[ALERTE] critical — data_exfiltration (app)");
   });
 
+  it("ends the alert with the Studio support address", async () => {
+    const m = okFetch();
+    await sendSecurityAlertEmail(
+      {
+        RESEND_API_KEY: "k",
+        EMAIL_FROM: "no-reply@x.com",
+        SECURITY_ALERT_EMAIL: "soc@x.com",
+      },
+      ALERT,
+      async () => ({ supportEmail: "help@x.com" }),
+    );
+    const [, init] = m.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as AlertBody;
+    expect(body.text.endsWith("\n\nNeed help? help@x.com")).toBe(true);
+  });
+
   it("still sends with the hard-coded copy when the copy fetch throws", async () => {
     const m = okFetch();
     await sendSecurityAlertEmail(

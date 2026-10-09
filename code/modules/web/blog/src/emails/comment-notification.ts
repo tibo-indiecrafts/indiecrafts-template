@@ -6,7 +6,7 @@
 import {
   EMAIL_COLORS,
   escapeHtml,
-  renderEmailLayout,
+  renderEmail,
   type RenderedEmail,
 } from "@indiecrafts/packages-web-email";
 
@@ -154,13 +154,13 @@ export function renderCommentNotificationEmail(
       : "",
   ].join("");
 
-  const html = renderEmailLayout({
+  return renderEmail({
+    subject,
+    text,
     title: heading,
     preheader: `${input.author} — ${input.excerpt.slice(0, 90)}`,
     contentHtml,
     lang,
     supportEmail: input.supportEmail,
   });
-
-  return { subject, text, html };
 }

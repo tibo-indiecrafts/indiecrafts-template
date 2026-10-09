@@ -11,6 +11,7 @@ import {
   defaultLocale,
   isLocale,
   localeCodes,
+  toSiteLocale,
 } from "@indiecrafts/packages-shared-config";
 import { privateId } from "@indiecrafts/packages-web-sanity/private-id";
 import { writeClient } from "@indiecrafts/packages-web-sanity/write";
@@ -153,13 +154,15 @@ async function sendConfirmEmail(
   try {
     const from = cfg?.from?.trim();
     if (!cfg?.enabled || !from || !process.env.RESEND_API_KEY) return;
-    const locale = language || defaultLocale;
+    // A site locale only: an unknown one would mix default-locale Studio copy with English.
+    const locale = toSiteLocale(language);
     const fallback = contactConfirmDefaults(locale);
     const message = renderContactConfirmEmail({
       subject: pick(cfg?.subject, locale) || fallback.subject,
       heading: pick(cfg?.heading, locale) || fallback.heading,
       intro: pick(cfg?.intro, locale) || fallback.intro,
       outro: pick(cfg?.outro, locale) || undefined,
+      locale,
       supportEmail,
     });
     await sendEmail({

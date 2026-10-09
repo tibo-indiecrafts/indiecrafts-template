@@ -59,6 +59,17 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Studio "Envoyer un test" sends the emails as visitors get them.** Each visitor email goes out
+  once per site locale (`contactConfirm · fr`), each owner alert once in the default locale, all
+  with the support line. The samples go out one at a time (under Resend's 2 requests/s), and the
+  Studio dialog names any sample that failed. **Why:** the samples had no support line, used
+  hard-coded French fallback copy, and could not show the French versions; sent all at once, the
+  extra ones would fail with a 429 that the dialog did not show.
+- **The seed writes no owner-alert subject.** The template's subject, in the site's default
+  locale, applies. **Why:** the seeded French subjects gave an English site mixed-language alerts;
+  the three seeded subjects were also removed from `production`.
+- **e2e: the web server gets 10 minutes to build** (was 300 s). The build took 259 s on a dev
+  machine; a shared CI runner is slower.
 - **A document request no longer reads as a newsletter sign-up.** A lead-magnet request got the
   newsletter's confirmation ("Thanks for subscribing! … start receiving the newsletter"), yet
   confirming does not subscribe anyone — the email misstated what the person agreed to. It now gets

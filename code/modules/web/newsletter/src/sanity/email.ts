@@ -37,7 +37,7 @@ export const emailGroups = [
       "E-mail envoyé quand quelqu'un demande un document (aimant à prospects) : le lien de confirmation envoie le document, sans inscrire à l'infolettre. Expéditeur et activation : ceux de la confirmation de l'infolettre.",
     enabledHint:
       "Informatif — l'envoi suit la case de la confirmation de l'infolettre. Vide sur les textes = valeurs par défaut.",
-    subjectHint: "Vide = « Confirmez votre demande ».",
+    subjectHint: "Vide = objet par défaut.",
     introHint:
       "Le message au-dessus du bouton. Dites que la personne recevra le document, sans être inscrite à l'infolettre.",
     outroHint:

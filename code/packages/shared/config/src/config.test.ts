@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { isPageVisible, locales, site } from "./index";
+import {
+  defaultLocale,
+  isPageVisible,
+  localeCopy,
+  locales,
+  site,
+  toSiteLocale,
+} from "./index";
 
 // The config brick is the shared primitives + the generic page-config contract.
 // (App-owned instance config — `features` / `pages` / `theme` / `fonts` — lives in
@@ -16,5 +23,22 @@ describe("@indiecrafts/packages-shared-config", () => {
     expect(
       isPageVisible({ key: "/x", id: "x", slug: "/x", enabled: false }),
     ).toBe(false);
+  });
+});
+
+describe("toSiteLocale", () => {
+  it("keeps a site locale and turns anything else into the default", () => {
+    for (const { code } of locales) expect(toSiteLocale(code)).toBe(code);
+    for (const bad of ["xx", "", null, undefined, "<script>"])
+      expect(toSiteLocale(bad)).toBe(defaultLocale);
+  });
+});
+
+describe("localeCopy", () => {
+  const table = { en: "en-copy", fr: "fr-copy" };
+  it("picks the locale's own copy, else the default locale's, else English", () => {
+    expect(localeCopy(table, "fr")).toBe("fr-copy");
+    expect(localeCopy(table, "de")).toBe(table[defaultLocale as "en" | "fr"]);
+    expect(localeCopy({ en: "en-copy" }, "de")).toBe("en-copy");
   });
 });

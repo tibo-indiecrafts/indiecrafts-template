@@ -6,9 +6,10 @@
 import {
   EMAIL_COLORS,
   escapeHtml,
-  renderEmailLayout,
+  renderEmail,
   type RenderedEmail,
 } from "@indiecrafts/packages-web-email";
+import { localeCopy } from "@indiecrafts/packages-shared-config";
 
 /**
  * "We got your message" acknowledgement → the person who sent the contact form.
@@ -21,12 +22,14 @@ export type ContactConfirmInput = {
   heading: string;
   intro: string;
   outro?: string;
+  /** The recipient's language — the layout's `<html lang>` and footer. */
+  locale: string;
   supportEmail?: string;
 };
 
 type ConfirmCopy = Pick<ContactConfirmInput, "subject" | "heading" | "intro">;
 
-/** Last-resort copy when a Studio field is empty, per locale; any other locale gets English. */
+/** Last-resort copy when a Studio field is empty, per locale; another locale gets the default locale's, else English (`localeCopy`). */
 const EN: ConfirmCopy = {
   subject: "We received your message",
   heading: "Thanks for getting in touch",
@@ -43,9 +46,9 @@ const CONFIRM_DEFAULTS: Record<string, ConfirmCopy> = {
   },
 };
 
-/** The fallback acknowledgement copy for `locale` (English when there is none). */
+/** The fallback acknowledgement copy for `locale` (else the default locale's, else English). */
 export function contactConfirmDefaults(locale: string): ConfirmCopy {
-  return CONFIRM_DEFAULTS[locale] ?? EN;
+  return localeCopy(CONFIRM_DEFAULTS, locale);
 }
 
 const C = EMAIL_COLORS;
@@ -76,12 +79,13 @@ export function renderContactConfirmEmail(
       : "",
   ].join("");
 
-  const html = renderEmailLayout({
+  return renderEmail({
+    subject: input.subject,
+    text,
     title: input.heading,
     preheader: input.intro.slice(0, 100),
     contentHtml,
+    lang: input.locale,
     supportEmail: input.supportEmail,
   });
-
-  return { subject: input.subject, text, html };
 }
