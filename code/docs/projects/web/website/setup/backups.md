@@ -111,15 +111,8 @@ To create a bucket by hand instead of Terraform: `wrangler r2 bucket create indi
 
 ## Automated backups
 
-**On GitLab** (this repo), the `backup` job in `.gitlab-ci.yml` runs from a **pipeline schedule**:
-Build → Pipeline schedules → new, cron `0 3 * * *` (UTC), variable `BACKUP_ENV=prod` (add one
-schedule per env). A manual "Run pipeline" with `BACKUP_ENV` runs it once. Either way the run is
-backup-only and records `kind = scheduled` for a schedule. It needs the CI/CD variables
-`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `SANITY_API_READ_TOKEN`,
-`NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`.
-
-**On GitHub**, `.github/workflows/backup.yml` runs **nightly (03:00 UTC, prod)** and on manual dispatch (pick the
-env). It exports Sanity + D1 and uploads to that env's R2 bucket. It reuses the deploy workflow's
+`.github/workflows/backup.yml` runs **nightly (03:00 UTC, prod)** once the repo variable
+`BACKUP_ENABLED` is `true` (off until then), and on manual dispatch (pick the env). It exports Sanity + D1 and uploads to that env's R2 bucket. It reuses the deploy workflow's
 GitHub **Environment** secrets/vars — `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`,
 `SANITY_API_READ_TOKEN`, `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`.
 

@@ -1,14 +1,10 @@
 name: Deploy (Cloudflare)
 
-# Push to main → deploy prod. Use "Run workflow" to target dev/staging/prod.
+# Manual only: "Run workflow" → pick dev/staging/prod (or `pnpm deploy:*` locally). A push to
+# main never deploys. To deploy prod after every green CI run on main, add back:
+#   workflow_run: { workflows: ["CI"], types: [completed], branches: [main] }
 # One-time setup + required secrets/vars: docs/projects/web/website/setup/deployment.md
 on:
-  # Prod deploy fires only after CI succeeds on main (see the success gate on
-  # the discover job). Manual dispatch stays available for dev/staging/prod.
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-    branches: [main]
   workflow_dispatch:
     inputs:
       environment:
@@ -25,8 +21,6 @@ jobs:
   # Read the app registry → the Cloudflare apps to deploy (code/shared/scripts/lib/apps.mjs).
   # Adding an app = a row there, no workflow edit.
   discover:
-    # workflow_dispatch runs unconditionally; a workflow_run only deploys when CI passed.
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     outputs:
       first: ${{ steps.registry.outputs.first }}
@@ -42,11 +36,10 @@ jobs:
           echo "first=$(jq -c '[.[] | select(.order < 10)]' <<<"$apps")" >> "$GITHUB_OUTPUT"
           echo "rest=$(jq -c '[.[] | select(.order >= 10)]' <<<"$apps")" >> "$GITHUB_OUTPUT"
 
-  # Manual (workflow_dispatch) deploys skip the CI-success gate, so a dispatch to
-  # staging/prod must pass the full suite HERE first. The workflow_run path is already
-  # CI-gated, and dev is the fast shared sandbox — both skip this job.
+  # A deploy to staging/prod must pass the full suite HERE first (as `pnpm deploy:*` does
+  # locally); dev is the fast shared sandbox and skips it.
   gate:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment != 'dev' }}
+    if: ${{ github.event.inputs.environment != 'dev' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -55,8 +48,8 @@ jobs:
 
   deploy-first:
     needs: [discover, gate]
-    # Deploy when discover succeeded AND the gate did not fail (it is skipped on the
-    # CI-gated workflow_run path and on a dev dispatch, which is not a failure).
+    # Deploy when discover succeeded AND the gate did not fail (skipped on a dev deploy,
+    # which is not a failure).
     if: ${{ always() && needs.discover.result == 'success' && needs.gate.result != 'failure' && needs.discover.outputs.first != '[]' }}
     uses: ./.github/workflows/deploy-app.yml
     with:

@@ -88,53 +88,60 @@ Full model → the [`code/shared/db` brief](/.claude/CLAUDE).
    `NEXT_PUBLIC_*` of `[env.<env>.vars]`, and refuses a build that would ship a `localhost` URL — see
    [Platform deploy](/shared/architecture/platform-deploy).
 
-## GitLab CI (the gate on GitLab)
+## CI (GitHub Actions)
 
-The repo lives on GitLab, where `.github/workflows/*` never run. `.gitlab-ci.yml` runs the same gate
-as `test.yml` on merge requests and pushes to `main`: `verify`, `infra`, `wrangler`, `docs`,
-`secrets-scan`, `build`, `browser-stories`, `browser-e2e-app`, `csp`, and the advisory
-`browser-e2e-visual`. Deploys stay manual there (`pnpm deploy:*` runs `pnpm verify` first for
-staging and prod). Set the CI/CD variables listed at the top of the file (mask and protect the
-secrets). To block a merge on red, enable **Settings → Merge requests → Pipelines must succeed**.
+The repo lives on GitHub. `.github/workflows/test.yml` (`CI`) runs on pull requests and pushes to
+`main`: `verify`, `infra`, `wrangler`, `docs`, `secrets-scan`, `build`, `browser-stories`,
+`browser-e2e-app`, `csp`, the advisory `browser-e2e-visual`, and `dependency-review` (PRs only).
+`react-doctor.yml` posts an advisory React Doctor summary. Set these in **Settings → Secrets and
+variables → Actions**:
 
-## GitHub Actions (auto-deploy)
+- **Variables:** `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_CDN_URL`, `NEXT_PUBLIC_SANITY_PROJECT_ID`,
+  `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_API_VERSION`.
+- **Secrets:** `SANITY_API_READ_TOKEN` (Viewer, read-only — no job writes to Sanity; the e2e seed
+  runs locally: `pnpm seed:e2e`); for the auth journeys `E2E_CLERK_PUBLISHABLE_KEY`,
+  `E2E_CLERK_SECRET_KEY`, `E2E_CLERK_ADMIN_EMAIL` (a Clerk **test** instance; unset → they skip).
 
-`.github/workflows/deploy.yml`: **push to `main` (after CI passes) → prod**; **Run workflow** → pick dev/staging/prod.
+To block a merge on red, add a branch rule on `main` (**Settings → Rules**) that requires the
+`verify`, `build`, `browser-stories`, `browser-e2e-app` and `csp` checks.
+
+## Deploy workflow (manual)
+
+`.github/workflows/deploy.yml`: **Run workflow** → pick dev/staging/prod. A push to `main` never
+deploys (the same as `pnpm deploy:*`, which stays the usual path).
 It fans out from the registry in two waves (the cron first — the api binds it — then the rest, in
 parallel, via the reusable `deploy-app.yml`), builds with OpenNext (next-cf) / bundles (worker-cf), runs
 `wrangler deploy --env <target>`, then a **best-effort smoke test** — it curls the app's custom-domain
 origin (from the domain registry via `domains:url`); no custom domain yet ⇒ skipped.
 
-> **Deploy is gated on CI.** `deploy.yml` triggers on `workflow_run` after the
-> `CI` workflow succeeds on `main` — a red CI (failing `verify`, `browser-stories`,
-> `browser-e2e-app`, or `csp`) blocks the prod deploy. (`browser-e2e-visual` stays advisory until
-> linux visual baselines are committed — see [Testing](/projects/web/website/setup/testing).) The auth E2E needs two repo Secrets —
-> `E2E_CLERK_PUBLISHABLE_KEY` + `E2E_CLERK_SECRET_KEY` (a Clerk **test** instance); without them
-> the sign-in journey self-skips. Setup → [testing](/projects/web/website/setup/testing) § Auth E2E.
+> **A staging or prod run passes the full suite first.** The `gate` job runs `pnpm verify`
+> before a staging/prod deploy; dev skips it. To deploy prod after every green `CI` run on
+> `main` instead, add a `workflow_run` trigger (the comment at the top of `deploy.yml` has it).
+> (`browser-e2e-visual` stays advisory until linux visual baselines are committed — see
+> [Testing](/projects/web/website/setup/testing).) Auth E2E setup → [testing](/projects/web/website/setup/testing) § Auth E2E.
 
 ### Deploy security — gates per env (who + what)
 
 Gating is **tiered** — `dev` stays fast, `staging`/`prod` are gated hard, `prod` needs an approval:
 
-| Env       | Gate before it ships                                                                                                                              | Approval                                        |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| `dev`     | none beyond the commit hook + `build:cf` — the fast shared sandbox                                                                                | —                                               |
-| `staging` | full **`pnpm verify`** (tsc · lint · tests · guards) — CI on the auto path, the `gate` job on manual dispatch, or the deploy runner on a hand-run | —                                               |
-| `prod`    | same, **plus** the CI e2e suite and an un-skippable confirm                                                                                       | **required reviewer** on the `prod` Environment |
+| Env       | Gate before it ships                                                                                                        | Approval                                        |
+| --------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `dev`     | none beyond the commit hook + `build:cf` — the fast shared sandbox                                                          | —                                               |
+| `staging` | full **`pnpm verify`** (tsc · lint · tests · guards) — the `gate` job on a workflow run, or the deploy runner on a hand-run | —                                               |
+| `prod`    | same, **plus** the CI e2e suite and an un-skippable confirm                                                                 | **required reviewer** on the `prod` Environment |
 
-Three gates enforce that:
+Two gates enforce that:
 
-1. **Auto (push to `main`)** — `workflow_run` fires only on CI success (above).
-2. **Manual dispatch** — a `workflow_dispatch` to `staging`/`prod` runs a `gate` job (`pnpm verify`) that `deploy` requires, so a dispatch can't ship on red; a `dev` dispatch skips it.
-3. **Hand-run `pnpm deploy:*`** — the runner runs `pnpm verify` for `staging`/`prod` before `wrangler deploy` (dev + CI skip it). Prod also **confirms and no longer skips on bare `--yes`** — an intentional non-interactive prod deploy needs `--yes-prod`; `--skip-gate` is the logged hotfix escape; `--dry-run` builds without publishing.
+1. **Workflow run** — a `workflow_dispatch` to `staging`/`prod` runs a `gate` job (`pnpm verify`) that `deploy` requires, so a run can't ship on red; a `dev` run skips it.
+2. **Hand-run `pnpm deploy:*`** — the runner runs `pnpm verify` for `staging`/`prod` before `wrangler deploy` (dev + CI skip it). Prod also **confirms and no longer skips on bare `--yes`** — an intentional non-interactive prod deploy needs `--yes-prod`; `--skip-gate` is the logged hotfix escape; `--dry-run` builds without publishing.
 
-**Required (enable these in GitHub — they are not in the repo and prod auto-deploys from `main`):**
+**Required (enable these in GitHub — they are not in the repo):**
 
 - **Branch protection on `main`** — Settings → Branches → require status checks to pass: `verify`,
   `build`, `browser-stories`, `browser-e2e-app`, `csp`, `docs`, `infra`, `wrangler`; and **Require
   review from Code Owners** (see `.github/CODEOWNERS` — replace the placeholder team).
 - **Required reviewer on the `prod` Environment** — Settings → Environments → `prod` → **Required
-  reviewers**. This is the only human gate on the auto prod deploy; without it a green `main` ships prod unattended.
+  reviewers**. It is the human gate on a prod workflow run (and on an auto-deploy, if you add the `workflow_run` trigger).
 - **Scope the `CLOUDFLARE_API_TOKEN`** to the minimum (Workers + R2 edit) and rotate it; prefer short-lived
   OIDC when available — today it is a long-lived account-scoped token reused by deploy + rollback.
 

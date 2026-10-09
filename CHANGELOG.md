@@ -20,10 +20,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 
 ### Added
 
-- **GitLab CI (`.gitlab-ci.yml`).** The repo lives on GitLab, so the GitHub workflows never ran: no
-  CI gate and no daily backup. The new file runs the same gate as `test.yml` on merge requests and
-  `main`, and a scheduled `backup` job (`BACKUP_ENV`) that runs `backup.mjs --all <env> --remote`.
-  Deploys stay manual. Setup → `code/docs/projects/web/website/setup/deployment.md` § GitLab CI.
+- **CI on GitHub Actions.** The repo moved from GitLab to GitHub, so `.gitlab-ci.yml` is gone and
+  `.github/workflows/test.yml` is the gate (pull requests and `main`). The workflows now match the
+  GitLab setup: deploys stay manual (`deploy.yml` lost its automatic prod deploy after a green
+  `main`), the nightly backup is off until the repo variable `BACKUP_ENABLED` is `true`, the e2e
+  and csp jobs read the Sanity project id from a variable like `build`, and `dependency-review`
+  runs on pull requests only. Setup → `code/docs/projects/web/website/setup/deployment.md` § CI.
 - **Zero Trust sign-in as code.** The `account` Terraform stack now creates the account's one-time-PIN
   identity provider (`manage_access_idp`, set in staging only: three env workspaces share one
   account). The admin Access gate signs in with it — no dashboard step left.

@@ -90,13 +90,13 @@ The `build` scripts use `next build --turbopack` (Next 16, ~2–5× faster); the
 
 ### CI workflows (`.github/workflows/`)
 
-| Workflow           | Trigger                      | Does                                                                                             |
-| ------------------ | ---------------------------- | ------------------------------------------------------------------------------------------------ |
-| `test.yml` (CI)    | PR + push `main`             | `verify` + `build` + `browser-stories` (blocking) · `browser-e2e` + `docs` + `dependency-review` |
-| `react-doctor.yml` | PR                           | Advisory React Doctor sticky comment                                                             |
-| `preview.yml`      | PR (same-repo)               | Build + a Cloudflare **version preview URL**, commented on the PR                                |
-| `deploy.yml`       | push `main` → prod; dispatch | OpenNext build + `wrangler deploy`                                                               |
-| `backup.yml`       | nightly + dispatch           | Sanity (+ D1) dump → R2                                                                          |
+| Workflow           | Trigger                                  | Does                                                                                             |
+| ------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `test.yml` (CI)    | PR + push `main`                         | `verify` + `build` + `browser-stories` (blocking) · `browser-e2e` + `docs` + `dependency-review` |
+| `react-doctor.yml` | PR + push `main`                         | Advisory React Doctor sticky comment                                                             |
+| `preview.yml`      | PR (same-repo)                           | Build + a Cloudflare **version preview URL**, commented on the PR                                |
+| `deploy.yml`       | dispatch (manual)                        | OpenNext build + `wrangler deploy`                                                               |
+| `backup.yml`       | nightly (if `BACKUP_ENABLED`) + dispatch | Sanity (+ D1) dump → R2                                                                          |
 
 The `build`, `preview`, `deploy`, and `backup` workflows need the repo's GitHub **Environment**
 vars/secrets (`CLOUDFLARE_API_TOKEN`/`ACCOUNT_ID`, `SANITY_API_READ_TOKEN`, `NEXT_PUBLIC_SANITY_*`) —
