@@ -106,6 +106,10 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **`/api/emails/test` takes a group and languages.** `{ to, scope?, locales? }`; the service and
+  account groups come from the api (`POST /v1/emails/test`). The website samples moved to
+  `samples.ts`. **Why:** the Studio test now covers every email, one group at a time.
+
 - **`pnpm seed` writes a baseline by default and refuses a dataset with content.** The seed
   (`scripts/seed-demo.mjs` → `scripts/seed.mjs`) now writes only what a new site needs (settings,
   SEO, legal pages, consent, navigation, form and email settings); `--demo` adds the demo posts,

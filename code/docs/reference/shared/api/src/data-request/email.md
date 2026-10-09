@@ -19,6 +19,7 @@ Copy comes from the Studio `emailStrings` groups `dataRequestReceipt` and `dataR
 
 ## Exports
 
+- `fetchDataRequestStrings(env)` — the two groups + support address + `bccAll` (the default `fetchStrings`, also read by the Studio test).
 - `sendDataRequestReceipt(env, { to, id, requestType, locale, submittedAt }, fetchStrings?)`.
 - `sendDataRequestClosedEmail(env, { to, id, outcome, note, locale }, fetchStrings?)`.
 

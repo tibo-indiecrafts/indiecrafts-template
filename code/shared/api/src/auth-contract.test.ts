@@ -29,6 +29,7 @@ const GUARDED: Record<
   "/v1/views/top": { method: "GET" },
   "/v1/newsletter/subscribers": { method: "POST", body: "{}" },
   "/v1/contacts/general": { method: "POST", body: "{}" },
+  "/v1/emails/test": { method: "POST", body: "{}" },
   "/v1/settings": { method: "PUT", body: "{}" },
   "/v1/backups/status": { method: "GET" },
   "/v1/cron/status": { method: "GET" },

@@ -45,6 +45,12 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **`POST /v1/emails/test` — the Studio test now covers the worker's emails.** It sends a sample of
+  the erasure and data-request emails (`service`) or the 12 Clerk templates + welcome (`account`),
+  per chosen language, to the editor's address only, never copied. `sendAuthTemplate` (out of
+  `handleClerkEmail`) renders one Clerk template for both the webhook and the test. **Why:** these
+  emails could only be seen by running the real flow.
+
 - **`POST /v1/contacts/general` — waitlist and contact-form people become Resend contacts.** A
   waitlist join records its consent (`consent_type: "waitlist"`) and opts into the new private
   `General` topic (`pnpm resend:topics:sync` creates it, or finds one made by hand in any case, e.g. `general`; Studio → Préférences → `general` holds its

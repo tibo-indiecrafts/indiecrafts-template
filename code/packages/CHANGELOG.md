@@ -92,6 +92,11 @@ copySupport: true })` offers it; senders spread `supportCopy(cfg, supportEmail)`
 
 ### Changed
 
+- **email: "Envoyer un test" picks a group and a language.** Site emails · service emails (erasure,
+  data request) · account emails (Clerk + welcome), in one language or all; also on the "E-mails
+  Clerk" page, account preselected. **Why:** every email can now be checked without flooding the
+  inbox, and the worker's emails were not covered.
+
 - **ui-components: one frame for every public form.** `useGuardedSubmit`, `FormFrame`,
   `GuardedFields` (+ `FormInput`, `SubmitButton`) and the server-side `formBlock` hold what the
   contact, waitlist, newsletter and lead-magnet forms repeated: the guarded POST, the card, the

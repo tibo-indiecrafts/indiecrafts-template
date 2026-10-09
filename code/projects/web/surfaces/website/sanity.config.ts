@@ -118,7 +118,9 @@ export default defineConfig({
   // The personal types get no "create" and no "duplicate" (see `personalTypes`).
   document: {
     actions: (prev, ctx) => {
-      if (ctx.schemaType === "emailStrings") return [...prev, sendTestEmailAction];
+      // "Envoyer un test" on both email pages (Clerk: the account emails preselected).
+      if (ctx.schemaType === "emailStrings" || ctx.schemaType === "clerkEmails")
+        return [...prev, sendTestEmailAction];
       if (personalTypes.has(ctx.schemaType))
         return prev.filter((a) => a.action !== "duplicate");
       return prev;

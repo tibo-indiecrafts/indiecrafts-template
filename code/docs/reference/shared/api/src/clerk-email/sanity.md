@@ -14,6 +14,7 @@ Reads the `clerkEmails` singleton and the global support address over raw GROQ-o
 
 ## Exports
 
+- `AUTH_SLUGS` — the canonical slug of every Clerk template we localize (the Studio test sends each).
 - `AuthKind` — the canonical id behind Clerk's slugs (verification, resetPassword, magicLink, and so on).
 - `AuthEmailStrings` — the editable groups plus `supportEmail`, `bccAll`, and the `welcome` group.
 - `authKind(slug)` — maps a Clerk slug to an `AuthKind`, forgivingly; `null` for a slug not localized.

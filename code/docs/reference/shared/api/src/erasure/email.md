@@ -22,6 +22,7 @@ Sends the erasure flow's two transactional emails. The shared `@indiecrafts/pack
 - `fetchEmailStrings(env, projection)` — one `emailStrings` projection over GROQ-HTTP; `null` on any failure (never throws). The data-request emails share it.
 - `resend(env, { to, subject, html, text, bcc?, supportCopy? })` — the low-level Resend send; silent no-op when unconfigured. `bcc` (the Studio `bccAll`) needs the `EMAIL_BCC_ALL_ENABLED` gate; `supportCopy` does not — it is the support address every footer shows, so a change to it is visible in each email.
 - `supportCopyOf(group, supportEmail)` — the support address when the group's `copySupport` is on, else `undefined`. The data-request and Clerk emails use it. Neither erasure email copies: the token email carries the confirm link, and a copy of the completion email would keep the erased person's data in the support inbox.
+- `fetchErasureEmailStrings(env)` — the erasure flow's Studio copy (both groups, support address, `bccAll`); the default `fetchStrings`, also read by the Studio test.
 - `sendErasureTokenEmail(env, { to, confirmUrl, locale? }, fetchStrings?)` — the request's token-confirmation email.
 - `sendErasureCompleteEmail(env, { to, retained, locale? }, fetchStrings?)` — the completion email sent after the erasure run.
 

@@ -114,8 +114,9 @@ matching template. Seeded EN + FR by `pnpm seed`. **Order in the Studio = module
    `ConfirmationConfig`), `pick(...)` the locale strings, `sendEmail`. A visitor's email uses the page
    language the form sent, through `toSiteLocale` (anything else → `defaultLocale`); an owner alert
    uses `defaultLocale`.
-4. Add the render, with `supportEmail`, to `buildSamples` in `code/projects/web/surfaces/website/src/app/api/emails/test/route.ts`
-   (importing it from your module) so the "Send test" action covers it.
+4. Add the render, with `supportEmail`, to `buildSamples` in `code/projects/web/surfaces/website/src/app/api/emails/test/samples.ts`
+   (importing it from your module) so the "Send test" action covers it. An email the api worker
+   sends goes in its `code/shared/api/src/email-test/send.ts` instead (the service or account group).
 
 ## BCC — per email, editor-owned
 
@@ -145,15 +146,28 @@ passes `supportCopy` to `resend()` (`supportCopyOf`, and `authSupportCopy` for C
 
 ## Verify deliverability — the "Send test" action
 
-Open Studio → **E-mails** → the **⋯ menu → "Envoyer un test"**, enter an address, and the site sends a
-sample of **every enabled email** to it — proof that mail leaves the server, the `From` is accepted,
-and the branded layout renders in a real inbox.
+Open Studio → **E-mails** (or **E-mails Clerk**) → the **⋯ menu → "Envoyer un test"**, pick a group
+and a language, enter an address, and a sample of **every enabled email of that group** goes to it —
+proof that mail leaves the server, the `From` is accepted, and the branded layout renders in a real
+inbox. One group per test, so it never floods the inbox:
+
+| Group              | Emails                                                                            | Built by       |
+| ------------------ | --------------------------------------------------------------------------------- | -------------- |
+| E-mails du site    | contact, waitlist, newsletter, lead magnet, the team alerts                       | the website    |
+| E-mails de service | erasure link + completion, data-request receipt + closing                         | the api worker |
+| E-mails de compte  | the 12 Clerk emails (codes, sign-in link, security notices, invitation) + welcome | the api worker |
+
+Each sample goes through the real sender with the real Studio copy, footer and language; only the
+data is a sample (reference `#0`, code `000000`, links with no valid token). A visitor email goes once
+per chosen language, a team alert once. The service and account samples come from
+`POST /v1/emails/test` on the api, which the website calls with `APP_API_TOKEN`.
 
 - **Not a public endpoint.** The action POSTs `/api/emails/test`, gated by `features.studio`, then the
   route verifies the caller's **Sanity session token** against the project's `users/me` — only a
   signed-in editor of this project can trigger a send, so it can't be abused as a spam relay.
-- Test sends go **only** to the address you type (real BCC recipients fire on real signups, not on a
-  test click). The `RESEND_API_KEY` secret never leaves the server.
+- Test sends go **only** to the address you type: never the support copy, never the QA `bccAll`
+  (real copies fire on real sends, not on a test click). The `RESEND_API_KEY` secret never leaves the
+  server.
 
 ## Landing in the inbox (not spam)
 

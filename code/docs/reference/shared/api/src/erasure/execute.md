@@ -14,6 +14,7 @@ Shared by the public confirm route and the admin retry. The caller owns the chec
 
 ## Exports
 
+- `retainedSummary(hadErrors)` — the completion email's "what we kept" line (English). The Studio test uses it for its sample.
 - `executeErasure(env, row, email, deps, country)` — returns `{ status, clerkFailed, errors }`.
 - `defaultExecuteDeps` — the real adapters and email sender; tests inject mocks.
 - Types `ErasureRow`, `ExecuteDeps`, `ExecuteResult`.

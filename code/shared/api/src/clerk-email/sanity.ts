@@ -65,6 +65,9 @@ const SLUG_FOR_KIND: Record<AuthKind, string> = {
   invitation: "invitation",
 };
 
+/** Every Clerk template we localize, by its canonical slug (the Studio test sends each). */
+export const AUTH_SLUGS: readonly string[] = Object.values(SLUG_FOR_KIND);
+
 /**
  * Map a Clerk email `slug` → our kind, FORGIVINGLY (Clerk's exact slugs vary). Order
  * matters: `reset` before `password` (reset_password_code contains "password"); `passkey`

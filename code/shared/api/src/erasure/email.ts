@@ -168,7 +168,7 @@ export async function fetchEmailStrings<T>(
 }
 
 /** The erasure flow's copy: both groups + the global support / bcc addresses. */
-function fetchErasureEmailStrings(
+export function fetchErasureEmailStrings(
   env: MailEnv,
 ): Promise<ErasureEmailStrings | null> {
   return fetchEmailStrings<ErasureEmailStrings>(

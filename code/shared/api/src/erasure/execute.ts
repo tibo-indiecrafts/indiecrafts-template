@@ -57,7 +57,7 @@ function notifiedAt(result: string | null): string | undefined {
 }
 
 /** A short, factual summary of what stays and why — sent in the completion email. */
-function retainedSummary(hadErrors: boolean): string {
+export function retainedSummary(hadErrors: boolean): string {
   const base =
     "Your account activity log is retained for legal accountability; everything else has been removed.";
   if (!hadErrors) return base;

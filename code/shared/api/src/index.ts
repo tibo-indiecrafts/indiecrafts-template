@@ -97,6 +97,7 @@ import {
   isGeneralSource,
 } from "./contacts/general";
 import { upsertGeneralContact } from "./resend-audience";
+import { isTestScope, sendTestEmails } from "./email-test/send";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -1002,6 +1003,48 @@ async function route(
       return json({ error: "resend" }, 502, cors);
     }
     return new Response(null, { status: 204, headers: cors });
+  }
+
+  // ── Studio test — POST /v1/emails/test (bearer-gated) ──
+  // The website's "Envoyer un test" asks for the emails this worker builds (erasure, data
+  // request, Clerk, welcome). Samples go to the given address only, with sample data and no
+  // copies; one result per email × locale.
+  if (url.pathname === "/v1/emails/test") {
+    if (request.method === "OPTIONS")
+      return new Response(null, { status: 204, headers: cors });
+    if (request.method !== "POST")
+      return json({ error: "method_not_allowed" }, 405, cors);
+    const denied =
+      requireAdminBearer(request, env, cors) ??
+      (await rateLimit(request, env, cors));
+    if (denied) return denied;
+    if (!env.RESEND_API_KEY || !env.EMAIL_FROM)
+      return json({ error: "unavailable" }, 503, cors);
+    if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
+      return json({ error: "too_large" }, 413, cors);
+    let body: { to?: unknown; scope?: unknown; locales?: unknown };
+    try {
+      const text = await request.text();
+      if (new TextEncoder().encode(text).length > BODY_MAX)
+        return json({ error: "too_large" }, 413, cors);
+      body = JSON.parse(text) as typeof body;
+    } catch {
+      return json({ error: "invalid" }, 400, cors);
+    }
+    const locales = Array.isArray(body?.locales) ? body.locales : [];
+    if (
+      !isNewsletterEmail(body?.to) ||
+      !isTestScope(body.scope) ||
+      locales.length === 0 ||
+      !locales.every((l) => typeof l === "string" && isLocale(l, localeCodes))
+    )
+      return json({ error: "invalid" }, 400, cors);
+    const results = await sendTestEmails(env, {
+      to: body.to.trim(),
+      scope: body.scope,
+      locales: [...new Set(locales as string[])],
+    });
+    return json({ results }, 200, cors);
   }
 
   // ── Form contacts — POST /v1/contacts/general (bearer-gated) ──

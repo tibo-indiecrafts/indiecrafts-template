@@ -19,6 +19,7 @@ import {
   canonicalAuthSlug,
   fetchAuthEmailStrings,
   resolveAuthCopy,
+  type AuthEmailStrings,
 } from "./sanity";
 
 /** The Env slice this handler needs — the mailer (`MailEnv`) plus a read handle to
@@ -71,6 +72,50 @@ async function resolveLocale(
 }
 
 /**
+ * Render a known Clerk template in `locale` — the Studio copy (`clerkEmails`) over the
+ * template's hardcoded en/fr, the support footer, `<div lang>` — and send it. Returns false
+ * for a slug we don't localize (nothing sent). Shared by the webhook and the Studio test.
+ */
+export async function sendAuthTemplate(
+  env: ClerkEmailEnv,
+  {
+    to,
+    slug,
+    locale,
+    vars,
+  }: { to: string; slug: string; locale: string; vars?: EmailVars },
+  strings: AuthEmailStrings | null,
+  send: typeof resend = resend,
+): Promise<boolean> {
+  // Clerk's exact slugs vary (the new-device one is undocumented), so match forgivingly
+  // to our canonical template slug rather than an exact key.
+  const canonical = canonicalAuthSlug(slug);
+  const tpl = canonical ? AUTH_TEMPLATES[canonical] : undefined;
+  if (!tpl) return false;
+  const foot = supportFooter(strings?.supportEmail, locale);
+  // Studio override, resolved to the recipient's locale; unset → the hardcoded copy.
+  const copy = resolveAuthCopy(strings, slug, locale);
+  // Our own link next to Clerk's variables: the device list where the user signs out
+  // a device (the new-device email's fallback when Clerk sends no revoke link).
+  const all = {
+    ...vars,
+    ...(env.WEBSITE_URL && {
+      account_security_url: `${env.WEBSITE_URL}/account#/security`,
+    }),
+  };
+  const { subject, html, text } = tpl(all, locale, copy);
+  await send(env, {
+    to,
+    subject,
+    html: inLanguage(html + foot.html, locale),
+    text: text + foot.text,
+    bcc: strings?.bccAll,
+    supportCopy: authSupportCopy(strings, slug),
+  });
+  return true;
+}
+
+/**
  * Handle a Clerk `email.created` event (fired when "Delivered by Clerk" is toggled
  * off): render a LOCALIZED auth email from the event's `data` variables and send it
  * via Resend, in the user's stored locale (`user_profiles.locale`, else the default).
@@ -98,34 +143,15 @@ export async function handleClerkEmail(
   // One read: the clerkEmails copy + the global support address. Never throws (a missing
   // Studio must not stop a mandatory auth email); an unset support address → no footer.
   const strings = await fetchStrings(env);
-  const foot = supportFooter(strings?.supportEmail, locale);
-  // Clerk's exact slugs vary (the new-device one is undocumented), so match forgivingly
-  // to our canonical template slug rather than an exact key.
-  const canonical = canonicalAuthSlug(slug);
-  const tpl = canonical ? AUTH_TEMPLATES[canonical] : undefined;
-  if (tpl) {
-    // Studio override (Sanity `clerkEmails`), resolved to the recipient's locale; null/
-    // unset → the template's hardcoded copy.
-    const copy = resolveAuthCopy(strings, slug, locale);
-    // Our own link next to Clerk's variables: the device list where the user signs out
-    // a device (the new-device email's fallback when Clerk sends no revoke link).
-    const vars = {
-      ...d.data,
-      ...(env.WEBSITE_URL && {
-        account_security_url: `${env.WEBSITE_URL}/account#/security`,
-      }),
-    };
-    const { subject, html, text } = tpl(vars, locale, copy);
-    await send(env, {
-      to,
-      subject,
-      html: inLanguage(html + foot.html, locale),
-      text: text + foot.text,
-      bcc: strings?.bccAll,
-      supportCopy: authSupportCopy(strings, slug),
-    });
+  if (
+    await sendAuthTemplate(
+      env,
+      { to, slug, locale, vars: d.data },
+      strings,
+      send,
+    )
+  )
     return;
-  }
   // Unknown slug → forward Clerk's own rendered (English) email; never drop it. Log the
   // slug (no PII) so an operator can discover a template worth localizing — e.g. the real
   // "sign in from new device" slug, which Clerk does not document.

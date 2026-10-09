@@ -106,7 +106,7 @@ const CLOSED: Record<L, Record<"subject" | "heading" | "outro", string>> = {
   },
 };
 
-const fetchDataRequestStrings: FetchStrings = (env) =>
+export const fetchDataRequestStrings: FetchStrings = (env) =>
   fetchEmailStrings<Strings>(
     env,
     "{ dataRequestReceipt{enabled,copySupport,subject,heading,intro,outro}, dataRequestClosed{enabled,copySupport,subject,heading,intro,outro}, supportEmail, bccAll }",

@@ -168,4 +168,81 @@ describe("POST /api/emails/test", () => {
     expect((await post(JSON.stringify({ to: "me@site.test" }))).status).toBe(404);
     expect(sendEmail).not.toHaveBeenCalled();
   });
+
+  it("sends only the chosen languages; the owner alert still goes once", async () => {
+    strings.value = {
+      ...CONTACT_ONLY,
+      contactOwner: {
+        enabled: true,
+        from: "Site <hello@site.test>",
+        to: ["t@site.test"],
+      },
+    };
+    const res = await post(
+      JSON.stringify({ to: "me@site.test", scope: "site", locales: ["fr"] }),
+    );
+    const { results } = (await res.json()) as { results: { label: string }[] };
+    expect(results.map((r) => r.label)).toEqual(["contactOwner", "contactConfirm · fr"]);
+  });
+
+  it("rejects an unknown group or language (400)", async () => {
+    for (const body of [
+      { to: "me@site.test", scope: "everything" },
+      { to: "me@site.test", locales: [] },
+      { to: "me@site.test", locales: ["xx"] },
+    ])
+      expect((await post(JSON.stringify(body))).status).toBe(400);
+    expect(sendEmail).not.toHaveBeenCalled();
+  });
+
+  describe("service and account emails — built and sent by the api", () => {
+    const apiCalls: { url: string; init?: RequestInit }[] = [];
+    const withApi = (answer: () => Response) =>
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(async (url: string, init?: RequestInit) => {
+          if (url.includes("/users/me")) return sanityUsersMe(url, init);
+          apiCalls.push({ url, init });
+          return answer();
+        }),
+      );
+    beforeEach(() => {
+      apiCalls.length = 0;
+      vi.stubEnv("API_URL", "https://api.test");
+      vi.stubEnv("APP_API_TOKEN", "server-token");
+    });
+
+    it("forwards the group and languages with the server bearer, and returns the api's results", async () => {
+      withApi(() =>
+        Response.json({ results: [{ label: "erasureToken · fr", ok: true }] }),
+      );
+      const res = await post(
+        JSON.stringify({ to: "me@site.test", scope: "service", locales: ["fr"] }),
+      );
+      expect(await res.json()).toEqual({
+        results: [{ label: "erasureToken · fr", ok: true }],
+      });
+      expect(apiCalls[0]?.url).toBe("https://api.test/v1/emails/test");
+      expect(new Headers(apiCalls[0]?.init?.headers).get("authorization")).toBe(
+        "Bearer server-token",
+      );
+      expect(JSON.parse(String(apiCalls[0]?.init?.body))).toEqual({
+        to: "me@site.test",
+        scope: "service",
+        locales: ["fr"],
+      });
+      expect(sendEmail).not.toHaveBeenCalled(); // the website sends none of these itself
+    });
+
+    it("says so when the api is not configured (503) or answers an error (502)", async () => {
+      withApi(() => Response.json({ error: "unavailable" }, { status: 503 }));
+      const failed = await post(JSON.stringify({ to: "me@site.test", scope: "account" }));
+      expect(failed.status).toBe(502);
+      expect(await failed.json()).toEqual({ error: "API : unavailable" });
+      vi.stubEnv("API_URL", "");
+      expect(
+        (await post(JSON.stringify({ to: "me@site.test", scope: "account" }))).status,
+      ).toBe(503);
+    });
+  });
 });
