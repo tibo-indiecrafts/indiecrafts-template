@@ -4,11 +4,14 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 // engine's server-only imports (Sanity write client + the email graph, which read
 // env at load) — the stubs keep importing the module from evaluating that env, and
 // let the `submit()` write-path tests drive the Sanity + mail calls.
-const { create, getEmailStrings, sendEmail } = vi.hoisted(() => ({
-  create: vi.fn(async () => ({})),
-  getEmailStrings: vi.fn(async () => null as unknown),
-  sendEmail: vi.fn(async () => undefined),
-}));
+const { create, getEmailStrings, sendEmail, addGeneralContact } = vi.hoisted(
+  () => ({
+    create: vi.fn(async () => ({})),
+    addGeneralContact: vi.fn(async () => "added"),
+    getEmailStrings: vi.fn(async () => null as unknown),
+    sendEmail: vi.fn(async () => undefined),
+  }),
+);
 
 vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
   writeClient: { create },
@@ -16,6 +19,12 @@ vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
 vi.mock("@indiecrafts/packages-web-email/strings", () => ({
   getEmailStrings,
   pick: () => "",
+  // Mirrors the brick: the support address when the group opts in.
+  supportCopy: (c: { copySupport?: boolean } | null | undefined, s?: string) =>
+    c?.copySupport && s ? [s] : [],
+}));
+vi.mock("@indiecrafts/packages-web-email/contacts", () => ({
+  addGeneralContact,
 }));
 vi.mock("@indiecrafts/packages-web-email", () => ({
   sendEmail,
@@ -161,8 +170,41 @@ describe("submit", () => {
     },
   );
 
+  it("a saved message is also a Resend contact, stored without a topic", async () => {
+    await submit({ ...input, language: "fr" }, "2026-01-01");
+    // No consent proof: this consent covers a reply, not broadcasts.
+    expect(addGeneralContact).toHaveBeenCalledWith({
+      email: "a@b.com",
+      locale: "fr",
+      source: "contact",
+    });
+    addGeneralContact.mockResolvedValueOnce("failed");
+    expect(await submit(input, "2026-01-01")).toEqual({ ok: true });
+  });
+
+  it("copies the support address when the acknowledgement opts in", async () => {
+    vi.stubEnv("RESEND_API_KEY", "re_x");
+    getEmailStrings.mockResolvedValueOnce({
+      supportEmail: "help@site.com",
+      contactConfirm: {
+        enabled: true,
+        from: "hi@site.com",
+        bcc: ["me@site.com"],
+        copySupport: true,
+      },
+    });
+    await submit(input, "2026-01-01");
+    expect(sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: ["a@b.com"],
+        bcc: ["me@site.com", "help@site.com"],
+      }),
+    );
+  });
+
   it("a write failure returns a server error, not a throw", async () => {
     create.mockRejectedValueOnce(new Error("network"));
+    expect(addGeneralContact).not.toHaveBeenCalled();
     expect(await submit(input, "2026-01-01")).toEqual({
       ok: false,
       error: "server",

@@ -9,9 +9,11 @@ import { logger } from "@indiecrafts/packages-shared-logger";
 import { site, toSiteLocale } from "@indiecrafts/packages-shared-config";
 import { writeClient } from "@indiecrafts/packages-web-sanity/write";
 import { sendEmail } from "@indiecrafts/packages-web-email";
+import { cleanList } from "@indiecrafts/packages-shared-utils/form";
 import {
   getEmailStrings,
   pick,
+  supportCopy,
   type ConfirmationConfig,
 } from "@indiecrafts/packages-web-email/strings";
 import {
@@ -141,7 +143,12 @@ async function sendMagnetEmail(
   await sendEmail({
     from,
     to: [email],
-    ...(bccAll ? { bcc: [bccAll] } : {}),
+    bcc: cleanList([
+      ...(lead?.bcc ?? []),
+      bccAll ?? "",
+      ...supportCopy(lead, strings?.supportEmail),
+    ]),
+    replyTo: lead?.replyTo?.trim(),
     ...message,
   });
 }

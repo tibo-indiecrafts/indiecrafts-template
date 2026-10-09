@@ -62,6 +62,16 @@ const replyToField = (description: string): FieldDefinition =>
     validation: (Rule) => Rule.email(),
   });
 
+/** "Copy the support address" — the per-email opt-in a sender reads as `copySupport`. */
+const copySupportField: FieldDefinition = defineField({
+  name: "copySupport",
+  title: "Copie cachée à l'adresse de support",
+  type: "boolean",
+  initialValue: false,
+  description:
+    "Coché = l'adresse de support (E-mails → Adresse de support) reçoit une copie invisible de chaque envoi. Décoché = aucune copie.",
+});
+
 /** A subscriber-facing confirmation email — translated copy + an optional admin BCC. */
 export function confirmationGroup(opts: {
   name: string;
@@ -84,6 +94,10 @@ export function confirmationGroup(opts: {
   /** Include the `heading` field. Default `true`. Set **false** when the template renders
    *  no heading (the worker code/link emails), so the Studio doesn't show a dead field. */
   heading?: boolean;
+  /** Offer the "copy the support address" checkbox (`copySupport`). Default `false`: never on
+   *  an email that carries a one-time code or action link (sign-in, invitation, confirm,
+   *  erasure) — a copy would hand that access to whoever reads the support inbox. */
+  copySupport?: boolean;
 }): FieldDefinition {
   return defineField({
     name: opts.name,
@@ -93,6 +107,7 @@ export function confirmationGroup(opts: {
     options: { collapsible: true, collapsed: true },
     fields: [
       enabled(opts.enabledHint),
+      ...(opts.copySupport ? [copySupportField] : []),
       ...(opts.addressFields === false
         ? []
         : [

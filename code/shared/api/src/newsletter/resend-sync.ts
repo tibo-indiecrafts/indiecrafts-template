@@ -34,7 +34,8 @@ export function isConsentTime(value: unknown): value is string {
 
 /** Append the double opt-in proof: a `visitor` row keyed by the email fingerprint, never the
  *  email. No country and no IP hash: the caller is the website server, not the visitor. `consentAt` is the confirm-token issue time; the idempotency key holds it, so a
- *  repeat click on the same link adds no second row. */
+ *  repeat click on the same link adds no second row. A waitlist join records its own consent
+ *  the same way (`consentType: "waitlist"`, `source: "waitlist"`). */
 export async function recordNewsletterConsent(
   db: D1Database,
   salt: string,
@@ -42,24 +43,30 @@ export async function recordNewsletterConsent(
     email,
     policyVersion,
     consentAt,
+    consentType = "newsletter",
+    source = "double_opt_in",
   }: {
     email: string;
     policyVersion: string;
     consentAt: string;
+    consentType?: "newsletter" | "waitlist";
+    source?: "double_opt_in" | "waitlist";
   },
 ): Promise<void> {
   const fp = await fingerprintEmail(email, salt);
   await db
     .prepare(
       "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, country, ip_hash, idempotency_key) " +
-        "VALUES (?, 'visitor', ?, ?, 'newsletter', 1, ?, 'website', 'double_opt_in', NULL, NULL, ?)",
+        "VALUES (?, 'visitor', ?, ?, ?, 1, ?, 'website', ?, NULL, NULL, ?)",
     )
     .bind(
       consentAt,
       fp,
       fp,
+      consentType,
       policyVersion || "unknown",
-      `newsletter:${fp}:${consentAt}`,
+      source,
+      `${consentType}:${fp}:${consentAt}`,
     )
     .run();
 }

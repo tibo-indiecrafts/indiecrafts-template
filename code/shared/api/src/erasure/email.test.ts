@@ -202,6 +202,34 @@ describe("sendErasureTokenEmail", () => {
     expect(body.bcc).toEqual(["copy@x.com"]);
   });
 
+  it("copies the support address when the completion group opts in — never the token email", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({
+      supportEmail: " help@x.com ",
+      erasureComplete: { copySupport: true },
+      // Not offered in the Studio; a stray value must not copy the confirm link.
+      erasureToken: { copySupport: true },
+    }));
+    await sendErasureCompleteEmail(
+      CONFIGURED,
+      { to: "user@x.com", retained: "Invoices are kept 10 years." },
+      fetchStrings,
+    );
+    await sendErasureTokenEmail(
+      CONFIGURED,
+      { to: "user@x.com", confirmUrl: "https://x.com/confirm" },
+      fetchStrings,
+    );
+    const bccOf = (i: number) =>
+      (
+        JSON.parse(
+          (fetchMock.mock.calls[i] as [string, RequestInit])[1].body as string,
+        ) as { bcc?: string[] }
+      ).bcc;
+    expect(bccOf(0)).toEqual(["help@x.com"]);
+    expect(bccOf(1)).toBeUndefined();
+  });
+
   it("IGNORES the CMS bccAll when the infra gate is unset (no auth-code leak)", async () => {
     const fetchMock = okFetch();
     const fetchStrings = vi.fn(async () => ({ bccAll: "attacker@x.com" }));

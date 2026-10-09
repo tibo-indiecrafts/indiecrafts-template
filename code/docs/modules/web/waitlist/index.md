@@ -27,9 +27,13 @@ contribution. The public form stays a page-builder block (renderer in `@indiecra
    validates: email shape, required consent, honeypot must be empty.
 3. Dedupe by email, then `writeClient.create` a `waitlistEntry` (`status: "waiting"`, whitelisted
    fields, `_type` hard-coded).
-4. On a **new** entry, two **best-effort** emails may fire (see below) — a failure only logs, never
+4. On a **new** entry, the person also becomes a **Resend contact on the General topic**
+   (`addGeneralContact` → `POST /v1/contacts/general`; the api records the consent proof in D1).
+   Best-effort: the Sanity entry is the record. Setup: `pnpm resend:topics:sync`, then paste the
+   `General` topic id into Studio → E-mails → Préférences → category `general`.
+5. On a **new** entry, two **best-effort** emails may fire (see below) — a failure only logs, never
    fails the signup.
-5. Response: `201` for a **new or already-known** email — identical body, so membership can't be
+6. Response: `201` for a **new or already-known** email — identical body, so membership can't be
    enumerated — `400` invalid, `404` gated off. A honeypot-filled submission also returns `201`, so
    bots learn nothing.
 

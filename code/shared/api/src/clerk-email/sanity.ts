@@ -13,6 +13,8 @@ type LocaleValue =
 
 type AuthGroup = {
   enabled?: boolean;
+  /** Blind-copy the support address — offered on the notice groups + welcome only. */
+  copySupport?: boolean;
   subject?: LocaleValue;
   intro?: LocaleValue;
   buttonLabel?: LocaleValue;
@@ -137,6 +139,30 @@ export function resolveWelcomeCopy(
     intro: pick(g.intro, locale),
     outro: pick(g.outro, locale),
   };
+}
+
+/** The kinds that may copy the support address: notices with no code and no action link.
+ *  The Studio offers the checkbox on these only; this list keeps a value written another way
+ *  from ever copying a sign-in code, a magic link, an invitation or a device sign-out link. */
+const SUPPORT_COPY_KINDS: ReadonlySet<AuthKind> = new Set<AuthKind>([
+  "passwordChanged",
+  "passwordRemoved",
+  "passkeyAdded",
+  "passkeyRemoved",
+  "mfaEnabled",
+  "primaryEmailChanged",
+  "accountLocked",
+]);
+
+/** The support address to blind-copy for this Clerk email, or undefined. */
+export function authSupportCopy(
+  strings: AuthEmailStrings | null,
+  slug: string,
+): string | undefined {
+  const kind = authKind(slug);
+  const address = strings?.supportEmail?.trim();
+  if (!kind || !SUPPORT_COPY_KINDS.has(kind) || !address) return undefined;
+  return strings?.[kind]?.copySupport ? address : undefined;
 }
 
 /** A 5-minute in-worker cache of the read. Auth emails fire on every sign-in, so the same

@@ -12,6 +12,7 @@ import {
   escapeHtml,
   fetchEmailStrings,
   resend,
+  supportCopyOf,
   supportFooter,
   type MailEnv,
 } from "../erasure/email";
@@ -22,6 +23,8 @@ type LocaleValue =
   Record<string, string | undefined> | string | null | undefined;
 type Group = {
   enabled?: boolean;
+  /** Blind-copy the support address (Studio "Copie cachée à l'adresse de support"). */
+  copySupport?: boolean;
   subject?: LocaleValue;
   heading?: LocaleValue;
   intro?: LocaleValue;
@@ -106,7 +109,7 @@ const CLOSED: Record<L, Record<"subject" | "heading" | "outro", string>> = {
 const fetchDataRequestStrings: FetchStrings = (env) =>
   fetchEmailStrings<Strings>(
     env,
-    "{ dataRequestReceipt{enabled,subject,heading,intro,outro}, dataRequestClosed{enabled,subject,heading,intro,outro}, supportEmail, bccAll }",
+    "{ dataRequestReceipt{enabled,copySupport,subject,heading,intro,outro}, dataRequestClosed{enabled,copySupport,subject,heading,intro,outro}, supportEmail, bccAll }",
   );
 
 const formatDue = (iso: string, l: L) =>
@@ -158,6 +161,7 @@ export async function sendDataRequestReceipt(
     html: `${para(heading)}${para(intro)}${para(outro)}${foot.html}`,
     text: `${heading}\n\n${intro}\n\n${outro}${foot.text}`,
     bcc: copy?.bccAll,
+    supportCopy: supportCopyOf(g, copy?.supportEmail),
   });
   return true;
 }
@@ -198,6 +202,7 @@ export async function sendDataRequestClosedEmail(
     html: `${para(heading)}${lead ? para(lead) : ""}${para(note)}${para(outro)}${foot.html}`,
     text: `${heading}\n\n${lead ? `${lead}\n\n` : ""}${note}\n\n${outro}${foot.text}`,
     bcc: copy?.bccAll,
+    supportCopy: supportCopyOf(g, copy?.supportEmail),
   });
   return true;
 }

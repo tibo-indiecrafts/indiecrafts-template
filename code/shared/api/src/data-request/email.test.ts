@@ -121,3 +121,25 @@ describe("sendDataRequestClosedEmail", () => {
     ).rejects.toThrow("resend 500");
   });
 });
+
+describe("support copy", () => {
+  it("blind-copies the support address only for the group that opts in", async () => {
+    const f = okFetch();
+    const strings = async () => ({
+      supportEmail: "help@x.com",
+      dataRequestReceipt: { copySupport: true },
+      dataRequestClosed: { copySupport: false },
+    });
+    await sendDataRequestReceipt(ON, { ...base, locale: "en" }, strings);
+    await sendDataRequestClosedEmail(
+      ON,
+      { to: base.to, id: 12, outcome: "done", note: "Done.", locale: "en" },
+      strings,
+    );
+    const bcc = (i: number) =>
+      (JSON.parse(f.mock.calls[i]![1]!.body as string) as { bcc?: string[] })
+        .bcc;
+    expect(bcc(0)).toEqual(["help@x.com"]);
+    expect(bcc(1)).toBeUndefined();
+  });
+});

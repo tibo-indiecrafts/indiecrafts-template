@@ -7,6 +7,7 @@ import { logger } from "@indiecrafts/packages-shared-logger";
 import {
   inLanguage,
   resend,
+  supportCopyOf,
   supportFooter,
   type MailEnv,
 } from "../erasure/email";
@@ -42,6 +43,7 @@ export async function sendWelcomeEmail(
       html: inLanguage(html + foot.html, locale),
       text: text + foot.text,
       bcc: strings?.bccAll,
+      supportCopy: supportCopyOf(strings?.welcome, strings?.supportEmail),
       idempotencyKey: `welcome/${userId}`,
     });
   } catch (error) {

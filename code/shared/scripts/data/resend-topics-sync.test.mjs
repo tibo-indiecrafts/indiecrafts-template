@@ -34,9 +34,10 @@ test("findTopicId matches by name", () => {
   assert.equal(findTopicId(list, "Nope"), undefined);
 });
 
-test("TOPICS covers the four categories + churned", () => {
+test("TOPICS covers the five categories + churned", () => {
   assert.deepEqual(TOPICS.map((t) => t.key).sort(), [
     "churned",
+    "general",
     "news",
     "offers",
     "partners",

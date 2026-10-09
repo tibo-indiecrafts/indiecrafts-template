@@ -34,6 +34,7 @@ const codeGroup = (
     name,
     heading: false,
     addressFields: false,
+    copySupport: true,
     title,
     description,
     enabledHint:

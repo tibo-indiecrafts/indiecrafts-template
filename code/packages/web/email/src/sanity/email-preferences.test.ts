@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { emailPreferencesSchema } from "./email-preferences";
 
 describe("emailPreferencesSchema", () => {
-  it("seeds the four reserved category keys", () => {
+  it("seeds the five reserved category keys, General never granted at sign-up", () => {
     const iv = (
       emailPreferencesSchema as {
         initialValue?: { categories?: { key: string }[] };
@@ -13,7 +13,18 @@ describe("emailPreferencesSchema", () => {
       "offers",
       "partners",
       "tips",
+      "general",
     ]);
+    expect(
+      (
+        emailPreferencesSchema as {
+          initialValue?: {
+            categories?: { key: string; includeAtSignup: boolean }[];
+          };
+        }
+      ).initialValue?.categories?.find((c) => c.key === "general")
+        ?.includeAtSignup,
+    ).toBe(false);
   });
 
   it("seeds bilingual read-only notices", () => {

@@ -18,6 +18,7 @@ import {
 export const emailGroups = [
   confirmationGroup({
     name: "waitlistConfirm",
+    copySupport: true,
     title: "Liste d'attente — confirmation (« vous êtes sur la liste »)",
     description:
       "E-mail de bienvenue envoyé à chaque nouvelle inscription sur la liste d'attente. Textes traduits par langue.",

@@ -18,6 +18,7 @@ import {
 export const emailGroups = [
   confirmationGroup({
     name: "contactConfirm",
+    copySupport: true,
     title: "Contact — accusé de réception (« message bien reçu »)",
     description:
       "E-mail envoyé à la personne qui a rempli le formulaire de contact. Textes traduits par langue.",

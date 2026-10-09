@@ -52,6 +52,8 @@ async function upsertContact(
   doFetch: typeof fetch,
   /** Segment ids for a NEW contact only (an existing one moves via `syncNewsletterSegments`). */
   segmentIds: string[] = [],
+  /** Fields for a NEW contact only — an existing contact keeps its own. */
+  createFields: Record<string, unknown> = {},
 ): Promise<"created" | "updated"> {
   const base = `${RESEND_API}/contacts`;
   const headers = {
@@ -64,6 +66,7 @@ async function upsertContact(
     headers,
     body: JSON.stringify({
       email,
+      ...createFields,
       ...fields,
       ...(topics.length ? { topics } : {}),
       ...(segmentIds.length
@@ -159,6 +162,28 @@ export async function subscribeNewsletterContact(
   );
   if (done === "updated")
     await syncNewsletterSegments(env, { email, locale }, f, target);
+}
+
+/** A waitlist or contact-form person (`POST /v1/contacts/general`). A new contact gets the
+ *  `locale` property; an existing one keeps its fields — a newsletter subscriber's language and
+ *  a global unsubscribe stay as they are. `topicId` (a waitlist join) opts into the General
+ *  topic; none (a contact message) stores the contact only. */
+export async function addGeneralContact(
+  env: ResendAudienceEnv,
+  {
+    email,
+    locale,
+    topicId,
+  }: { email: string; locale: string; topicId?: string },
+  doFetch: typeof fetch = fetch,
+): Promise<void> {
+  if (!env.RESEND_API_KEY || !email) return;
+  const topics: TopicSub[] = topicId
+    ? [{ id: topicId, subscription: "opt_in" }]
+    : [];
+  await upsertContact(env, email, {}, topics, retrying(doFetch), [], {
+    properties: { locale },
+  });
 }
 
 type Segment = { id: string; name: string };

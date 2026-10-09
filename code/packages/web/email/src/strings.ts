@@ -38,6 +38,8 @@ export type OwnerAlertConfig = {
  */
 export type ConfirmationConfig = {
   enabled?: boolean | null;
+  /** Blind-copy the global `supportEmail` (the group's "copie à l'adresse de support"). */
+  copySupport?: boolean | null;
   from?: string | null;
   replyTo?: string | null;
   bcc?: string[] | null;
@@ -77,4 +79,13 @@ export const getEmailStrings = cache(async (): Promise<EmailStrings> =>
 /** Resolve a `localeString`/`localeText` to one string: the locale, else default, else empty. */
 export function pick(value: LocaleValue, locale: string): string {
   return pickLocale(value, locale).trim();
+}
+
+/** The support-address blind copy for one send: `[supportEmail]` when the group opts in. */
+export function supportCopy(
+  cfg: { copySupport?: boolean | null } | null | undefined,
+  supportEmail: string | null | undefined,
+): string[] {
+  const address = supportEmail?.trim();
+  return cfg?.copySupport && address ? [address] : [];
 }

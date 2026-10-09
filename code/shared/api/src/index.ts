@@ -91,6 +91,7 @@ import {
   recordNewsletterConsent,
   syncNewsletterSubscriber,
 } from "./newsletter/resend-sync";
+import { isGeneralSource, syncGeneralContact } from "./contacts/general";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -991,6 +992,75 @@ async function route(
     } catch (error) {
       // Never the email — name only.
       logger.error("newsletter resend sync failed", {
+        name: (error as Error)?.name,
+      });
+      return json({ error: "resend" }, 502, cors);
+    }
+    return new Response(null, { status: 204, headers: cors });
+  }
+
+  // ── Form contacts — POST /v1/contacts/general (bearer-gated) ──
+  // The website server calls this after it saves a waitlist entry or a contact message. A
+  // waitlist join appends its consent proof (D1) and opts into the General topic; a contact
+  // message is stored as a Resend contact only. A Resend error → 502 (the website logs it).
+  if (url.pathname === "/v1/contacts/general") {
+    if (request.method === "OPTIONS")
+      return new Response(null, { status: 204, headers: cors });
+    if (request.method !== "POST")
+      return json({ error: "method_not_allowed" }, 405, cors);
+    const denied =
+      requireAdminBearer(request, env, cors) ??
+      (await rateLimit(request, env, cors));
+    if (denied) return denied;
+    if (!env.RESEND_API_KEY || !env.MAIN_DB || !env.GDPR_FINGERPRINT_SALT)
+      return json({ error: "unavailable" }, 503, cors);
+    if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
+      return json({ error: "too_large" }, 413, cors);
+    let body: {
+      email?: unknown;
+      locale?: unknown;
+      source?: unknown;
+      policyVersion?: unknown;
+      consentAt?: unknown;
+    };
+    try {
+      const text = await request.text();
+      if (new TextEncoder().encode(text).length > BODY_MAX)
+        return json({ error: "too_large" }, 413, cors);
+      body = JSON.parse(text) as typeof body;
+    } catch {
+      return json({ error: "invalid" }, 400, cors);
+    }
+    const waitlist = body?.source === "waitlist";
+    if (
+      !isNewsletterEmail(body?.email) ||
+      !isValidLocale(body.locale) ||
+      !isGeneralSource(body.source) ||
+      // A waitlist join carries its consent proof; a contact message carries none.
+      (waitlist &&
+        (typeof body.policyVersion !== "string" ||
+          body.policyVersion.length > 120 ||
+          !isConsentTime(body.consentAt)))
+    )
+      return json({ error: "invalid" }, 400, cors);
+    const email = body.email.trim().toLowerCase();
+    if (waitlist)
+      await recordNewsletterConsent(env.MAIN_DB, env.GDPR_FINGERPRINT_SALT, {
+        email,
+        policyVersion: body.policyVersion as string,
+        consentAt: new Date(body.consentAt as string).toISOString(),
+        consentType: "waitlist",
+        source: "waitlist",
+      });
+    try {
+      await syncGeneralContact(env, {
+        email,
+        locale: body.locale,
+        source: body.source,
+      });
+    } catch (error) {
+      // Never the email — name only.
+      logger.error("general contact resend sync failed", {
         name: (error as Error)?.name,
       });
       return json({ error: "resend" }, 502, cors);

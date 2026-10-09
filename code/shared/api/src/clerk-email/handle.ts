@@ -15,6 +15,7 @@ import {
 } from "../erasure/email";
 import { AUTH_TEMPLATES, type EmailVars } from "./templates";
 import {
+  authSupportCopy,
   canonicalAuthSlug,
   fetchAuthEmailStrings,
   resolveAuthCopy,
@@ -121,6 +122,7 @@ export async function handleClerkEmail(
       html: inLanguage(html + foot.html, locale),
       text: text + foot.text,
       bcc: strings?.bccAll,
+      supportCopy: authSupportCopy(strings, slug),
     });
     return;
   }

@@ -4,12 +4,14 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 // engine's server-only imports (Sanity write client + the email graph, which read
 // env at load) — the stubs keep importing the module from evaluating that env, and
 // let the `join()` write-path tests drive the Sanity + mail calls.
-const { fetch, create, getEmailStrings, sendEmail } = vi.hoisted(() => ({
-  fetch: vi.fn(),
-  create: vi.fn(async () => ({})),
-  getEmailStrings: vi.fn(async () => null as unknown),
-  sendEmail: vi.fn(async () => undefined),
-}));
+const { fetch, create, getEmailStrings, sendEmail, addGeneralContact } =
+  vi.hoisted(() => ({
+    fetch: vi.fn(),
+    addGeneralContact: vi.fn(async () => "added"),
+    create: vi.fn(async () => ({})),
+    getEmailStrings: vi.fn(async () => null as unknown),
+    sendEmail: vi.fn(async () => undefined),
+  }));
 
 vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
   writeClient: { fetch, create },
@@ -17,6 +19,12 @@ vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
 vi.mock("@indiecrafts/packages-web-email/strings", () => ({
   getEmailStrings,
   pick: () => "",
+  // Mirrors the brick: the support address when the group opts in.
+  supportCopy: (c: { copySupport?: boolean } | null | undefined, s?: string) =>
+    c?.copySupport && s ? [s] : [],
+}));
+vi.mock("@indiecrafts/packages-web-email/contacts", () => ({
+  addGeneralContact,
 }));
 vi.mock("@indiecrafts/packages-web-email", () => ({
   sendEmail,
@@ -106,6 +114,45 @@ describe("join", () => {
       already: true,
     });
     expect(create).not.toHaveBeenCalled();
+    expect(addGeneralContact).not.toHaveBeenCalled();
+  });
+
+  it("a new entry joins the Resend General topic with its consent proof", async () => {
+    fetch.mockResolvedValueOnce(null);
+    await join({ ...input, language: "fr" }, "2026-01-01T10:00:00.000Z", "v2");
+    expect(addGeneralContact).toHaveBeenCalledWith({
+      email: "a@b.com",
+      locale: "fr",
+      source: "waitlist",
+      policyVersion: "v2",
+      consentAt: "2026-01-01T10:00:00.000Z",
+    });
+  });
+
+  it("a failed Resend contact never turns a saved entry into an error", async () => {
+    fetch.mockResolvedValueOnce(null);
+    addGeneralContact.mockResolvedValueOnce("failed");
+    expect(await join(input, "2026-01-01")).toEqual({
+      ok: true,
+      already: false,
+    });
+  });
+
+  it("copies the support address when the confirmation opts in", async () => {
+    vi.stubEnv("RESEND_API_KEY", "re_x");
+    getEmailStrings.mockResolvedValueOnce({
+      supportEmail: "help@site.com",
+      waitlistConfirm: {
+        enabled: true,
+        from: "hi@site.com",
+        copySupport: true,
+      },
+    });
+    fetch.mockResolvedValueOnce(null);
+    await join(input, "2026-01-01");
+    expect(sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({ to: ["a@b.com"], bcc: ["help@site.com"] }),
+    );
   });
 
   it("a new email creates a whitelisted entry with the policy stamp", async () => {

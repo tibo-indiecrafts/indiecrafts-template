@@ -55,6 +55,7 @@ export const emailGroups = [
   }),
   confirmationGroup({
     name: "erasureComplete",
+    copySupport: true,
     addressFields: false,
     title: "RGPD — effacement terminé",
     description:
@@ -69,6 +70,7 @@ export const emailGroups = [
   }),
   confirmationGroup({
     name: "dataRequestReceipt",
+    copySupport: true,
     addressFields: false,
     title: "RGPD — accusé de réception (au demandeur)",
     description:
@@ -82,6 +84,7 @@ export const emailGroups = [
   }),
   confirmationGroup({
     name: "dataRequestClosed",
+    copySupport: true,
     addressFields: false,
     title: "RGPD — demande clôturée (au demandeur)",
     description:

@@ -28,8 +28,11 @@ contribution. The public form stays a page-builder block (renderer in `@indiecra
    validates: email shape, non-empty message, required consent, honeypot must be empty.
 3. `writeClient.create` a `contactMessage` (`status: "new"`, whitelisted fields, `_type` hard-coded).
    No dedupe — a person may write more than once.
-4. Two **best-effort** emails may fire (see below) — a failure only logs, never fails the submission.
-5. Response: `201` on success, `400` invalid, `404` gated off. A honeypot-filled submission also
+4. The sender also becomes a **Resend contact, with no topic** (`addGeneralContact` →
+   `POST /v1/contacts/general`): the consent covers a reply, not broadcasts. An existing contact is
+   left as it is. Best-effort: the Sanity message is the record.
+5. Two **best-effort** emails may fire (see below) — a failure only logs, never fails the submission.
+6. Response: `201` on success, `400` invalid, `404` gated off. A honeypot-filled submission also
    returns `201`, so bots learn nothing.
 
 ## Studio — Contact

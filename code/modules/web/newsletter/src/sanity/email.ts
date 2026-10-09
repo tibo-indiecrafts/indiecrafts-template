@@ -56,6 +56,7 @@ export const emailGroups = [
   }),
   confirmationGroup({
     name: "leadMagnet",
+    copySupport: true,
     title: "Infolettre — livraison du document (lead magnet)",
     description:
       "E-mail envoyé après confirmation, avec le lien de téléchargement du document promis. Textes traduits par langue.",

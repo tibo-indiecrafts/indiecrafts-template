@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import {
   authKind,
+  authSupportCopy,
   canonicalAuthSlug,
   fetchAuthEmailStrings,
   resolveAuthCopy,
@@ -152,3 +153,33 @@ describe("fetchAuthEmailStrings", () => {
 });
 
 afterEach(() => vi.unstubAllGlobals());
+
+describe("authSupportCopy", () => {
+  const withCopy: AuthEmailStrings = {
+    supportEmail: "help@x.com",
+    passwordChanged: { copySupport: true },
+    accountLocked: { copySupport: false },
+    // Not offered in the Studio: a code, a sign-in link or an invitation is never copied.
+    verification: { copySupport: true },
+    magicLink: { copySupport: true },
+    invitation: { copySupport: true },
+    newDevice: { copySupport: true },
+  };
+
+  it("copies a notice whose group opts in", () => {
+    expect(authSupportCopy(withCopy, "password_changed")).toBe("help@x.com");
+    expect(authSupportCopy(withCopy, "account_locked")).toBeUndefined();
+    expect(
+      authSupportCopy({ ...withCopy, supportEmail: " " }, "password_changed"),
+    ).toBeUndefined();
+  });
+
+  it.each([
+    "verification_code",
+    "magic_link_sign_in",
+    "invitation",
+    "new_device_sign_in",
+  ])("never copies %s", (slug) => {
+    expect(authSupportCopy(withCopy, slug)).toBeUndefined();
+  });
+});

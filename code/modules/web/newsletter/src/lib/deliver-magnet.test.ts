@@ -5,6 +5,12 @@ import { signDownloadToken } from "@indiecrafts/packages-shared-gated-delivery";
 const SECRET = "test-newsletter-secret";
 const fetch = vi.hoisted(() => vi.fn());
 const sendEmail = vi.hoisted(() => vi.fn(async () => undefined));
+const strings = vi.hoisted(() => ({
+  value: { newsletterConfirm: { from: "hi@site.test" } } as Record<
+    string,
+    unknown
+  >,
+}));
 vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
   writeClient: { fetch },
 }));
@@ -20,10 +26,11 @@ vi.mock("@indiecrafts/packages-web-email", () => ({
   EMAIL_COLORS: new Proxy({}, { get: () => "#000000" }),
 }));
 vi.mock("@indiecrafts/packages-web-email/strings", () => ({
-  getEmailStrings: async () => ({
-    newsletterConfirm: { from: "hi@site.test" },
-  }),
+  getEmailStrings: async () => strings.value,
   pick: () => "",
+  // Mirrors the brick: the support address when the group opts in.
+  supportCopy: (c: { copySupport?: boolean } | null | undefined, s?: string) =>
+    c?.copySupport && s ? [s] : [],
 }));
 
 /** Stub the env for one test, then import the module. */
@@ -98,6 +105,28 @@ describe("deliverMagnetsForTags", () => {
     expect(sendEmail).toHaveBeenCalledOnce();
     const sent = JSON.stringify(sendEmail.mock.calls[0]);
     expect(sent).toContain("/api/download?token=");
+  });
+
+  it("honours the group's own bcc and reply-to, and the support copy", async () => {
+    strings.value = {
+      newsletterConfirm: { from: "hi@site.test" },
+      supportEmail: "help@site.test",
+      leadMagnet: {
+        bcc: ["me@site.test"],
+        replyTo: "team@site.test",
+        copySupport: true,
+      },
+    };
+    const { deliverMagnetsForTags } = await load(SECRET);
+    fetch.mockResolvedValueOnce({ _id: "magnet.1", title: "Guide" });
+    await deliverMagnetsForTags("a@b.com", ["magnet.1"], "en");
+    expect(sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        bcc: ["me@site.test", "help@site.test"],
+        replyTo: "team@site.test",
+      }),
+    );
+    strings.value = { newsletterConfirm: { from: "hi@site.test" } };
   });
 
   it.each([

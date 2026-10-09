@@ -16,9 +16,11 @@ import {
 import { privateId } from "@indiecrafts/packages-web-sanity/private-id";
 import { writeClient } from "@indiecrafts/packages-web-sanity/write";
 import { sendEmail } from "@indiecrafts/packages-web-email";
+import { addGeneralContact } from "@indiecrafts/packages-web-email/contacts";
 import {
   getEmailStrings,
   pick,
+  supportCopy,
   type ConfirmationConfig,
   type OwnerAlertConfig,
 } from "@indiecrafts/packages-web-email/strings";
@@ -111,6 +113,16 @@ export async function submit(
       createdAt,
     });
 
+    // Also a Resend contact, stored only: this consent covers a reply, not broadcasts.
+    if (
+      (await addGeneralContact({
+        email,
+        locale: toSiteLocale(input.language),
+        source: "contact",
+      })) === "failed"
+    )
+      logger.error("contact resend contact failed");
+
     const strings = (await getEmailStrings()) as {
       contactConfirm?: ConfirmationConfig;
       contactOwner?: OwnerAlertConfig;
@@ -168,7 +180,11 @@ async function sendConfirmEmail(
     await sendEmail({
       from,
       to: [email],
-      bcc: cleanList([...(cfg?.bcc ?? []), bccAll ?? ""]),
+      bcc: cleanList([
+        ...(cfg?.bcc ?? []),
+        bccAll ?? "",
+        ...supportCopy(cfg, supportEmail),
+      ]),
       replyTo: cfg?.replyTo?.trim(),
       ...message,
     });

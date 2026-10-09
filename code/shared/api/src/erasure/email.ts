@@ -36,6 +36,8 @@ type LocaleValue =
 
 type ErasureEmailGroup = {
   enabled?: boolean;
+  /** Blind-copy the support address (Studio "Copie cachée à l'adresse de support"). */
+  copySupport?: boolean;
   subject?: LocaleValue;
   heading?: LocaleValue;
   intro?: LocaleValue;
@@ -51,6 +53,16 @@ type ErasureEmailStrings = {
   /** The global editor-owned blind-copy address (`emailStrings.bccAll`). */
   bccAll?: string;
 };
+
+/** The support address when the email's group opts in (`copySupport`), else undefined. Always
+ *  the site's own published address, never a free field, so `resend` sends it ungated. */
+export function supportCopyOf(
+  group: { copySupport?: boolean } | null | undefined,
+  supportEmail: string | null | undefined,
+): string | undefined {
+  const address = supportEmail?.trim();
+  return group?.copySupport && address ? address : undefined;
+}
 
 /** Escape untrusted text before interpolating it into an HTML body. */
 export function escapeHtml(value: string): string {
@@ -159,7 +171,7 @@ function fetchErasureEmailStrings(
 ): Promise<ErasureEmailStrings | null> {
   return fetchEmailStrings<ErasureEmailStrings>(
     env,
-    "{ erasureToken{enabled,subject,heading,intro,buttonLabel,outro}, erasureComplete{enabled,subject,heading,intro,outro}, supportEmail, bccAll }",
+    "{ erasureToken{enabled,subject,heading,intro,buttonLabel,outro}, erasureComplete{enabled,copySupport,subject,heading,intro,outro}, supportEmail, bccAll }",
   );
 }
 
@@ -171,6 +183,7 @@ export async function resend(
     html,
     text,
     bcc,
+    supportCopy,
     idempotencyKey,
   }: {
     to: string;
@@ -179,6 +192,9 @@ export async function resend(
     text: string;
     /** Extra blind copy (the Studio-editable global `bccAll`), merged with `EMAIL_ADMIN_BCC`. */
     bcc?: string;
+    /** The support address, when the email's group opts in (`supportCopyOf`). Not gated:
+     *  it is the site's own address, and no group that carries a code or link offers it. */
+    supportCopy?: string;
     /** Resend sends one email per key for 24 h — for a send a retry may repeat. */
     idempotencyKey?: string;
   },
@@ -192,7 +208,9 @@ export async function resend(
   // CMS value is honored ONLY when the infra gate is set (unset in prod), so a Sanity editor
   // can't silently redirect a blind copy of auth codes / magic links. Dedupe, drop empties.
   const cmsBcc = env.EMAIL_BCC_ALL_ENABLED ? bcc : undefined;
-  const bccList = [...new Set([env.EMAIL_ADMIN_BCC, cmsBcc].filter(Boolean))];
+  const bccList = [
+    ...new Set([env.EMAIL_ADMIN_BCC, cmsBcc, supportCopy].filter(Boolean)),
+  ];
 
   const res = await fetchWithTimeout("https://api.resend.com/emails", {
     method: "POST",
@@ -285,5 +303,12 @@ export async function sendErasureCompleteEmail(
   const html = `<p>Hello ${escapeHtml(to)},</p><p>${line}</p><p>${escapeHtml(retained)}</p>${outro ? `<p>${escapeHtml(outro)}</p>` : ""}${foot.html}`;
   const textLine = intro ? `${heading} ${intro}` : heading;
   const text = `Hello ${to},\n\n${textLine}\n\n${retained}${outro ? `\n\n${outro}` : ""}${foot.text}`;
-  await resend(env, { to, subject, html, text, bcc: copy?.bccAll });
+  await resend(env, {
+    to,
+    subject,
+    html,
+    text,
+    bcc: copy?.bccAll,
+    supportCopy: supportCopyOf(copy?.erasureComplete, copy?.supportEmail),
+  });
 }

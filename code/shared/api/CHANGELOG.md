@@ -38,6 +38,18 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **`POST /v1/contacts/general` — waitlist and contact-form people become Resend contacts.** A
+  waitlist join records its consent (`consent_type: "waitlist"`) and opts into the new private
+  `General` topic (`pnpm resend:topics:sync` creates it; Studio → Préférences → `general` holds its
+  id). A contact message is stored with no topic: that consent covers a reply. An existing contact
+  keeps its language and its global unsubscribe. **Why:** Resend is the mailing tool; a launch
+  email needs the waitlist there.
+- **Service emails can copy the support address.** `erasureComplete`, the two data-request emails,
+  the Clerk notices and the welcome email send a blind copy to `emailStrings.supportEmail` when
+  their Studio group ticks "Copie cachée à l'adresse de support". **Why:** the support team asked to
+  see what users receive. Codes, magic links, invitations, device sign-out and the erasure confirm
+  link are never copied (a fixed list in `clerk-email/sanity.ts` backs the Studio).
+
 - **Auth contract test** (`src/auth-contract.test.ts`): every `/v1` route answers an anonymous
   caller with its own refusal (>= 400). The route list is read from `index.ts`, so a new route
   fails the test until it is listed as guarded or public with a reason. **Why:**

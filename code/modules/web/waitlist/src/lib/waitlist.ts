@@ -16,9 +16,11 @@ import {
 import { privateId } from "@indiecrafts/packages-web-sanity/private-id";
 import { writeClient } from "@indiecrafts/packages-web-sanity/write";
 import { sendEmail } from "@indiecrafts/packages-web-email";
+import { addGeneralContact } from "@indiecrafts/packages-web-email/contacts";
 import {
   getEmailStrings,
   pick,
+  supportCopy,
   type ConfirmationConfig,
   type OwnerAlertConfig,
 } from "@indiecrafts/packages-web-email/strings";
@@ -110,6 +112,19 @@ export async function join(
       createdAt,
     });
 
+    // Also a Resend contact on the General topic: the waitlist consent covers early-access
+    // news. Best-effort — the Sanity entry is the record.
+    if (
+      (await addGeneralContact({
+        email,
+        locale: toSiteLocale(input.language),
+        source: "waitlist",
+        policyVersion: policyVersion ?? "",
+        consentAt: createdAt,
+      })) === "failed"
+    )
+      logger.error("waitlist resend contact failed");
+
     const strings = (await getEmailStrings()) as {
       waitlistConfirm?: ConfirmationConfig;
       waitlistOwner?: OwnerAlertConfig;
@@ -172,7 +187,11 @@ async function sendConfirmEmail(
     await sendEmail({
       from,
       to: [email],
-      bcc: cleanList([...(cfg?.bcc ?? []), bccAll ?? ""]),
+      bcc: cleanList([
+        ...(cfg?.bcc ?? []),
+        bccAll ?? "",
+        ...supportCopy(cfg, supportEmail),
+      ]),
       replyTo: cfg?.replyTo?.trim(),
       ...message,
     });

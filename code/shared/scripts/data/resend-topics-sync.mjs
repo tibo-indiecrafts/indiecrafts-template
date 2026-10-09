@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Operator-run: ensures every churn/marketing Resend topic exists (private,
+// Operator-run: ensures every churn/marketing/general Resend topic exists (private,
 // opt_out default) and prints its id — paste those into the Sanity
 // `emailPreferences` singleton (`resendTopicId` per category).
 //
@@ -36,6 +36,8 @@ export const TOPICS = [
   { key: "offers", name: "Offers" },
   { key: "partners", name: "Partners" },
   { key: "tips", name: "Tips" },
+  // Waitlist and contact-form people (`POST /v1/contacts/general`).
+  { key: "general", name: "General" },
   { key: "churned", name: "Win-back (former members)" },
 ];
 

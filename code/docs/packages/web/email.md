@@ -16,11 +16,12 @@ sender (the newsletter's double opt-in) could never reach a helper stuck in the 
 
 ## Subpaths
 
-| Import                                    | Side   | What it is                                                                                                                                               |
-| ----------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@indiecrafts/packages-web-email`         | pure   | `sendEmail` · `renderEmail` · `escapeHtml` · the `RenderedEmail` render contract (templates live with their feature)                                     |
-| `@indiecrafts/packages-web-email/strings` | server | `getEmailStrings()` (React-`cache`d generic read) + `pick(value, locale)` + the `OwnerAlertConfig`/`ConfirmationConfig` read shapes                      |
-| `@indiecrafts/packages-web-email/sanity`  | Studio | `emailSanity(modules)` (builds the singleton) · `confirmationGroup`/`ownerAlertGroup` (group factories) · `sendTestEmailAction` (the "Send test" action) |
+| Import                                     | Side   | What it is                                                                                                                                                             |
+| ------------------------------------------ | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@indiecrafts/packages-web-email`          | pure   | `sendEmail` · `renderEmail` · `escapeHtml` · the `RenderedEmail` render contract (templates live with their feature)                                                   |
+| `@indiecrafts/packages-web-email/strings`  | server | `getEmailStrings()` (React-`cache`d generic read) + `pick(value, locale)` + `supportCopy(cfg, supportEmail)` + the `OwnerAlertConfig`/`ConfirmationConfig` read shapes |
+| `@indiecrafts/packages-web-email/contacts` | server | `addGeneralContact(…)` — a waitlist or contact-form person as a Resend contact on the General topic, via `POST /v1/contacts/general`                                   |
+| `@indiecrafts/packages-web-email/sanity`   | Studio | `emailSanity(modules)` (builds the singleton) · `confirmationGroup`/`ownerAlertGroup` (group factories) · `sendTestEmailAction` (the "Send test" action)               |
 
 ## Sending + layout
 
@@ -76,23 +77,23 @@ Two group factories cover every email:
 
 Groups today:
 
-| Group                 | Owner module            | To               | Translated? | Extras                        |
-| --------------------- | ----------------------- | ---------------- | ----------- | ----------------------------- |
-| `commentNotification` | blog                    | site team        | no          | reply-to · moderation buttons |
-| `newsletterConfirm`   | newsletter              | subscriber       | **yes**     | button · bcc                  |
-| `leadMagnetConfirm`   | newsletter              | visitor          | **yes**     | button (copy only)            |
-| `leadMagnet`          | newsletter              | visitor          | **yes**     | button (the download link)    |
-| `newsletterOwner`     | newsletter              | site team        | no          | —                             |
-| `waitlistConfirm`     | waitlist                | joiner           | **yes**     | bcc                           |
-| `waitlistOwner`       | waitlist                | site team        | no          | —                             |
-| `contactConfirm`      | contact                 | sender           | **yes**     | bcc                           |
-| `contactOwner`        | contact                 | site team        | no          | reply-to = the sender         |
-| `dataRequestOwner`    | compliance              | controller / DPO | no          | —                             |
-| `erasureToken`        | compliance (api worker) | requester        | **yes**     | —                             |
-| `erasureComplete`     | compliance (api worker) | requester        | **yes**     | —                             |
-| `dataRequestReceipt`  | compliance (api worker) | requester        | **yes**     | —                             |
-| `dataRequestClosed`   | compliance (api worker) | requester        | **yes**     | —                             |
-| `securityAlert`       | the brick               | site team        | no          | no on/off; plain text         |
+| Group                 | Owner module            | To               | Translated? | Extras                                          |
+| --------------------- | ----------------------- | ---------------- | ----------- | ----------------------------------------------- |
+| `commentNotification` | blog                    | site team        | no          | reply-to · moderation buttons                   |
+| `newsletterConfirm`   | newsletter              | subscriber       | **yes**     | button · bcc                                    |
+| `leadMagnetConfirm`   | newsletter              | visitor          | **yes**     | button (copy only)                              |
+| `leadMagnet`          | newsletter              | visitor          | **yes**     | button (the download link) · bcc · support copy |
+| `newsletterOwner`     | newsletter              | site team        | no          | —                                               |
+| `waitlistConfirm`     | waitlist                | joiner           | **yes**     | bcc · support copy                              |
+| `waitlistOwner`       | waitlist                | site team        | no          | —                                               |
+| `contactConfirm`      | contact                 | sender           | **yes**     | bcc · support copy                              |
+| `contactOwner`        | contact                 | site team        | no          | reply-to = the sender                           |
+| `dataRequestOwner`    | compliance              | controller / DPO | no          | —                                               |
+| `erasureToken`        | compliance (api worker) | requester        | **yes**     | —                                               |
+| `erasureComplete`     | compliance (api worker) | requester        | **yes**     | support copy                                    |
+| `dataRequestReceipt`  | compliance (api worker) | requester        | **yes**     | support copy                                    |
+| `dataRequestClosed`   | compliance (api worker) | requester        | **yes**     | support copy                                    |
+| `securityAlert`       | the brick               | site team        | no          | no on/off; plain text                           |
 
 A sender reads the whole entity once (`getEmailStrings()` — a **generic read**, no field projection,
 so a feature adding a group never edits this brick), **narrows to its own group** with the exported
@@ -121,6 +122,22 @@ matching template. Seeded EN + FR by `pnpm seed`. **Order in the Studio = module
 Every group carries its own **BCC** field (the confirmations too). An admin who wants a copy of a
 user-facing confirmation adds their address to that email's BCC — there is **no global admin-BCC**.
 The confirm engines pass `bcc: clean(cfg?.bcc)` to `sendEmail`; empty stays omitted.
+
+## Copy to the support address — a checkbox per email
+
+A group built with `confirmationGroup({ …, copySupport: true })` shows **"Copie cachée à l'adresse
+de support"**. Ticked, the support address (E-mails → "Adresse de support") gets a blind copy of
+each send. The website senders spread `supportCopy(cfg, supportEmail)` into `bcc`; the api worker
+passes `supportCopy` to `resend()` (`supportCopyOf`, and `authSupportCopy` for Clerk).
+
+- **Offered on:** `contactConfirm` · `waitlistConfirm` · `leadMagnet` · `erasureComplete` ·
+  `dataRequestReceipt` · `dataRequestClosed` · the Clerk notices (password, passkey, two-step,
+  primary email, account locked) · `welcome`.
+- **Never offered** (the default): an email that carries a one-time code or action link —
+  `newsletterConfirm` · `leadMagnetConfirm` · `erasureToken` · Clerk codes, magic link, invitation,
+  new device. A copy would hand that access to whoever reads the support inbox. The Clerk worker
+  also keeps a fixed list, so a value written outside the Studio cannot copy one either.
+- **Not gated** like `bccAll`: the address is the site's own published one, never a free field.
 
 ## Verify deliverability — the "Send test" action
 

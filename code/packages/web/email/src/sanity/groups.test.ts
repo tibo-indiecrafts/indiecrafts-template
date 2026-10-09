@@ -38,6 +38,13 @@ describe("confirmationGroup", () => {
     ]);
   });
 
+  it("offers the support copy only when the group opts in", () => {
+    expect(names(confirmationGroup(confirmBase))).not.toContain("copySupport");
+    expect(
+      names(confirmationGroup({ ...confirmBase, copySupport: true })),
+    ).toEqual(expect.arrayContaining(["enabled", "copySupport", "bcc"]));
+  });
+
   it("adds buttonLabel only with button:true", () => {
     expect(
       names(confirmationGroup({ ...confirmBase, button: true })),

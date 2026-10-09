@@ -20,6 +20,7 @@ The server-only read side of the email content entity. `getEmailStrings` fetches
 - `EmailStrings` — the whole singleton as a generic index of the two group shapes.
 - `getEmailStrings()` — React-cached read of the singleton.
 - `pick(value, locale)` — resolve a locale value to the locale's string, else default, else empty.
+- `supportCopy(cfg, supportEmail)` — `[supportEmail]` when the group's `copySupport` is on and an address is set, else `[]`. A sender spreads it into `bcc`.
 
 ## Usage
 

@@ -22,6 +22,16 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **email: "Copie cachée à l'adresse de support", a checkbox per email.** `confirmationGroup({
+copySupport: true })` offers it; senders spread `supportCopy(cfg, supportEmail)` into `bcc`. Off
+  by default, and never offered on an email with a one-time code or link. **Why:** an editor
+  chooses which emails the support inbox sees, without typing an address.
+- **email: `addGeneralContact` (`@indiecrafts/packages-web-email/contacts`)** — a waitlist or
+  contact-form person as a Resend contact through `POST /v1/contacts/general`. Best-effort, never
+  throws. **Why:** two modules need it.
+- **email: a `general` category in Préférences e-mail**, never granted at account sign-up. **Why:**
+  the waitlist's Resend topic, which the preference centre lets a person turn off.
+
 - **security: `CspHosts.frameAncestors`.** Lists who may frame the page (default `'none'`);
   when set, `X-Frame-Options` becomes `SAMEORIGIN`. **Why:** the website's Studio preview frames
   the site from the same origin.

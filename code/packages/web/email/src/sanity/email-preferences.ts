@@ -110,7 +110,7 @@ const seededCategory = (
 /**
  * Préférences e-mail (singleton) — the subscriber-facing preference centre:
  * the marketing categories an abonné can toggle (`categories[]`, seeded with
- * the 4 reserved keys below) plus display-only transactional notices
+ * the 5 reserved keys below) plus display-only transactional notices
  * (`notices[]`, e.g. "you'll always get order confirmations"), plus the
  * `churned` win-back topic a departing contact is switched to in place of
  * every other category. Read by the preference-centre page + the
@@ -211,6 +211,15 @@ export const emailPreferencesSchema = defineType({
           fr: "Conseils et bonnes pratiques.",
         },
         true,
+      ),
+      // The waitlist joins it (`POST /v1/contacts/general`); never granted at account sign-up.
+      seededCategory(
+        "general",
+        { en: "General", fr: "Général" },
+        {
+          en: "Early-access and launch news.",
+          fr: "Accès anticipé et annonces de lancement.",
+        },
       ),
     ],
     // The transactional emails the site sends today, so the read-only section shows.

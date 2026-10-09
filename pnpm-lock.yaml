@@ -526,6 +526,9 @@ importers:
       '@indiecrafts/packages-shared-config':
         specifier: workspace:*
         version: link:../../shared/config
+      '@indiecrafts/packages-shared-utils':
+        specifier: workspace:*
+        version: link:../../shared/utils
       '@indiecrafts/packages-web-sanity':
         specifier: workspace:*
         version: link:../sanity

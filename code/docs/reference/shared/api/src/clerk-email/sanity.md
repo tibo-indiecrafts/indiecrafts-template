@@ -20,6 +20,7 @@ Reads the `clerkEmails` singleton and the global support address over raw GROQ-o
 - `canonicalAuthSlug(slug)` — the canonical template slug for a Clerk slug, or `undefined`.
 - `resolveAuthCopy(strings, slug, locale)` — the Studio override for one email in the recipient's locale, or `undefined`.
 - `resolveWelcomeCopy(strings, locale)` — the Studio override for the welcome email, or `undefined`.
+- `authSupportCopy(strings, slug)` — the support address to blind-copy, when the email's group opts in (`copySupport`). Only the notice kinds (password, passkey, two-step, primary email, account locked) qualify: a code, a magic link, an invitation or a device sign-out link is never copied, whatever the stored value.
 - `fetchAuthEmailStrings(env, doFetch?)` — fetches and locale-agnostically returns the copy; never throws; `doFetch` is injectable and bypasses the cache.
 
 ## Usage
