@@ -59,6 +59,9 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The footer credit's preview card has an accessible name** (the same localized label as its
+  button). Screen readers announced an unnamed dialog; the new `MadeByCredit` story's axe check
+  found it.
 - **Studio "Envoyer un test" sends the emails as visitors get them.** Each visitor email goes out
   once per site locale (`contactConfirm · fr`), each owner alert once in the default locale, all
   with the support line. The samples go out one at a time (under Resend's 2 requests/s), and the

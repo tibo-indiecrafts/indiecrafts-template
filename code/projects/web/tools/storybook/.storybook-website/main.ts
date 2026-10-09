@@ -23,6 +23,9 @@ const websiteStories = `${relative(configDir, websiteSrc)}/**/*.stories.@(ts|tsx
 const nextIntlMock = fileURLToPath(
   new URL("../.storybook/next-intl-mock.tsx", import.meta.url),
 );
+// Website stories import `storybook/test`, but `storybook` is a dep of THIS package only
+// (pnpm strict). Resolve it from this file — same trick as `.storybook/main.ts`.
+const storybookAnchor = fileURLToPath(import.meta.url);
 
 const config: StorybookConfig = {
   framework: { name: "@storybook/nextjs-vite", options: {} },
@@ -38,6 +41,13 @@ const config: StorybookConfig = {
     cfg.plugins = cfg.plugins ?? [];
     cfg.plugins.push(tailwindcss());
 
+    // Auth is opt-in behind this key; `AuthMenu` renders nothing without it. A demo value
+    // shows its signed-out sign-in link (Clerk itself never loads in a story).
+    cfg.define = {
+      ...cfg.define,
+      "process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": JSON.stringify("pk_test_storybook"),
+    };
+
     cfg.resolve = cfg.resolve ?? {};
     const existing = Array.isArray(cfg.resolve.alias)
       ? cfg.resolve.alias
@@ -52,6 +62,14 @@ const config: StorybookConfig = {
       { find: /^next-intl$/, replacement: nextIntlMock },
       { find: /^next-intl\/server$/, replacement: nextIntlMock },
       { find: /^next-intl\/navigation$/, replacement: nextIntlMock },
+      {
+        find: /^storybook\/test$/,
+        replacement: "storybook/test",
+        async customResolver(source: string) {
+          const resolved = await this.resolve(source, storybookAnchor, { skipSelf: true });
+          return resolved?.id;
+        },
+      },
       ...existing,
     ];
     return cfg;

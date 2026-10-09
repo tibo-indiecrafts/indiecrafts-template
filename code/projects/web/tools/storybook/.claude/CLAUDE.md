@@ -19,6 +19,7 @@ route from `domains.mjs` once set). The gallery is still browse-only; the app ne
 pnpm --filter @indiecrafts/web-tools-storybook storybook        # dev gallery on :6006
 pnpm --filter @indiecrafts/web-tools-storybook storybook:build  # static → storybook-static/
 pnpm --filter @indiecrafts/web-tools-storybook test:stories     # every story as a component + a11y test, Light + Dark (Vitest, headless Chromium)
+pnpm --filter @indiecrafts/web-tools-storybook test:stories:website  # the website surface's own stories, Light + Dark
 ```
 
 `test:stories` is the visual/interaction gate (the repo's "visual = colocated stories" rule); it **blocks**
@@ -30,8 +31,11 @@ so it lives in its own Playwright-provisioned job, not the browserless `verify`.
 - **Browse-only — the decoupling is the design.** The app **copies** a component from here then adapts it
   to template conventions; it **never** imports this package or depends on it at runtime (root `CLAUDE.md`
   NEVER). Stories reference the real bricks so the gallery stays honest.
-- **Stories live in `stories/`.** Add a story when a brick gains a variant worth documenting; keep the
-  a11y addon green.
+- **Stories live in `stories/`** (and beside each brick). Add a story when a brick gains a variant worth
+  documenting; keep the a11y addon green.
+- **The website surface composes in** (`.storybook-website/` + `vitest.website.config.ts`): its stories
+  sit beside the website's own components (`src/**/*.stories.tsx`, excluded from the website `tsc`).
+  Async server components (`DefaultLayout`) and live-Sanity views (Studio) get no story.
 - **Next-coupled bricks are mocked** for the gallery (`.storybook/next-intl-mock.tsx`, `shiki-mock.ts`) —
   the gallery is Vite, not Next; mock the Next/CMS edges, don't pull them in. The intl mock reads the
   website's real `messages/{en,fr}.json` (Locale toolbar) — never copy strings into it.

@@ -54,6 +54,7 @@ export function MadeByCredit({ madeBy }: { madeBy: MadeByData }) {
             </button>
           </PopoverTrigger>
           <PopoverContent
+            aria-label={`${name} — ${t("previewLabel")}`}
             side="top"
             align="start"
             sideOffset={8}

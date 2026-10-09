@@ -4,7 +4,7 @@
  * `messages/<locale>.json` — no i18n request or provider needed. The Locale
  * toolbar (preview.tsx) calls `setLocale`, so every story renders in en or fr.
  */
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import en from "../../../surfaces/website/messages/en.json";
 import fr from "../../../surfaces/website/messages/fr.json";
 
@@ -86,15 +86,24 @@ export function createNavigation() {
   const usePathname = () => "/";
   const getPathname = () => "/";
   const redirect = () => {};
+  // Keeps `href` (a typed-route object → its `pathname`) and the anchor attributes, so
+  // the `<a>` stays a real link (role, focus) for the story's `play` and axe.
   function Link({
     children,
-    className,
-  }: {
-    children?: ReactNode;
-    className?: string;
-    [key: string]: unknown;
+    href,
+    locale: _locale,
+    prefetch: _prefetch,
+    ...rest
+  }: Omit<ComponentProps<"a">, "href"> & {
+    href?: string | { pathname?: string };
+    locale?: string;
+    prefetch?: boolean;
   }) {
-    return <a className={className}>{children}</a>;
+    return (
+      <a href={typeof href === "string" ? href : href?.pathname} {...rest}>
+        {children}
+      </a>
+    );
   }
   return { Link, redirect, usePathname, useRouter, getPathname };
 }

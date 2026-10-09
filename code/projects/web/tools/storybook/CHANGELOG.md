@@ -18,6 +18,14 @@ _The Storybook gallery for the design-system bricks (`ui` · `ui-components` · 
 
 ### Added
 
+- **The website surface Storybook has stories, in light and dark.** `test:stories:website` found 0
+  stories. It now runs 15 colocated story files from the website `src`: the layout chrome
+  (`Header`, `Footer`, `Logo`, `LocaleSwitcher`, `ThemeToggle`, `AuthMenu`, …), `NavIcon`,
+  `NewsletterConfirm`, the erasure forms, and `FeaturedArticles`. Copy comes from the website's
+  `messages/en.json`. The config adds the `storybook/test` resolve, a demo Clerk publishable key
+  (the signed-out sign-in link), and a dark project. The `next-intl` mock `Link` now keeps `href`,
+  so it renders a real link. Website `tsc` skips `*.stories.tsx` (the website has no Storybook
+  types); the story run is their check.
 - **The consent UI is in the gallery.** `packages-web-compliance` joins the story sources, so the
   website's `CookiePreferences` dialog renders (through the `next-intl` mock) next to the shared
   `ConsentBanner` and `AccountConsentTab`.
