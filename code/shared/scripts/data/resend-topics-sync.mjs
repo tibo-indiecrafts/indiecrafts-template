@@ -54,8 +54,11 @@ export function topicPayload(topic) {
   };
 }
 
+// Case-insensitive: a topic made by hand in the Resend dashboard (e.g. `general`) is found,
+// not duplicated as `General`.
 export function findTopicId(listResponse, name) {
-  return listResponse?.data?.find((t) => t.name === name)?.id;
+  const wanted = name.toLowerCase();
+  return listResponse?.data?.find((t) => t.name?.toLowerCase() === wanted)?.id;
 }
 
 /** `{ codes, defaultLocale }` from the `i18n.ts` source text. */

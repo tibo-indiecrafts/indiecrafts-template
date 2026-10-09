@@ -47,7 +47,7 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 - **`POST /v1/contacts/general` — waitlist and contact-form people become Resend contacts.** A
   waitlist join records its consent (`consent_type: "waitlist"`) and opts into the new private
-  `General` topic (`pnpm resend:topics:sync` creates it; Studio → Préférences → `general` holds its
+  `General` topic (`pnpm resend:topics:sync` creates it, or finds one made by hand in any case, e.g. `general`; Studio → Préférences → `general` holds its
   id). A contact message is stored with no topic: that consent covers a reply. An existing contact
   is left untouched, so a single-opt-in form never overrides a General opt-out. **Why:** Resend is the mailing tool; a launch
   email needs the waitlist there.

@@ -32,6 +32,11 @@ test("findTopicId matches by name", () => {
   };
   assert.equal(findTopicId(list, "Win-back (former members)"), "t2");
   assert.equal(findTopicId(list, "Nope"), undefined);
+  // A topic made by hand with another case is the same topic, never a duplicate.
+  assert.equal(
+    findTopicId({ data: [{ id: "t9", name: "general" }] }, "General"),
+    "t9",
+  );
 });
 
 test("TOPICS covers the five categories + churned", () => {
