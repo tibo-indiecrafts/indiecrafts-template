@@ -107,12 +107,11 @@ social, themed from tokens) at `/[locale]/sign-in/[[...sign-in]]`. The website h
 shows a **Sign in** link to that page for a signed-out visitor (Clerk isn't loaded yet), and the
 account menu once signed in, via `AuthMenu` (opt-in on the publishable key).
 
-**Redirects (precedence):** `forceRedirectUrl` → a validated `redirect_url` → the
-app's home (`fallbackRedirectUrl`, default `/`). A user bounced from a protected page
-returns there; otherwise they land on that surface's own homepage. Every redirect we
-build ourselves passes through **`resolveSignInRedirect` / `isSafeRelativePath`** — a
-`redirect_url` is honored only when it's a same-origin **relative path**; anything
-absolute / protocol-relative / cross-origin falls back to home (open-redirect guard).
+**Redirects (precedence):** a validated `redirect_url` → the app's home
+(`fallbackRedirectUrl`, default `/`). A user bounced from a protected page returns there;
+otherwise they land on that surface's own homepage. We pass only the fixed home; Clerk reads
+and validates `redirect_url` itself against the instance's allowed origins, so an absolute or
+cross-origin target never wins (open-redirect guard).
 
 ## Session sharing across surfaces
 

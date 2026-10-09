@@ -13,6 +13,7 @@ import {
   type ReactNode,
 } from "react";
 import { Link } from "@indiecrafts/packages-web-i18n";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import type {
   AnnouncementLink,
@@ -116,15 +117,17 @@ export function AnnouncementToast({
             </LinkView>
           ) : null}
         </div>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-xs"
           aria-label={dismissLabel}
           title={dismissLabel}
           onClick={close}
-          className="focus-visible:ring-ring text-muted-foreground hover:text-foreground -mt-1 -mr-1 shrink-0 self-start rounded p-1 text-lg leading-none focus-visible:ring-2 focus-visible:outline-none"
+          className="text-muted-foreground hover:text-foreground -mt-1 -mr-1 shrink-0 self-start text-lg leading-none"
         >
           <span aria-hidden="true">×</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

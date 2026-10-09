@@ -17,6 +17,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **Launch checklist: arm the defenses that run open until configured** — the edge stack on the
+  real domain, the per-env GDPR salt, the worker secrets, and a check that each is live. Ported
+  from `feat/harden-security-p1` and corrected: the salt is one value per env, and the admin gate
+  already fails closed without Clerk keys.
 - **Email pages: the support line and email languages.** The email brick page documents
   `renderEmail`, the localized footer, the support address as the on/off switch, and lists every
   email group (contact, document delivery and the api worker's compliance emails were missing).

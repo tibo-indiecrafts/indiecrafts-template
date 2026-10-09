@@ -15,7 +15,6 @@
     "./session-logger": "./src/session-logger.tsx",
     "./persist-locale": "./src/persist-locale.tsx",
     "./session-log": "./src/session-log.ts",
-    "./redirect": "./src/redirect.ts",
     "./account": "./src/account/account-modal.tsx",
     "./testing/clerk-user": "./src/testing/clerk-user.ts"
   },

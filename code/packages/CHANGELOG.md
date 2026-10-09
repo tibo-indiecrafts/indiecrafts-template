@@ -68,6 +68,9 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **announcement: the dismiss and copy-code controls use the shadcn `Button`** (`ghost`,
+  `icon-xs` / `xs`) instead of raw `<button>`s with their own focus ring. Ported from the
+  `feat/profile-locale` branch.
 - **`packages-web-email` — the `emailPreferences` seed grants every category at sign-up.** `news`,
   `offers`, `partners` and `tips` all start with `includeAtSignup` on. **Why:** the sign-up box now
   asks for "emails from us and our partners", so a yes covers all four.

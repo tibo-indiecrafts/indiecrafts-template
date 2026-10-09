@@ -13,6 +13,7 @@ import {
   type ReactNode,
 } from "react";
 import { Link } from "@indiecrafts/packages-web-i18n";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import type {
   BannerItem,
@@ -116,18 +117,20 @@ export function AnnouncementBar({
           )}
         </p>
         {dismissible ? (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon-xs"
             aria-label={dismissLabel}
             title={dismissLabel}
             onClick={() => {
               dismissAnnouncement(version);
               setHidden(true);
             }}
-            className="focus-visible:ring-ring shrink-0 rounded p-1 text-lg leading-none opacity-80 hover:opacity-100 focus-visible:ring-2 focus-visible:outline-none"
+            className="shrink-0 text-lg leading-none opacity-80 hover:opacity-100"
           >
             <span aria-hidden="true">×</span>
-          </button>
+          </Button>
         ) : null}
       </div>
     </aside>
@@ -175,8 +178,10 @@ function CodeChip({
 }) {
   const [copied, setCopied] = useState(false);
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="xs"
       aria-label={`${copyLabel} ${code}`}
       title={copied ? copiedLabel : copyLabel}
       onClick={async () => {
@@ -188,9 +193,9 @@ function CodeChip({
           // clipboard blocked — the code is still visible to copy by hand
         }
       }}
-      className="focus-visible:ring-ring ml-2 inline-flex items-center rounded bg-black/10 px-1.5 py-0.5 font-mono text-xs font-semibold focus-visible:ring-2 focus-visible:outline-none"
+      className="ml-2 bg-black/10 font-mono font-semibold"
     >
       {copied ? copiedLabel : code}
-    </button>
+    </Button>
   );
 }

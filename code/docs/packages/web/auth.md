@@ -29,7 +29,6 @@ Root `.` barrel:
 - **`SignInView` / `SignUpView`** — the prebuilt, themed sign-in/up surfaces for a catch-all route.
 - **`SignInModalButton`** — the header's sign-in button: opens Clerk's modal with `unsafeMetadata.locale`, because Clerk signs up inside the modal and `<SignInButton>` can't pass metadata.
 - **`SessionLogger`** — fires one audit ping per Clerk session, deduped in `sessionStorage`.
-- **`isSafeRelativePath` / `resolveSignInRedirect`** — open-redirect guard and post-sign-in target.
 - Re-exported from `@clerk/nextjs`: **`SignInButton`**, **`SignOutButton`**, **`UserButton`**, **`Show`**.
 
 Subpath-only exports (not in the root barrel): `./persist-locale` (`persistLocale`), `./clerk-active` (`useClerkActive`),

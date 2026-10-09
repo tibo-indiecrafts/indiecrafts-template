@@ -20,8 +20,6 @@ Re-exports the web auth brick's public API — the provider, sign-in/up views, a
 - `SignInView` — the themed sign-in surface.
 - `SignUpView` — the themed sign-up surface.
 - `SessionLogger` — one log ping per Clerk session.
-- `isSafeRelativePath` — same-origin redirect guard.
-- `resolveSignInRedirect` — post-sign-in target resolver.
 - `SignInButton`, `SignOutButton`, `UserButton`, `Show` — re-exported `@clerk/nextjs` UI controls (`Show` replaces the old `<SignedIn>` / `<SignedOut>`).
 
 ## Usage

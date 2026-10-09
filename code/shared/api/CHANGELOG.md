@@ -38,6 +38,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **Auth contract test** (`src/auth-contract.test.ts`): every `/v1` route answers an anonymous
+  caller with its own refusal (>= 400). The route list is read from `index.ts`, so a new route
+  fails the test until it is listed as guarded or public with a reason. **Why:**
+  `check:api-guards` scans the Next routes only. Ported from `feat/harden-security-p1`, rewritten
+  for today's 28 guarded routes.
 - **Anonymous post-view counter for the blog's Trending block.** `POST /v1/views` (server bearer,
   body `{ postId, locale }`) adds 1 to today's counter in a new `post_views` table (`main` D1,
   migration `0015`); `GET /v1/views/top?locale=&limit=&days=` returns the most-viewed post ids.

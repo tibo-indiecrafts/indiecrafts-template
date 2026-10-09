@@ -41,6 +41,19 @@ The app deploys to Cloudflare Workers via OpenNext (dev / staging / prod). The *
 Turnstile CAPTCHA on the public forms, set **both** `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET`
 (set only one and submissions are rejected) — see the Turnstile block in [`environment.md`](/projects/web/website/setup/environment).
 
+**Arm the rest of the defenses.** These also run open or idle until configured:
+
+- [ ] **Edge stack** — on `*.workers.dev` the WAF, bot, rate-limit and leaked-credential rules do
+      nothing. Put the site on its real domain and apply the zone stack:
+      `pnpm infra:web:website:apply:prod` (the api has its own stack under `code/shared/api/infra/`).
+- [ ] **GDPR fingerprint salt** — `pnpm gdpr:salt:generate`, then `pnpm gdpr:salt:set:prod`; check
+      with `pnpm gdpr:salt:status:prod`. One value per env, never rotated: it is the key that finds a
+      person's records on erasure.
+- [ ] **Worker secrets** — `pnpm secrets:sync:shared:api:prod` and `pnpm secrets:sync:web:website:prod`
+      push `APP_API_TOKEN`, `CLERK_WEBHOOK_SECRET`, the Sanity tokens and the rest from the env files.
+- [ ] **Check them** — a public form POST without a valid Turnstile token is refused, `/admin`
+      sends a signed-out visitor to sign in, and an erasure request finds its subject.
+
 ### Env vars + secrets
 
 Public `NEXT_PUBLIC_*` go in `wrangler.toml [vars]` (and GitHub Environment **vars** for the CI build); server tokens are **secrets** (`wrangler secret put … --env <env>`, and GitHub Environment **secrets**). Full reference in [`environment.md`](/projects/web/website/setup/environment).
