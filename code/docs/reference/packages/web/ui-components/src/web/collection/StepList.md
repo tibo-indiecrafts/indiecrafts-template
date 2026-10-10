@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders a `module.step-list` block as a numbered vertical timeline. Each step's number sits in a circle, and a connector line runs between consecutive circles so the sequence reads as a flow. Step bodies are portable text.
+Renders a `module.step-list` block as a numbered vertical timeline. Each step's number sits in a circle, and a connector line runs between consecutive circles so the sequence reads as a flow. Step bodies are portable text. The step text can shrink (`min-w-0`) and breaks long words (`break-words`), so a long word does not overflow a narrow column.
 
 ## Exports
 

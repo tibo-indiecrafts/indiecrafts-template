@@ -104,4 +104,5 @@ Drop it from the schema, the `<Name>Module` type, the block `.md`, `seed.mjs`, a
 
 - `custom-html` renders raw HTML (`dangerouslySetInnerHTML`) — a trusted-editor escape hatch, not the modelled default; keep it role-gated.
 - GROQ cannot recurse: a block inside a container inside a container is not resolved (`LEAF` covers one level).
+- Site pages dispatch through the blog's `Modules` and drop blog blocks by their `module.blog-` prefix (`siteBlocks`). A second content module (shop, events) needs a renderer registry that modules register into.
 - Not built yet: reusable section documents (one block shared by several pages), insert-menu preview images, and the Presentation preview for `page` (pages read the published perspective).

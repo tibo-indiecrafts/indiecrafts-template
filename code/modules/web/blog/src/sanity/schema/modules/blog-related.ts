@@ -29,7 +29,7 @@ export default defineModule({
       title: "Nombre d'articles",
       type: "number",
       initialValue: 4,
-      validation: (Rule) => Rule.min(1).max(8),
+      validation: (Rule) => Rule.min(1).max(8).integer(),
     }),
   ],
 });

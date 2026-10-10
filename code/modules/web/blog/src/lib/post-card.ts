@@ -29,6 +29,7 @@ export function toPostCard(
     href: localizedPathname(`/blog/${post.slug ?? ""}`, locale),
     title: post.metadata?.title ?? post.title ?? "",
     image: post.metadata?.image?.asset?.url,
+    imageAlt: post.metadata?.image?.alt || undefined,
     lqip: post.metadata?.image?.asset?.metadata?.lqip,
     category: display.taxonomy.categories
       ? post.categories?.[0]?.title

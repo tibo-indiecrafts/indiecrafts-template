@@ -12,12 +12,12 @@ status: stable
 
 The `Modules` component drives every block list that can hold blog blocks: the blog's frontpage and post layouts, site pages, the home page and the sidebar. It iterates a module array, skips hidden entries, and dispatches each. An internal switch handles the blog blocks, which fetch and render live posts. Every other module is a generic block that `@indiecrafts/packages-web-ui-components` renders via `renderBlock`. It returns `null` for the empty-array case, so route callers fall back to their hard-coded default layout.
 
-Outside a post, it skips the blocks that describe the post being read (`blog-toc`, `blog-related`, `blog-post-content`). With `context.sidebar`, each block sits in a `SidebarCard`: generic blocks render `inline`, and the post lists render as compact `PostLinks`. The `blog-toc` card is hidden below `lg`, because `MobileToc` shows it above the article. Outside a sidebar, blog blocks that paint no `id` get a wrapper `div` with their `anchor`.
+Outside a post, it skips the blocks that describe the post being read: `POST_ONLY_TYPES` from `sanity/block-types.ts` (`blog-toc`, `blog-related`, `blog-post-content`). With `context.sidebar`, each block sits in a `SidebarCard`: generic blocks render `inline`, and the post lists render as compact `PostLinks`. The `blog-toc` card is hidden below `lg`, because `MobileToc` shows it above the article. Outside a sidebar, blog blocks that paint no `id` get a wrapper `div` with their `anchor`.
 
 ## Exports
 
 - `Modules` — async server component; takes `modules` (`AnyModule[]`) and `context` (`ModuleContext`).
-- `ModuleContext` — type: `{ locale: Locale; post?: Post; sidebar?: boolean; postSidebar?: PostSidebar }`. `postSidebar` is the post's sidebar that `blog-post-content` paints beside the body.
+- `ModuleContext` — type: `{ locale: Locale; post?: Post; sidebar?: boolean; postSidebar?: PostSidebar; related?: PostListItem[] }`. `postSidebar` is the post's sidebar that `blog-post-content` paints beside the body. `related` is the post's related posts, fetched once by the route, for the `blog-related` card.
 
 ## Usage
 

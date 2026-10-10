@@ -16,7 +16,7 @@ Defines the blog's GROQ queries with `defineQuery` (typegen-ready). Every post /
 
 - `POST_CARD_PROJECTION` — the shared post-card field shape for every listing.
 - `MODULES_FRAGMENT` — the generic page-builder projection plus the blog blocks that hold references (`blog-post-list`, `blog-topic-cards`). Post bodies, the blog layouts, site pages, the home page and the sidebar use it.
-- Post reads — `allPostsQuery`, `featuredPostsQuery`, `postBySlugQuery`, `relatedPostsQuery`, `allPostSlugsQuery`, `rssPostsQuery`, `searchPostsQuery`. `postBySlugQuery` also projects the post's `sidebar` (via `sidebarProjection`). `relatedPostsQuery` returns at most `$limit` posts.
+- Post reads — `allPostsQuery`, `postBySlugQuery`, `relatedPostsQuery`, `allPostSlugsQuery`, `rssPostsQuery`, `searchPostsQuery`. `postBySlugQuery` also projects the post's `sidebar` (via `sidebarProjection`). `relatedPostsQuery` returns at most `$limit` posts.
 - Series reads — `seriesBySlugQuery`, `postsBySeriesSlugQuery`, `postsBySeriesCountQuery`, `allSeriesSlugsQuery`.
 - Blog singleton — `blogSingletonQuery`, `blogDisplayQuery`.
 - Comments — `approvedCommentsQuery` (never projects `authorEmail`).

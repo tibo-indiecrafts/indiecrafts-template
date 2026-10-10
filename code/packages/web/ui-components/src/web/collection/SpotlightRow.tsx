@@ -48,7 +48,7 @@ export function SpotlightRow({
           </a>
         ) : null}
       </div>
-      <div className="grid grid-cols-1 gap-6 @2xl:grid-cols-2 @4xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 @xl:grid-cols-2 @4xl:grid-cols-4">
         {items.map((post) => (
           <PostCard key={post._key} post={post} />
         ))}

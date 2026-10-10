@@ -10,13 +10,13 @@ status: stable
 
 ## Purpose
 
-Builds the documents that the block sidebar needs. The seed uses them for new datasets. `sidebar-migrate.mjs` uses them for existing datasets. `homeFeaturedBlock` returns the home's "Articles à la une" block: a `module.blog-featured` with `layout: "editorial"`, `source: "flag"`, and `limit: 4`. `sidebarSettingsDoc` returns `sidebarSettings-<lang>`. In it, articles show the post's table of contents and four related posts. Every other page type keeps the empty default, so it has no sidebar.
+Builds the documents that the block sidebar needs. The seed uses them for new datasets. `sidebar-migrate.mjs` uses them for existing datasets. `homeFeaturedBlock` returns the home's "Articles à la une" block: a `module.blog-featured` with `layout: "editorial"`, `source: "flag"`, and `limit: 4`. `sidebarSettingsDoc` returns `sidebarSettings-<lang>`. In it, articles show the post's table of contents and four related posts. Its `{ toc, related }` option (both `true` by default) leaves either card out. Every other page type keeps the empty default, so it has no sidebar.
 
 ## Exports
 
 - `HOME_FEATURED_COPY` — the featured block copy (`eyebrow`, `title`, `intro`, `viewAll`) per locale (`en`, `fr`).
 - `homeFeaturedBlock(lang, _key)` — the home's `module.blog-featured` block, anchored at `home-featured`.
-- `sidebarSettingsDoc(lang, key)` — the `sidebarSettings-<lang>` document. `key` is a function that returns a new `_key`.
+- `sidebarSettingsDoc(lang, key)` — the `sidebarSettings-<lang>` document. `key` is a function that returns a new `_key`. The optional `{ toc, related }` turns off either card.
 
 ## Usage
 

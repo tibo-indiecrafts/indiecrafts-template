@@ -55,6 +55,8 @@ export type PostCardItem = {
   href: string;
   title: string;
   image?: string;
+  /** The cover's editor alt text, where a layout shows the image as content (the editorial lead). */
+  imageAlt?: string;
   lqip?: string;
   category?: string;
   author?: string;

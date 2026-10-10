@@ -33,17 +33,18 @@ export const homeFeaturedBlock = (lang, _key) => ({
 
 /**
  * `sidebarSettings-<lang>`: articles show the post's table of contents and its related
- * posts; every other page type inherits the empty default (no sidebar).
+ * posts (each unless `toc` / `related` is false); every other page type inherits the empty
+ * default (no sidebar).
  */
-export const sidebarSettingsDoc = (lang, key) => ({
+export const sidebarSettingsDoc = (lang, key, { toc = true, related = true } = {}) => ({
   _id: `sidebarSettings-${lang}`,
   _type: "sidebarSettings",
   byType: {
     post: {
       mode: "custom",
       blocks: [
-        { _type: "module.blog-toc", _key: key() },
-        { _type: "module.blog-related", _key: key(), limit: 4 },
+        ...(toc ? [{ _type: "module.blog-toc", _key: key() }] : []),
+        ...(related ? [{ _type: "module.blog-related", _key: key(), limit: 4 }] : []),
       ],
     },
   },

@@ -152,20 +152,6 @@ export const allPostsQuery = defineQuery(`
   }
 `);
 
-export const featuredPostsQuery = defineQuery(`
-  *[_type == "post"
-    && defined(media.slug.current)
-    && seo.noIndex != true
-    && seo.hideFromDiscovery != true
-    && seo.unpublished != true
-    && featured == true
-    && coalesce(publishedAt, _createdAt) <= now()
-    && coalesce(language, "en") == $locale]
-  | order(${ORDER_BY_PRIORITY}) {
-    ${POST_CARD_PROJECTION}
-  }
-`);
-
 export const postBySlugQuery = defineQuery(`
   *[_type == "post"
     && media.slug.current == $slug

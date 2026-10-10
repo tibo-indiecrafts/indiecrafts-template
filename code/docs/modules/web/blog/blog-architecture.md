@@ -110,7 +110,6 @@ Inside it, each `_type == "module.X" => { ... }` branch dereferences only what t
 | Query                        | Locale-filtered?  | Consumed by                                                                                                                                      |
 | ---------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `allPostsQuery`              | yes               | `DefaultBlogFrontpage`, category fallback                                                                                                        |
-| `featuredPostsQuery`         | yes               | The hero mosaic in `DefaultBlogFrontpage` (the code-default `/blog`, when `frontpageModules` is empty)                                           |
 | `blogHeroQuery`              | yes               | `module.blog-hero` (`BlogHeroModule`) — latest or one pinned post                                                                                |
 | `blogFeaturedQuery`          | yes               | `module.blog-featured` (`BlogFeatured`) — flagged or pinned posts                                                                                |
 | `blogCategorySpotlightQuery` | yes               | `module.blog-category-spotlight` (`BlogCategorySpotlight`) — one category + its posts                                                            |

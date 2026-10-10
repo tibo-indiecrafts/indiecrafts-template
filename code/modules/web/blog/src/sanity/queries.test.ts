@@ -10,7 +10,6 @@ import {
   blogFeaturedQuery,
   blogHeroQuery,
   categoriesForLocaleQuery,
-  featuredPostsQuery,
   moduleBlogPostListQuery,
   postBySlugQuery,
   postsByAuthorCountQuery,
@@ -53,7 +52,8 @@ const run = async <T>(
   dataset: unknown[],
   params: Record<string, unknown> = {},
 ): Promise<T> => {
-  const tree = parse(query);
+  // Params at parse time too: a slice bound like `[0...$limit]` must be a constant there.
+  const tree = parse(query, { params });
   const value = await evaluate(tree, { dataset, params });
   return (await value.get()) as T;
 };
@@ -135,23 +135,25 @@ describe("allPostsQuery — the main listing's public filter", () => {
   });
 });
 
-describe("featuredPostsQuery — regression: leaked unpublished/hidden posts (was noIndex-only)", () => {
+// The flagged posts behind every « Articles à la une » block (the home strip included).
+describe("blogFeaturedQuery (flag) — regression: leaked unpublished/hidden posts (was noIndex-only)", () => {
   const featuredPosts = posts.map((p) => ({ ...p, featured: true }));
+  const flag = { locale: "en", pinnedIds: [], useFlag: true, limit: 20 };
 
   it("returns only the public and createdAt-only featured posts", async () => {
     const result = await run<{ slug: string }[]>(
-      featuredPostsQuery,
+      blogFeaturedQuery,
       featuredPosts,
-      { locale: "en" },
+      flag,
     );
     expect(result.map((p) => p.slug)).toEqual(["public", "createdonly"]);
   });
 
   it("excludes a featured post that is unpublished, hidden, noIndex, or scheduled", async () => {
     const result = await run<{ slug: string }[]>(
-      featuredPostsQuery,
+      blogFeaturedQuery,
       featuredPosts,
-      { locale: "en" },
+      flag,
     );
     const slugs = result.map((p) => p.slug);
     expect(slugs).not.toContain("noindex");
@@ -204,7 +206,6 @@ describe("postBySlugQuery — the direct-URL detail read", () => {
 describe("public post/taxonomy queries — public-filter clause drift guard", () => {
   const LISTING_QUERIES: [string, string][] = [
     ["allPostsQuery", allPostsQuery],
-    ["featuredPostsQuery", featuredPostsQuery],
     ["relatedPostsQuery", relatedPostsQuery],
     ["rssPostsQuery", rssPostsQuery],
     ["postsBySeriesSlugQuery", postsBySeriesSlugQuery],
@@ -322,5 +323,30 @@ describe("series nav + taxonomy counts — same filter as the listings", () => {
       [`${prefix}.public`]: 1,
       [`${prefix}.ghost`]: 1,
     });
+  });
+});
+
+describe("relatedPostsQuery — one fetch for the grid and the sidebar card", () => {
+  const params = { locale: "en", id: "post.public", categoryIds: [] };
+
+  it("never returns the current post, and only public posts", async () => {
+    const result = await run<{ slug: string }[]>(relatedPostsQuery, posts, {
+      ...params,
+      limit: 10,
+    });
+    expect(result.map((p) => p.slug)).toEqual(["createdonly"]);
+  });
+
+  it("returns at most $limit posts", async () => {
+    const many = Array.from({ length: 6 }, (_, i) => ({
+      ...posts[0],
+      _id: `post.p${i}`,
+      media: { slug: { current: `p${i}` } },
+    }));
+    const result = await run<unknown[]>(relatedPostsQuery, many, {
+      ...params,
+      limit: 4,
+    });
+    expect(result).toHaveLength(4);
   });
 });

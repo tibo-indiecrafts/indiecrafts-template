@@ -94,7 +94,18 @@ export default defineModule({
       title: "Limite",
       type: "number",
       initialValue: 4,
-      validation: (Rule) => Rule.min(1).max(20),
+      validation: (Rule) =>
+        Rule.min(1)
+          .max(20)
+          .integer()
+          .custom((limit, ctx) =>
+            (ctx.parent as { layout?: string } | undefined)?.layout ===
+              "editorial" &&
+            typeof limit === "number" &&
+            limit > 4
+              ? "La présentation « liste » affiche 4 articles au plus."
+              : true,
+          ),
       description: "Nombre maximum d'articles affichés.",
     }),
     defineField({

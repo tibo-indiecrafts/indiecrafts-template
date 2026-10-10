@@ -10,10 +10,11 @@ status: stable
 
 ## Purpose
 
-`FeaturedEditorial` is the `editorial` layout of `FeaturedPosts`. The first post renders as a large card: image or an in-place video, category, title, excerpt and meta. The next three posts render as compact rows with a thumbnail, title and meta. The card and the rows sit side by side from a `@4xl` container and stack below it. With no runners-up, the lead card takes the full width. It renders nothing when `posts` is empty.
+`FeaturedEditorial` is the `editorial` layout of `FeaturedPosts`. The first post renders as a large card: image or an in-place video, category, title, excerpt and meta. The lead image alt text is `imageAlt`, else the title. The next posts, up to `EDITORIAL_MAX` in all, render as compact rows with a thumbnail, title and meta. The card and the rows sit side by side from a `@4xl` container and stack below it. With no runners-up, the lead card takes the full width. It renders nothing when `posts` is empty.
 
 ## Exports
 
+- `EDITORIAL_MAX` — the most posts the layout shows: `4` (the lead and three rows).
 - `FeaturedEditorial` — takes `posts` (`PostCardItem[]`) and `playLabel` (the lead video's play button label, from the host's messages).
 
 ## Usage

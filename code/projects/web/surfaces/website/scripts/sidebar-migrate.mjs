@@ -6,10 +6,13 @@
  *   node --env-file=.env.local scripts/sidebar-migrate.mjs --apply    # writes it
  *   … --dataset tests-e2e --apply
  *
- * - Creates `sidebarSettings-<locale>` (articles: the post's TOC + related posts), so posts
- *   keep the sidebar they had before it became configurable.
+ * - Creates `sidebarSettings-<locale>` for every locale with a home page or the default
+ *   copy (articles: the post's TOC + related posts), so posts keep the sidebar they had
+ *   before it became configurable. A card the editor had turned off
+ *   (`blog.display.post.tableOfContents` / `relatedPosts` false) is left out.
  * - Adds the "Articles à la une" block to each home page (published and draft) that has
- *   none: the strip the home used to render in code.
+ *   none: the strip the home used to render in code. A locale with no copy in
+ *   `HOME_FEATURED_COPY` is reported and skipped.
  * - Unsets `blog.display.post.tableOfContents`: the TOC is now a sidebar card.
  *
  * New datasets get all three from the seed. Safe to re-run: each step skips what is done.
@@ -25,7 +28,6 @@ import {
   sidebarSettingsDoc,
 } from "./lib/blocks-sidebar.mjs";
 
-const LANGS = Object.keys(HOME_FEATURED_COPY);
 const key = () => randomUUID().slice(0, 12);
 
 /**
@@ -34,18 +36,32 @@ const key = () => randomUUID().slice(0, 12);
  */
 export function planSidebarMigration(docs, newKey = key) {
   const ids = new Set(docs.map((d) => d._id));
-  const creates = LANGS.filter((l) => !ids.has(`sidebarSettings-${l}`)).map((l) =>
-    sidebarSettingsDoc(l, newKey),
+  const allHomes = docs.filter((d) => d._type === "page" && d.isHome === true);
+  const langs = [
+    ...new Set([...Object.keys(HOME_FEATURED_COPY), ...allHomes.map((d) => d.language)]),
+  ].filter(Boolean);
+  // The published blog's old toggles: a card the editor had turned off stays off.
+  const post = docs.find((d) => d._id === "blog")?.display?.post ?? {};
+  const cards = {
+    toc: post.tableOfContents !== false,
+    related: post.relatedPosts !== false,
+  };
+  const creates = langs
+    .filter((l) => !ids.has(`sidebarSettings-${l}`))
+    .map((l) => sidebarSettingsDoc(l, newKey, cards));
+  const lacking = allHomes.filter(
+    (d) => !(d.sections ?? []).some((s) => s._type === "module.blog-featured"),
   );
-  const homes = docs
-    .filter((d) => d._type === "page" && d.isHome === true)
-    .filter((d) => !(d.sections ?? []).some((s) => s._type === "module.blog-featured"))
-    .filter((d) => LANGS.includes(d.language))
+  const homes = lacking
+    .filter((d) => HOME_FEATURED_COPY[d.language])
     .map((d) => ({ id: d._id, block: homeFeaturedBlock(d.language, newKey()) }));
+  const skipped = lacking
+    .filter((d) => !HOME_FEATURED_COPY[d.language])
+    .map((d) => d._id);
   const blogs = docs
     .filter((d) => d._type === "blog" && d.display?.post?.tableOfContents !== undefined)
     .map((d) => d._id);
-  return { creates, homes, blogs };
+  return { creates, homes, blogs, skipped };
 }
 
 async function main() {
@@ -73,17 +89,18 @@ async function main() {
     perspective: "raw", // drafts too
   });
   const docs = await client.fetch(
-    `*[_id in $settings || (_type == "page" && isHome == true) || _type == "blog"]{
+    `*[_type == "sidebarSettings" || (_type == "page" && isHome == true) || _type == "blog"]{
       _id, _type, isHome, language, "sections": sections[]{ _type }, display
     }`,
-    { settings: LANGS.map((l) => `sidebarSettings-${l}`) },
   );
-  const { creates, homes, blogs } = planSidebarMigration(docs);
+  const { creates, homes, blogs, skipped } = planSidebarMigration(docs);
 
   console.log(`${projectId}/${dataset}:`);
   for (const d of creates) console.log(`  create ${d._id}`);
   for (const h of homes) console.log(`  ${h.id}: add "Articles à la une"`);
   for (const id of blogs) console.log(`  ${id}: unset display.post.tableOfContents`);
+  for (const id of skipped)
+    console.log(`  ${id}: skipped (no "Articles à la une" copy for its locale)`);
   if (!creates.length && !homes.length && !blogs.length)
     return console.log("✓ Nothing to do.");
   if (!apply) return console.log("Dry run. Re-run with --apply to write.");

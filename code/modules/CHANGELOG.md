@@ -13,6 +13,23 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **blog: post sidebar review fixes.** The route fetches related posts once (the "Keep reading"
+  grid and the `blog-related` card share them) and the sidebar settings in its first round trip;
+  `postSidebar` drops the TOC card with no heading and the related card with no related post, so an
+  empty card never keeps an empty column. `POST_ONLY_TYPES` (`sanity/block-types.ts`, no schema
+  code) lets pages drop the post's own cards. The editorial `blog-featured` fetches at most the 4
+  posts it shows (a Studio warning above 4); the lead keeps the cover's alt text (`imageAlt`);
+  `blog-related` / `blog-featured` limits are whole numbers.
+- **blog: breadcrumb links met 3.59:1 contrast** (`opacity-80` on muted text). They now keep the
+  muted colour (4.5:1+) and underline on hover.
+
+### Removed
+
+- **blog: `featuredPostsQuery`** — no runtime caller once the home strip became a block; its
+  public-filter regression test now runs on `blogFeaturedQuery`.
+
 ### Added
 
 - **blog: blog blocks on any page.** `BLOG_SECTION_TYPES` (featured, trending, latest posts,

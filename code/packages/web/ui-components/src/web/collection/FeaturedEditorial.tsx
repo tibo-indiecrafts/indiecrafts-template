@@ -9,6 +9,9 @@ import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { FeaturedMedia } from "../media/FeaturedMedia";
 import { PostMeta } from "./PostCard";
 
+/** Most posts the editorial layout shows: the lead + 3 rows. */
+export const EDITORIAL_MAX = 4;
+
 /**
  * The `editorial` layout of `FeaturedPosts`: the first post as a large card (image or a video
  * it plays in place, category, title, excerpt, meta), the next three as compact rows beside it. Side by side from a
@@ -24,7 +27,7 @@ export function FeaturedEditorial({
 }) {
   const [lead, ...rest] = posts;
   if (!lead) return null;
-  const rows = rest.slice(0, 3);
+  const rows = rest.slice(0, EDITORIAL_MAX - 1);
 
   return (
     <div className="grid gap-6 @4xl:grid-cols-12 @4xl:gap-8">
@@ -36,7 +39,7 @@ export function FeaturedEditorial({
       >
         <FeaturedMedia
           image={lead.image}
-          alt={lead.title}
+          alt={lead.imageAlt ?? lead.title}
           videoUrl={lead.video}
           lqip={lead.lqip}
           aspect="aspect-[3/2]"

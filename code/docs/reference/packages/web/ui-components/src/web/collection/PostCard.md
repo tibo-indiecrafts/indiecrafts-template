@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders one compact post card with image, category chip, title, and author and date. It is the shared card primitive reused by `FeaturedPosts`, `SpotlightRow`, and `Carousel` so every collection block renders identical cards.
+Renders one compact post card with image, category chip, title, and the author and date line (`PostMeta`). It is the shared card primitive reused by `FeaturedPosts`, `SpotlightRow`, and `Carousel` so every collection block renders identical cards.
 
 ## Exports
 

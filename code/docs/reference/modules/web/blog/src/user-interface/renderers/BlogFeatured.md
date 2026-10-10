@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`BlogFeatured` renders the "Featured" block on any page. It works in two modes: curated (`source === "pinned"`, the editor's picks in order) or automatic (`source === "flag"`, the latest posts marked `featured`). It fetches with `blogFeaturedQuery`, restores the manual pin order with `reorderByIds`, and maps each post with `toPostCard`. It passes `layout` (`grid` or `editorial`), `eyebrow`, `title`, `intro` and `anchor` to `FeaturedPosts`. A `viewAll` label adds a link to `/blog`. The first card renders as a lead when `leadCard` is on or the layout is `editorial`. With `compact` (in a sidebar), it renders a `PostLinks` list instead. It returns `null` when no post matches.
+`BlogFeatured` renders the "Featured" block on any page. It works in two modes: curated (`source === "pinned"`, the editor's picks in order) or automatic (`source === "flag"`, the latest posts marked `featured`). It fetches with `blogFeaturedQuery`: `limit` posts (default 4), capped at `EDITORIAL_MAX` in the `editorial` layout. It restores the manual pin order with `reorderByIds`, and maps each post with `toPostCard`. It passes `layout` (`grid` or `editorial`), `eyebrow`, `title`, `intro` and `anchor` to `FeaturedPosts`. A `viewAll` label adds a link to `/blog`. The first card renders as a lead when `leadCard` is on or the layout is `editorial`. With `compact` (in a sidebar), it renders a `PostLinks` list instead. It returns `null` when no post matches.
 
 ## Exports
 

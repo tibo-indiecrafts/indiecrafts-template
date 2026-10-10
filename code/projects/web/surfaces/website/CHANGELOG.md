@@ -17,6 +17,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Sidebar review fixes.** `pageSidebar` drops the post's own cards (TOC, related) on every other
+  page type, so no empty sidebar column; the post route reads its sidebar settings in the first
+  round trip and fetches related posts once. `scripts/sidebar-migrate.mjs` keeps a card the editor had
+  turned off (« Sommaire » / « À lire ensuite ») and covers every locale that has a home page.
+
 ### Added
 
 - **A sidebar on every page type.** Studio → Site web → Barre latérale (one document per locale)

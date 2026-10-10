@@ -15,6 +15,7 @@ import {
 } from "@indiecrafts/packages-web-page-builder/sanity/sidebar";
 import { MODULES_FRAGMENT } from "@indiecrafts/modules-web-blog/sanity/queries";
 import type { AnyModule } from "@indiecrafts/modules-web-blog/sanity/types";
+import { POST_ONLY_TYPES } from "@indiecrafts/modules-web-blog/sanity/block-types";
 import { SIDEBAR_PAGES, type SidebarPage } from "@/sanity/sidebar-pages";
 
 const QUERIES = Object.fromEntries(
@@ -22,7 +23,7 @@ const QUERIES = Object.fromEntries(
 ) as Record<SidebarPage, string>;
 
 /** The locale's settings for one page type; `null` on error, so a page renders without a sidebar. */
-const getSidebarSettings = cache(
+export const getSidebarSettings = cache(
   async (locale: Locale, page: SidebarPage): Promise<SidebarSettings<AnyModule>> => {
     try {
       return await client.fetch<SidebarSettings<AnyModule>>(QUERIES[page], { locale });
@@ -36,11 +37,27 @@ const getSidebarSettings = cache(
 /**
  * The blocks this site can render: without the blog, its blocks are dropped (a page or
  * a sidebar may still list them from before the blog was turned off).
+ * ponytail: pages dispatch through the blog's `Modules` and filter its blocks by prefix. A
+ * second content module (shop, events) → a renderer registry that modules register into.
  */
 export function siteBlocks<B extends { _type: string }>(blocks: B[]): B[] {
   return features.blog
     ? blocks
     : blocks.filter((b) => !b._type.startsWith("module.blog-"));
+}
+
+/**
+ * The cards of a page of type `page` from its `settings` and its document's own `choice`.
+ * Off a post, the post's own cards (TOC, related) go: they would render nothing and leave
+ * an empty column.
+ */
+export function pageSidebar(
+  page: SidebarPage,
+  settings: SidebarSettings<AnyModule>,
+  choice?: SidebarChoice<AnyModule>,
+): AnyModule[] {
+  const cards = siteBlocks(resolveSidebar(choice, settings));
+  return page === "post" ? cards : cards.filter((c) => !POST_ONLY_TYPES.has(c._type));
 }
 
 /** The sidebar cards of a page of type `page`, its document's own `choice` first. */
@@ -49,5 +66,5 @@ export async function getSidebar(
   page: SidebarPage,
   choice?: SidebarChoice<AnyModule>,
 ): Promise<AnyModule[]> {
-  return siteBlocks(resolveSidebar(choice, await getSidebarSettings(locale, page)));
+  return pageSidebar(page, await getSidebarSettings(locale, page), choice);
 }

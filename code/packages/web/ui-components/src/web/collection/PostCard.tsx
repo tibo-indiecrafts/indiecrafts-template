@@ -43,17 +43,7 @@ export function PostCard({ post }: { post: PostCardItem }) {
             <span className="line-clamp-2">{post.title}</span>
           </a>
         </h3>
-        {post.author || post.date ? (
-          <div className="text-muted-foreground mt-auto flex items-center gap-2 pt-2 text-xs">
-            {post.author ? (
-              <span className="truncate">{post.author}</span>
-            ) : null}
-            {post.author && post.date ? (
-              <span aria-hidden="true">·</span>
-            ) : null}
-            {post.date ? <span>{post.date}</span> : null}
-          </div>
-        ) : null}
+        <PostMeta post={post} className="text-muted-foreground mt-auto pt-2" />
       </div>
     </article>
   );

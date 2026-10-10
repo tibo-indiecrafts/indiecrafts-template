@@ -95,11 +95,11 @@ export function FeaturedPosts({
           playLabel={playLabel}
         />
       ) : (
-        <div className="grid grid-cols-1 gap-6 @2xl:grid-cols-2 @4xl:grid-flow-dense @4xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 @xl:grid-cols-2 @4xl:grid-flow-dense @4xl:grid-cols-3">
           {lead ? (
             <LeadCard
               post={lead}
-              className="@2xl:col-span-2 @4xl:col-span-2 @4xl:row-span-2"
+              className="@xl:col-span-2 @4xl:col-span-2 @4xl:row-span-2"
             />
           ) : null}
           {items.map((post) => (

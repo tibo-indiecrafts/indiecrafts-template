@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Defines the `module.blog-featured` page-builder block. It can sit on any page, to promote the blog. A `layout` radio picks `grid` (lead card + grid, the default) or `editorial` (lead card + list, the home page's strip). Optional `eyebrow`, `intro` and `viewAll` (the label of a link to the blog) frame the block; an empty field hides its part. A `source` radio chooses between auto-updating posts flagged `featured` (`flag`) and a fixed `pinned` selection. A `limit` (1–20, default 4) caps the count. `leadCard` (default on) renders the first post large; the `editorial` layout hides it, because that layout always leads. The pinned picker is hidden unless the source is `pinned` and is filtered to the document language.
+Defines the `module.blog-featured` page-builder block. It can sit on any page, to promote the blog. A `layout` radio picks `grid` (lead card + grid, the default) or `editorial` (lead card + list, the home page's strip). Optional `eyebrow`, `intro` and `viewAll` (the label of a link to the blog) frame the block; an empty field hides its part. A `source` radio chooses between auto-updating posts flagged `featured` (`flag`) and a fixed `pinned` selection. A `limit` (an integer, 1–20, default 4) caps the count. The `editorial` layout shows 4 posts at most, so a higher `limit` there gets a warning. `leadCard` (default on) renders the first post large; the `editorial` layout hides it, because that layout always leads. The pinned picker is hidden unless the source is `pinned` and is filtered to the document language.
 
 ## Exports
 

@@ -23,7 +23,7 @@ import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { DefaultPostLayout } from "@indiecrafts/modules-web-blog/user-interface/post/layout/DefaultPostLayout";
 import { Modules } from "@indiecrafts/modules-web-blog/user-interface/renderers/ModuleRenderer";
 import { postSidebar } from "@indiecrafts/modules-web-blog/user-interface/post/layout/post-sidebar";
-import { getSidebar } from "@/lib/sidebar";
+import { getSidebarSettings, pageSidebar } from "@/lib/sidebar";
 import { Comments } from "@indiecrafts/modules-web-blog/user-interface/post/sections/Comments";
 import { PostViewBeacon } from "@indiecrafts/modules-web-blog/user-interface/post/components/PostViewBeacon";
 import { isCommentsEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
@@ -36,6 +36,7 @@ import {
   relatedPostsQuery,
 } from "@indiecrafts/modules-web-blog/sanity/queries";
 import type {
+  BlogRelatedModule,
   BlogSingleton,
   Post,
   PostListItem,
@@ -116,17 +117,20 @@ export default async function BlogPostPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const [post, blog, display, nav, settings, subnav] = await Promise.all([
-    sanityFetchLive<Post | null>({ query: postBySlugQuery, params: { slug, locale } }),
-    sanityFetchLive<BlogSingleton | null>({
-      query: blogSingletonQuery,
-      params: { locale },
-    }),
-    getBlogSettings(),
-    getTranslations("nav"),
-    getSiteSettings(),
-    getCategoryNav(locale),
-  ]);
+  const [post, blog, display, nav, settings, subnav, sidebarSettings] = await Promise.all(
+    [
+      sanityFetchLive<Post | null>({ query: postBySlugQuery, params: { slug, locale } }),
+      sanityFetchLive<BlogSingleton | null>({
+        query: blogSingletonQuery,
+        params: { locale },
+      }),
+      getBlogSettings(),
+      getTranslations("nav"),
+      getSiteSettings(),
+      getCategoryNav(locale),
+      getSidebarSettings(locale, "post"),
+    ],
+  );
   if (!post) return redirectToTranslation("post", slug, locale as Locale);
 
   const title = post.metadata?.title ?? post.title ?? "";
@@ -137,28 +141,27 @@ export default async function BlogPostPage({ params }: Props) {
   // (breadcrumbs / body slot / related). Empty array → DefaultPostLayout.
   const modules = blog?.postModules ?? [];
 
-  // Related posts — only fetched for the default layout. Module-driven
-  // layouts can drop their own `module.blog-post-list` instead.
-  // Filter null entries before mapping — GROQ returns null for refs the
-  // client can't resolve (deleted / private categories).
-  const categoryIds =
-    modules.length === 0
-      ? (post.categories ?? []).flatMap((c) => (c?._id ? [c._id] : []))
-      : [];
-  const related =
-    modules.length === 0
-      ? await sanityFetchLive<PostListItem[]>({
-          query: relatedPostsQuery,
-          params: { locale, id: post._id, categoryIds, limit: 3 },
-        })
-      : [];
-
-  // The sidebar cards beside the body: the post's own choice, else Site web → Barre latérale.
-  const sidebar = postSidebar(
-    await getSidebar(locale, "post", post.sidebar),
-    post,
-    locale,
+  // The sidebar cards: the post's own choice, else Site web → Barre latérale (« Articles »).
+  const cards = pageSidebar("post", sidebarSettings, post.sidebar);
+  const relatedCard = cards.find(
+    (m): m is BlogRelatedModule => m._type === "module.blog-related",
   );
+
+  // Related posts, fetched once: the default layout's "Keep reading" grid (3) and the
+  // sidebar's related card (its own limit). Filter null entries before mapping — GROQ
+  // returns null for refs the client can't resolve (deleted / private categories).
+  const relatedLimit = Math.max(
+    modules.length === 0 ? 3 : 0,
+    relatedCard ? (relatedCard.limit ?? 4) : 0,
+  );
+  const categoryIds = (post.categories ?? []).flatMap((c) => (c?._id ? [c._id] : []));
+  const related = relatedLimit
+    ? await sanityFetchLive<PostListItem[]>({
+        query: relatedPostsQuery,
+        params: { locale, id: post._id, categoryIds, limit: relatedLimit },
+      })
+    : [];
+  const sidebar = postSidebar(cards, post, locale, related);
 
   const path = localizedPathname(`/blog/${slug}`, locale);
   // Evaluate once (not inline in JSX): a bare `new Date()` reached from the
@@ -215,7 +218,7 @@ export default async function BlogPostPage({ params }: Props) {
           image={image}
           title={title}
           description={description}
-          related={related}
+          related={related.slice(0, 3)}
           aside={sidebar.aside}
           mobileToc={sidebar.mobileToc}
           share={settings.share}

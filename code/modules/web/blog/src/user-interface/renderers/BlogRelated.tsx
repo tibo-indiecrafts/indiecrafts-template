@@ -8,40 +8,34 @@ import {
   localizedPathname,
   type Locale,
 } from "@indiecrafts/packages-shared-config";
-import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import type {
   BlogRelatedModule,
   Post,
   PostListItem,
 } from "@indiecrafts/modules-web-blog/sanity/types";
-import { relatedPostsQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { toPostCard } from "@indiecrafts/modules-web-blog/lib/post-card";
 import { PostLinks } from "./PostLinks";
 
 /**
- * The `blog-related` card: other posts sharing a category with `post` (the latest posts
- * when it has none), headed "More on <category>" with a link to that category. Nothing
- * outside a post or when no other post exists.
+ * The `blog-related` card: up to `limit` of the post's `related` posts (fetched once by
+ * the route: same category, else the latest), headed "More on <category>" with a link to
+ * that category. Nothing outside a post or with no related post.
  */
 export async function BlogRelated({
   module: m,
   post,
+  related,
   locale,
 }: {
   module: BlogRelatedModule;
   post?: Post;
+  related?: PostListItem[];
   locale: Locale;
 }) {
-  if (!post) return null;
-  const categoryIds = (post.categories ?? []).flatMap((c) =>
-    c?._id ? [c._id] : [],
-  );
-  const [posts, display, t] = await Promise.all([
-    sanityFetchLive<PostListItem[]>({
-      query: relatedPostsQuery,
-      params: { locale, id: post._id, categoryIds, limit: m.limit ?? 4 },
-    }),
+  const posts = (related ?? []).slice(0, m.limit ?? 4);
+  if (!post || !posts.length) return null;
+  const [display, t] = await Promise.all([
     getBlogSettings(),
     getTranslations({ locale, namespace: "pages.blog" }),
   ]);

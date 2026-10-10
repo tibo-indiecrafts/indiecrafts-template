@@ -12,7 +12,8 @@ export type FormVariant = "card" | "inline" | "banner";
 /**
  * The block frame: the section, the variant's card, the heading + body, then either the
  * success message or the form. Sizes key off the frame's own width (`@container`), so the
- * same block fits a sidebar card, the blog column and a full-width section. `headingAs` —
+ * same block fits a sidebar card, the blog column and a full-width section (`w-full`: a size
+ * container in a shrink-to-fit parent would collapse to zero). `headingAs` —
  * `h3` inside a page's blocks, `h1` when the form IS the page.
  */
 export function FormFrame({
@@ -37,7 +38,7 @@ export function FormFrame({
   const banner = variant === "banner";
   const inline = variant === "inline";
   return (
-    <section id={anchor} className="not-prose @container my-8 md:my-12">
+    <section id={anchor} className="not-prose @container my-8 w-full md:my-12">
       <div
         className={cn(
           "mx-auto",

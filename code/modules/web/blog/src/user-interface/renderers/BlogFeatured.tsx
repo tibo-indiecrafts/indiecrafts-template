@@ -19,6 +19,7 @@ import { blogFeaturedQuery } from "@indiecrafts/modules-web-blog/sanity/queries"
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { toPostCard } from "@indiecrafts/modules-web-blog/lib/post-card";
 import { reorderByIds } from "@indiecrafts/modules-web-blog/lib/pin-order";
+import { EDITORIAL_MAX } from "@indiecrafts/packages-web-ui-components/web/collection/FeaturedEditorial";
 import { PostLinks } from "./PostLinks";
 
 /**
@@ -47,7 +48,11 @@ export async function BlogFeatured({
       params: {
         locale,
         pinnedIds,
-        limit: m.limit ?? 4,
+        // The editorial layout shows a lead + 3 rows: fetch no more than it paints.
+        limit:
+          m.layout === "editorial"
+            ? Math.min(m.limit ?? 4, EDITORIAL_MAX)
+            : (m.limit ?? 4),
         useFlag: m.source === "flag",
       },
     }),

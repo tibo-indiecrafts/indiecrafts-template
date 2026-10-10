@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Defines the `module.blog-related` block. It is a sidebar card for posts only: on any other page it shows nothing. An editor sets an optional `title` (empty shows "More on `<category>`") and a `limit` (1–8, default 4). It is in `BLOG_SIDEBAR_TYPES` only, not in the blog's page layouts.
+Defines the `module.blog-related` block. It is a sidebar card for posts only: on any other page it shows nothing. An editor sets an optional `title` (empty shows "More on `<category>`") and a `limit` (an integer, 1–8, default 4). It is in `BLOG_SIDEBAR_TYPES` only, not in the blog's page layouts.
 
 ## Exports
 

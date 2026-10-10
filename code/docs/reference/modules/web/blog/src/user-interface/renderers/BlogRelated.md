@@ -10,18 +10,18 @@ status: stable
 
 ## Purpose
 
-`BlogRelated` renders the `blog-related` sidebar card. It fetches other posts that share a category with `post` (`relatedPostsQuery`, at most `limit`, default 4). A post with no category gets the latest posts. The heading is the editor's `title`, else "More on `<category>`", else "More reading". When categories show, a footer links to the category page. It renders through `PostLinks`. It returns `null` outside a post.
+`BlogRelated` renders the `blog-related` sidebar card. It does not fetch. The post route fetches the `related` posts once: the posts that share a category with `post`, else the latest posts. The card shows up to `limit` of them (default 4). The heading is the editor's `title`, else "More on `<category>`", else "More reading". When categories show, a footer links to the category page. It renders through `PostLinks`. It returns `null` outside a post or with no related post.
 
 ## Exports
 
-- `BlogRelated` — async server component; takes `module` (`BlogRelatedModule`), optional `post` (`Post`), and `locale` (`Locale`).
+- `BlogRelated` — async server component; takes `module` (`BlogRelatedModule`), optional `post` (`Post`), optional `related` (`PostListItem[]`), and `locale` (`Locale`).
 
 ## Usage
 
 ```tsx
 import { BlogRelated } from "@indiecrafts/modules-web-blog/user-interface/renderers/BlogRelated";
 
-<BlogRelated module={m} post={post} locale={locale} />;
+<BlogRelated module={m} post={post} related={related} locale={locale} />;
 ```
 
 ## Source

@@ -12,6 +12,14 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **ui-components: sidebar and narrow-width fixes from QA.** The sidebar's scroll box has a 4px
+  inset so card rings and focus rings are not clipped; card and stat lists get the card frame (their
+  hairline grid shows no edge with one item); a block's responsive margin no longer escapes the card
+  (`*:my-0!`). `StepList` text can shrink (`min-w-0`, `break-words`): a long word overflowed a 320px
+  screen. `PostCard` renders the shared `PostMeta`; `PostCardItem` gains `imageAlt`.
+
 ### Added
 
 - **page-builder: a configurable sidebar of block cards.** `sidebar` (a mode — inherit · custom ·

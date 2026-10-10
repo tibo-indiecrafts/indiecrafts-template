@@ -15,6 +15,9 @@ import { cn } from "@indiecrafts/packages-shared-utils/cn";
  * gutter would otherwise double-pad and squeeze the module on mobile) and
  * just adds `not-prose` + modest vertical spacing so the typography plugin
  * doesn't restyle the module's own markup.
+ *
+ * `w-full` in both modes: blocks put `@container` here, and a size container in a
+ * shrink-to-fit parent (a flex column, a centered landing) would collapse to zero width.
  */
 export function ModuleSection({
   anchor,
@@ -29,7 +32,7 @@ export function ModuleSection({
 }) {
   if (inline) {
     return (
-      <div id={anchor} className={cn("not-prose my-8", className)}>
+      <div id={anchor} className={cn("not-prose my-8 w-full", className)}>
         {children}
       </div>
     );
@@ -37,7 +40,10 @@ export function ModuleSection({
   return (
     <section
       id={anchor}
-      className={cn("mx-auto max-w-6xl px-(--gutter) py-8 md:py-12", className)}
+      className={cn(
+        "mx-auto w-full max-w-6xl px-(--gutter) py-8 md:py-12",
+        className,
+      )}
     >
       {children}
     </section>

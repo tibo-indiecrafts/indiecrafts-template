@@ -19,6 +19,8 @@ sidebar card, the blog column and a full-width section. The contact, waitlist,
 newsletter and lead-magnet forms all use it. A client-side part: it has no `"use client"` entry,
 because only the client forms render it.
 
+The section takes the full width (`w-full`): it is a size container, and a size container in a shrink-to-fit parent (a centered landing) would otherwise collapse to zero width.
+
 ## Exports
 
 - `FormFrame({ anchor?, variant?, heading?, body?, headingAs?, done, success, children })`.

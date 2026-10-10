@@ -6,7 +6,9 @@
 import type {
   AnyModule,
   Post,
+  PostListItem,
 } from "@indiecrafts/modules-web-blog/sanity/types";
+import { POST_ONLY_TYPES } from "@indiecrafts/modules-web-blog/sanity/block-types";
 import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { Fragment } from "react";
 import type { Locale } from "@indiecrafts/packages-shared-config";
@@ -46,6 +48,8 @@ export type ModuleContext = {
   sidebar?: boolean;
   /** The post's sidebar, painted beside its body by `blog-post-content`. */
   postSidebar?: PostSidebar;
+  /** The post's related posts, fetched once by the route (the `blog-related` card). */
+  related?: PostListItem[];
 };
 
 export async function Modules({
@@ -61,7 +65,7 @@ export async function Modules({
       {modules.flatMap((m) => {
         if (m.hidden) return [];
         // The post's own cards mean nothing on another page.
-        if (!context.post && POST_ONLY.has(m._type)) return [];
+        if (!context.post && POST_ONLY_TYPES.has(m._type)) return [];
         const block = <ModuleSwitch module={m} context={context} />;
         if (context.sidebar) {
           return [
@@ -91,13 +95,6 @@ export async function Modules({
     </>
   );
 }
-
-/** Blocks that describe the post being read. */
-const POST_ONLY = new Set<string>([
-  "module.blog-toc",
-  "module.blog-related",
-  "module.blog-post-content",
-]);
 
 /** Blog blocks whose renderer paints no `id` of its own. */
 const UNANCHORED = new Set<string>([
@@ -137,7 +134,14 @@ async function ModuleSwitch({
     case "module.blog-toc":
       return <BlogToc module={m} post={post} locale={locale} />;
     case "module.blog-related":
-      return <BlogRelated module={m} post={post} locale={locale} />;
+      return (
+        <BlogRelated
+          module={m}
+          post={post}
+          related={context.related}
+          locale={locale}
+        />
+      );
     case "module.blog-post-content":
       return post ? (
         <BlogPostContent

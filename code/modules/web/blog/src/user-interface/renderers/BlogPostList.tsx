@@ -78,7 +78,7 @@ export async function BlogPostList({
           {t("noPostsModule")}
         </p>
       ) : (
-        <ul className="mt-10 grid gap-8 @2xl:grid-cols-2 @4xl:grid-cols-3">
+        <ul className="mt-10 grid gap-8 @xl:grid-cols-2 @4xl:grid-cols-3">
           {posts.map((post) => (
             <li key={post._id}>
               <BlogCard post={post} locale={locale} />

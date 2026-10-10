@@ -38,7 +38,7 @@ export function StepList({
               >
                 {i + 1}
               </span>
-              <div className="flex-1 pt-1">
+              <div className="min-w-0 flex-1 pt-1 break-words">
                 {step.title ? (
                   <h3 className="text-lg font-semibold">{step.title}</h3>
                 ) : null}

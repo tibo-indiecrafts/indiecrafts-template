@@ -4,6 +4,7 @@
  * @see docs/reference/modules/web/blog/src/sanity/types.md
  */
 import type { PortableTextBlock } from "@portabletext/react";
+import type { SidebarChoice } from "@indiecrafts/packages-web-page-builder/sanity/sidebar";
 import type {
   ImageRef,
   ModuleBase,
@@ -327,10 +328,7 @@ export type BlogRelatedModule = ModuleBase & {
 };
 
 /** A `sidebar` field as projected (`sidebarProjection`): its mode and visible cards. */
-export type SidebarField = {
-  mode?: "inherit" | "custom" | "none" | null;
-  blocks?: AnyModule[] | null;
-} | null;
+export type SidebarField = SidebarChoice<AnyModule>;
 
 /** Every module a blog page can hold — the shared blocks plus the blog's own. */
 export type AnyModule =

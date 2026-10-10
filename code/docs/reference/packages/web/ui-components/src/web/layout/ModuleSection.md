@@ -12,6 +12,8 @@ status: stable
 
 `ModuleSection` is the shared wrapper for modules that serve both as full-width `postModules` slots and as inline body embeds. As a slot it is a centered `max-w-6xl` section with page gutters and vertical rhythm. Inline — rendered inside the article's `.prose` column, which already owns width and horizontal padding — it drops the gutter (which would double-pad and squeeze the module on mobile) and adds `not-prose` plus modest vertical spacing so the typography plugin does not restyle the module's own markup.
 
+Both modes take the full width (`w-full`). Blocks put `@container` on this wrapper, and a size container in a shrink-to-fit parent would otherwise collapse to zero width.
+
 ## Exports
 
 - `ModuleSection({ anchor, inline, className, children })` — the section wrapper component.

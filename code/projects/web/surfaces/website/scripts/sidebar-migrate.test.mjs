@@ -51,7 +51,7 @@ test("re-running does nothing", () => {
     ],
     key,
   );
-  assert.deepEqual(plan, { creates: [], homes: [], blogs: [] });
+  assert.deepEqual(plan, { creates: [], homes: [], blogs: [], skipped: [] });
 });
 
 test("unsets the old TOC toggle wherever it is set", () => {
@@ -60,4 +60,24 @@ test("unsets the old TOC toggle wherever it is set", () => {
     key,
   );
   assert.deepEqual(plan.blogs, ["blog"]);
+});
+
+test("keeps a card the editor had turned off, and covers every locale with a home", () => {
+  const plan = planSidebarMigration(
+    [
+      { _id: "blog", _type: "blog", display: { post: { tableOfContents: false } } },
+      { _id: "page-home-de", _type: "page", isHome: true, language: "de", sections: [] },
+    ],
+    key,
+  );
+  assert.deepEqual(
+    plan.creates.map((d) => d._id),
+    ["sidebarSettings-en", "sidebarSettings-fr", "sidebarSettings-de"],
+  );
+  assert.deepEqual(
+    plan.creates[0].byType.post.blocks.map((b) => b._type),
+    ["module.blog-related"],
+  );
+  assert.deepEqual(plan.homes, []);
+  assert.deepEqual(plan.skipped, ["page-home-de"]);
 });
