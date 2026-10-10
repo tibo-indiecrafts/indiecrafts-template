@@ -50,7 +50,7 @@
     "storybook": "pnpm --filter @indiecrafts/web-tools-storybook storybook",
     "storybook:build": "pnpm --filter @indiecrafts/web-tools-storybook storybook:build",
     "format": "prettier --write . --ignore-path .prettierignore",
-    "format:check": "prettier --check . --ignore-path .prettierignore",
+    "format:check": "prettier --check . --ignore-path .prettierignore && turbo run format:check",
     "docs:install": "npm --prefix code/docs install",
     "docs": "npm --prefix code/docs run docs:dev",
     "docs:build": "npm --prefix code/docs run docs:build",

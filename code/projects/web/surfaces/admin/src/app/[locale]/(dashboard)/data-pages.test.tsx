@@ -72,7 +72,14 @@ function configureApi() {
 
 beforeEach(() => {
   // Unset by default; each test opts in.
-  for (const k of ["API_URL", "APP_API_TOKEN", "WEBSITE_URL", "APP_URL", "WORKERS_URL", "CLOUDFLARE_SECURITY_URL"])
+  for (const k of [
+    "API_URL",
+    "APP_API_TOKEN",
+    "WEBSITE_URL",
+    "APP_URL",
+    "WORKERS_URL",
+    "CLOUDFLARE_SECURITY_URL",
+  ])
     vi.stubEnv(k, "");
 });
 afterEach(() => {
@@ -148,7 +155,9 @@ describe("sessions page", () => {
 describe("security page", () => {
   it("shows the load-error alert (not 'all clear') when unconfigured", async () => {
     await page("./security/page");
-    expect(screen.getByRole("alert").textContent).toMatch(/Could not load the incident feed/);
+    expect(screen.getByRole("alert").textContent).toMatch(
+      /Could not load the incident feed/,
+    );
     expect(screen.queryByText("No security incidents recorded.")).toBeNull();
     expect(screen.getByText(/Set CLOUDFLARE_SECURITY_URL/)).toBeTruthy();
     expect(fetchMock).not.toHaveBeenCalled();
@@ -176,8 +185,24 @@ describe("security page", () => {
     fetchMock.mockResolvedValueOnce(
       json({
         data: [
-          { ts: "2026-10-01T10:00:00Z", event_type: "failed_login", severity: "high", surface: "app", user_id: null, country: "FR", description: null },
-          { ts: "2026-10-01T11:00:00Z", event_type: "new_thing", severity: "weird", surface: null, user_id: "user_b", country: null, description: "d" },
+          {
+            ts: "2026-10-01T10:00:00Z",
+            event_type: "failed_login",
+            severity: "high",
+            surface: "app",
+            user_id: null,
+            country: "FR",
+            description: null,
+          },
+          {
+            ts: "2026-10-01T11:00:00Z",
+            event_type: "new_thing",
+            severity: "weird",
+            surface: null,
+            user_id: "user_b",
+            country: null,
+            description: "d",
+          },
         ],
       }),
     );
@@ -186,7 +211,9 @@ describe("security page", () => {
     expect(screen.getByText("High")).toBeTruthy();
     expect(screen.getByRole("cell", { name: "new_thing" })).toBeTruthy();
     expect(screen.getByText("weird")).toBeTruthy();
-    expect(screen.getByRole("link", { name: /Open Cloudflare Security Events/ })).toBeTruthy();
+    expect(
+      screen.getByRole("link", { name: /Open Cloudflare Security Events/ }),
+    ).toBeTruthy();
   });
 });
 
@@ -213,7 +240,9 @@ describe("system page", { timeout: 30_000 }, () => {
     await page("./system/page");
     const health = fetchMock.mock.calls.find(([u]) => u === `${API}/health`);
     expect(health?.[1]).toEqual(bearer);
-    const version = fetchMock.mock.calls.find(([u]) => u === "https://www.x.dev/api/version");
+    const version = fetchMock.mock.calls.find(
+      ([u]) => u === "https://www.x.dev/api/version",
+    );
     expect(JSON.stringify(version?.[1])).not.toMatch(/t0ken/);
     expect(screen.getByRole("cell", { name: "1.2.3" })).toBeTruthy();
     expect(screen.getByText("error")).toBeTruthy();

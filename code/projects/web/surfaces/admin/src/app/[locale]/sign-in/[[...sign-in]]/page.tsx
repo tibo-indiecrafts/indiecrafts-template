@@ -27,11 +27,7 @@ export default async function SignInPage({
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
     const t = await getTranslations("admin");
     return (
-      <main
-        id="main"
-        tabIndex={-1}
-        className="grid min-h-dvh place-items-center p-6"
-      >
+      <main id="main" tabIndex={-1} className="grid min-h-dvh place-items-center p-6">
         <p className="text-muted-foreground">{t("authNotConfigured")}</p>
       </main>
     );
@@ -43,11 +39,7 @@ export default async function SignInPage({
   if (userId && !isAdmin(sessionClaims)) {
     const t = await getTranslations("admin");
     return (
-      <main
-        id="main"
-        tabIndex={-1}
-        className="grid min-h-dvh place-items-center p-6"
-      >
+      <main id="main" tabIndex={-1} className="grid min-h-dvh place-items-center p-6">
         <NotAdminNotice message={t("notAdmin")} signOutLabel={t("signOut")} />
       </main>
     );

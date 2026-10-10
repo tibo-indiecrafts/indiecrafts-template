@@ -1,8 +1,17 @@
 # Repo-wide formatting on EVERY staged file, all surfaces. Root .prettierignore
-# excludes code/projects/web/ (the website step below formats that itself), so this
+# excludes code/projects/web/ (each web surface formats itself below), so this
 # covers the rest — shared workers/scripts, packages, mobile, docs, root config.
 # Catches a format slip locally instead of at CI's format:check.
 pnpm lint-staged
 
-# Website: eslint --fix + prettier on its staged files, then a full tsc typecheck.
-cd code/projects/web/surfaces/website && pnpm lint-staged && pnpm tsc
+# Web surfaces (website · admin · app): the shared checks
+# (@indiecrafts/packages-web-quality-config — eslint --fix + prettier) on their staged
+# files, then a full tsc typecheck. The website always typechecks (packages and modules
+# feed it); admin and app when one of their files is staged.
+for dir in code/projects/web/surfaces/*/; do
+  [ -f "$dir/.lintstagedrc.mjs" ] || continue
+  if [ "$dir" = "code/projects/web/surfaces/website/" ] ||
+    git diff --cached --name-only -- "$dir" | grep -q .; then
+    (cd "$dir" && pnpm lint-staged && pnpm tsc) || exit 1
+  fi
+done

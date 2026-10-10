@@ -28,7 +28,11 @@ type El = ReactElement<{ children?: ReactNode }>;
 const kids = (el: El) =>
   [el.props.children].flat().filter((c): c is El => !!c && typeof c === "object");
 const find = (el: El, type: unknown): El | undefined =>
-  el.type === type ? el : kids(el).map((c) => find(c, type)).find(Boolean);
+  el.type === type
+    ? el
+    : kids(el)
+        .map((c) => find(c, type))
+        .find(Boolean);
 
 describe("admin LocaleLayout", () => {
   it("renders the skip link first, pointing at #main", async () => {

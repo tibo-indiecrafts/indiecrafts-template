@@ -14,10 +14,7 @@ import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shar
 import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { OfflineBanner } from "@indiecrafts/packages-web-system-pages/web";
 import { consent, localeDir, site, type Locale } from "@/config";
-import {
-  AppClerkProvider,
-  SessionLogger,
-} from "@indiecrafts/packages-web-auth";
+import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
 import { MarketingNudgeMount } from "@indiecrafts/packages-web-auth/marketing-nudge";
 import { routing } from "@/i18n/routing";
 import { ShellOverlays } from "@/user-interface/ShellOverlays";
@@ -65,10 +62,7 @@ export default async function LocaleLayout({
   const requestHeaders = await headers();
   // Geo-resolve the consent mode from the visitor's edge country (opt-in EU/UK · opt-out US ·
   // none elsewhere), overridable per country in config.
-  const consentMode = resolveConsentMode(
-    requestHeaders.get("cf-ipcountry"),
-    consent,
-  );
+  const consentMode = resolveConsentMode(requestHeaders.get("cf-ipcountry"), consent);
   // Global Privacy Control, read server-side from the `Sec-GPC: 1` request header — honoured
   // even before/without client JS. Unioned with the client-side `navigator` check inside
   // `ConsentGate` (either source denies); native surfaces have no equivalent (no browser).
@@ -88,19 +82,12 @@ export default async function LocaleLayout({
     // suppressHydrationWarning: the inline THEME_SCRIPT sets `data-theme` on <html> before
     // hydration, so the server/client attributes differ by design (one level deep only).
     <AppClerkProvider locale={locale} nonce={nonce} signUpPath="/sign-up">
-      <html
-        lang={locale}
-        dir={localeDir(locale as Locale)}
-        suppressHydrationWarning
-      >
+      <html lang={locale} dir={localeDir(locale as Locale)} suppressHydrationWarning>
         {/* suppressHydrationWarning: browser extensions inject attributes on <body>
           (e.g. data-atm-installed) before React hydrates — a one-level-deep,
           client-only diff, not an app mismatch. */}
         <body suppressHydrationWarning>
-          <script
-            nonce={nonce}
-            dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }}
-          />
+          <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
           <NextIntlClientProvider>
             {/* First focusable element: every page renders a `<main id="main">`. */}
             <SkipLink label={t("skipToContent")} />

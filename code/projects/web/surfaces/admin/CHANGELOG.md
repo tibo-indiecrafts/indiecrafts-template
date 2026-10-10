@@ -21,6 +21,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Lint, format and React Doctor, like the website.** `lint` · `format` · `format:check` ·
+  `doctor` · `doctor:changed` scripts on the shared `@indiecrafts/packages-web-quality-config`;
+  `verify` now runs tsc + lint + format + React Doctor + tests; the pre-commit hook lints, formats
+  and typechecks a staged admin file. **Why:** the admin was never linted or format-checked.
+
 - **Email preferences, with off-only overrides.** Users → a row's "Emails" sheet shows the person's
   categories (their own choice + the Resend topic) and the Resend global state; `/contacts` looks
   anyone up by email, with or without an account. An admin can turn a category off, or stop all
@@ -182,6 +187,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   zone's Cloudflare events, read by the screen but listed nowhere.
 - **Confirmation toasts sit at the top** (`<Toaster position="top-center" />`), like the website
   and the app — the bottom slot belongs to the fixed overlays.
+
 ### Added
 
 - **Churn dashboard.** A new `/churn` page reads the api's `GET /v1/churn` (bearer-gated) and renders
@@ -352,4 +358,4 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   moved off Sanity Studio into D1 (`api`'s `data_requests` table), so this restores operator
   visibility. **Read-only** — status write-back (mark in-progress/done) is a deferred follow-up; until
   it lands, flip a request's status by hand: `wrangler d1 execute indiecrafts-<env>-shared-api
-  --command "UPDATE data_requests SET status='done' WHERE id=?"`.
+--command "UPDATE data_requests SET status='done' WHERE id=?"`.

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://react.doctor/schema/config.json",
+
+  // Build output — minified bundles (`build:cf` / `next dev`), never source. Scanning them
+  // reports library internals as app findings.
+  "ignore": {
+    "files": [".open-next/**", ".next/**"],
+  },
+}

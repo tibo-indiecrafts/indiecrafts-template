@@ -33,13 +33,21 @@ export function ThemeToggle({ label }: { label: ThemeToggleLabel }) {
     const next: Theme = theme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     localStorage.setItem("app-theme", next);
-    window.dispatchEvent(new StorageEvent("storage", { key: "app-theme", newValue: next }));
+    window.dispatchEvent(
+      new StorageEvent("storage", { key: "app-theme", newValue: next }),
+    );
   };
 
   const Icon = theme === "dark" ? Moon : Sun;
 
   return (
-    <Button variant="ghost" size="icon" aria-label={label.toggle} title={label[theme]} onClick={toggle}>
+    <Button
+      variant="ghost"
+      size="icon"
+      aria-label={label.toggle}
+      title={label[theme]}
+      onClick={toggle}
+    >
       <Icon className="size-4" aria-hidden="true" />
     </Button>
   );

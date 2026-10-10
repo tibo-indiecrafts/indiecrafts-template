@@ -57,7 +57,5 @@ export async function audit(
       // fall through to the durable console fallback
     }
   }
-  console.log(
-    JSON.stringify({ audit: true, ...payload, ts: new Date().toISOString() }),
-  );
+  console.log(JSON.stringify({ audit: true, ...payload, ts: new Date().toISOString() }));
 }

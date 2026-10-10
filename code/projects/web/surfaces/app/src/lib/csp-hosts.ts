@@ -18,9 +18,6 @@ const originOf = (url: string | undefined): string[] => {
  * the live legal version) and the api Worker (`/v1/consent/legal`, the signed-in sync).
  * The production `connect-src` allows only `'self'`, so both must be listed here.
  */
-export function appCspHosts(
-  websiteUrl: string,
-  apiUrl: string | undefined,
-): CspHosts {
+export function appCspHosts(websiteUrl: string, apiUrl: string | undefined): CspHosts {
   return { connectSrc: [...originOf(websiteUrl), ...originOf(apiUrl)] };
 }

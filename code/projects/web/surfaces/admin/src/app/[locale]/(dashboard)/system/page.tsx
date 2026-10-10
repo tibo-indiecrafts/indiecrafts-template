@@ -5,11 +5,7 @@
  */
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireAdminPage } from "@/lib/require-admin";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@indiecrafts/packages-web-ui/web/card";
+import { Card, CardContent, CardHeader } from "@indiecrafts/packages-web-ui/web/card";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {
   Table,
@@ -227,12 +223,8 @@ export default async function SystemPage({
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 <span className="text-muted-foreground">{t("bindings")}</span>
                 {api.bindings.map((b) => (
-                  <Badge
-                    key={b.key}
-                    variant={b.bound ? "outline" : "secondary"}
-                  >
-                    {t(`binding.${b.key}`)} ·{" "}
-                    {b.bound ? t("bound") : t("unbound")}
+                  <Badge key={b.key} variant={b.bound ? "outline" : "secondary"}>
+                    {t(`binding.${b.key}`)} · {b.bound ? t("bound") : t("unbound")}
                   </Badge>
                 ))}
               </div>

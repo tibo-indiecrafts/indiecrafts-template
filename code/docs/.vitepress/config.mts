@@ -516,6 +516,10 @@ export default withMermaid(
                   link: "/packages/web/locale-suggest",
                 },
                 { text: "page-builder", link: "/packages/web/page-builder" },
+                {
+                  text: "quality-config",
+                  link: "/packages/web/quality-config",
+                },
                 { text: "sanity", link: "/packages/web/sanity" },
                 { text: "schema", link: "/packages/web/schema" },
                 {

@@ -11,10 +11,19 @@ const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 const SIGN_IN = /\/sign-in(\/|\?|$)/;
 // The shadcn sidebar is the dashboard shell — on sign-in it must never appear.
 const SHELL = '[data-slot^="sidebar"]';
-const DASHBOARD = ["/en", "/en/users", "/en/sessions", "/en/security", "/en/churn", "/en/system"];
+const DASHBOARD = [
+  "/en",
+  "/en/users",
+  "/en/sessions",
+  "/en/security",
+  "/en/churn",
+  "/en/system",
+];
 
 for (const path of DASHBOARD) {
-  test(`signed out, ${path} redirects to sign-in without the dashboard`, async ({ page }) => {
+  test(`signed out, ${path} redirects to sign-in without the dashboard`, async ({
+    page,
+  }) => {
     const documents: Response[] = [];
     page.on("response", (r) => {
       if (r.request().resourceType() === "document") documents.push(r);

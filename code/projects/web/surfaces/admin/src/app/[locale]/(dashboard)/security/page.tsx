@@ -125,7 +125,10 @@ export default async function SecurityPage({
                 {rows.map((row, i) => (
                   <TableRow key={i}>
                     <TableCell className="tabular-nums">
-                      {format.dateTime(new Date(row.ts), { dateStyle: "medium", timeStyle: "short" })}
+                      {format.dateTime(new Date(row.ts), {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      })}
                     </TableCell>
                     <TableCell>
                       {isSecurityEventType(row.event_type)

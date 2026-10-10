@@ -29,7 +29,15 @@ const stateVariant = (state: ErasureRow["state"]) =>
 // The zone (UTC) comes from the next-intl config, so server and browser renders match.
 const WHEN = { dateStyle: "medium", timeStyle: "short" } as const;
 
-function Rows({ rows, empty, actions }: { rows: ErasureRow[]; empty: string; actions: boolean }) {
+function Rows({
+  rows,
+  empty,
+  actions,
+}: {
+  rows: ErasureRow[];
+  empty: string;
+  actions: boolean;
+}) {
   const t = useTranslations("admin.erasure");
   const format = useFormatter();
   const when = (iso: string | null) => (iso ? format.dateTime(new Date(iso), WHEN) : "—");

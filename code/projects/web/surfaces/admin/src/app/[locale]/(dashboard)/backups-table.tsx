@@ -88,17 +88,15 @@ export function BackupsTable({ status }: { status: BackupsStatus }) {
     <div className="mt-6 flex flex-col gap-6">
       <dl className="grid gap-4 sm:grid-cols-3">
         <div>
-          <dt className="text-sm text-muted-foreground">{t("bucket")}</dt>
+          <dt className="text-muted-foreground text-sm">{t("bucket")}</dt>
           <dd className="text-foreground">{status.bucket ?? t("notConfigured")}</dd>
         </div>
         <div>
-          <dt className="text-sm text-muted-foreground">{t("retentionDays")}</dt>
+          <dt className="text-muted-foreground text-sm">{t("retentionDays")}</dt>
           <dd className="text-foreground tabular-nums">{status.retentionDays}</dd>
         </div>
         <div>
-          <dt className="text-sm text-muted-foreground">
-            {t("preMigrationSnapshots")}
-          </dt>
+          <dt className="text-muted-foreground text-sm">{t("preMigrationSnapshots")}</dt>
           <dd className="text-foreground">
             {status.preMigrationSnapshots ? t("on") : t("off")}
           </dd>
@@ -147,9 +145,7 @@ export function BackupsTable({ status }: { status: BackupsStatus }) {
                       <Badge variant="outline">{run.status}</Badge>
                     )}
                   </TableCell>
-                  <TableCell className="tabular-nums">
-                    {size(run.bytes)}
-                  </TableCell>
+                  <TableCell className="tabular-nums">{size(run.bytes)}</TableCell>
                   <TableCell className="text-muted-foreground">
                     {run.error ?? "—"}
                   </TableCell>

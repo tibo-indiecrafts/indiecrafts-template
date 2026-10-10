@@ -56,12 +56,8 @@ function setCsp(response: NextResponse, nonce: string): NextResponse {
     CSP_MODE,
   );
   response.headers.set("Content-Security-Policy", enforced);
-  response.headers.set(
-    "Reporting-Endpoints",
-    `csp-endpoint="${REPORTING.endpoint}"`,
-  );
-  if (reportOnly)
-    response.headers.set("Content-Security-Policy-Report-Only", reportOnly);
+  response.headers.set("Reporting-Endpoints", `csp-endpoint="${REPORTING.endpoint}"`);
+  if (reportOnly) response.headers.set("Content-Security-Policy-Report-Only", reportOnly);
   return response;
 }
 
@@ -89,9 +85,7 @@ const gated = clerkMiddleware(async (auth, request) => {
   return runIntl(request);
 });
 
-const proxy = clerkConfigured
-  ? gated
-  : (request: NextRequest) => runIntl(request);
+const proxy = clerkConfigured ? gated : (request: NextRequest) => runIntl(request);
 
 export default proxy;
 

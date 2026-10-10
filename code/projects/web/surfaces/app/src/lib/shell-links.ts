@@ -14,8 +14,7 @@ export function isExternalUrl(href: string, appOrigin: string): boolean {
     return false;
   }
   return (
-    (url.protocol === "https:" || url.protocol === "http:") &&
-    url.origin !== appOrigin
+    (url.protocol === "https:" || url.protocol === "http:") && url.origin !== appOrigin
   );
 }
 
@@ -30,9 +29,7 @@ export function deepLinkPath(url: string): string {
   } catch {
     return "/";
   }
-  const path = `/${u.host}${u.pathname}`
-    .replace(/\/{2,}/g, "/")
-    .replace(/(.)\/$/, "$1");
+  const path = `/${u.host}${u.pathname}`.replace(/\/{2,}/g, "/").replace(/(.)\/$/, "$1");
   const target = `${path}${u.search}`;
   const origin = "https://app.invalid";
   return new URL(target, origin).origin === origin ? target : "/";

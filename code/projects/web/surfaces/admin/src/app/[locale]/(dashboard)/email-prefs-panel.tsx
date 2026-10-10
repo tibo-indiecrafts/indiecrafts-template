@@ -130,9 +130,7 @@ export function EmailPrefsPanel({ state }: { state: EmailPrefState }) {
       {pending ? (
         <OverrideConfirm
           question={
-            pending === "all"
-              ? t("confirmStop")
-              : t("confirmOff", { name: pending.name })
+            pending === "all" ? t("confirmStop") : t("confirmOff", { name: pending.name })
           }
           busy={busy}
           onConfirm={confirm}

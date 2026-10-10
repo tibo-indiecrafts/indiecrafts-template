@@ -22,6 +22,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/packages-web-quality-config`** — the shared ESLint (`webEslintConfig`: Next + TS,
+  every jsx-a11y rule an error, routing only via `@/i18n/routing`), Prettier (90 cols, Tailwind sort)
+  and lint-staged config of every Next web surface. **Why:** only the website was linted, formatted
+  and checked at commit; admin and app had no lint at all.
+
 - **email: "Copie cachée à l'adresse de support", a checkbox per email.** `confirmationGroup({
 copySupport: true })` offers it; senders spread `supportCopy(cfg, supportEmail)` into `bcc`. Off
   by default, and never offered on an email with a one-time code or link. **Why:** an editor

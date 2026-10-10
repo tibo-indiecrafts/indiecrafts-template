@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Configures Prettier for the website. It sets the formatting rules (`semi`, double quotes, `trailingComma: "all"`, `printWidth: 90`) and loads `prettier-plugin-tailwindcss` so Tailwind utility classes are sorted on format.
+Re-exports the shared Prettier config from `@indiecrafts/packages-web-quality-config/prettier` (semicolons, double quotes, trailing commas, 90 columns, Tailwind classes sorted), shared with the admin and app surfaces.
 
 ## Exports
 

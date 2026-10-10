@@ -6,13 +6,20 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { site, type Locale } from "@/config";
-import { LEGAL_PAGE_KEYS, legalUrl } from "@indiecrafts/packages-shared-compliance/shared";
+import {
+  LEGAL_PAGE_KEYS,
+  legalUrl,
+} from "@indiecrafts/packages-shared-compliance/shared";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 // Legal link-out — the canonical legal pages live on the marketing website; this lists
 // them and opens each there (`legalUrl(site.websiteUrl, …)`, cross-origin). No content
 // re-hosting: a plain `<a>` (not the typed `Link`) because the target is another origin.
-export default async function LegalPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function LegalPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("legal");

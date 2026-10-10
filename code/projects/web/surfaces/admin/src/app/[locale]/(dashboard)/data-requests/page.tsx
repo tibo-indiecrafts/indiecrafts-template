@@ -18,7 +18,11 @@ import { DataRequestsTable } from "../data-requests-table";
  */
 /** The two closing replies for a request, rendered in the requester's language (en / fr) —
  *  whatever the admin's own UI locale. */
-async function replies(detail: { id: number; request_type: string; locale: string | null }) {
+async function replies(detail: {
+  id: number;
+  request_type: string;
+  locale: string | null;
+}) {
   const locale = detail.locale?.startsWith("fr") ? "fr" : "en";
   const r = await getTranslations({ locale, namespace: "admin.dataRequests" });
   const key = `types.${detail.request_type}`;

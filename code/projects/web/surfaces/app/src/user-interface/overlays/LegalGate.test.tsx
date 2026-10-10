@@ -3,9 +3,7 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { NextIntlClientProvider } from "next-intl";
 
-(
-  globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
-).IS_REACT_ACT_ENVIRONMENT = true;
+(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 // Clerk keeps getToken stable across renders; only userId changes on sign-in.
 const auth = vi.hoisted(() => {
@@ -22,14 +20,11 @@ const syncLegalConsent = vi.hoisted(() =>
 vi.mock("@clerk/nextjs", () => ({
   useAuth: () => ({ userId: auth.userId, getToken: auth.getToken }),
 }));
-vi.mock(
-  "@indiecrafts/packages-shared-compliance/shared",
-  async (importOriginal) => ({
-    ...(await importOriginal<object>()),
-    fetchLegalVersion: async () => "v2",
-    syncLegalConsent,
-  }),
-);
+vi.mock("@indiecrafts/packages-shared-compliance/shared", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  fetchLegalVersion: async () => "v2",
+  syncLegalConsent,
+}));
 
 afterEach(() => {
   vi.unstubAllEnvs();

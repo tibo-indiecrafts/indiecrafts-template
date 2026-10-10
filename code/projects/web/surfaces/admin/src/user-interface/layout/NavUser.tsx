@@ -66,6 +66,7 @@ function ClerkNavUser({ label, signOutLabel }: { label: string; signOutLabel: st
 export function NavUser() {
   const t = useTranslations("admin");
   const label = t("user.account");
-  if (CLERK_CONFIGURED) return <ClerkNavUser label={label} signOutLabel={t("user.signOut")} />;
+  if (CLERK_CONFIGURED)
+    return <ClerkNavUser label={label} signOutLabel={t("user.signOut")} />;
   return <NavUserButton label={label} />;
 }

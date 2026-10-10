@@ -18,7 +18,10 @@ describe("primaryEmail", () => {
       }),
     ).toBe("a@x.dev");
     expect(
-      primaryEmail({ primaryEmailAddress: null, emailAddresses: [{ emailAddress: "b@x.dev" }] }),
+      primaryEmail({
+        primaryEmailAddress: null,
+        emailAddresses: [{ emailAddress: "b@x.dev" }],
+      }),
     ).toBe("b@x.dev");
     expect(primaryEmail({ primaryEmailAddress: null, emailAddresses: [] })).toBeNull();
   });
@@ -28,11 +31,20 @@ describe("fetchEmails", () => {
   it("looks up each distinct user id once and maps id → email", async () => {
     getUserList.mockResolvedValueOnce({
       data: [
-        { id: "user_1", primaryEmailAddress: { emailAddress: "one@x.dev" }, emailAddresses: [] },
+        {
+          id: "user_1",
+          primaryEmailAddress: { emailAddress: "one@x.dev" },
+          emailAddresses: [],
+        },
       ],
     });
-    expect(await fetchEmails(["user_1", "user_1", "user_2"])).toEqual({ "user_1": "one@x.dev" });
-    expect(getUserList).toHaveBeenCalledWith({ userId: ["user_1", "user_2"], limit: 100 });
+    expect(await fetchEmails(["user_1", "user_1", "user_2"])).toEqual({
+      user_1: "one@x.dev",
+    });
+    expect(getUserList).toHaveBeenCalledWith({
+      userId: ["user_1", "user_2"],
+      limit: 100,
+    });
   });
 
   it("skips Clerk for no ids, and fails open to {} on an error", async () => {

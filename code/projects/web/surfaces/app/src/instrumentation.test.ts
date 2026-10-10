@@ -1,7 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-const { env, addTransport } = vi.hoisted(() => ({ env: { value: "production" }, addTransport: vi.fn() }));
-vi.mock("@indiecrafts/packages-shared-config", () => ({ getCurrentEnvironment: () => env.value }));
+const { env, addTransport } = vi.hoisted(() => ({
+  env: { value: "production" },
+  addTransport: vi.fn(),
+}));
+vi.mock("@indiecrafts/packages-shared-config", () => ({
+  getCurrentEnvironment: () => env.value,
+}));
 vi.mock("@indiecrafts/packages-shared-logger", () => ({ addTransport }));
 
 const { register } = await import("./instrumentation");

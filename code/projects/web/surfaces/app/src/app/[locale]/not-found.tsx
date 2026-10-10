@@ -17,10 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** 404 (also inside the mobile shell): the Sanity logo + bundled copy. */
 export default async function NotFound() {
-  const [t, brand] = await Promise.all([
-    getTranslations("notFound"),
-    getBrand(),
-  ]);
+  const [t, brand] = await Promise.all([getTranslations("notFound"), getBrand()]);
   return (
     <main
       id="main"

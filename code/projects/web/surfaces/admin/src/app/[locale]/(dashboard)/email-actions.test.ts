@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const m = vi.hoisted(() => ({
-  session: { userId: "user_2abcADMIN000000001", sessionClaims: { metadata: { role: "admin" } } } as {
+  session: {
+    userId: "user_2abcADMIN000000001",
+    sessionClaims: { metadata: { role: "admin" } },
+  } as {
     userId: string | null;
     sessionClaims: unknown;
   },
@@ -47,9 +50,16 @@ beforeEach(() => {
 describe("turnOffEmails — off only, by an admin, with a reason", () => {
   it("sends the categories, the reason and the acting admin", async () => {
     expect(
-      await turnOffEmails({ userId: USER, off: ["news"], stopAll: false, reason: "request_email" }),
+      await turnOffEmails({
+        userId: USER,
+        off: ["news"],
+        stopAll: false,
+        reason: "request_email",
+      }),
     ).toEqual({ ok: true, resend: "ok" });
-    expect(m.apiFetch.mock.calls[0]?.[0]).toBe("https://api.x/v1/admin/email-preferences");
+    expect(m.apiFetch.mock.calls[0]?.[0]).toBe(
+      "https://api.x/v1/admin/email-preferences",
+    );
     expect(body()).toEqual({
       userId: USER,
       off: ["news"],
@@ -61,7 +71,14 @@ describe("turnOffEmails — off only, by an admin, with a reason", () => {
 
   it("refuses a non-admin, a bad reason, nothing to do, or a bad key — before the api", async () => {
     m.session = { userId: "user_2abcSOMEONE0000001", sessionClaims: {} };
-    expect(await turnOffEmails({ userId: USER, off: ["news"], stopAll: false, reason: "other" })).toEqual({
+    expect(
+      await turnOffEmails({
+        userId: USER,
+        off: ["news"],
+        stopAll: false,
+        reason: "other",
+      }),
+    ).toEqual({
       ok: false,
       error: "forbidden",
     });
@@ -79,13 +96,23 @@ describe("turnOffEmails — off only, by an admin, with a reason", () => {
   it("says when the api is unreachable", async () => {
     delete process.env.API_URL;
     expect(
-      await turnOffEmails({ email: "a@x.com", off: [], stopAll: true, reason: "complaint" }),
+      await turnOffEmails({
+        email: "a@x.com",
+        off: [],
+        stopAll: true,
+        reason: "complaint",
+      }),
     ).toEqual({ ok: false, error: "unreachable" });
   });
 });
 
 describe("changeSignInEmail — a login path", () => {
-  const input = { userId: USER, email: "New@x.com", confirm: "new@x.com ", reason: "request_phone" };
+  const input = {
+    userId: USER,
+    email: "New@x.com",
+    confirm: "new@x.com ",
+    reason: "request_phone",
+  };
 
   it("adds the new address verified + primary, removes the old, signs out, moves the contact", async () => {
     m.apiFetch.mockResolvedValue(Response.json({ ok: true, resend: "moved" }));
@@ -112,7 +139,9 @@ describe("changeSignInEmail — a login path", () => {
       ok: false,
       error: "mismatch",
     });
-    expect(await changeSignInEmail({ ...input, email: "old@x.com", confirm: "old@x.com" })).toEqual({
+    expect(
+      await changeSignInEmail({ ...input, email: "old@x.com", confirm: "old@x.com" }),
+    ).toEqual({
       ok: false,
       error: "same",
     });
@@ -131,6 +160,9 @@ describe("changeSignInEmail — a login path", () => {
   it("the Clerk change stands when the api is down — audited anyway", async () => {
     delete process.env.API_URL;
     expect(await changeSignInEmail(input)).toEqual({ ok: true, resend: "unreachable" });
-    expect(m.audit).toHaveBeenCalledWith("admin.change_email", { actor: ADMIN, target: USER });
+    expect(m.audit).toHaveBeenCalledWith("admin.change_email", {
+      actor: ADMIN,
+      target: USER,
+    });
   });
 });

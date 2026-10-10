@@ -17,7 +17,10 @@ describe("appCspHosts", () => {
   });
 
   it("reaches the production connect-src", () => {
-    const csp = buildCsp("production", appCspHosts("https://site.test", "https://api.test"));
+    const csp = buildCsp(
+      "production",
+      appCspHosts("https://site.test", "https://api.test"),
+    );
     expect(csp).toMatch(/connect-src [^;]*https:\/\/site\.test[^;]*https:\/\/api\.test/);
   });
 });

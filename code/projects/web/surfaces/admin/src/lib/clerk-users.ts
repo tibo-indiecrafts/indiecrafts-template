@@ -14,9 +14,7 @@ type EmailFields = {
 /** The user's primary email, else their first one, else null. */
 export function primaryEmail(user: EmailFields): string | null {
   return (
-    user.primaryEmailAddress?.emailAddress ??
-    user.emailAddresses[0]?.emailAddress ??
-    null
+    user.primaryEmailAddress?.emailAddress ?? user.emailAddresses[0]?.emailAddress ?? null
   );
 }
 
@@ -27,7 +25,9 @@ export async function fetchEmails(userIds: string[]): Promise<Record<string, str
   const ids = [...new Set(userIds)].slice(0, 100);
   if (ids.length === 0) return {};
   try {
-    const { data } = await (await clerkClient()).users.getUserList({ userId: ids, limit: 100 });
+    const { data } = await (
+      await clerkClient()
+    ).users.getUserList({ userId: ids, limit: 100 });
     return Object.fromEntries(
       data.flatMap((u) => {
         const email = primaryEmail(u);

@@ -15,6 +15,7 @@
     "storybook": { "cache": false, "persistent": true },
     "storybook:build": { "outputs": ["storybook-static/**"] },
     "lint": {},
+    "format:check": {},
     "tsc": { "outputs": ["*.tsbuildinfo"] },
     "test": {},
     "verify": { "cache": false }

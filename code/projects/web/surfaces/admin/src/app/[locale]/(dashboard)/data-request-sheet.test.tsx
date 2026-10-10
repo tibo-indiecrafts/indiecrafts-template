@@ -92,7 +92,9 @@ describe("DataRequestSheet", () => {
     const note = screen.getByLabelText("Reply to the requester") as HTMLTextAreaElement;
     expect(note.value).toBe("Bonjour, demande traitée.");
     expect(
-      screen.getByRole("checkbox", { name: "Email the requester" }).getAttribute("data-state"),
+      screen
+        .getByRole("checkbox", { name: "Email the requester" })
+        .getAttribute("data-state"),
     ).toBe("checked");
     await user.click(screen.getByRole("button", { name: "Confirm: done" }));
     expect(setDataRequestStatus).toHaveBeenCalledWith(

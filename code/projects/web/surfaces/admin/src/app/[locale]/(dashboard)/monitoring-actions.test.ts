@@ -13,17 +13,12 @@ vi.mock("@/lib/audit", () => ({ audit: auditMock }));
 vi.stubGlobal("fetch", fetchMock);
 // Spy on apiFetch (the real one still runs) to see the options each action passes.
 const { apiFetchSpy } = vi.hoisted(() => ({ apiFetchSpy: vi.fn() }));
-vi.mock(
-  "@indiecrafts/packages-shared-utils/api-fetch",
-  async (importOriginal) => {
-    const real =
-      await importOriginal<
-        typeof import("@indiecrafts/packages-shared-utils/api-fetch")
-      >();
-    apiFetchSpy.mockImplementation(real.apiFetch);
-    return { apiFetch: apiFetchSpy };
-  },
-);
+vi.mock("@indiecrafts/packages-shared-utils/api-fetch", async (importOriginal) => {
+  const real =
+    await importOriginal<typeof import("@indiecrafts/packages-shared-utils/api-fetch")>();
+  apiFetchSpy.mockImplementation(real.apiFetch);
+  return { apiFetch: apiFetchSpy };
+});
 
 const { retryErasure, closeErasure, runCronNow, setDataRequestStatus } =
   await import("./monitoring-actions");
@@ -52,10 +47,7 @@ describe.each([
   ["retryErasure", () => retryErasure(7)],
   ["closeErasure", () => closeErasure(7, "erased by hand")],
   ["runCronNow", () => runCronNow()],
-  [
-    "setDataRequestStatus",
-    () => setDataRequestStatus(7, "new", "done", "x", true),
-  ],
+  ["setDataRequestStatus", () => setDataRequestStatus(7, "new", "done", "x", true)],
 ])("%s — non-admin", (_name, call) => {
   it("fails closed: forbidden, no api call, no audit", async () => {
     authMock.mockResolvedValue(nonAdmin);
@@ -89,24 +81,12 @@ describe("retryErasure", () => {
 
   it.each([
     [207, { ok: true, partial: true }, { ok: true, outcome: "partial" }],
-    [
-      502,
-      { ok: false, clerk_failed: true },
-      { ok: false, error: "clerk_failed" },
-    ],
+    [502, { ok: false, clerk_failed: true }, { ok: false, error: "clerk_failed" }],
     [422, { error: "email_required" }, { ok: false, error: "email_required" }],
     [400, { error: "email_mismatch" }, { ok: false, error: "email_mismatch" }],
     [409, { error: "not_retryable" }, { ok: false, error: "not_retryable" }],
-    [
-      409,
-      { error: "clerk_email_changed" },
-      { ok: false, error: "clerk_email_changed" },
-    ],
-    [
-      503,
-      { error: "clerk_unavailable" },
-      { ok: false, error: "clerk_unavailable" },
-    ],
+    [409, { error: "clerk_email_changed" }, { ok: false, error: "clerk_email_changed" }],
+    [503, { error: "clerk_unavailable" }, { ok: false, error: "clerk_unavailable" }],
     [503, { error: "unavailable" }, { ok: false, error: "unavailable" }],
     [409, { error: "changed" }, { ok: false, error: "changed" }],
   ])("maps a %s reply", async (status, body, expected) => {
@@ -166,9 +146,7 @@ describe("runCronNow", () => {
 
   it.each(["cron_unbound", "cron_unreachable"])("reports %s", async (error) => {
     authMock.mockResolvedValue(admin);
-    fetchMock.mockResolvedValue(
-      reply(error === "cron_unbound" ? 503 : 502, { error }),
-    );
+    fetchMock.mockResolvedValue(reply(error === "cron_unbound" ? 503 : 502, { error }));
     expect(await runCronNow()).toEqual({ ok: false, error });
   });
 
@@ -204,12 +182,10 @@ describe("long-running actions get a 60 s timeout (a tick or an erasure can outl
 describe("setDataRequestStatus", () => {
   it("POSTs the change with the actor and audits", async () => {
     authMock.mockResolvedValue(admin);
-    fetchMock.mockResolvedValue(
-      reply(200, { ok: true, status: "done", notified: true }),
+    fetchMock.mockResolvedValue(reply(200, { ok: true, status: "done", notified: true }));
+    expect(await setDataRequestStatus(7, "in-progress", "done", " Done. ", true)).toEqual(
+      { ok: true, notified: true },
     );
-    expect(
-      await setDataRequestStatus(7, "in-progress", "done", " Done. ", true),
-    ).toEqual({ ok: true, notified: true });
     expect(fetchMock).toHaveBeenCalledWith(
       "http://api.test/v1/data-requests/7/status",
       expect.objectContaining({

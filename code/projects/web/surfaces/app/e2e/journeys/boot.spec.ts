@@ -10,7 +10,5 @@ test("the app boots at /en", async ({ page }) => {
   const res = await page.goto("/en");
   expect(res, "no response for /en").toBeTruthy();
   expect(res!.ok()).toBeTruthy(); // 2xx after following any locale/auth redirect
-  await expect(
-    page.locator("main").or(page.getByRole("textbox")).first(),
-  ).toBeVisible();
+  await expect(page.locator("main").or(page.getByRole("textbox")).first()).toBeVisible();
 });

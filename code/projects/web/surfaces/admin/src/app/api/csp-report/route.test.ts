@@ -67,7 +67,9 @@ describe("POST /api/csp-report", () => {
   });
 
   it("refuses an oversize body with 413", async () => {
-    const big = JSON.stringify([{ type: "csp-violation", body: { x: "a".repeat(70_000) } }]);
+    const big = JSON.stringify([
+      { type: "csp-violation", body: { x: "a".repeat(70_000) } },
+    ]);
     expect((await report(big)).status).toBe(413);
     expect(forwardCspReports).not.toHaveBeenCalled();
   });

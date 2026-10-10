@@ -25,9 +25,7 @@ describe("isExternalUrl", () => {
 
 describe("deepLinkPath", () => {
   it("maps host + path + query to an in-app path", () => {
-    expect(deepLinkPath("indiecrafts://account?tab=data")).toBe(
-      "/account?tab=data",
-    );
+    expect(deepLinkPath("indiecrafts://account?tab=data")).toBe("/account?tab=data");
     expect(deepLinkPath("indiecrafts://legal/privacy")).toBe("/legal/privacy");
     expect(deepLinkPath("indiecrafts://account/")).toBe("/account");
   });

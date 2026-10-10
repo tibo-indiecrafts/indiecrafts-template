@@ -49,7 +49,11 @@ export function DataRequestSheet({
   const facts: [string, React.ReactNode][] = [
     [
       t("email"),
-      <a key="e" href={`mailto:${request.email}`} className="underline underline-offset-2">
+      <a
+        key="e"
+        href={`mailto:${request.email}`}
+        className="underline underline-offset-2"
+      >
         {request.email}
       </a>,
     ],
@@ -129,8 +133,12 @@ export function DataRequestSheet({
                 {request.events.map((e) => (
                   <li key={e.id} className="flex flex-col gap-1 border-l-2 pl-3">
                     <span className="flex flex-wrap items-center gap-2">
-                      <Badge variant={statusVariant(e.status)}>{statusWord(e.status)}</Badge>
-                      <span className="text-muted-foreground tabular-nums">{when(e.at)}</span>
+                      <Badge variant={statusVariant(e.status)}>
+                        {statusWord(e.status)}
+                      </Badge>
+                      <span className="text-muted-foreground tabular-nums">
+                        {when(e.at)}
+                      </span>
                       <span className="text-muted-foreground">
                         {t("sheet.by", { actor: e.actor })}
                       </span>

@@ -15,6 +15,7 @@ export async function register(): Promise<void> {
   const { getCurrentEnvironment } = await import("@indiecrafts/packages-shared-config");
   if (getCurrentEnvironment() !== "production") return;
   const { addTransport } = await import("@indiecrafts/packages-shared-logger");
-  const { cloudflareTransport } = await import("@indiecrafts/packages-shared-logger/cloudflare");
+  const { cloudflareTransport } =
+    await import("@indiecrafts/packages-shared-logger/cloudflare");
   addTransport(cloudflareTransport());
 }

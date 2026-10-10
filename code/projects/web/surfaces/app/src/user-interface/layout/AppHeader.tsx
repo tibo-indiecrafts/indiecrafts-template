@@ -20,7 +20,11 @@ export async function AppHeader() {
       <div className="ml-auto flex items-center gap-1">
         <LocaleSwitcher label={t("locale.label")} />
         <ThemeToggle
-          label={{ toggle: t("theme.toggle"), light: t("theme.light"), dark: t("theme.dark") }}
+          label={{
+            toggle: t("theme.toggle"),
+            light: t("theme.light"),
+            dark: t("theme.dark"),
+          }}
         />
       </div>
     </header>

@@ -68,9 +68,7 @@ export function CronRunsTable({ status }: { status: CronStatus | null }) {
         </div>
         <div>
           <dt className="text-muted-foreground text-sm">{t("erasureOpen")}</dt>
-          <dd className="text-foreground tabular-nums">
-            {status?.erasure.open ?? "—"}
-          </dd>
+          <dd className="text-foreground tabular-nums">{status?.erasure.open ?? "—"}</dd>
         </div>
         <div>
           <dt className="text-muted-foreground text-sm">{t("erasureDueSoon")}</dt>
@@ -116,9 +114,7 @@ export function CronRunsTable({ status }: { status: CronStatus | null }) {
                   {when(run.startedAt)}
                 </TableCell>
                 <TableCell className="align-top">
-                  <Badge
-                    variant={run.status === "failed" ? "destructive" : "outline"}
-                  >
+                  <Badge variant={run.status === "failed" ? "destructive" : "outline"}>
                     {t(`runStatus.${run.status}`)}
                   </Badge>
                 </TableCell>

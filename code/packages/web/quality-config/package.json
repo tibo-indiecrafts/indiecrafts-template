@@ -1,0 +1,19 @@
+{
+  "name": "@indiecrafts/packages-web-quality-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./eslint": "./src/eslint.mjs",
+    "./prettier": "./src/prettier.mjs",
+    "./lint-staged": "./src/lint-staged.mjs"
+  },
+  "dependencies": {
+    "eslint-config-next": "16.3.1",
+    "prettier-plugin-tailwindcss": "0.0.0-insiders.f7d2598"
+  },
+  "peerDependencies": {
+    "eslint": "^9",
+    "prettier": "^3"
+  }
+}

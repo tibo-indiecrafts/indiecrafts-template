@@ -142,7 +142,9 @@ export function ConsentSheet({
                         <TableCell>{d.surface}</TableCell>
                         <TableCell>{sourceLabel(d.source)}</TableCell>
                         <TableCell>{d.country ?? "—"}</TableCell>
-                        <TableCell className="font-mono text-xs">{d.policyVersion}</TableCell>
+                        <TableCell className="font-mono text-xs">
+                          {d.policyVersion}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

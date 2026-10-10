@@ -52,8 +52,7 @@ export function LegalGate({
       surface: "app",
       acceptedHere,
     }).then((synced) => {
-      if (alive && synced && !acceptedHere)
-        legalStore.save({ version, t: Date.now() });
+      if (alive && synced && !acceptedHere) legalStore.save({ version, t: Date.now() });
     });
     return () => {
       alive = false;
@@ -95,11 +94,5 @@ export function SignedInLegalGate({ locale }: { locale: Locale }) {
   const { getToken, userId } = useAuth();
   // Sign-in is a client-side navigation (the gate stays mounted): keying on the user
   // remounts it, so the server acceptance is re-read for the new identity.
-  return (
-    <LegalGate
-      key={userId ?? "anonymous"}
-      locale={locale}
-      getToken={getToken}
-    />
-  );
+  return <LegalGate key={userId ?? "anonymous"} locale={locale} getToken={getToken} />;
 }

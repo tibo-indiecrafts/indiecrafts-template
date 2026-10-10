@@ -126,13 +126,9 @@ export async function fetchDataRequests(): Promise<DataRequestRow[] | null> {
 }
 
 /** One request with its history. `null` = not found or could not load. */
-export async function fetchDataRequest(
-  id: number,
-): Promise<DataRequestDetail | null> {
+export async function fetchDataRequest(id: number): Promise<DataRequestDetail | null> {
   if (!Number.isInteger(id) || id < 1) return null;
-  const body = await getApi<{ data?: DataRequestDetail }>(
-    `/v1/data-requests/${id}`,
-  );
+  const body = await getApi<{ data?: DataRequestDetail }>(`/v1/data-requests/${id}`);
   return body?.data ?? null;
 }
 
@@ -140,11 +136,8 @@ export async function fetchDataRequest(
 export const isOverdue = (
   r: Pick<DataRequestRow, "status" | "due_at">,
   now = Date.now(),
-) =>
-  (r.status === "new" || r.status === "in-progress") &&
-  Date.parse(r.due_at) < now;
-export const fetchErasureRequests = () =>
-  getApi<ErasureRequests>("/v1/erasure-requests");
+) => (r.status === "new" || r.status === "in-progress") && Date.parse(r.due_at) < now;
+export const fetchErasureRequests = () => getApi<ErasureRequests>("/v1/erasure-requests");
 
 /** The api's authed `/health` body, flattened for the System page. No body (api down, or the
  *  bearer is not set) → dashes and empty lists, never a crash. */

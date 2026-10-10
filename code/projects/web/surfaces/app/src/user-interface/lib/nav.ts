@@ -21,6 +21,7 @@ const LOCALE_PREFIX = new RegExp(`^/(${localeCodes.join("|")})(?=/|$)`);
 /** Strip the optional locale prefix, then pick the item whose href is the longest matching prefix. `/` → home. */
 export function activeKey(pathname: string): string | undefined {
   const p = pathname.replace(LOCALE_PREFIX, "") || "/";
-  return NAV.filter((i) => (i.href === "/" ? p === "/" : p === i.href || p.startsWith(i.href + "/")))
-    .sort((a, b) => b.href.length - a.href.length)[0]?.key;
+  return NAV.filter((i) =>
+    i.href === "/" ? p === "/" : p === i.href || p.startsWith(i.href + "/"),
+  ).sort((a, b) => b.href.length - a.href.length)[0]?.key;
 }

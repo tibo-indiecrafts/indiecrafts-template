@@ -5,7 +5,7 @@
  *
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/settings-form.md
  */
-import { useRef, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
@@ -54,13 +54,14 @@ export function groupSettings(
  *  `saveSetting` per changed field. */
 export function SettingsForm({ settings }: { settings: SettingRow[] }) {
   const t = useTranslations("admin.settings");
-  const initial = useRef(
+  // The values as loaded, frozen on the first render (a lazy initial state, not a ref read).
+  const [initial] = useState<Record<string, number>>(() =>
     Object.fromEntries(settings.map((s) => [s.key, s.value])),
-  ).current;
+  );
   const [original, setOriginal] = useState<Record<string, number>>(initial);
   const [values, setValues] = useState<Record<string, number>>(initial);
-  const [overriddenAt, setOverriddenAt] = useState<Record<string, string | null>>(
-    () => Object.fromEntries(settings.map((s) => [s.key, s.updatedAt])),
+  const [overriddenAt, setOverriddenAt] = useState<Record<string, string | null>>(() =>
+    Object.fromEntries(settings.map((s) => [s.key, s.updatedAt])),
   );
   const [pending, startTransition] = useTransition();
 
@@ -96,19 +97,14 @@ export function SettingsForm({ settings }: { settings: SettingRow[] }) {
   };
 
   if (settings.length === 0) {
-    return (
-      <p className="text-muted-foreground py-10 text-center">{t("empty")}</p>
-    );
+    return <p className="text-muted-foreground py-10 text-center">{t("empty")}</p>;
   }
 
   return (
     <div className="mt-6 flex flex-col gap-8">
       {groupSettings(settings).map(({ group, rows }) => (
         <section key={group} aria-labelledby={`settings-group-${group}`}>
-          <h2
-            id={`settings-group-${group}`}
-            className="leading-none font-semibold"
-          >
+          <h2 id={`settings-group-${group}`} className="leading-none font-semibold">
             {t(`groups.${group}`)}
           </h2>
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
@@ -137,15 +133,15 @@ export function SettingsForm({ settings }: { settings: SettingRow[] }) {
                       }
                       className="max-w-32"
                     />
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-muted-foreground text-sm">
                       {t(`unit.${row.unit}`)}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {t("default", { value: row.def })}
                   </p>
                   {DRIFT_KEYS.has(row.key) ? (
-                    <p className="text-xs text-muted-foreground">{t("driftReminder")}</p>
+                    <p className="text-muted-foreground text-xs">{t("driftReminder")}</p>
                   ) : null}
                 </div>
               );

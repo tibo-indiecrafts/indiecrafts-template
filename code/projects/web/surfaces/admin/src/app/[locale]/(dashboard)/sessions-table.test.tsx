@@ -4,12 +4,14 @@ import { NextIntlClientProvider } from "next-intl";
 import messages from "../../../../messages/fr.json";
 import { SessionsTable, type SessionRow } from "./sessions-table";
 
-const { toastMock, listUserSessions, revokeSession, revokeUserSessions } = vi.hoisted(() => ({
-  toastMock: { success: vi.fn(), error: vi.fn() },
-  listUserSessions: vi.fn(),
-  revokeSession: vi.fn(),
-  revokeUserSessions: vi.fn(),
-}));
+const { toastMock, listUserSessions, revokeSession, revokeUserSessions } = vi.hoisted(
+  () => ({
+    toastMock: { success: vi.fn(), error: vi.fn() },
+    listUserSessions: vi.fn(),
+    revokeSession: vi.fn(),
+    revokeUserSessions: vi.fn(),
+  }),
+);
 vi.mock("sonner", () => ({ toast: toastMock }));
 vi.mock("./actions", () => ({ listUserSessions, revokeSession, revokeUserSessions }));
 
@@ -58,7 +60,11 @@ describe("SessionsTable", () => {
 
   it("formats a live session's last activity the same way", async () => {
     listUserSessions.mockResolvedValueOnce([
-      { id: "sess_1", lastActiveAt: Date.parse("2026-10-01T23:45:00.000Z"), browser: "Firefox" },
+      {
+        id: "sess_1",
+        lastActiveAt: Date.parse("2026-10-01T23:45:00.000Z"),
+        browser: "Firefox",
+      },
     ]);
     renderTable();
     fireEvent.click(screen.getByRole("button", { name: "Gérer" }));
@@ -77,6 +83,8 @@ describe("SessionsTable", () => {
     revokeUserSessions.mockResolvedValueOnce({ ok: false, error: "failed" });
     renderTable();
     fireEvent.click(screen.getByRole("button", { name: "Déconnecter l'utilisateur" }));
-    await waitFor(() => expect(toastMock.error).toHaveBeenCalledWith("Échec de l'action."));
+    await waitFor(() =>
+      expect(toastMock.error).toHaveBeenCalledWith("Échec de l'action."),
+    );
   });
 });

@@ -53,20 +53,20 @@ export default async function LocaleLayout({
     // hydration, so the server/client attributes differ by design (one level deep only).
     <AppClerkProvider locale={locale} nonce={nonce}>
       <html lang={locale} dir={localeDir(locale as Locale)} suppressHydrationWarning>
-      {/* suppressHydrationWarning: browser extensions inject attributes on <body>
+        {/* suppressHydrationWarning: browser extensions inject attributes on <body>
           (e.g. data-atm-installed) before React hydrates — a one-level-deep,
           client-only diff, not an app mismatch. */}
-      <body suppressHydrationWarning>
-        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
-        <NextIntlClientProvider>
-          {/* First focusable element: every page renders a `<main id="main">`. */}
-          <SkipLink label={t("skipToContent")} />
-          {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
-            <SessionLogger surface="admin" />
-          ) : null}
-          {children}
-        </NextIntlClientProvider>
-      </body>
+        <body suppressHydrationWarning>
+          <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+          <NextIntlClientProvider>
+            {/* First focusable element: every page renders a `<main id="main">`. */}
+            <SkipLink label={t("skipToContent")} />
+            {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+              <SessionLogger surface="admin" />
+            ) : null}
+            {children}
+          </NextIntlClientProvider>
+        </body>
       </html>
     </AppClerkProvider>
   );

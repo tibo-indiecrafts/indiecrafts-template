@@ -4,7 +4,11 @@ vi.mock("server-only", () => ({}));
 const { fetchEmailPreferences } = await import("./email-preferences");
 const USER = "user_2abcEMAILPREFS00001";
 const ADMIN = "user_2abcADMIN000000001";
-const STATE = { subject: { userId: USER, email: "a@x.com" }, categories: [], resend: null };
+const STATE = {
+  subject: { userId: USER, email: "a@x.com" },
+  categories: [],
+  resend: null,
+};
 
 beforeEach(() => {
   process.env.API_URL = "https://api.x";

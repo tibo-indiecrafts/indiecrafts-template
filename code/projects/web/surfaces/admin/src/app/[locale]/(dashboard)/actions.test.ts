@@ -42,19 +42,17 @@ vi.mock("@clerk/nextjs/server", () => ({
 vi.mock("@/lib/audit", () => ({ audit: auditMock }));
 vi.stubGlobal("fetch", fetchMock);
 
-const {
-  grantAdmin,
-  revokeSession,
-  revokeUserSessions,
-  listUserSessions,
-  saveSetting,
-} = await import("./actions");
+const { grantAdmin, revokeSession, revokeUserSessions, listUserSessions, saveSetting } =
+  await import("./actions");
 
 const ADMIN_ID = "user_admin1";
 const TARGET_ID = "user_target1";
 const admin = { userId: ADMIN_ID, sessionClaims: { metadata: { role: "admin" } } };
 const noSession = { userId: null, sessionClaims: null };
-const nonAdmin = { userId: "user_bob1", sessionClaims: { metadata: { role: undefined } } };
+const nonAdmin = {
+  userId: "user_bob1",
+  sessionClaims: { metadata: { role: undefined } },
+};
 
 afterEach(() => {
   vi.clearAllMocks();
@@ -78,7 +76,10 @@ describe("grantAdmin", () => {
 
   it("rejects a malformed target id before any mutation", async () => {
     authMock.mockResolvedValueOnce(admin);
-    expect(await grantAdmin("not-a-user-id")).toEqual({ ok: false, error: "invalid_user" });
+    expect(await grantAdmin("not-a-user-id")).toEqual({
+      ok: false,
+      error: "invalid_user",
+    });
     expect(clerkClientMock).not.toHaveBeenCalled();
     expect(auditMock).not.toHaveBeenCalled();
   });
@@ -129,7 +130,10 @@ describe("revokeSession", () => {
 describe("revokeUserSessions", () => {
   it("fails closed for a non-admin session — no mutation, no audit", async () => {
     authMock.mockResolvedValueOnce(nonAdmin);
-    expect(await revokeUserSessions(TARGET_ID)).toEqual({ ok: false, error: "forbidden" });
+    expect(await revokeUserSessions(TARGET_ID)).toEqual({
+      ok: false,
+      error: "forbidden",
+    });
     expect(clerkClientMock).not.toHaveBeenCalled();
     expect(auditMock).not.toHaveBeenCalled();
   });
@@ -148,7 +152,11 @@ describe("revokeUserSessions", () => {
     getSessionList.mockResolvedValueOnce({ data: [{ id: "sess_1" }, { id: "sess_2" }] });
     expect(await revokeUserSessions(TARGET_ID)).toEqual({ ok: true });
     // Clerk pages at 10 by default — ask for the max so no session is left signed in.
-    expect(getSessionList).toHaveBeenCalledWith({ userId: TARGET_ID, status: "active", limit: 500 });
+    expect(getSessionList).toHaveBeenCalledWith({
+      userId: TARGET_ID,
+      status: "active",
+      limit: 500,
+    });
     expect(revokeSessionApi).toHaveBeenCalledWith("sess_1");
     expect(revokeSessionApi).toHaveBeenCalledWith("sess_2");
     expect(auditMock).toHaveBeenCalledWith("admin.revoke_user_sessions", {
@@ -206,12 +214,24 @@ describe("listUserSessions", () => {
         {
           id: "sess_1",
           lastActiveAt: 1,
-          latestActivity: { deviceType: "Mac", browserName: "Firefox", city: "Lyon", country: "FR", ipAddress: "203.0.113.7" },
+          latestActivity: {
+            deviceType: "Mac",
+            browserName: "Firefox",
+            city: "Lyon",
+            country: "FR",
+            ipAddress: "203.0.113.7",
+          },
         },
       ],
     } as never);
     expect(await listUserSessions(TARGET_ID)).toEqual([
-      { id: "sess_1", lastActiveAt: 1, device: "Mac", browser: "Firefox", location: "Lyon, FR" },
+      {
+        id: "sess_1",
+        lastActiveAt: 1,
+        device: "Mac",
+        browser: "Firefox",
+        location: "Lyon, FR",
+      },
     ]);
   });
 });

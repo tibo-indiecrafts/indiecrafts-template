@@ -85,9 +85,8 @@ export async function listUserSessions(userId: string): Promise<LiveSession[]> {
       device: s.latestActivity?.deviceType ?? undefined,
       browser: s.latestActivity?.browserName ?? undefined,
       location:
-        [s.latestActivity?.city, s.latestActivity?.country]
-          .filter(Boolean)
-          .join(", ") || undefined,
+        [s.latestActivity?.city, s.latestActivity?.country].filter(Boolean).join(", ") ||
+        undefined,
     }));
   } catch {
     return [];

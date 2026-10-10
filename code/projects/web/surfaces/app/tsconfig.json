@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "jsx": "react-jsx",
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -22,9 +18,7 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
+      "@/*": ["./src/*"],
       "@indiecrafts/packages-web-announcement/*": [
         "../../../../packages/web/announcement/src/*"
       ],
@@ -43,9 +37,7 @@
       "@indiecrafts/packages-web-system-pages/*": [
         "../../../../packages/web/system-pages/src/*"
       ],
-      "@indiecrafts/packages-web-ui-icons/*": [
-        "../../../../packages/web/ui-icons/src/*"
-      ]
+      "@indiecrafts/packages-web-ui-icons/*": ["../../../../packages/web/ui-icons/src/*"]
     },
     "allowJs": true
   },
@@ -56,7 +48,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

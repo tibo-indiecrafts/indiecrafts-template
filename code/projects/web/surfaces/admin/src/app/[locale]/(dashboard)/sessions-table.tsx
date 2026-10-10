@@ -80,7 +80,8 @@ function Row({ row, email }: { row: SessionRow; email?: string }) {
   const [open, setOpen] = useState(false);
   const [live, setLive] = useState<LiveSession[] | null>(null);
   // A toast, not an inline line: "sign out everywhere" also runs with the row collapsed.
-  const notify = (ok: boolean) => (ok ? toast.success(t("revoked")) : toast.error(t("error")));
+  const notify = (ok: boolean) =>
+    ok ? toast.success(t("revoked")) : toast.error(t("error"));
 
   const toggle = () => {
     if (!open && live === null) {
@@ -117,19 +118,14 @@ function Row({ row, email }: { row: SessionRow; email?: string }) {
           <Button variant="outline" size="sm" disabled={pending} onClick={toggle}>
             {open ? t("hide") : t("manage")}
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={pending}
-            onClick={revokeAll}
-          >
+          <Button variant="outline" size="sm" disabled={pending} onClick={revokeAll}>
             {t("signOutUser")}
           </Button>
         </TableCell>
       </TableRow>
       {open ? (
         <TableRow className="bg-muted/30 hover:bg-muted/30">
-          <TableCell colSpan={COLUMN_COUNT} className="whitespace-normal px-4 py-3">
+          <TableCell colSpan={COLUMN_COUNT} className="px-4 py-3 whitespace-normal">
             {live === null ? (
               <p className="text-muted-foreground">{t("loading")}</p>
             ) : live.length === 0 ? (
@@ -139,10 +135,9 @@ function Row({ row, email }: { row: SessionRow; email?: string }) {
                 {live.map((s) => (
                   <li key={s.id} className="flex items-center justify-between gap-4">
                     <span className="text-sm">
-                      {[s.device, s.browser, s.location]
-                        .filter(Boolean)
-                        .join(" · ") || s.id}
-                      <span className="ml-2 text-xs text-muted-foreground tabular-nums">
+                      {[s.device, s.browser, s.location].filter(Boolean).join(" · ") ||
+                        s.id}
+                      <span className="text-muted-foreground ml-2 text-xs tabular-nums">
                         {format.dateTime(new Date(s.lastActiveAt), WHEN)}
                       </span>
                     </span>

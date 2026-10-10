@@ -25,12 +25,9 @@ type Fail = {
     | "unreachable"
     | "failed";
 };
-export type OverrideResult =
-  | { ok: true; resend: "ok" | "failed" | "skipped" }
-  | Fail;
+export type OverrideResult = { ok: true; resend: "ok" | "failed" | "skipped" } | Fail;
 export type ChangeEmailResult =
-  | { ok: true; resend: "moved" | "none" | "failed" | "skipped" | "unreachable" }
-  | Fail;
+  { ok: true; resend: "moved" | "none" | "failed" | "skipped" | "unreachable" } | Fail;
 
 const USER_ID = /^user_[A-Za-z0-9]{10,40}$/;
 const EMAIL = /^[^@\s/?#%\\]+@[^@\s/?#%\\]+\.[^@\s/?#%\\]+$/;
@@ -178,8 +175,6 @@ export async function changeSignInEmail(input: {
   return {
     ok: true,
     resend:
-      resend === "moved" || resend === "none" || resend === "failed"
-        ? resend
-        : "skipped",
+      resend === "moved" || resend === "none" || resend === "failed" ? resend : "skipped",
   };
 }

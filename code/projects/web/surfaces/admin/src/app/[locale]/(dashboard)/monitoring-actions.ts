@@ -30,14 +30,12 @@ export type RetryResult =
       | "changed"
       | "not_found"
     >;
-export type CloseResult =
-  { ok: true } | Fail<"note_required" | "not_open" | "not_found">;
+export type CloseResult = { ok: true } | Fail<"note_required" | "not_open" | "not_found">;
 export type DataRequestStatusResult =
   | { ok: true; notified: boolean }
   | Fail<"note_required" | "not_allowed" | "changed" | "not_found">;
 export type RunResult =
-  | { ok: true; status: "ok" | "failed" }
-  | Fail<"cron_unbound" | "cron_unreachable">;
+  { ok: true; status: "ok" | "failed" } | Fail<"cron_unbound" | "cron_unreachable">;
 
 /** The caller must be a signed-in admin (checked on the server, never trusted from the client). */
 async function adminId(): Promise<string | null> {
@@ -68,10 +66,7 @@ async function postApi(
     });
     return {
       status: res.status,
-      data: ((await res.json().catch(() => ({}))) ?? {}) as Record<
-        string,
-        unknown
-      >,
+      data: ((await res.json().catch(() => ({}))) ?? {}) as Record<string, unknown>,
     };
   } catch {
     return null;
@@ -82,10 +77,7 @@ const validId = (id: number) => Number.isInteger(id) && id > 0;
 
 /** Retry a stuck (`confirmed`) erasure. The email is optional: the api reads it from Clerk when
  *  it can and answers `email_required` otherwise; a typed email is never stored. */
-export async function retryErasure(
-  id: number,
-  email?: string,
-): Promise<RetryResult> {
+export async function retryErasure(id: number, email?: string): Promise<RetryResult> {
   const actor = await adminId();
   if (!actor) return { ok: false, error: "forbidden" };
   if (!validId(id)) return { ok: false, error: "invalid" };
@@ -114,16 +106,12 @@ export async function retryErasure(
 }
 
 /** Close an open request handled outside the system — the note is required (5–500 chars). */
-export async function closeErasure(
-  id: number,
-  note: string,
-): Promise<CloseResult> {
+export async function closeErasure(id: number, note: string): Promise<CloseResult> {
   const actor = await adminId();
   if (!actor) return { ok: false, error: "forbidden" };
   if (!validId(id)) return { ok: false, error: "invalid" };
   const text = note.trim();
-  if (text.length < 5 || text.length > 500)
-    return { ok: false, error: "note_required" };
+  if (text.length < 5 || text.length > 500) return { ok: false, error: "note_required" };
   const res = await postApi(`/v1/erasure-requests/${id}/close`, {
     note: text,
     by: actor,
@@ -143,10 +131,7 @@ export async function runCronNow(): Promise<RunResult> {
   const res = await postApi("/v1/cron/run");
   await audit("admin.cron_run", { actor, target: "cron" });
   if (!res) return { ok: false, error: "unreachable" };
-  if (
-    res.data.error === "cron_unbound" ||
-    res.data.error === "cron_unreachable"
-  )
+  if (res.data.error === "cron_unbound" || res.data.error === "cron_unreachable")
     return { ok: false, error: res.data.error };
   if (res.data.status === "ok" || res.data.status === "failed")
     return { ok: true, status: res.data.status };
@@ -180,8 +165,7 @@ export async function setDataRequestStatus(
     target: `data-request:${id}`,
   });
   if (!res) return { ok: false, error: "unreachable" };
-  if (res.status === 200)
-    return { ok: true, notified: res.data.notified === true };
+  if (res.status === 200) return { ok: true, notified: res.data.notified === true };
   const known = [
     "note_required",
     "not_allowed",

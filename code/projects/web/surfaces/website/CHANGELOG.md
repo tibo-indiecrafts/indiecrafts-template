@@ -106,6 +106,10 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **ESLint, Prettier and lint-staged configs come from `@indiecrafts/packages-web-quality-config`.**
+  Same rules, now shared with admin and app. **Why:** one source of the quality bar for every
+  surface.
+
 - **`/api/emails/test` takes a group and languages.** `{ to, scope?, locales? }`; the service and
   account groups come from the api (`POST /v1/emails/test`). The website samples moved to
   `samples.ts`. **Why:** the Studio test now covers every email, one group at a time.

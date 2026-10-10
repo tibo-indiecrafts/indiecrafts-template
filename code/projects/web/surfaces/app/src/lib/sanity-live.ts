@@ -12,10 +12,7 @@ import { logger } from "@indiecrafts/packages-shared-logger";
  * briefly so a transient Sanity error retries soon. Reads the PUBLIC project id + dataset
  * straight from env (not `@indiecrafts/packages-web-sanity/env`, which asserts).
  */
-export function liveQuery<T>(
-  query: string,
-  label: string,
-): () => Promise<T | null> {
+export function liveQuery<T>(query: string, label: string): () => Promise<T | null> {
   const TTL_MS = 60_000;
   const FAIL_TTL_MS = 5_000;
   let cache: { value: T | null; expires: number } | null = null;
@@ -25,8 +22,7 @@ export function liveQuery<T>(
     if (cache && cache.expires > now) return cache.value;
     const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
     const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
-    const apiVersion =
-      process.env.NEXT_PUBLIC_SANITY_API_VERSION ?? "2025-01-01";
+    const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION ?? "2025-01-01";
     if (!projectId || !dataset) return null;
     try {
       const url = `https://${projectId}.apicdn.sanity.io/v${apiVersion}/data/query/${dataset}?query=${encodeURIComponent(query)}`;

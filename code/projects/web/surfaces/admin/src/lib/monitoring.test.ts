@@ -29,9 +29,7 @@ describe("cronHealth", () => {
     expect(cronHealth(null)).toBe("unreachable");
   });
   it("is never when no run was recorded", () => {
-    expect(
-      cronHealth({ ...base, lastRunAt: null, runs: [], stale: true }),
-    ).toBe("never");
+    expect(cronHealth({ ...base, lastRunAt: null, runs: [], stale: true })).toBe("never");
   });
   it("is stale before failed — an old failure means the cron stopped", () => {
     expect(
@@ -43,9 +41,9 @@ describe("cronHealth", () => {
     ).toBe("stale");
   });
   it("is failed when the last run failed", () => {
-    expect(
-      cronHealth({ ...base, runs: [{ ...base.runs[0], status: "failed" }] }),
-    ).toBe("failed");
+    expect(cronHealth({ ...base, runs: [{ ...base.runs[0], status: "failed" }] })).toBe(
+      "failed",
+    );
   });
   it("is ok otherwise", () => {
     expect(cronHealth(base)).toBe("ok");
@@ -137,7 +135,17 @@ describe("fetchDataRequests", () => {
   it("returns the newest 100 rows from the bearer-gated list", async () => {
     vi.stubEnv("API_URL", "http://api.test");
     vi.stubEnv("APP_API_TOKEN", "t");
-    const row = { id: 1, request_type: "access", email: "a@b.co", message: null, status: "new", submitted_at: "2026-10-01T08:00:00Z", due_at: "2026-11-01T08:00:00Z", source: null, locale: "en" };
+    const row = {
+      id: 1,
+      request_type: "access",
+      email: "a@b.co",
+      message: null,
+      status: "new",
+      submitted_at: "2026-10-01T08:00:00Z",
+      due_at: "2026-11-01T08:00:00Z",
+      source: null,
+      locale: "en",
+    };
     const fetchMock = vi
       .fn()
       .mockResolvedValue(new Response(JSON.stringify({ data: [row] }), { status: 200 }));
@@ -185,8 +193,12 @@ describe("isOverdue", () => {
   const now = Date.parse("2026-11-02T00:00:00Z");
   it("is true only for an open request past its due date", () => {
     expect(isOverdue({ status: "new", due_at: "2026-11-01T08:30:00Z" }, now)).toBe(true);
-    expect(isOverdue({ status: "in-progress", due_at: "2026-11-01T08:30:00Z" }, now)).toBe(true);
-    expect(isOverdue({ status: "done", due_at: "2026-11-01T08:30:00Z" }, now)).toBe(false);
+    expect(
+      isOverdue({ status: "in-progress", due_at: "2026-11-01T08:30:00Z" }, now),
+    ).toBe(true);
+    expect(isOverdue({ status: "done", due_at: "2026-11-01T08:30:00Z" }, now)).toBe(
+      false,
+    );
     expect(isOverdue({ status: "new", due_at: "2026-12-01T08:30:00Z" }, now)).toBe(false);
   });
 });

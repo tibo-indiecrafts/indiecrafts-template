@@ -19,6 +19,7 @@ export function BrandMark({ brand }: { brand: Brand | null }) {
   const alt = brand.name ?? "";
   return (
     <>
+      {/* eslint-disable-next-line @next/next/no-img-element -- CDN-sized via explicit Sanity params (sanity-images rule) */}
       <img
         src={sized(brand.logo)}
         alt={alt}
@@ -26,6 +27,7 @@ export function BrandMark({ brand }: { brand: Brand | null }) {
         className={brand.logoDark ? "h-12 w-auto dark:hidden" : "h-12 w-auto"}
       />
       {brand.logoDark ? (
+        // eslint-disable-next-line @next/next/no-img-element -- CDN-sized, as above
         <img
           src={sized(brand.logoDark)}
           alt={alt}

@@ -50,7 +50,6 @@ export function ConsentGate({
     consentStore.save({ v: policyVersion, t: Date.now(), choices });
     // Logged server-side for a signed-in user only (the route drops anonymous calls).
     reportConsent(choices, policyVersion, "auto");
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- close is stable enough; re-arm on version/timer change
   }, [mode, gpcSignal, record]);
 
   // Only opt-in regions get the blocking banner; opt-out/none rely on the seed + preferences.

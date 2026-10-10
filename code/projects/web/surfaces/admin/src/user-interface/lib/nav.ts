@@ -52,7 +52,10 @@ export const NAV: NavGroup[] = [
       { key: "settings", href: "/settings", icon: Settings },
     ],
   },
-  { labelKey: "security", items: [{ key: "security", href: "/security", icon: ShieldCheck }] },
+  {
+    labelKey: "security",
+    items: [{ key: "security", href: "/security", icon: ShieldCheck }],
+  },
 ];
 
 // Matches an optional leading `/<locale>` segment (e.g. `/en`, `/fr`) — built from the
@@ -64,7 +67,9 @@ export function activeKey(pathname: string): string | undefined {
   const p = pathname.replace(LOCALE_PREFIX, "") || "/";
   const items = NAV.flatMap((g) => g.items);
   const match = items
-    .filter((i) => (i.href === "/" ? p === "/" : p === i.href || p.startsWith(i.href + "/")))
+    .filter((i) =>
+      i.href === "/" ? p === "/" : p === i.href || p.startsWith(i.href + "/"),
+    )
     .sort((a, b) => b.href.length - a.href.length)[0];
   return match?.key;
 }

@@ -9,7 +9,9 @@ vi.mock("@indiecrafts/packages-web-auth/session-log", () => ({ logSession }));
 
 const { POST } = await import("./route");
 
-function request(init: { body?: object | string; headers?: Record<string, string> } = {}) {
+function request(
+  init: { body?: object | string; headers?: Record<string, string> } = {},
+) {
   const body =
     init.body === undefined
       ? {}

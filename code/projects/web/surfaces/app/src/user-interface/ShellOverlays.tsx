@@ -39,11 +39,7 @@ export function ShellOverlays({
   return (
     <>
       <ConsentGate mode={mode} gpcSignal={gpcSignal} />
-      {clerkOn ? (
-        <SignedInLegalGate locale={locale} />
-      ) : (
-        <LegalGate locale={locale} />
-      )}
+      {clerkOn ? <SignedInLegalGate locale={locale} /> : <LegalGate locale={locale} />}
       <UpdatePrompt
         current={commit}
         message={tv("message")}

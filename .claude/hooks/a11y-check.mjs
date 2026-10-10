@@ -8,8 +8,8 @@
  *   • Stop                              → lint the whole changed UI set, once.
  *
  * Each file is fed to the app's REAL eslint via `--stdin` + an in-base-path
- * `--stdin-filename`, so the exact flat config (code/projects/web/surfaces/website/
- * eslint.config.mjs) + the TS parser apply — no rule drift, and it works for files
+ * `--stdin-filename`, so the exact flat config (the website's eslint.config.mjs — the shared
+ * `@indiecrafts/packages-web-quality-config/eslint` every web surface uses) + the TS parser apply — no rule drift, and it works for files
  * outside the website that eslint-config-next would otherwise skip ("File ignored because
  * outside of base path").
  *

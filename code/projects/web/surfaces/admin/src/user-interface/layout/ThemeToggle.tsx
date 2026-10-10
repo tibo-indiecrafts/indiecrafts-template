@@ -33,7 +33,9 @@ export function ThemeToggle({ label }: { label: ThemeToggleLabel }) {
     const next: Theme = theme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     localStorage.setItem("admin-theme", next);
-    window.dispatchEvent(new StorageEvent("storage", { key: "admin-theme", newValue: next }));
+    window.dispatchEvent(
+      new StorageEvent("storage", { key: "admin-theme", newValue: next }),
+    );
   };
 
   const Icon = theme === "dark" ? Moon : Sun;

@@ -6,13 +6,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/erasure-row-actions.md
  */
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-  type FormEvent,
-} from "react";
+import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
@@ -35,13 +29,7 @@ import { closeErasure, retryErasure } from "./monitoring-actions";
 /** Retry (only a stuck `confirmed` request) + Close manually (any open request). The retry
  *  asks for the subject's email only when the api can't read it from Clerk; the typed email
  *  goes to the server action once and is never kept. */
-export function ErasureRowActions({
-  id,
-  status,
-}: {
-  id: number;
-  status: string;
-}) {
+export function ErasureRowActions({ id, status }: { id: number; status: string }) {
   const t = useTranslations("admin.erasure.actions");
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -61,9 +49,7 @@ export function ErasureRowActions({
     start(async () => {
       const r = await retryErasure(id, needEmail ? email : undefined);
       if (r.ok) {
-        toast.success(
-          t(r.outcome === "completed" ? "retryDone" : "retryPartial"),
-        );
+        toast.success(t(r.outcome === "completed" ? "retryDone" : "retryPartial"));
         setNeedEmail(false);
         setEmail("");
         router.refresh();
@@ -128,11 +114,7 @@ export function ErasureRowActions({
               <DialogClose asChild>
                 <Button variant="outline">{t("cancel")}</Button>
               </DialogClose>
-              <Button
-                variant="destructive"
-                disabled={pending || !noteOk}
-                onClick={close}
-              >
+              <Button variant="destructive" disabled={pending || !noteOk} onClick={close}>
                 {t("closeConfirm")}
               </Button>
             </DialogFooter>

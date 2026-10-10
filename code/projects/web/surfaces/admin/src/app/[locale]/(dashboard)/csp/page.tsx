@@ -92,7 +92,9 @@ export default async function CspPage({
                   <TableRow key={row.group_key}>
                     <TableCell className="tabular-nums">{row.count}</TableCell>
                     <TableCell>
-                      <Badge variant={row.disposition === "report" ? "outline" : "secondary"}>
+                      <Badge
+                        variant={row.disposition === "report" ? "outline" : "secondary"}
+                      >
                         {row.disposition}
                       </Badge>
                     </TableCell>

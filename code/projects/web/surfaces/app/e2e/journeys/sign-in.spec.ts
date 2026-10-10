@@ -12,9 +12,7 @@ const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 // Clerk signs in existing users only: each run creates its own and removes it.
 const user = throwawayClerkUser("app-sign-in");
 
-async function isSignedIn(
-  page: import("@playwright/test").Page,
-): Promise<boolean> {
+async function isSignedIn(page: import("@playwright/test").Page): Promise<boolean> {
   return page.evaluate(() =>
     Boolean((window as unknown as { Clerk?: { user?: unknown } }).Clerk?.user),
   );

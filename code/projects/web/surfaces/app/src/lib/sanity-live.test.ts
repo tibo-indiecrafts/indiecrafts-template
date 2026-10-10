@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { liveQuery } from "./sanity-live";
 
 const json = (result: unknown) =>
-  vi.fn(async (_url: string) => new Response(JSON.stringify({ result }), { status: 200 }));
+  vi.fn(
+    async (_url: string) => new Response(JSON.stringify({ result }), { status: 200 }),
+  );
 
 afterEach(() => {
   vi.unstubAllEnvs();

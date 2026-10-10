@@ -17,7 +17,10 @@ describe("dashboard pages", () => {
     expect(pages.length).toBeGreaterThan(0);
   });
 
-  it.each(pages.map((p) => [relative(root, p), p]))("%s calls requireAdminPage", (_name, file) => {
-    expect(readFileSync(file, "utf8")).toMatch(/await requireAdminPage\(locale\)/);
-  });
+  it.each(pages.map((p) => [relative(root, p), p]))(
+    "%s calls requireAdminPage",
+    (_name, file) => {
+      expect(readFileSync(file, "utf8")).toMatch(/await requireAdminPage\(locale\)/);
+    },
+  );
 });

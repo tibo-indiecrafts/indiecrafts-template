@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The production app's ESLint flat config. It extends `eslint-config-next` (core-web-vitals + TypeScript) and enumerates every `jsx-a11y` rule explicitly so a future `eslint-config-next` downgrade cannot silently weaken accessibility coverage — WCAG 2.1 AA is the baseline, and every violation is an error. It also restricts imports from `next/link` and `next-intl/navigation` (steering callers to `@/i18n/routing`), allowing that import only in `src/i18n/routing.ts`, and ignores build-output directories.
+Re-exports `webEslintConfig()` from `@indiecrafts/packages-web-quality-config/eslint`, shared with the admin and app surfaces. It extends `eslint-config-next` (core-web-vitals + TypeScript) and enumerates every `jsx-a11y` rule as an error — WCAG 2.1 AA is the baseline. It restricts imports from `next/link` and `next-intl/navigation` (steering callers to `@/i18n/routing`), allowing that import only in `src/i18n/routing.ts`, and ignores build-output directories. Change a rule in the brick, for every surface.
 
 ## Exports
 

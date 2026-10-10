@@ -41,7 +41,10 @@ test.describe("admin auth (Clerk sign-in)", () => {
   });
 
   test("a signed-in admin reaches the dashboard", async ({ page }) => {
-    test.skip(!ADMIN_EMAIL, "set E2E_CLERK_ADMIN_EMAIL to a test user with the admin role");
+    test.skip(
+      !ADMIN_EMAIL,
+      "set E2E_CLERK_ADMIN_EMAIL to a test user with the admin role",
+    );
     await signIn(page, ADMIN_EMAIL!);
     await page.goto("/en/sessions");
     await expect(page).not.toHaveURL(/\/sign-in/);

@@ -1,0 +1,15 @@
+# Build output — `format` / `format:check` run `prettier … .` from this dir, so these must be
+# listed here (the root .prettierignore excludes code/projects/web/ and is not applied here).
+.next/
+.open-next/
+.wrangler/
+.turbo/
+dist/
+out/
+build/
+coverage/
+test-results/
+playwright-report/
+
+# Generated
+next-env.d.ts

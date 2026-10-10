@@ -3,11 +3,7 @@
  *
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/users/page.md
  */
-import {
-  getFormatter,
-  getTranslations,
-  setRequestLocale,
-} from "next-intl/server";
+import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { requireAdminPage } from "@/lib/require-admin";
 import { auth } from "@clerk/nextjs/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
@@ -45,8 +41,7 @@ export default async function UsersPage({
   const tc = await getTranslations("admin.consent");
   const te = await getTranslations("admin.emails");
   const format = await getFormatter();
-  const day = (ms: number) =>
-    format.dateTime(new Date(ms), { dateStyle: "medium" });
+  const day = (ms: number) => format.dateTime(new Date(ms), { dateStyle: "medium" });
   const users = await fetchUsers(query);
   const consent = await fetchMarketingConsent(users.map((u) => u.id));
   // `?consent=<userId>` opens that user's consent sheet; the read is audited.
@@ -58,15 +53,11 @@ export default async function UsersPage({
     `${listHref}${query ? "&" : "?"}emails=${encodeURIComponent(id)}`;
   const { userId: actor } = await auth();
   const sheetUser =
-    typeof consentFor === "string"
-      ? users.find((u) => u.id === consentFor)
-      : undefined;
+    typeof consentFor === "string" ? users.find((u) => u.id === consentFor) : undefined;
   const history =
     sheetUser && actor ? await fetchConsentHistory(sheetUser.id, actor) : null;
   const emailsUser =
-    typeof emailsFor === "string"
-      ? users.find((u) => u.id === emailsFor)
-      : undefined;
+    typeof emailsFor === "string" ? users.find((u) => u.id === emailsFor) : undefined;
   const emailState =
     emailsUser && actor
       ? await fetchEmailPreferences({ userId: emailsUser.id }, actor)
@@ -91,9 +82,7 @@ export default async function UsersPage({
             <Button type="submit">{t("go")}</Button>
           </form>
           {users.length === 0 ? (
-            <p className="text-muted-foreground py-10 text-center">
-              {t("empty")}
-            </p>
+            <p className="text-muted-foreground py-10 text-center">{t("empty")}</p>
           ) : (
             <div className="mt-6">
               <Table>
@@ -119,15 +108,11 @@ export default async function UsersPage({
                       <TableCell>{u.email}</TableCell>
                       <TableCell>{u.role}</TableCell>
                       <TableCell>{emailsLabel(consent[u.id])}</TableCell>
-                      <TableCell className="tabular-nums">
-                        {day(u.created)}
-                      </TableCell>
+                      <TableCell className="tabular-nums">{day(u.created)}</TableCell>
                       <TableCell className="tabular-nums">
                         {u.lastSignIn ? day(u.lastSignIn) : "—"}
                       </TableCell>
-                      <TableCell className="font-mono text-xs">
-                        {u.id}
-                      </TableCell>
+                      <TableCell className="font-mono text-xs">{u.id}</TableCell>
                       <TableCell>
                         <RowLink
                           href={consentHref(u.id)}
@@ -151,11 +136,7 @@ export default async function UsersPage({
         </CardContent>
       </Card>
       {sheetUser ? (
-        <ConsentSheet
-          email={sheetUser.email}
-          history={history}
-          closeHref={listHref}
-        />
+        <ConsentSheet email={sheetUser.email} history={history} closeHref={listHref} />
       ) : null}
       {emailsUser ? (
         <EmailPrefsSheet
@@ -170,15 +151,7 @@ export default async function UsersPage({
 }
 
 /** A row's link that opens one of its side sheets. */
-function RowLink({
-  href,
-  label,
-  aria,
-}: {
-  href: string;
-  label: string;
-  aria: string;
-}) {
+function RowLink({ href, label, aria }: { href: string; label: string; aria: string }) {
   return (
     <Link
       href={href}
