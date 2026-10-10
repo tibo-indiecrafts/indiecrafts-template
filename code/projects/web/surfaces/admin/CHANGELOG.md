@@ -14,6 +14,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **Sign-in email change, after review.** Audited (with its reason) the moment Clerk accepts the
+  new address; sessions are revoked and counted before the old address is removed; anything short
+  of complete answers "partial" so the operator finishes in the Clerk Dashboard. `adminId` /
+  `postApi` and the id patterns live once (`lib/admin-api.ts`, `lib/ids.ts`). **Why:** a half-done
+  login change must never pass silently or unaudited.
+
 - **Prod admin has no `workers.dev` URL.** Cloudflare Access fronts the admin's custom host only,
   so `<worker>.workers.dev` and preview URLs reached the Worker without it (Clerk only). Prod sets
   `workers_dev = false` and `preview_urls = false`; `wrangler-parity.test.mjs` fails for any env
@@ -357,5 +363,5 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   status · a truncated message excerpt · locale/source, last 100); linked from the dashboard. DSARs
   moved off Sanity Studio into D1 (`api`'s `data_requests` table), so this restores operator
   visibility. **Read-only** — status write-back (mark in-progress/done) is a deferred follow-up; until
-  it lands, flip a request's status by hand: `wrangler d1 execute indiecrafts-<env>-shared-api
---command "UPDATE data_requests SET status='done' WHERE id=?"`.
+  it lands, flip a request's status by hand:
+  `wrangler d1 execute indiecrafts-<env>-shared-api --command "UPDATE data_requests SET status='done' WHERE id=?"`.

@@ -15,7 +15,7 @@ Mirrors each marketing-email consent decision to Resend's global Contacts. Resen
 ## Exports
 
 - `ResendAudienceEnv` — the `Env` slice this module needs (`RESEND_API_KEY?`), never the full worker `Env`.
-- `syncContactTopics` — create-or-update the contact's per-topic subscriptions, mapping `granted` to `opt_in`/`opt_out`. With `newsletterLocale` (the `news` category changed): a locale sets the `locale` property and moves the contact to `newsletter-<locale>`; `null` removes it from every `newsletter-*` segment.
+- `syncContactTopics` — create-or-update the contact's per-topic subscriptions, mapping `granted` to `opt_in`/`opt_out`. With `newsletterLocale` (the `news` category changed): a locale sets the `locale` property and moves the contact to `newsletter-<locale>`; `null` removes it from every `newsletter-*` segment. Any opt-in also clears the global `unsubscribed`: the person's own choice must reach them, even after an admin's stop.
 - `subscribeNewsletterContact` — a confirmed newsletter subscriber: global `unsubscribed: false`, the `locale` property, the `news` topic `opt_in` and the `newsletter-<locale>` segment. A new contact gets all of it in one `POST /contacts`; an existing one is updated, then moved out of the other `newsletter-*` segments. No `newsletter-<locale>` segment (setup not run) → throws: a subscriber outside every language segment would never get an issue.
 - `upsertGeneralContact` — a waitlist or contact-form person (`POST /v1/contacts/general`): a new contact gets the `locale` property; an existing one keeps its fields (language, global unsubscribe). With a `topicId` the contact opts into that topic, new or existing; the route passes none for a contact message or a preference-centre opt-out.
 - `clearSegmentCache` — forget the cached segment list (a test seam).
@@ -23,8 +23,8 @@ Mirrors each marketing-email consent decision to Resend's global Contacts. Resen
 - `suppressResendContact` — suppress a departed contact: global unsubscribe, opt out of every marketing topic, opt into the churned topic, and stamp the churn reason.
 - `deleteResendContact` — remove the contact (the erasure pure-delete); a 404 counts as success.
 - `getResendContact` — the contact's global state (`{ exists, unsubscribed }`; `exists: false` for an unknown address, `null` on error). The admin email panel reads it.
-- `turnOffContact` — an admin override: opt out of the given topics, and with `stopAll` the global unsubscribe. Never opts anything in.
-- `moveResendContact` — after a sign-in email change: the new address gets the old contact's topics, segments, global unsubscribe and `locale`; the old contact is removed.
+- `turnOffContact` — an admin override: opt out of the given topics, with `stopAll` the global unsubscribe, with `leaveNewsletter` out of every `newsletter-<locale>` segment. Never opts anything in.
+- `moveResendContact` — after a sign-in email change: the new address gets the old contact's topics, segments, global unsubscribe and `locale`, merged with a contact already there so the more restrictive state wins; the old contact is removed. Every read must succeed before anything is written.
 
 ## Usage
 

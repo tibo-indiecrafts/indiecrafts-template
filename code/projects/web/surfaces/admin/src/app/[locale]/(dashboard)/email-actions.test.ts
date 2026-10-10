@@ -27,6 +27,7 @@ vi.mock("@clerk/nextjs/server", () => ({
 }));
 vi.mock("@indiecrafts/packages-shared-utils/api-fetch", () => ({ apiFetch: m.apiFetch }));
 vi.mock("@/lib/audit", () => ({ audit: m.audit }));
+vi.mock("server-only", () => ({}));
 vi.mock("@/lib/clerk-sessions", () => ({ revokeActiveSessions: m.revoke }));
 
 const { turnOffEmails, changeSignInEmail } = await import("./email-actions");
@@ -93,6 +94,20 @@ describe("turnOffEmails — off only, by an admin, with a reason", () => {
     expect(m.apiFetch).not.toHaveBeenCalled();
   });
 
+  it("passes on the api's refusal of a non-admin actor", async () => {
+    m.apiFetch.mockResolvedValueOnce(
+      Response.json({ error: "forbidden" }, { status: 403 }),
+    );
+    expect(
+      await turnOffEmails({
+        userId: USER,
+        off: ["news"],
+        stopAll: false,
+        reason: "other",
+      }),
+    ).toEqual({ ok: false, error: "forbidden" });
+  });
+
   it("says when the api is unreachable", async () => {
     delete process.env.API_URL;
     expect(
@@ -114,7 +129,7 @@ describe("changeSignInEmail — a login path", () => {
     reason: "request_phone",
   };
 
-  it("adds the new address verified + primary, removes the old, signs out, moves the contact", async () => {
+  it("adds the new address, audits at once, signs out, removes the old, moves the contact", async () => {
     m.apiFetch.mockResolvedValue(Response.json({ ok: true, resend: "moved" }));
     expect(await changeSignInEmail(input)).toEqual({ ok: true, resend: "moved" });
     expect(m.createEmailAddress).toHaveBeenCalledWith({
@@ -123,15 +138,31 @@ describe("changeSignInEmail — a login path", () => {
       verified: true,
       primary: true,
     });
+    expect(m.audit).toHaveBeenCalledWith("admin.change_email", {
+      actor: ADMIN,
+      target: USER,
+      reason: "request_phone",
+    });
+    // Sessions go before the old address, so a refused delete still signs everyone out.
+    expect(m.revoke.mock.invocationCallOrder[0]).toBeLessThan(
+      m.deleteEmailAddress.mock.invocationCallOrder[0]!,
+    );
     expect(m.deleteEmailAddress).toHaveBeenCalledWith("idn_old");
-    expect(m.revoke).toHaveBeenCalledWith(expect.anything(), USER);
     expect(body()).toEqual({
       userId: USER,
       from: "old@x.com",
       to: "new@x.com",
-      reason: "request_phone",
       actorUserId: ADMIN,
     });
+  });
+
+  it("a session left open or an old address Clerk keeps is a partial change — audited anyway", async () => {
+    m.revoke.mockResolvedValueOnce({ revoked: 1, total: 3 });
+    expect(await changeSignInEmail(input)).toEqual({ ok: false, error: "partial" });
+    m.deleteEmailAddress.mockRejectedValueOnce(new Error("linked to OAuth"));
+    expect(await changeSignInEmail(input)).toEqual({ ok: false, error: "partial" });
+    expect(m.audit).toHaveBeenCalledTimes(2);
+    expect(m.apiFetch).not.toHaveBeenCalled(); // nothing moves until the change is complete
   });
 
   it("refuses a mismatch, the same address, an admin's account, a taken address", async () => {
@@ -141,10 +172,7 @@ describe("changeSignInEmail — a login path", () => {
     });
     expect(
       await changeSignInEmail({ ...input, email: "old@x.com", confirm: "old@x.com" }),
-    ).toEqual({
-      ok: false,
-      error: "same",
-    });
+    ).toEqual({ ok: false, error: "same" });
     m.getUser.mockResolvedValueOnce({
       publicMetadata: { role: "admin" },
       primaryEmailAddressId: "idn_old",
@@ -153,16 +181,18 @@ describe("changeSignInEmail — a login path", () => {
     expect(await changeSignInEmail(input)).toEqual({ ok: false, error: "admin_target" });
     m.createEmailAddress.mockRejectedValueOnce(new Error("form_identifier_exists"));
     expect(await changeSignInEmail(input)).toEqual({ ok: false, error: "taken" });
+    expect(m.audit).not.toHaveBeenCalled(); // nothing changed, nothing to audit
     expect(m.deleteEmailAddress).not.toHaveBeenCalled();
     expect(m.revoke).not.toHaveBeenCalled();
   });
 
-  it("the Clerk change stands when the api is down — audited anyway", async () => {
+  it("the Clerk change stands when the api is down — audited all the same", async () => {
     delete process.env.API_URL;
     expect(await changeSignInEmail(input)).toEqual({ ok: true, resend: "unreachable" });
     expect(m.audit).toHaveBeenCalledWith("admin.change_email", {
       actor: ADMIN,
       target: USER,
+      reason: "request_phone",
     });
   });
 });

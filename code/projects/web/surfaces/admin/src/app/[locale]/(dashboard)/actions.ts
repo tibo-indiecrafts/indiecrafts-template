@@ -9,6 +9,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { isAdmin, type Roles } from "@indiecrafts/packages-shared-auth";
 import { audit } from "@/lib/audit";
+import { USER_ID } from "@/lib/ids";
 import { revokeActiveSessions, SESSION_LIMIT } from "@/lib/clerk-sessions";
 import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
 
@@ -21,8 +22,6 @@ import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
 type Result =
   | { ok: true }
   | { ok: false; error: "forbidden" | "invalid_user" | "invalid_session" | "failed" };
-
-const USER_ID = /^user_[A-Za-z0-9]+$/;
 
 /** The caller must be a signed-in admin (checked on the server, never trusted from the client). */
 async function requireAdmin(): Promise<string> {

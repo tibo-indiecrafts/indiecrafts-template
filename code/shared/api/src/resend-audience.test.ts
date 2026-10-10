@@ -110,10 +110,16 @@ describe("syncContactTopics", () => {
       f as unknown as typeof fetch,
     );
     expect(calls[0].method).toBe("POST");
-    expect(calls[1].method).toBe("PATCH");
-    expect(calls[1].url).toBe("https://api.resend.com/contacts/u@x.com/topics");
+    // An opt-in also lifts a global stop: the contact's own fields first…
+    expect(calls[1]).toMatchObject({
+      method: "PATCH",
+      url: "https://api.resend.com/contacts/u@x.com",
+      body: { unsubscribed: false },
+    });
+    expect(calls[2].method).toBe("PATCH");
+    expect(calls[2].url).toBe("https://api.resend.com/contacts/u@x.com/topics");
     // Topics body is a bare array, not wrapped in a `topics` property.
-    expect(calls[1].body).toEqual([{ id: "t1", subscription: "opt_in" }]);
+    expect(calls[2].body).toEqual([{ id: "t1", subscription: "opt_in" }]);
   });
 
   it("throws on a non-ok, non-409/422 response", async () => {
@@ -168,6 +174,7 @@ describe("syncContactTopics — newsletter language segment", () => {
     expect(calls[0].body).toEqual({
       email: "u@x.com",
       properties: { locale: "fr" },
+      unsubscribed: false, // the person's own opt-in lifts a global stop
       topics: [{ id: "t1", subscription: "opt_in" }],
     });
     expect(calls.map((c) => c.line)).toEqual([
@@ -281,5 +288,21 @@ describe("suppressResendContact", () => {
     expect(seen[2]).toBe(
       "PATCH https://api.resend.com/contacts/u@x.com/topics",
     );
+  });
+});
+
+describe("syncContactTopics — an opt-out never lifts a global stop", () => {
+  it("only opt-outs: no `unsubscribed` field is sent", async () => {
+    const bodies: unknown[] = [];
+    const f = vi.fn(async (_url: string, init: RequestInit) => {
+      bodies.push(JSON.parse(String(init.body)));
+      return new Response("{}", { status: 200 });
+    });
+    await syncContactTopics(
+      env,
+      { email: "u@x.com", topics: [{ topicId: "t1", granted: false }] },
+      f as unknown as typeof fetch,
+    );
+    expect(bodies[0]).not.toHaveProperty("unsubscribed");
   });
 });

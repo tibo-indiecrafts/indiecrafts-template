@@ -524,6 +524,7 @@
           "invalid": "Vérifiez l'adresse et le motif.",
           "mismatch": "Les deux adresses diffèrent.",
           "same": "C'est déjà l'e-mail de connexion.",
+          "partial": "Changé, mais pas terminé : l’ancienne adresse ou une session est encore là — terminez dans le Clerk Dashboard.",
           "admin_target": "L'e-mail d'un administrateur se change dans le Clerk Dashboard, pas ici.",
           "taken": "Un autre compte utilise déjà cette adresse.",
           "unreachable": "L'api est injoignable.",

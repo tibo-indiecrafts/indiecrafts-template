@@ -4,20 +4,23 @@ import {
   waitOnExecutionContext,
 } from "cloudflare:test";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import worker, { type Env } from "../index";
 
 const SALT = "test-override-salt";
 const ADMIN = "user_admin0000001";
+const NOT_ADMIN = "user_plain0000001";
 afterEach(() => vi.unstubAllGlobals());
 
 type Call = { url: string; method: string; body: unknown };
+type Contact = "missing" | { unsubscribed: boolean };
+type Topic = { id: string; subscription: string };
 
-/** Sanity (two categories) + Resend, routed by URL. Records every Resend call. */
+/** Sanity (two categories) + Resend, routed by URL and by address. Records every Resend call. */
 function stubFetch(
   opts: {
-    contact?: "missing" | { unsubscribed: boolean };
-    topics?: { id: string; subscription: string }[];
+    contacts?: Record<string, Contact>;
+    topics?: Record<string, Topic[] | "error">;
     resendStatus?: number;
   } = {},
 ) {
@@ -50,12 +53,15 @@ function stubFetch(
       });
       if (opts.resendStatus && method !== "GET")
         return reply({}, opts.resendStatus);
-      if (method === "GET" && /^\/contacts\/[^/]+$/.test(path))
-        return opts.contact === "missing"
-          ? reply({}, 404)
-          : reply(opts.contact ?? { unsubscribed: false });
-      if (method === "GET" && path.includes("/topics"))
-        return reply({ data: opts.topics ?? [] });
+      const email = decodeURIComponent(path.split("/")[2] ?? "");
+      if (method === "GET" && /^\/contacts\/[^/]+$/.test(path)) {
+        const c = opts.contacts?.[email] ?? { unsubscribed: false };
+        return c === "missing" ? reply({}, 404) : reply(c);
+      }
+      if (method === "GET" && path.includes("/topics")) {
+        const t = opts.topics?.[email] ?? [];
+        return t === "error" ? reply({}, 500) : reply({ data: t });
+      }
       if (method === "GET" && path.includes("/segments"))
         return reply({ data: [{ id: "seg-fr", name: "newsletter-fr" }] });
       if (method === "POST" && path === "/contacts") return reply({}, 409);
@@ -94,16 +100,23 @@ async function call(path: string, init: RequestInit = {}, e = testEnv()) {
 }
 const post = (path: string, body: unknown, e?: Env) =>
   call(path, { method: "POST", body: JSON.stringify(body) }, e);
+const read = (q: string, actor = ADMIN) =>
+  call(`/v1/admin/email-preferences?${q}&actorUserId=${actor}`);
 
-async function seedUser(userId: string, email: string) {
+async function seedUser(
+  userId: string,
+  email: string,
+  role: string | null = null,
+) {
   await env
     .MAIN_DB!.prepare(
-      "INSERT OR REPLACE INTO user_profiles (user_id, email, email_fingerprint, locale, created_at) VALUES (?, ?, ?, 'fr', ?)",
+      "INSERT OR REPLACE INTO user_profiles (user_id, email, email_fingerprint, locale, role, created_at) VALUES (?, ?, ?, 'fr', ?, ?)",
     )
     .bind(
       userId,
       email,
       await fingerprintEmail(email, SALT),
+      role,
       new Date().toISOString(),
     )
     .run();
@@ -114,6 +127,10 @@ async function seedUser(userId: string, email: string) {
     .bind(userId, new Date().toISOString())
     .run();
 }
+beforeAll(async () => {
+  await seedUser(ADMIN, "admin@example.com", "admin");
+  await seedUser(NOT_ADMIN, "plain@example.com");
+});
 const audits = async (target: string) =>
   (
     await env
@@ -123,15 +140,25 @@ const audits = async (target: string) =>
       .bind(target)
       .all()
   ).results;
+const visitorRows = async (email: string) =>
+  (
+    await env
+      .MAIN_DB!.prepare(
+        "SELECT consent_type, granted, source FROM consent_events WHERE email_fingerprint = ? AND subject_type = 'visitor' ORDER BY consent_type",
+      )
+      .bind(await fingerprintEmail(email, SALT))
+      .all()
+  ).results;
 
 describe("GET /v1/admin/email-preferences", () => {
-  it("an account: its own choices, the Resend topics and global state", async () => {
+  it("an account: its own choices, the Resend topics and global state; the view is audited", async () => {
     await seedUser("user_read00000001", "read@example.com");
-    stubFetch({ topics: [{ id: "t_news", subscription: "opt_in" }] });
-    const res = await call(
-      "/v1/admin/email-preferences?userId=user_read00000001&actorUserId=user_admin0000001",
-    );
-    expect(res.status).toBe(200);
+    stubFetch({
+      topics: {
+        "read@example.com": [{ id: "t_news", subscription: "opt_in" }],
+      },
+    });
+    const res = await read("userId=user_read00000001");
     expect(await res.json()).toEqual({
       subject: { userId: "user_read00000001", email: "read@example.com" },
       categories: [
@@ -147,13 +174,14 @@ describe("GET /v1/admin/email-preferences", () => {
 
   it("an email with no account: Resend only; an account's email resolves to the account", async () => {
     stubFetch({
-      contact: { unsubscribed: true },
-      topics: [{ id: "t_gen", subscription: "opt_in" }],
+      contacts: { "visitor@example.com": { unsubscribed: true } },
+      topics: {
+        "visitor@example.com": [{ id: "t_gen", subscription: "opt_in" }],
+      },
     });
-    const res = await call(
-      "/v1/admin/email-preferences?email=Visitor@Example.com&actorUserId=user_admin0000001",
-    );
-    expect(await res.json()).toMatchObject({
+    expect(
+      await (await read("email=Visitor@Example.com")).json(),
+    ).toMatchObject({
       subject: { userId: null, email: "visitor@example.com" },
       categories: [
         { key: "news", granted: null, topic: null },
@@ -162,33 +190,25 @@ describe("GET /v1/admin/email-preferences", () => {
       resend: { exists: true, unsubscribed: true },
     });
     await seedUser("user_byemail00001", "owner@example.com");
-    const owner = await call(
-      "/v1/admin/email-preferences?email=owner@example.com&actorUserId=user_admin0000001",
-    );
-    expect(await owner.json()).toMatchObject({
+    expect(await (await read("email=owner@example.com")).json()).toMatchObject({
       subject: { userId: "user_byemail00001" },
     });
   });
 
-  it("400s without a valid user id or email; 401s without the bearer", async () => {
+  it("only an admin may look (403); 400 without a valid subject or actor; 401 without the bearer", async () => {
     stubFetch();
-    expect(
-      (
-        await call(
-          "/v1/admin/email-preferences?userId=nope&actorUserId=user_admin0000001",
-        )
-      ).status,
-    ).toBe(400);
-    // Who is looking is required: the view is audited.
+    expect((await read("userId=user_read00000001", NOT_ADMIN)).status).toBe(
+      403,
+    );
+    expect((await read("userId=nope")).status).toBe(400);
     expect(
       (await call("/v1/admin/email-preferences?userId=user_read00000001"))
         .status,
     ).toBe(400);
-    expect((await call("/v1/admin/email-preferences")).status).toBe(400);
     expect(
       (
         await call(
-          "/v1/admin/email-preferences?userId=user_read00000001&actorUserId=user_admin0000001",
+          `/v1/admin/email-preferences?userId=user_read00000001&actorUserId=${ADMIN}`,
           {
             headers: { authorization: "" },
           },
@@ -199,7 +219,7 @@ describe("GET /v1/admin/email-preferences", () => {
 });
 
 describe("POST /v1/admin/email-preferences — off only", () => {
-  it("turns a category off: the account row, a proof row (source admin), Resend, the audit", async () => {
+  it("turns news off: the account row, proof rows, the topic, the newsletter segment, the audit", async () => {
     await seedUser("user_off000000001", "off@example.com");
     const calls = stubFetch();
     const res = await post("/v1/admin/email-preferences", {
@@ -225,10 +245,21 @@ describe("POST /v1/admin/email-preferences — off only", () => {
     expect(proof.results).toEqual([
       { granted: 0, surface: "admin", source: "admin" },
     ]);
+    // The newsletter sign-up consent is withdrawn too, so the ledger agrees.
+    expect(await visitorRows("off@example.com")).toEqual([
+      { consent_type: "newsletter", granted: 0, source: "admin" },
+    ]);
     expect(
       calls.find((c) => c.url.endsWith("/topics") && c.method === "PATCH")
         ?.body,
     ).toEqual([{ id: "t_news", subscription: "opt_out" }]);
+    expect(
+      calls.some(
+        (c) =>
+          c.method === "DELETE" &&
+          c.url === "/contacts/off@example.com/segments/seg-fr",
+      ),
+    ).toBe(true);
     expect(await audits("user_off000000001")).toEqual([
       {
         event: "admin.email_pref_off",
@@ -270,7 +301,7 @@ describe("POST /v1/admin/email-preferences — off only", () => {
     ]);
   });
 
-  it("a person without an account: proof rows by fingerprint, audited by fingerprint", async () => {
+  it("a person without an account: per-category proof + the waitlist withdrawal, audited by fingerprint", async () => {
     stubFetch();
     await post("/v1/admin/email-preferences", {
       email: "solo@example.com",
@@ -278,20 +309,15 @@ describe("POST /v1/admin/email-preferences — off only", () => {
       reason: "request_phone",
       actorUserId: ADMIN,
     });
-    const fp = await fingerprintEmail("solo@example.com", SALT);
-    const proof = await env
-      .MAIN_DB!.prepare(
-        "SELECT subject_type, granted, source FROM consent_events WHERE email_fingerprint = ? AND consent_type = 'email_pref:general'",
-      )
-      .bind(fp)
-      .all();
-    expect(proof.results).toEqual([
-      { subject_type: "visitor", granted: 0, source: "admin" },
+    expect(await visitorRows("solo@example.com")).toEqual([
+      { consent_type: "email_pref:general", granted: 0, source: "admin" },
+      { consent_type: "waitlist", granted: 0, source: "admin" },
     ]);
+    const fp = await fingerprintEmail("solo@example.com", SALT);
     expect(await audits(`fp:${fp}`)).toHaveLength(1);
   });
 
-  it("can never turn anything on, and needs a known reason and category", async () => {
+  it("can never turn anything on; needs an admin, a known reason and a known category", async () => {
     stubFetch();
     const base = {
       userId: "user_off000000001",
@@ -304,14 +330,20 @@ describe("POST /v1/admin/email-preferences — off only", () => {
       { ...base, off: ["news"], reason: "because" },
       { ...base, off: ["news"], reason: undefined },
       { ...base, off: ["news"], actorUserId: "admin" },
+      { ...base, off: ["unknown"] },
     ])
       expect((await post("/v1/admin/email-preferences", body)).status).toBe(
         400,
       );
     expect(
-      (await post("/v1/admin/email-preferences", { ...base, off: ["unknown"] }))
-        .status,
-    ).toBe(400);
+      (
+        await post("/v1/admin/email-preferences", {
+          ...base,
+          off: ["news"],
+          actorUserId: NOT_ADMIN,
+        })
+      ).status,
+    ).toBe(403);
   });
 
   it("a Resend failure keeps the D1 change and says so", async () => {
@@ -328,47 +360,102 @@ describe("POST /v1/admin/email-preferences — off only", () => {
 });
 
 describe("POST /v1/admin/email-preferences/move", () => {
-  it("the new address gets the topics, segments and global state; the old contact goes", async () => {
-    await seedUser("user_move00000001", "old@example.com");
-    const calls = stubFetch({
-      topics: [{ id: "t_news", subscription: "opt_in" }],
-    });
-    const res = await post("/v1/admin/email-preferences/move", {
+  const move = (body: Record<string, unknown>) =>
+    post("/v1/admin/email-preferences/move", {
       userId: "user_move00000001",
       from: "old@example.com",
       to: "New@Example.com",
-      reason: "request_email",
       actorUserId: ADMIN,
+      ...body,
     });
-    expect(await res.json()).toEqual({ ok: true, resend: "moved" });
-    const writes = calls
-      .filter((c) => c.method !== "GET")
-      .map((c) => `${c.method} ${c.url}`);
-    expect(writes).toEqual([
-      "POST /contacts", // 409: the new address exists → updated in place
-      "PATCH /contacts/new@example.com",
-      "PATCH /contacts/new@example.com/topics",
-      "POST /contacts/new@example.com/segments/seg-fr",
-      "DELETE /contacts/old@example.com",
-    ]);
-    expect(await audits("user_move00000001")).toEqual([
+
+  it("the new address gets the topics, segments and global state; the old contact goes", async () => {
+    await seedUser("user_move00000001", "old@example.com");
+    const calls = stubFetch({
+      contacts: { "new@example.com": "missing" },
+      topics: { "old@example.com": [{ id: "t_news", subscription: "opt_in" }] },
+    });
+    expect(await (await move({})).json()).toEqual({
+      ok: true,
+      resend: "moved",
+    });
+    const writes = calls.filter((c) => c.method !== "GET");
+    expect(writes[0]).toEqual({
+      url: "/contacts",
+      method: "POST",
+      body: {
+        email: "new@example.com",
+        unsubscribed: false,
+        properties: { locale: "fr" },
+        topics: [{ id: "t_news", subscription: "opt_in" }],
+        segments: [{ id: "seg-fr" }],
+      },
+    });
+    expect(writes.at(-1)).toEqual({
+      url: "/contacts/old@example.com",
+      method: "DELETE",
+      body: undefined,
+    });
+  });
+
+  it("merges into an existing contact — the more restrictive state wins, never an opt-in", async () => {
+    await seedUser("user_move00000001", "old@example.com");
+    const calls = stubFetch({
+      contacts: { "new@example.com": { unsubscribed: true } },
+      topics: {
+        "old@example.com": [{ id: "t_news", subscription: "opt_in" }],
+        "new@example.com": [{ id: "t_news", subscription: "opt_out" }],
+      },
+    });
+    await move({});
+    expect(
+      calls.find(
+        (c) => c.method === "PATCH" && c.url === "/contacts/new@example.com",
+      )?.body,
+    ).toEqual({ unsubscribed: true, properties: { locale: "fr" } });
+    expect(
+      calls.find(
+        (c) =>
+          c.method === "PATCH" && c.url === "/contacts/new@example.com/topics",
+      )?.body,
+    ).toEqual([{ id: "t_news", subscription: "opt_out" }]);
+  });
+
+  it("an unreadable topic list writes and deletes nothing", async () => {
+    const calls = stubFetch({ topics: { "old@example.com": "error" } });
+    expect(await (await move({})).json()).toEqual({
+      ok: true,
+      resend: "failed",
+    });
+    expect(calls.filter((c) => c.method !== "GET")).toEqual([]);
+  });
+
+  it("refuses the same address (it would delete the only contact) and a non-admin actor", async () => {
+    stubFetch();
+    expect((await move({ to: "OLD@example.com" })).status).toBe(400);
+    expect((await move({ actorUserId: NOT_ADMIN })).status).toBe(403);
+  });
+});
+
+describe("POST /v1/events — an admin event's reason", () => {
+  const event = (reason?: unknown) =>
+    post("/v1/events", {
+      kind: "admin",
+      event: "admin.change_email",
+      actorUserId: ADMIN,
+      targetUserId: "user_event0000001",
+      ...(reason === undefined ? {} : { reason }),
+    });
+
+  it("stores a known reason code and refuses free text", async () => {
+    expect((await event("request_phone")).status).toBe(201);
+    expect(await audits("user_event0000001")).toEqual([
       {
         event: "admin.change_email",
         actor_user_id: ADMIN,
-        reason: "request_email",
+        reason: "request_phone",
       },
     ]);
-  });
-
-  it("no old contact: nothing to move, still audited", async () => {
-    stubFetch({ contact: "missing" });
-    const res = await post("/v1/admin/email-preferences/move", {
-      userId: "user_move00000001",
-      from: "gone@example.com",
-      to: "new2@example.com",
-      reason: "other",
-      actorUserId: ADMIN,
-    });
-    expect(await res.json()).toEqual({ ok: true, resend: "none" });
+    expect((await event("he called me")).status).toBe(400);
   });
 });

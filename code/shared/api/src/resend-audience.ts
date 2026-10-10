@@ -102,7 +102,8 @@ async function upsertContact(
  *  primitive (Resend's `unsubscribed` is the global flag, not per-category); each entry maps
  *  `granted` to Resend's `opt_in`/`opt_out`. Entries with an empty/missing `topicId` are
  *  dropped. `newsletterLocale` (set only when the `news` category changed): a locale → the
- *  `locale` property + that language segment; `null` → out of every language segment. */
+ *  `locale` property + that language segment; `null` → out of every language segment. Any
+ *  opt-in also clears the global `unsubscribed`: the person's own choice must reach them. */
 export async function syncContactTopics(
   env: ResendAudienceEnv,
   {
@@ -124,9 +125,13 @@ export async function syncContactTopics(
       subscription: t.granted ? "opt_in" : "opt_out",
     }));
   const f = retrying(doFetch);
-  const fields = newsletterLocale
-    ? { properties: { locale: newsletterLocale } }
-    : {};
+  // The person's own opt-in also lifts a global stop (an admin's, or Resend's unsubscribe
+  // link): what they just chose must reach them. An opt-out never touches it.
+  const optIn = subs.some((t) => t.subscription === "opt_in");
+  const fields = {
+    ...(newsletterLocale ? { properties: { locale: newsletterLocale } } : {}),
+    ...(optIn ? { unsubscribed: false } : {}),
+  };
   if (subs.length || newsletterLocale)
     await upsertContact(env, email, fields, subs, f);
   if (newsletterLocale !== undefined)
@@ -332,7 +337,15 @@ export async function turnOffContact(
     email,
     topicIds,
     stopAll,
-  }: { email: string; topicIds: string[]; stopAll: boolean },
+    leaveNewsletter,
+  }: {
+    email: string;
+    topicIds: string[];
+    stopAll: boolean;
+    /** `news` went off: also out of every `newsletter-<locale>` segment, as the person's own
+     *  opt-out does — a broadcast to a segment must not reach them either. */
+    leaveNewsletter: boolean;
+  },
   doFetch: typeof fetch = fetch,
 ): Promise<void> {
   if (!env.RESEND_API_KEY || !email) return;
@@ -340,20 +353,24 @@ export async function turnOffContact(
     id,
     subscription: "opt_out",
   }));
-  if (!topics.length && !stopAll) return;
-  await upsertContact(
-    env,
-    email,
-    stopAll ? { unsubscribed: true } : {},
-    topics,
-    retrying(doFetch),
-  );
+  const f = retrying(doFetch);
+  if (topics.length || stopAll)
+    await upsertContact(
+      env,
+      email,
+      stopAll ? { unsubscribed: true } : {},
+      topics,
+      f,
+    );
+  if (leaveNewsletter)
+    await syncNewsletterSegments(env, { email, locale: null }, f);
 }
 
 /** A sign-in email change: the new address gets the old contact's topics, segments (the
- *  newsletter language), global unsubscribe and `locale`, and the old contact is removed — so
- *  the person's choices follow them and nothing more goes to the old address. No old contact →
- *  nothing to move. Throws on a Resend error. */
+ *  newsletter language), global unsubscribe and `locale`, merged with any contact already at
+ *  the new address — the more restrictive state wins, so a move never opts anyone in — and
+ *  the old contact is removed. No old contact → nothing to move. Every read must succeed
+ *  before anything is written; throws on a Resend error. */
 export async function moveResendContact(
   env: ResendAudienceEnv,
   { from, to, locale }: { from: string; to: string; locale: string },
@@ -364,7 +381,16 @@ export async function moveResendContact(
   const old = await getResendContact(env, { email: from }, f);
   if (!old) throw new Error("resend unavailable");
   if (!old.exists) return "none";
-  const topics = (await getContactTopics(env, { email: from }, f)) ?? [];
+  // Every read must succeed before anything is written: the old contact is the only record
+  // of the person's opt-outs, and it is deleted at the end.
+  const oldTopics = await getContactTopics(env, { email: from }, f);
+  if (!oldTopics) throw new Error("resend topics unreadable");
+  const target = await getResendContact(env, { email: to }, f);
+  if (!target) throw new Error("resend unavailable");
+  const targetTopics = target.exists
+    ? await getContactTopics(env, { email: to }, f)
+    : [];
+  if (!targetTopics) throw new Error("resend topics unreadable");
   const headers = { Authorization: `Bearer ${env.RESEND_API_KEY}` };
   const segRes = await f(`${RESEND_API}/contacts/${from}/segments?limit=100`, {
     headers,
@@ -374,11 +400,22 @@ export async function moveResendContact(
   const segments = segRes.ok
     ? (((await segRes.json()) as { data?: Segment[] }).data ?? [])
     : [];
+  // Merge, the more restrictive state winning: an opt-out or a global stop on EITHER address
+  // stands — a move never opts anyone back in.
+  const optedOut = (id: string) =>
+    targetTopics.some((t) => t.id === id && t.subscription === "opt_out");
+  const topics = oldTopics.map((t): TopicSub => ({
+    id: t.id,
+    subscription: optedOut(t.id) ? "opt_out" : t.subscription,
+  }));
   const created = await upsertContact(
     env,
     to,
-    { unsubscribed: old.unsubscribed, properties: { locale } },
-    topics.map((t) => ({ id: t.id, subscription: t.subscription })),
+    {
+      unsubscribed: old.unsubscribed || target.unsubscribed,
+      properties: { locale },
+    },
+    topics,
     f,
     segments.map((seg) => seg.id),
   );

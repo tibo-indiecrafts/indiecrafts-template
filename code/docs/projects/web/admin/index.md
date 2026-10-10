@@ -96,11 +96,15 @@ calls a bearer-gated api route and writes an admin audit event):
   (`admin.email_pref_off` / `admin.email_stop`) with a **reason code** — by email, by phone,
   complaint, bounce, other. Never free text: `admin_audit` outlives an erasure. Looking at a
   person's preferences is audited too (`admin.view_email_prefs`; by fingerprint without an account).
+  The api re-checks that the acting admin holds the admin role. A person's own later opt-in
+  lifts the global stop.
 - **Change a sign-in email** (Users → Emails), for a person who lost access to their address. A
   login path: the new address typed twice, a reason code, never an admin's account (that stays in
-  the Clerk Dashboard). The new address is added verified and primary, the old one removed, every
-  session revoked; Clerk notifies the person; the Resend contact moves to the new address;
-  `user_profiles` follows via the `user.updated` webhook. Audit `admin.change_email`.
+  the Clerk Dashboard). The new address is added verified and primary — audited at once
+  (`admin.change_email` + reason) — then every session is revoked and the old address removed; if
+  either falls short the dialog says "partial" and the operator finishes in the Clerk Dashboard.
+  Clerk notifies the person; the Resend contact moves (the more restrictive state wins);
+  `user_profiles` follows via the `user.updated` webhook.
 
 `/sign-in` is the one public route. Two API routes back the security baseline:
 `/api/csp-report` (the CSP violation sink) and `/api/session-log` (session-log ingest).

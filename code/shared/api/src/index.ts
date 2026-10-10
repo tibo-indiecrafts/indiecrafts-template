@@ -98,6 +98,7 @@ import {
 } from "./contacts/general";
 import { upsertGeneralContact } from "./resend-audience";
 import { isTestScope, sendTestEmails } from "./email-test/send";
+import { isOverrideReason } from "@indiecrafts/packages-shared-compliance/shared";
 import {
   applyOverride,
   moveContact,
@@ -494,13 +495,20 @@ async function route(
         const event = str(body.event, 32);
         const actor = str(body.actorUserId);
         const target = str(body.targetUserId);
-        if (!event || !actor || !target)
+        // An optional reason — a fixed code only (admin_audit outlives an erasure).
+        const reason = body.reason === undefined ? null : body.reason;
+        if (
+          !event ||
+          !actor ||
+          !target ||
+          (reason !== null && !isOverrideReason(reason))
+        )
           return json({ error: "invalid" }, 400, cors);
         // No IP for admin actions — the userId is the identity (minimization).
         await env.AUDIT_DB.prepare(
-          "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, ?, ?, ?, ?, NULL)",
+          "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash, reason) VALUES (?, ?, ?, ?, ?, NULL, ?)",
         )
-          .bind(ts, event, actor, target, country)
+          .bind(ts, event, actor, target, country, reason)
           .run();
       } else if (body.kind === "session") {
         if (!env.AUDIT_DB || !env.MAIN_DB)

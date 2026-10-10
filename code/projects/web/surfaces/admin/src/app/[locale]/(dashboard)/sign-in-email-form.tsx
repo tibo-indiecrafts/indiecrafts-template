@@ -16,7 +16,10 @@ import {
   NativeSelectOption,
 } from "@indiecrafts/packages-web-ui/web/native-select";
 import { useRouter } from "@/i18n/routing";
-import { OVERRIDE_REASONS, type OverrideReason } from "@/lib/override-reasons";
+import {
+  OVERRIDE_REASONS,
+  type OverrideReason,
+} from "@indiecrafts/packages-shared-compliance/shared";
 import { changeSignInEmail } from "./email-actions";
 
 export function SignInEmailForm({

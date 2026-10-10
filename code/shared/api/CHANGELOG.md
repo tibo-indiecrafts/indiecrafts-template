@@ -14,6 +14,15 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Admin email overrides, after review.** The acting admin must hold the admin role in
+  `user_profiles` (the bearer is shared by every first-party server). The contact move merges into
+  a contact already at the new address — the more restrictive state wins — fails closed on an
+  unreadable topic list, and refuses `from == to`. Turning `news` off also leaves the newsletter
+  segments. A person's own opt-in now lifts a global stop. A withdrawal also closes the visitor
+  consent it came from (`newsletter`, `waitlist`). `/v1/events` stores an admin event's reason
+  code. **Why:** each of these could re-subscribe someone, lose an opt-out, or leave a gap in the
+  audit trail.
+
 - **`POST /v1/contacts/general` respects a General opt-out and never half-writes.** A waitlist join
   opts a new or existing contact into General unless the person turned it off in the preference
   centre (D1). No topic id answers `503 no_topic` before any write, and a re-join repairs it. A

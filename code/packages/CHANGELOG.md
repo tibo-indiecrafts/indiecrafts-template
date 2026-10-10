@@ -22,6 +22,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **compliance: the email-override contract** (`./shared`: `OVERRIDE_REASONS`,
+  `isOverrideReason`, `VISITOR_CONSENT_TYPE`) — shared by the admin app and the api, so the
+  reason codes and the consent mapping can't drift.
+
 - **`@indiecrafts/packages-web-quality-config`** — the shared ESLint (`webEslintConfig`: Next + TS,
   every jsx-a11y rule an error, routing only via `@/i18n/routing`), Prettier (90 cols, Tailwind sort)
   and lint-staged config of every Next web surface. **Why:** only the website was linted, formatted

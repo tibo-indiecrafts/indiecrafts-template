@@ -28,18 +28,22 @@ import {
   type PrefCategory,
 } from "./email-preferences-sanity";
 import { USER_ID } from "./history";
+import {
+  isOverrideReason as isReason,
+  VISITOR_CONSENT_TYPE,
+  type OverrideReason,
+} from "@indiecrafts/packages-shared-compliance/shared";
 
-/** Why an admin acted — a fixed code, so the audit trail holds no personal data. */
-export const OVERRIDE_REASONS = [
-  "request_email",
-  "request_phone",
-  "complaint",
-  "bounce",
-  "other",
-] as const;
-export type OverrideReason = (typeof OVERRIDE_REASONS)[number];
-const isReason = (v: unknown): v is OverrideReason =>
-  OVERRIDE_REASONS.includes(v as OverrideReason);
+/** The acting admin must hold the admin role (synced from Clerk by the webhook). The bearer
+ *  is shared by every first-party server, so the role check is what makes these admin-only. */
+async function isAdminActor(db: D1Database, actor: string): Promise<boolean> {
+  if (!USER_ID.test(actor)) return false;
+  const row = await db
+    .prepare("SELECT role FROM user_profiles WHERE user_id = ?")
+    .bind(actor)
+    .first<{ role: string | null }>();
+  return row?.role === "admin";
+}
 
 const json = (body: unknown, status: number) =>
   new Response(JSON.stringify(body), {
@@ -147,6 +151,8 @@ export async function readOverrideState(
   const params = new URL(request.url).searchParams;
   const actor = params.get("actorUserId") ?? "";
   if (!USER_ID.test(actor)) return json({ error: "invalid" }, 400);
+  if (!(await isAdminActor(env.MAIN_DB, actor)))
+    return json({ error: "forbidden" }, 403);
   const subject = await resolveSubject(env.MAIN_DB, env.GDPR_FINGERPRINT_SALT, {
     userId: params.get("userId"),
     email: params.get("email"),
@@ -228,6 +234,8 @@ export async function applyOverride(
   )
     return json({ error: "invalid" }, 400);
   const reason = body.reason;
+  if (!(await isAdminActor(env.MAIN_DB, actor)))
+    return json({ error: "forbidden" }, 403);
   const subject = await resolveSubject(env.MAIN_DB, env.GDPR_FINGERPRINT_SALT, {
     userId: body.userId,
     email: body.email,
@@ -247,7 +255,7 @@ export async function applyOverride(
   const keys = stopAll ? [...known.keys()] : (off as string[]);
   const updates = keys.map((key) => ({ key, granted: false }));
 
-  if (subject.userId) {
+  if (subject.userId)
     await writePreferences(env.MAIN_DB, {
       userId: subject.userId,
       fingerprint: subject.fingerprint,
@@ -257,24 +265,29 @@ export async function applyOverride(
       marketingKeys: [...known.keys()],
       source: "admin",
     });
-  } else {
+  // Proof rows by the email fingerprint: a person without an account gets one per category
+  // (`email_pref:<key>`); anyone gets the withdrawal of the visitor consent that category came
+  // from (`newsletter` for news, `waitlist` for general), so the consent ledger agrees.
+  if (subject.fingerprint) {
+    const fp = subject.fingerprint;
     const now = new Date().toISOString();
-    await env.MAIN_DB.batch(
-      keys.map((key) =>
-        env
-          .MAIN_DB!.prepare(
-            "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, country, ip_hash, idempotency_key) " +
-              "VALUES (?, 'visitor', ?, ?, ?, 0, '1', 'admin', 'admin', NULL, NULL, ?)",
-          )
-          .bind(
-            now,
-            subject.fingerprint,
-            subject.fingerprint,
-            `email_pref:${key}`,
-            `admin:${subject.fingerprint}:${now}:${key}`,
-          ),
+    const types = [
+      ...(subject.userId ? [] : keys.map((k) => `email_pref:${k}`)),
+      ...keys.flatMap((k) =>
+        VISITOR_CONSENT_TYPE[k] ? [VISITOR_CONSENT_TYPE[k]] : [],
       ),
-    );
+    ];
+    if (types.length)
+      await env.MAIN_DB.batch(
+        types.map((type) =>
+          env
+            .MAIN_DB!.prepare(
+              "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, country, ip_hash, idempotency_key) " +
+                "VALUES (?, 'visitor', ?, ?, ?, 0, '1', 'admin', 'admin', NULL, NULL, ?)",
+            )
+            .bind(now, fp, fp, type, `admin:${fp}:${now}:${type}`),
+        ),
+      );
   }
 
   let resend: "ok" | "failed" | "skipped" = "skipped";
@@ -288,6 +301,7 @@ export async function applyOverride(
             .map((k) => known.get(k)?.resendTopicId)
             .filter((id): id is string => Boolean(id)),
           stopAll,
+          leaveNewsletter: keys.includes("news"),
         },
         deps.doFetch,
       );
@@ -310,10 +324,12 @@ export async function applyOverride(
 }
 
 /**
- * `POST /v1/admin/email-preferences/move` — `{ userId, from, to, reason, actorUserId }`, after
- * the admin changed the account's sign-in email in Clerk. The Resend contact follows (topics,
- * segments, global unsubscribe, `locale`) and the old one is removed; `user_profiles` follows on
- * its own (the Clerk `user.updated` webhook). Audited as `admin.change_email`.
+ * `POST /v1/admin/email-preferences/move` — `{ userId, from, to, actorUserId }`, after the
+ * admin changed the account's sign-in email in Clerk. The Resend contact follows (topics,
+ * segments, global unsubscribe, `locale`, merged so the more restrictive state wins) and the
+ * old one is removed; `user_profiles` follows on its own (the Clerk `user.updated` webhook).
+ * The admin action audits the change itself (`admin.change_email` + reason), whatever Resend
+ * does. `from === to` is refused: the move would delete the only contact.
  */
 export async function moveContact(
   request: Request,
@@ -327,14 +343,15 @@ export async function moveContact(
   if (
     !USER_ID.test(actor) ||
     !USER_ID.test(userId) ||
-    !isReason(body.reason) ||
     !isNewsletterEmail(body.from) ||
     !isNewsletterEmail(body.to)
   )
     return json({ error: "invalid" }, 400);
-  const reason = body.reason;
   const from = body.from.trim().toLowerCase();
   const to = body.to.trim().toLowerCase();
+  if (from === to) return json({ error: "same" }, 400);
+  if (!(await isAdminActor(env.MAIN_DB, actor)))
+    return json({ error: "forbidden" }, 403);
   const locale = await readProfileLocale(env.MAIN_DB, { userId });
   let resend: "moved" | "none" | "failed" | "skipped" = "skipped";
   if (env.RESEND_API_KEY) {
@@ -347,6 +364,5 @@ export async function moveContact(
       });
     }
   }
-  await auditAdmin(env, "admin.change_email", actor, userId, reason);
   return json({ ok: true, resend }, 200);
 }

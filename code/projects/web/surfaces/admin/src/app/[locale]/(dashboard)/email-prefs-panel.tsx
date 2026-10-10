@@ -25,7 +25,10 @@ import {
 } from "@indiecrafts/packages-web-ui/web/table";
 import { useRouter } from "@/i18n/routing";
 import type { EmailPrefState } from "@/lib/email-preferences";
-import { OVERRIDE_REASONS, type OverrideReason } from "@/lib/override-reasons";
+import {
+  OVERRIDE_REASONS,
+  type OverrideReason,
+} from "@indiecrafts/packages-shared-compliance/shared";
 import { turnOffEmails } from "./email-actions";
 
 /** What the admin is about to do: one category off, or every email. */

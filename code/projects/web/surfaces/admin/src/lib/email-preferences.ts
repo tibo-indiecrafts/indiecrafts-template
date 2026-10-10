@@ -4,6 +4,7 @@
  * @see docs/reference/projects/web/admin/src/lib/email-preferences.md
  */
 import "server-only";
+import { EMAIL, USER_ID } from "@/lib/ids";
 
 /** One category as the admin sees it: the account's own choice (`null` without an account)
  *  and the Resend topic state (`null` when the contact has none). */
@@ -19,9 +20,6 @@ export type EmailPrefState = {
   /** The Resend contact; `null` when Resend could not be read. */
   resend: { exists: boolean; unsubscribed: boolean } | null;
 };
-
-const USER_ID = /^user_[A-Za-z0-9]{10,40}$/;
-const EMAIL = /^[^@\s/?#%\\]+@[^@\s/?#%\\]+\.[^@\s/?#%\\]+$/;
 
 /**
  * `GET /v1/admin/email-preferences` (bearer-gated) for an account (`userId`) or an address

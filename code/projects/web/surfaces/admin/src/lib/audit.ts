@@ -6,6 +6,7 @@
 import "server-only";
 import { headers } from "next/headers";
 import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
+import type { OverrideReason } from "@indiecrafts/packages-shared-compliance/shared";
 
 /**
  * Admin audit sink — POST each privileged action to the shared api's `/v1/events`,
@@ -28,7 +29,7 @@ export async function audit(
     | "admin.data_request_status"
     | "admin.view_consent"
     | "admin.change_email",
-  fields: { actor: string; target: string },
+  fields: { actor: string; target: string; reason?: OverrideReason },
 ): Promise<void> {
   const url = process.env.API_URL;
   const token = process.env.APP_API_TOKEN;
@@ -38,6 +39,7 @@ export async function audit(
     event,
     actorUserId: fields.actor,
     targetUserId: fields.target,
+    ...(fields.reason ? { reason: fields.reason } : {}),
     country,
   };
 

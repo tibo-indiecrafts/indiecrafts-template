@@ -451,6 +451,7 @@ describe("clerk webhook → user_profiles", () => {
       body: {
         email: "yes@x.com",
         properties: { locale: "en" },
+        unsubscribed: false, // their own yes lifts any earlier global stop
         topics: [{ id: "t_news", subscription: "opt_in" }],
       },
     });

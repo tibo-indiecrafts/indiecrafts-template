@@ -5,6 +5,7 @@
  */
 import "server-only";
 import { audit } from "@/lib/audit";
+import { USER_ID } from "@/lib/ids";
 
 export type ConsentDecision = {
   ts: string;
@@ -19,8 +20,6 @@ export type ConsentHistory = {
   current: ConsentDecision[];
   events: ConsentDecision[];
 };
-
-const USER_ID = /^user_[A-Za-z0-9]{10,40}$/;
 
 /**
  * `GET /v1/consent/history` (bearer-gated, data-minimized: no IP hash). Viewing a

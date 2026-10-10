@@ -10,11 +10,10 @@ import { Input } from "@indiecrafts/packages-web-ui/web/input";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { requireAdminPage } from "@/lib/require-admin";
 import { fetchEmailPreferences } from "@/lib/email-preferences";
+import { EMAIL } from "@/lib/ids";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 import { Link } from "@/i18n/routing";
 import { EmailPrefsPanel } from "../email-prefs-panel";
-
-const EMAIL = /^[^@\s/?#%\\]+@[^@\s/?#%\\]+\.[^@\s/?#%\\]+$/;
 
 /** `?email=` looks the address up (the api audits the view). An address that belongs to an
  *  account links to that account's email sheet, where the sign-in email can change too. */

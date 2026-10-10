@@ -242,8 +242,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 - **Share this page — a share row on the home screen.** `src/app/[locale]/page.tsx` mounts the shared
   `ShareButtons` (`@indiecrafts/packages-web-ui-components/web/layout/ShareButtons`) with no `url`, so
   it resolves the current page URL client-side. Adds the `ui-components`/`ui-icons` deps + `transpilePackages`
-  - tsconfig `paths`, and new `share.*` copy (`messages/{en,fr}.json`). **Why:** parity with the website's
-    site-wide share (share on all surfaces except admin).
+  plus tsconfig `paths`, and new `share.*` copy (`messages/{en,fr}.json`). **Why:** parity with the
+  website's site-wide share (share on all surfaces except admin).
 - **Proxy-set, per-request nonce CSP — `CSP_MODE`.** `src/proxy.ts` generates one nonce per request
   (`generateNonce`) and stamps the response with `cspHeadersForMode(...)`
   (`@indiecrafts/packages-shared-security`): `CSP_MODE=enforce` ships the strict nonce `script-src`

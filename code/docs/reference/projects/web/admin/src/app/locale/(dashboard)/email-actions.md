@@ -10,8 +10,8 @@ status: stable
 
 ## Purpose
 
-- `turnOffEmails({ userId | email, off, stopAll, reason })` — off only. Validates the subject, the category keys and the reason code, then calls `POST /v1/admin/email-preferences` with the acting admin.
-- `changeSignInEmail({ userId, email, confirm, reason })` — a **login path**, so: admin-only, the new address typed twice, a reason code, and never an admin's account (an operator does that in the Clerk Dashboard). It adds the new address verified and primary, removes the old one, and revokes every session, so whoever held the old address is signed out. Clerk notifies the person. Then `POST /v1/admin/email-preferences/move` moves the Resend contact and audits; if the api is down, the Clerk change stands and `audit()` keeps a trace.
+- `turnOffEmails({ userId | email, off, stopAll, reason })` — off only. Validates the subject, the category keys and the reason code, then calls `POST /v1/admin/email-preferences` with the acting admin (the api checks that admin's role too).
+- `changeSignInEmail({ userId, email, confirm, reason })` — a **login path**, so: admin-only, the new address typed twice, a reason code, never an admin's account (an operator does that in the Clerk Dashboard). In order, each step only after the last: (1) add the new address, verified and primary — the change is now real, so `admin.change_email` is audited at once with the reason, whatever follows; (2) revoke every session, checking each one went; (3) remove the old address. A session left open or an old address Clerk keeps answers `partial`, and the operator finishes in the Clerk Dashboard. Only a complete change moves the Resend contact (`POST /v1/admin/email-preferences/move`). Clerk notifies the person.
 
 ## Exports
 

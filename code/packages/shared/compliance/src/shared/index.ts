@@ -94,3 +94,10 @@ export {
   type DeleteAccountSurveyCopy,
   type ExportCopy,
 } from "./account-copy";
+
+export {
+  OVERRIDE_REASONS,
+  type OverrideReason,
+  isOverrideReason,
+  VISITOR_CONSENT_TYPE,
+} from "./email-overrides";

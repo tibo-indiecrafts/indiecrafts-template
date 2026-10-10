@@ -524,6 +524,7 @@
           "invalid": "Check the address and the reason.",
           "mismatch": "The two addresses differ.",
           "same": "That is already the sign-in email.",
+          "partial": "Changed, but not finished: the old address or a session is still there — finish it in the Clerk Dashboard.",
           "admin_target": "An admin's email changes in the Clerk Dashboard, not here.",
           "taken": "Another account already uses this address.",
           "unreachable": "The api is unreachable.",
