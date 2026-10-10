@@ -129,6 +129,16 @@
             "statusMessage": "Review nudge (diff scan)"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/react-doctor-changed.sh\" ] || \"$CLAUDE_PROJECT_DIR/.claude/hooks/react-doctor-changed.sh\"",
+            "timeout": 180,
+            "statusMessage": "React Doctor (changed scope)"
+          }
+        ]
       }
     ]
   }
