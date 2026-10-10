@@ -39,7 +39,6 @@ export function resolveBlogDisplay(
     post: {
       date: on(p.date),
       readingTime: on(p.readingTime),
-      tableOfContents: on(p.tableOfContents),
       relatedPosts: on(p.relatedPosts),
       readingProgress: on(p.readingProgress),
     },

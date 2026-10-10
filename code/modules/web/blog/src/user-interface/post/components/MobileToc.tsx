@@ -10,7 +10,8 @@ import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 /**
  * Collapsed "On this page" jump list for the article — shown only below
- * `lg`, where the sticky sidebar `Toc` is hidden. A native `<details>` so
+ * `lg`, where the sidebar's `blog-toc` card is hidden (the post layouts mount it
+ * only when the sidebar holds that card). A native `<details>` so
  * it needs no JS (no scroll-spy on mobile; it's a tap-to-jump index).
  * Anchors match the `slugify`-derived heading ids in `portable-text-components`.
  */

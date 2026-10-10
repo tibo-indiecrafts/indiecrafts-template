@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Builds the page-builder's desk sections: Accueil (the home `page`, one pinned document per locale), Pages (every other `page`), and the two generic entities the blocks reference — Témoignages (`quote`) and Équipe (`person`). Each localized type exposes EN and FR children. The app's `composeStudio` stitches these into the "Site web" group.
+Builds the page-builder's desk sections: Accueil (the home `page`, one pinned document per locale), Pages (every other `page`), Barre latérale (`sidebarSettings`, one pinned document per locale with the id `sidebarSettings-<locale>`), and the two generic entities the blocks reference — Témoignages (`quote`) and Équipe (`person`). Each localized type exposes EN and FR children. The app's `composeStudio` stitches these into the "Site web" group.
 
 ## Exports
 
@@ -21,7 +21,7 @@ Builds the page-builder's desk sections: Accueil (the home `page`, one pinned do
 ```ts
 import { pageBuilderStructure } from "@indiecrafts/packages-web-page-builder/sanity/structure";
 
-const pageBuilderSanity = {
+const pageBuilderModule: SanityModule = {
   name: "page-builder",
   structure: pageBuilderStructure,
   // …schemaTypes, templates, i18nSchemaTypes

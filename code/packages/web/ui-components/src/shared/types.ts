@@ -59,6 +59,10 @@ export type PostCardItem = {
   category?: string;
   author?: string;
   date?: string;
+  /** A one-line summary, shown where a layout has room (the editorial lead card). */
+  excerpt?: string;
+  /** A video (file or embed link) the editorial lead card can play in place. */
+  video?: string;
 };
 
 export type AccordionListModule = ModuleBase & {

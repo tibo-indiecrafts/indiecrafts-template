@@ -1,6 +1,6 @@
 ---
 title: "Page-builder Sanity module"
-description: "SanityModule barrel for the page document, blocks, entities, desk, and create templates."
+description: "Builds the SanityModule for the page document, blocks, sidebar, entities, desk, and create templates."
 status: stable
 ---
 
@@ -10,18 +10,26 @@ status: stable
 
 ## Purpose
 
-Bundles the page-builder's Sanity contribution as a `SanityModule`: the generic `page` document, the block schemas, the `quote` and `person` entities, the shared objects, its desk sections (Pages, Témoignages, Équipe), and per-(type, locale) create templates. It is feature-independent — every site has pages, so it is not gated. Drop `pageBuilderSanity` into `composeStudio([...])` in `sanity.config.ts`.
+`pageBuilderSanity` builds the page-builder's Sanity contribution as a `SanityModule`. It holds the `page` document, the 17 generic blocks, the sidebar types (`sidebar`, `sidebarBlocks`, `sidebarSettings`), the `quote` and `person` entities, and the shared objects. It also adds the desk sections (Accueil, Pages, Barre latérale, Témoignages, Équipe) and per-(type, locale) create templates. It is feature-independent: every site has pages, so it is not gated.
+
+The app passes its own blocks. `sectionTypes` adds to `page.sections[]`. `sidebarTypes` adds to the sidebar cards. Both come on top of the generic blocks. `sidebarPages` lists the page types that the sidebar settings configure, for example `post`.
 
 ## Exports
 
-- `pageBuilderSanity` — a `SanityModule` with `schemaTypes`, `structure`, `i18nSchemaTypes`, and locale-scoped `templates`.
+- `pageBuilderSanity({ sectionTypes, sidebarTypes, sidebarPages })` — returns a `SanityModule` with `schemaTypes`, `structure`, `i18nSchemaTypes`, and locale-scoped `templates`.
 
 ## Usage
 
 ```ts
 import { pageBuilderSanity } from "@indiecrafts/packages-web-page-builder/sanity";
 
-composeStudio([pageBuilderSanity]);
+composeStudio([
+  pageBuilderSanity({
+    sectionTypes: BLOG_SECTION_TYPES,
+    sidebarTypes: BLOG_SIDEBAR_TYPES,
+    sidebarPages: SIDEBAR_PAGES,
+  }),
+]);
 ```
 
 ## Source

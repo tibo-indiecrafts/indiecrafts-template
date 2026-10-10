@@ -29,7 +29,7 @@ export function Pricing({
   const tiers = props.tiers ?? [];
   if (!tiers.length) return null;
   return (
-    <ModuleSection anchor={props.anchor} inline={inline}>
+    <ModuleSection anchor={props.anchor} inline={inline} className="@container">
       {props.title || props.intro ? (
         <div className="mx-auto max-w-2xl space-y-4 text-center">
           {props.title ? (
@@ -42,7 +42,7 @@ export function Pricing({
           ) : null}
         </div>
       ) : null}
-      <ul className="mt-8 grid gap-6 md:mt-16 md:grid-cols-3">
+      <ul className="mt-8 grid gap-6 @3xl:mt-16 @3xl:grid-cols-3">
         {tiers.map((tier) => (
           <li key={tier._key}>
             <Card

@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-Renders a `module.card-list` block: a centered title over a bordered grid of content cards. Each card can carry an image, title, portable-text body, and a CTA. Column count keys off the container width, not the viewport.
+Renders a `module.card-list` block: a centered title over a bordered grid of content cards. Each card can carry an image, title, portable-text body, and a CTA. Column count and padding key off the container width, not the viewport. With `inline` set, `ModuleSection` renders it bare (`not-prose`, no gutters) for a rich-text body or a sidebar card. Without it, the block is a full-width section.
 
 ## Exports
 
-- `CardList` — renders a bordered grid of content cards from a `CardListModule` plus portable-text components.
+- `CardList` — renders a bordered grid of content cards from a `CardListModule` plus portable-text components and an optional `inline`.
 
 ## Usage
 

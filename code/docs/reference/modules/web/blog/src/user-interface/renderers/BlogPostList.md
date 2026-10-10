@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-`BlogPostList` is a server component that fetches its own posts using the module's filters (categories, limit, featured-only) via `moduleBlogPostListQuery` and renders them with the shared `BlogCard`, so every post grid on the site looks the same. Null category refs (deleted or private) are filtered before the query. It shows an optional title/intro header and an empty-state message when no post matches.
+`BlogPostList` is a server component that fetches its own posts using the module's filters (categories, limit, featured-only) via `moduleBlogPostListQuery` and renders them with the shared `BlogCard`, so every post grid on the site looks the same. Null category refs (deleted or private) are filtered before the query. It shows an optional title/intro header and an empty-state message when no post matches. With `compact` (in a sidebar), it renders the posts as a `PostLinks` list instead.
 
 ## Exports
 
-- `BlogPostList` — async server component; takes `module` (`BlogPostListModule`) and `locale` (`Locale`).
+- `BlogPostList` — async server component; takes `module` (`BlogPostListModule`), `locale` (`Locale`), and optional `compact` (boolean).
 
 ## Usage
 

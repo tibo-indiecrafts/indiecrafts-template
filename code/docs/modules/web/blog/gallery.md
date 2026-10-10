@@ -8,7 +8,7 @@ status: stable
 
 **Schema `_type`:** `module.gallery` · **Studio label:** « Galerie d'images » · **Renderer:** client `GalleryCarousel` behind the server `Gallery` wrapper.
 
-A swipeable image carousel for post bodies — a thumbnail strip, an image counter, and click-to-zoom fullscreen. One of the 9 inline blocks in the body editor's **+** picker, and it also works in the `blog.postModules` layout slot.
+A swipeable image carousel for post bodies — a thumbnail strip, an image counter, and click-to-zoom fullscreen. One of the 13 inline blocks in the rich-text **+** picker. It also works as a section of a `page`, the home page, and the `blog.postModules` layout slot.
 
 ## What the reader gets
 
@@ -40,15 +40,15 @@ Inside the carousel, images are cropped (`object-cover`) to fill the chosen **Fo
 
 ## How it's wired (developer)
 
-A standard page-builder module (general shape + full add/remove checklist in [blog-architecture](/modules/web/blog/blog-architecture#8-adding-removing-a-module)). The gallery-specific pieces:
+A standard page-builder module (general shape + full add/remove checklist in [blog-architecture](/modules/web/blog/blog-architecture#_8-adding-removing-a-module)). The gallery-specific pieces:
 
-- **Schema** — `sanity/schema/modules/gallery.ts` (via `defineModule`, `ImagesIcon`). Registered in `modules/index.ts` (`moduleSchemas` + `MODULE_TYPES`), the inline allowlist (`blockContent.ts` `INLINE_MODULES`) and `portable-text-components.tsx` `INLINE_TYPES`.
-- **Query** — `MODULES_FRAGMENT` (`queries.ts`) projects each image via `asset->` to `{ _key, url, alt, lqip, aspectRatio, width, height }`. The `lqip` drives the blur placeholder.
-- **Types** — `GalleryModule` / `GalleryImage` in `sanity/types.ts`, added to `AnyModule`.
+- **Schema** — `code/packages/web/page-builder/src/sanity/schema/modules/gallery.ts` (via `defineModule`, `ImagesIcon`), in the **Médias** group of the picker. Registered in `modules/index.ts` (`moduleSchemas` + `MODULE_TYPES`), the inline allowlist (`blockContent.ts` `INLINE_MODULES`) and `portable-text-components.tsx` `INLINE_TYPES`.
+- **Query** — `MODULES_FRAGMENT` (`@indiecrafts/packages-web-page-builder`, `sanity/queries.ts`) projects each image via `asset->` to `{ _key, url, alt, lqip, aspectRatio, width, height }`. The `lqip` drives the blur placeholder. A gallery inside a callout, card, accordion, step or prose rich text resolves the same way.
+- **Types** — `GalleryModule` / `GalleryImage` in `@indiecrafts/packages-web-ui-components` `src/shared/types.ts`, part of the `BlockModule` union.
 - **Renderers** (`@indiecrafts/packages-web-ui-components/web/media/`) — `Gallery.tsx` is the **server** wrapper (owns spacing via `not-prose my-5 md:my-10` + the optional title/intro; the registry invokes module renderers as plain functions, which only works server-side). It renders the **client** `GalleryCarousel.tsx`, which holds two synced [embla](https://www.embla-carousel.com/) instances (main + drag-free thumbnails) and the lightbox (a `Dialog` + the shared `@indiecrafts/packages-web-ui/web/embla-carousel` `Carousel`). Registered in `web/registry.tsx` `BLOCK_RENDERERS` (gallery is a generic block; schema in `@indiecrafts/packages-web-page-builder`).
 - **Dependency** — `embla-carousel-react` (also backs the shared `@indiecrafts/packages-web-ui` carousel).
 - **Strings** — `pages.blog.gallery.*` in `messages/<locale>.json` (`regionLabel`, `imageLabel`, `open`, `close`, `goToImage`); arrow labels reuse `common.previous` / `common.next`.
 
-To change the default frame, edit `RATIO_CLASS` (in `GalleryCarousel.tsx`) **and** the schema's `ratio` list. To add a ratio, add it in both places **and** to the `GalleryModule["ratio"]` union in `sanity/types.ts`.
+To change the default frame, edit `RATIO_CLASS` (in `GalleryCarousel.tsx`) **and** the schema's `ratio` list. To add a ratio, add it in both places **and** to the `GalleryModule["ratio"]` union in `src/shared/types.ts` (ui-components).
 
 > **Not seeded:** `pnpm seed` doesn't create a gallery — it needs uploaded images. Add one by hand in the Studio to see it.

@@ -3,12 +3,15 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/callout.md
  */
+import { InfoOutlineIcon } from "@sanity/icons/InfoOutline";
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.callout",
   title: "Encadré",
+  icon: InfoOutlineIcon,
+  description: "Un encadré coloré : note, conseil ou avertissement.",
   fields: [
     defineField({
       name: "variant",

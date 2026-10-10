@@ -5,18 +5,22 @@
  */
 
 import { defineQuery } from "next-sanity";
-import { MODULES_FRAGMENT } from "@indiecrafts/packages-web-page-builder/sanity/queries";
+import { MODULES_FRAGMENT } from "@indiecrafts/modules-web-blog/sanity/queries";
+import { sidebarProjection } from "@indiecrafts/packages-web-page-builder/sanity/sidebar";
 
 /**
- * A generic `page` document by slug + locale, with its `sections[]` resolved
- * through the shared page-builder `MODULES_FRAGMENT`. Rendered by the
- * `/[locale]/[...slug]` catch-all (`src/lib/page.ts` → the route).
+ * A generic `page` document by slug + locale, with its `sections[]` and `sidebar`
+ * resolved through the blog's `MODULES_FRAGMENT` (the generic blocks + the blog blocks a
+ * page can hold). Rendered by the `/[locale]/[...slug]` catch-all (`src/lib/page.ts` → the route). An unpublished page
+ * matches nothing, so the route 404s.
  */
 export const pageBySlugQuery = defineQuery(`
-  *[_type == "page" && isHome != true && slug.current == $slug && language == $locale][0]{
+  *[_type == "page" && isHome != true && slug.current == $slug && language == $locale
+    && seo.unpublished != true][0]{
     title,
     seo{ ..., image{ asset->{ url }, alt } },
-    "sections": sections[hidden != true]{ ${MODULES_FRAGMENT} }
+    "sections": sections[hidden != true]{ ${MODULES_FRAGMENT} },
+    "sidebar": sidebar${sidebarProjection(MODULES_FRAGMENT)}
   }
 `);
 

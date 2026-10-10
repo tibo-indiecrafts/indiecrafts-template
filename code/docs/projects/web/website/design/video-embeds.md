@@ -22,8 +22,9 @@ player itself —
 so only a validated URL from a known provider ever reaches an iframe `src`. The
 parsing lives in `@indiecrafts/packages-shared-utils` (`parseVideoEmbed`); the rendering lives in the
 shared **`FeaturedMedia`** component in `@indiecrafts/packages-web-ui-components`
-(`renderers/FeaturedMedia.tsx`) — **one structure for a featured image or video**, used by
-the post hero, the blog frontpage, and the homepage/blog cards alike.
+(`src/web/media/FeaturedMedia.tsx`) — **one structure for a featured image or video**, used by
+the post hero, the blog cards, and the lead card of the `blog-featured` block's `editorial`
+layout (the home page's « Articles à la une » strip).
 
 ## Why a URL, not markup
 
@@ -67,7 +68,7 @@ files** play in a native `<video>`, so the Sanity CDN must be in **`media-src`**
 
 ## Rendering: `FeaturedMedia`
 
-`@indiecrafts/packages-web-ui-components` `renderers/FeaturedMedia.tsx` renders the cover — image **or**
+`@indiecrafts/packages-web-ui-components` `src/web/media/FeaturedMedia.tsx` renders the cover — image **or**
 video — in one fixed-aspect box. It takes the image, an optional `videoUrl`, an `aspect`,
 and a `playLabel`; internally it calls `parseVideoEmbed`, so callers don't:
 
@@ -105,4 +106,4 @@ Key behaviors:
 Cards wrap the media with a **stretched title link** (`after:absolute after:inset-0`) so a
 click anywhere opens the post, while the play button (raised `z-10`, `stopPropagation`) plays
 inline without navigating — valid HTML (the `<button>` is a sibling of the link, never nested
-inside it). See `BlogCard`, `FeaturedArticles`, and the post hero for the pattern.
+inside it). See `BlogCard`, `FeaturedEditorial`, and the post hero for the pattern.

@@ -6,6 +6,7 @@
 import type { StructureBuilder, ListItemBuilder } from "sanity/structure";
 import { DocumentsIcon } from "@sanity/icons/Documents";
 import { HomeIcon } from "@sanity/icons/Home";
+import { SplitHorizontalIcon } from "@sanity/icons/SplitHorizontal";
 import { StarIcon } from "@sanity/icons/Star";
 import { UsersIcon } from "@sanity/icons/Users";
 import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
@@ -15,7 +16,8 @@ type PageBuilderType = "page" | "quote" | "person";
 
 /**
  * The page-builder's desk sections — Accueil (the home `page`, `isHome`, one pinned
- * doc per locale), Pages (every other `page`), plus the two generic entities the
+ * doc per locale), Pages (every other `page`), Barre latérale (`sidebarSettings`, one
+ * pinned doc per locale), plus the two generic entities the
  * blocks reference: Témoignages (`quote` → `module.quote-list`) and Équipe (`person`
  * → `module.person-list`). Each localized type exposes EN/FR children. The app's
  * `composeStudio` stitches these into the "Site web" group.
@@ -24,6 +26,7 @@ export function pageBuilderStructure(S: StructureBuilder): ListItemBuilder[] {
   return [
     homeItem(S),
     languageSplit(S, "page", "Pages", DocumentsIcon),
+    perLocale(S, "sidebarSettings", "Barre latérale", SplitHorizontalIcon),
     languageSplit(S, "quote", "Témoignages", StarIcon),
     languageSplit(S, "person", "Équipe", UsersIcon),
   ];
@@ -31,21 +34,32 @@ export function pageBuilderStructure(S: StructureBuilder): ListItemBuilder[] {
 
 /** The home page — one pinned `page` (fixed id `page-home-<locale>`) per locale. */
 function homeItem(S: StructureBuilder) {
+  return perLocale(S, "page", "Accueil", HomeIcon, "page-home");
+}
+
+/** One pinned document per locale, id `<idPrefix>-<locale>` (defaults to the type name). */
+function perLocale(
+  S: StructureBuilder,
+  type: string,
+  title: string,
+  icon: Parameters<ListItemBuilder["icon"]>[0],
+  idPrefix = type,
+) {
   return S.listItem()
-    .title("Accueil")
-    .icon(HomeIcon)
+    .title(title)
+    .icon(icon)
     .child(
       S.list()
-        .title("Accueil")
+        .title(title)
         .items(
           locales.map((l) =>
             S.listItem()
-              .title(`Accueil — ${l.label}`)
+              .title(`${title} — ${l.label}`)
               .child(
                 S.editor()
-                  .id(`page-home-${l.code}`)
-                  .schemaType("page")
-                  .documentId(`page-home-${l.code}`),
+                  .id(`${idPrefix}-${l.code}`)
+                  .schemaType(type)
+                  .documentId(`${idPrefix}-${l.code}`),
               ),
           ),
         ),

@@ -7,10 +7,22 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { ProseModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
-export function Prose(
-  props: ProseModule & { components: PortableTextComponents },
-) {
+/** Rich text as a section (narrow or wide column), or bare when `inline` (a body, a card). */
+export function Prose({
+  inline,
+  ...props
+}: ProseModule & { inline?: boolean; components: PortableTextComponents }) {
   if (!props.content) return null;
+  if (inline) {
+    return (
+      <div
+        id={props.anchor}
+        className="prose prose-neutral dark:prose-invert max-w-none"
+      >
+        <PortableText value={props.content} components={props.components} />
+      </div>
+    );
+  }
   return (
     <section
       id={props.anchor}

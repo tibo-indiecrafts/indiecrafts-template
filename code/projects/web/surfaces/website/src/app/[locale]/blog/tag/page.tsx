@@ -9,6 +9,7 @@ import { requireTaxonomyRoute } from "@indiecrafts/modules-web-blog/lib/route-ga
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
+import { PageSidebar } from "@/user-interface/shared/layout/PageSidebar";
 import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { TagListing } from "@indiecrafts/modules-web-blog/user-interface/tag/sections/TagListing";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
@@ -39,16 +40,18 @@ export default async function TagIndexPage({ params }: Props) {
 
   return (
     <DefaultLayout subnav={subnav}>
-      <PageSchemas page={pages.tag} locale={locale} />
-      <TagListing
-        tags={tags}
-        breadcrumbs={[{ label: nav("blog"), href: "/blog" }, { label: t("title") }]}
-        breadcrumbsLabel={t("breadcrumbs")}
-        heading={c?.heading ?? ""}
-        subheading={c?.subheading ?? ""}
-        emptyLabel={c?.empty ?? ""}
-        postsLabel={(count) => t("posts", { count })}
-      />
+      <PageSidebar locale={locale} page="blogListing">
+        <PageSchemas page={pages.tag} locale={locale} />
+        <TagListing
+          tags={tags}
+          breadcrumbs={[{ label: nav("blog"), href: "/blog" }, { label: t("title") }]}
+          breadcrumbsLabel={t("breadcrumbs")}
+          heading={c?.heading ?? ""}
+          subheading={c?.subheading ?? ""}
+          emptyLabel={c?.empty ?? ""}
+          postsLabel={(count) => t("posts", { count })}
+        />
+      </PageSidebar>
     </DefaultLayout>
   );
 }

@@ -1,5 +1,5 @@
 /**
- * Render a lead post card above a grid of featured posts.
+ * Render featured posts: a lead card over a grid, or a lead card beside a short list.
  *
  * @see docs/reference/packages/web/ui-components/src/web/collection/FeaturedPosts.md
  */
@@ -7,49 +7,106 @@ import Image from "next/image";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import type { PostCardItem } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { ModuleSection } from "../layout/ModuleSection";
-import { PostCard } from "./PostCard";
+import { FeaturedEditorial } from "./FeaturedEditorial";
+import { PostCard, PostMeta } from "./PostCard";
 
 /**
- * Featured posts — an optional large "lead" card (the same image + gradient
- * scrim treatment as `PostHero`, at card size) spanning 2 columns/rows in
- * the grid, plus compact `BlogCard`-style cards for the rest. With no
- * `lead`, every item renders at compact size in a plain grid. Renders
- * nothing when there's nothing to show.
+ * Featured posts, under an optional header (eyebrow · heading · intro · "view all" link).
  *
- * Data-driven like `PostHero`: every field on `PostCardItem` is already
- * resolved (a plain `href`, formatted `date`), so this primitive stays pure
- * — no i18n, no routing. Whole-card click via a plain `<a>` stretched over
- * the title.
+ * - `grid` (default) — an optional large `lead` card (the `PostHero` image + scrim, at card
+ *   size) spanning 2 columns/rows, plus compact `PostCard`s. With no `lead`, a plain grid.
+ * - `editorial` — the lead card beside a short list of runners-up (`FeaturedEditorial`): it
+ *   reads differently from a uniform grid because the lead outranks the rest.
+ *
+ * Data-driven: every `PostCardItem` field is resolved (plain `href`, formatted `date`), so
+ * this stays pure — no i18n, no routing. Container-driven, so it fits a full-width section,
+ * a narrow column and a page with a sidebar. Renders nothing with no post.
  */
 export function FeaturedPosts({
+  layout = "grid",
+  eyebrow,
   heading,
+  intro,
+  viewAll,
   lead,
   items,
+  anchor,
+  playLabel = "Play video",
 }: {
+  layout?: "grid" | "editorial";
+  eyebrow?: string;
   heading?: string;
+  intro?: string;
+  viewAll?: { label: string; href: string };
   lead?: PostCardItem;
   items: PostCardItem[];
+  anchor?: string;
+  /** The editorial lead's video play label (i18n, from the host). */
+  playLabel?: string;
 }) {
   if (!lead && !items.length) return null;
+  const headingId = anchor ? `${anchor}-title` : undefined;
 
   return (
-    <ModuleSection className="@container">
-      {heading ? (
-        <h2 className="mb-8 text-3xl font-semibold text-balance md:mb-10 md:text-4xl">
-          {heading}
-        </h2>
+    <ModuleSection anchor={anchor} className="@container">
+      {eyebrow || heading || intro || viewAll ? (
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 @2xl:mb-10">
+          <div className="max-w-xl">
+            {eyebrow ? (
+              <p className="text-brand flex items-center gap-3 text-xs font-medium tracking-widest uppercase">
+                <span aria-hidden="true" className="bg-brand h-px w-8" />
+                {eyebrow}
+              </p>
+            ) : null}
+            {heading ? (
+              <h2
+                id={headingId}
+                className={cn(
+                  "text-2xl font-semibold tracking-tight text-balance @2xl:text-3xl @4xl:text-4xl",
+                  eyebrow && "mt-4",
+                )}
+              >
+                {heading}
+              </h2>
+            ) : null}
+            {intro ? (
+              <p className="text-muted-foreground mt-3 text-balance">{intro}</p>
+            ) : null}
+          </div>
+          {viewAll ? (
+            <a
+              href={viewAll.href}
+              className="group hover:text-brand focus-visible:ring-ring inline-flex items-center gap-1.5 rounded text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            >
+              {viewAll.label}
+              <span
+                aria-hidden="true"
+                className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+              >
+                →
+              </span>
+            </a>
+          ) : null}
+        </div>
       ) : null}
-      <div className="grid grid-cols-1 gap-6 @2xl:grid-cols-2 @4xl:grid-cols-3 @4xl:grid-flow-dense">
-        {lead ? (
-          <LeadCard
-            post={lead}
-            className="@2xl:col-span-2 @4xl:col-span-2 @4xl:row-span-2"
-          />
-        ) : null}
-        {items.map((post) => (
-          <PostCard key={post._key} post={post} />
-        ))}
-      </div>
+      {layout === "editorial" ? (
+        <FeaturedEditorial
+          posts={lead ? [lead, ...items] : items}
+          playLabel={playLabel}
+        />
+      ) : (
+        <div className="grid grid-cols-1 gap-6 @2xl:grid-cols-2 @4xl:grid-flow-dense @4xl:grid-cols-3">
+          {lead ? (
+            <LeadCard
+              post={lead}
+              className="@2xl:col-span-2 @4xl:col-span-2 @4xl:row-span-2"
+            />
+          ) : null}
+          {items.map((post) => (
+            <PostCard key={post._key} post={post} />
+          ))}
+        </div>
+      )}
     </ModuleSection>
   );
 }
@@ -100,17 +157,7 @@ function LeadCard({
             <span className="line-clamp-3">{post.title}</span>
           </a>
         </h3>
-        {post.author || post.date ? (
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/85">
-            {post.author ? (
-              <span className="font-medium text-white">{post.author}</span>
-            ) : null}
-            {post.author && post.date ? (
-              <span aria-hidden="true">·</span>
-            ) : null}
-            {post.date ? <span>{post.date}</span> : null}
-          </div>
-        ) : null}
+        <PostMeta post={post} className="text-white/85" />
       </div>
     </article>
   );

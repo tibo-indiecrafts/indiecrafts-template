@@ -17,6 +17,7 @@ import { translationAlternates } from "@/lib/seo/translations";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
+import { PageSidebar } from "@/user-interface/shared/layout/PageSidebar";
 import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { TagDetail } from "@indiecrafts/modules-web-blog/user-interface/tag/sections/TagDetail";
 import { client } from "@indiecrafts/packages-web-sanity/client";
@@ -110,36 +111,38 @@ export default async function TagDetailPage({ params, searchParams }: Props) {
 
   return (
     <DefaultLayout subnav={subnav}>
-      <PageSchemas
-        page={{
-          ...pages.tag,
-          seo: { structuredData: [buildBreadcrumbSchema(breadcrumbItems)] },
-        }}
-        locale={locale}
-        pathname={localizedPathname(`/blog/tag/${slug}`, locale)}
-      />
-      <TagDetail
-        tag={tag}
-        posts={posts}
-        locale={locale}
-        breadcrumbs={[
-          { label: nav("blog"), href: "/blog" },
-          { label: t("title"), href: "/blog/tag" },
-          { label: tag.title ?? slug },
-        ]}
-        breadcrumbsLabel={t("breadcrumbs")}
-        postsLabel={(count) => t("posts", { count })}
-        noPostsLabel={t("noPosts")}
-        page={page}
-        pageCount={pageCount(total)}
-        basePath={`/blog/tag/${slug}`}
-        pagerLabels={{
-          label: pagerT("label"),
-          previous: pagerT("previous"),
-          next: pagerT("next"),
-          status: pagerT.raw("status") as string,
-        }}
-      />
+      <PageSidebar locale={locale} page="blogListing">
+        <PageSchemas
+          page={{
+            ...pages.tag,
+            seo: { structuredData: [buildBreadcrumbSchema(breadcrumbItems)] },
+          }}
+          locale={locale}
+          pathname={localizedPathname(`/blog/tag/${slug}`, locale)}
+        />
+        <TagDetail
+          tag={tag}
+          posts={posts}
+          locale={locale}
+          breadcrumbs={[
+            { label: nav("blog"), href: "/blog" },
+            { label: t("title"), href: "/blog/tag" },
+            { label: tag.title ?? slug },
+          ]}
+          breadcrumbsLabel={t("breadcrumbs")}
+          postsLabel={(count) => t("posts", { count })}
+          noPostsLabel={t("noPosts")}
+          page={page}
+          pageCount={pageCount(total)}
+          basePath={`/blog/tag/${slug}`}
+          pagerLabels={{
+            label: pagerT("label"),
+            previous: pagerT("previous"),
+            next: pagerT("next"),
+            status: pagerT.raw("status") as string,
+          }}
+        />
+      </PageSidebar>
     </DefaultLayout>
   );
 }

@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`Breadcrumbs` renders a breadcrumb trail. Items are passed in order; the last item renders as plain text (the current page) and gets `aria-current="page"`. It renders the visual and ARIA trail only — the `BreadcrumbList` JSON-LD is emitted separately by each route's page schemas, so the crumbs live in two places on purpose. Link and current-page styling use opacity and font-weight rather than hard-coded colors, so a passed `className` (for example `text-white/85`) cascades through the whole component for dark hero backgrounds.
+`Breadcrumbs` renders a breadcrumb trail. Items are passed in order; the last item renders as plain text (the current page) and gets `aria-current="page"`. It renders the visual and ARIA trail only — the `BreadcrumbList` JSON-LD is emitted separately by each route's page schemas, so the crumbs live in two places on purpose. Link and current-page styling use a hover underline and font-weight rather than hard-coded colors (no opacity, which broke the 4.5:1 contrast), so a passed `className` (for example `text-white/85`) cascades through the whole component for dark hero backgrounds.
 
 ## Exports
 

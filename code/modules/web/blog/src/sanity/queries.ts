@@ -5,6 +5,7 @@
  */
 import { defineQuery } from "next-sanity";
 import { MODULES_FRAGMENT as GENERIC_MODULES_FRAGMENT } from "@indiecrafts/packages-web-page-builder/sanity/queries";
+import { sidebarProjection } from "@indiecrafts/packages-web-page-builder/sanity/sidebar";
 
 /**
  * GROQ queries — `defineQuery` flags them for future `sanity typegen`
@@ -93,8 +94,9 @@ const AUTHOR_FRAGMENT = `
 
 /**
  * Modules fragment — the generic page-builder projection
- * (`@indiecrafts/packages-web-page-builder`) plus the blog-specific `blog-post-list`. Used by
- * post bodies (inline modules) + the blog singleton's `postModules`.
+ * (`@indiecrafts/packages-web-page-builder`) plus the blog blocks that hold references
+ * (`blog-post-list`, `blog-topic-cards`). Used wherever blog blocks can sit: post bodies,
+ * the blog singleton's layouts, site pages, the home page and the sidebar.
  */
 export const MODULES_FRAGMENT = `
   ${GENERIC_MODULES_FRAGMENT},
@@ -182,6 +184,7 @@ export const postBySlugQuery = defineQuery(`
     // MODULES_FRAGMENT. Without this, modules embedded inline render
     // with empty quotes / people.
     body[]{ ${MODULES_FRAGMENT} },
+    "sidebar": sidebar${sidebarProjection(MODULES_FRAGMENT)},
     "slug": media.slug.current,
     "metadata": {
       "title": seo.title,
@@ -221,11 +224,11 @@ export const postBySlugQuery = defineQuery(`
 
 /**
  * Posts related to the current one — same categories overlap, excludes
- * the current post, locale-filtered, limit 3.
+ * the current post, locale-filtered, at most `$limit`.
  *
  * `$categoryIds` is the array of `_id`s of the current post's categories.
  * Pass an empty array to disable the filter and just return the latest
- * three posts (still excluding the current one).
+ * posts (still excluding the current one).
  */
 export const relatedPostsQuery = defineQuery(`
   *[_type == "post"
@@ -237,7 +240,7 @@ export const relatedPostsQuery = defineQuery(`
     && _id != $id
     && coalesce(publishedAt, _createdAt) <= now()
     && (count($categoryIds) == 0 || count(categories[@->_id in $categoryIds]) > 0)]
-  | order(${ORDER_BY_PRIORITY})[0...3] {
+  | order(${ORDER_BY_PRIORITY})[0...$limit] {
     ${POST_CARD_PROJECTION}
   }
 `);

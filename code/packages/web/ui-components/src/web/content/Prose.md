@@ -1,4 +1,4 @@
-> `module.prose` renderer · `renderers/Prose.tsx`
+> `module.prose` renderer · `code/packages/web/ui-components/src/web/content/Prose.tsx`
 
 **Use when** a block holds long-form editorial body copy (paragraphs, headings, lists, links) authored as PortableText and rendered at a readable measure.
 
@@ -17,3 +17,4 @@
 - `components` is required; the renderer passes it straight to `<PortableText>`, so custom marks/blocks (code, callouts, links) will not render without it.
 - Wraps content in `prose prose-neutral dark:prose-invert` — the Tailwind typography plugin styles the body and adapts to light/dark.
 - Centered with page gutters (`px-(--gutter)`) and vertical rhythm (`py-10 md:py-16`).
+- `inline` (a sidebar card) renders the bare `prose` body, with no section, measure or padding.

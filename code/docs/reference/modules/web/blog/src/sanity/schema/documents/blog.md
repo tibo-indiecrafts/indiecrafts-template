@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Defines the `blog` singleton document (one instance, `documentId: "blog"`). It owns `postModules` (the layout around every `/blog/[slug]`), `frontpageModules` (the `/blog` frontpage stack), shared and listing-page SEO, a `display` object of ON-by-default toggles that hide blog elements without a deploy, and a `comments` object of `localeString` fields for the on-post comment form copy. Empty module arrays fall back to the code defaults (`DefaultPostLayout` and `DefaultBlogFrontpage`). It is hidden from omnisearch so an editor cannot create a second copy.
+Defines the `blog` singleton document (one instance, `documentId: "blog"`). It owns `postModules` (the layout around every `/blog/[slug]`), `frontpageModules` (the `/blog` frontpage stack), shared and listing-page SEO, a `display` object of ON-by-default toggles that hide blog elements without a deploy, and a `comments` object of `localeString` fields for the on-post comment form copy. Empty module arrays fall back to the code defaults (`DefaultPostLayout` and `DefaultBlogFrontpage`). Both arrays use the grouped `blockInsertMenu`. The sidebar beside the article body is not set here: it lives in « Barre latérale ». The `display.post` toggles have no table-of-contents toggle; the `blog-toc` sidebar card replaces it. It is hidden from omnisearch so an editor cannot create a second copy.
 
 ## Exports
 

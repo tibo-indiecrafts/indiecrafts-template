@@ -10,6 +10,7 @@ import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/sche
 export default defineModule({
   name: "module.blog-post-list",
   title: "Articles",
+  description: "Les derniers articles, filtrables par catégorie.",
   icon: BlockContentIcon,
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),

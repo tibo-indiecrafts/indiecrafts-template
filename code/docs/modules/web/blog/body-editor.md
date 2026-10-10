@@ -29,7 +29,7 @@ Click the **"Normal"** dropdown in the toolbar to change the current block's sty
 | **H6**       | `h6`         | Metadata labels. **Not** in the TOC.                                                                                |
 | **Citation** | `blockquote` | Long editorial pull quotes (left border + italic).                                                                  |
 
-**TOC behaviour:** the right-rail sidebar auto-collects H2 / H3 / H4 with deterministic slug `id`s for click-to-scroll. H5 / H6 stay out of the TOC, but use them only under an H4.
+**TOC behaviour:** the **Sommaire de l'article** sidebar card (`module.blog-toc`) lists H2 / H3 / H4, with deterministic slug `id`s for click-to-scroll. It shows when the post's sidebar holds that card (the seed gives it to every post — see [Sidebar](/modules/web/blog/editor-guide#_7-sidebar-barre-laterale)). From the `lg` breakpoint the card sits in the sidebar; on a phone the same list opens from « Sur cette page » above the article. H5 / H6 stay out of the TOC, but use them only under an H4.
 
 **Heading order:** a heading goes at most one level deeper than the one before it (H2 → H3, not H2 → H4). Screen readers and search engines read the headings as the page outline, so a gap reads as a missing section. The Studio shows a warning on the body when a heading skips a level (`headingSkip` in `blockContent.ts`); it does not block publishing.
 
@@ -91,27 +91,33 @@ For swipeable multi-image sets, use the [gallery module](/modules/web/blog/galle
 
 ## 6. Inline modules (the "+" picker)
 
-On an empty line, click **+** to insert a fancy block. Ten modules are inline-embeddable (the allowlist is `INLINE_MODULES` in `blockContent.ts`, mirrored by `INLINE_TYPES` in `portable-text-components.tsx`). The Studio shows French labels matching each schema title.
+On an empty line, click **+** to insert a fancy block. Thirteen modules are inline-embeddable (the allowlist is `INLINE_MODULES` in `blockContent.ts`, mirrored by `INLINE_TYPES` in `portable-text-components.tsx`). The picker groups them (Mise en page · Contenu · Médias · Formulaires) in a list view, each block with an icon and a one-line description. The Studio shows French labels matching each schema title.
 
-| Studio label          | Schema `_type`          | What it does                                                                                                      |
-| --------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| **Accordéon**         | `module.accordion-list` | Expandable FAQ — `items[{title, content}]`. Each item's editor is the same block-content canvas.                  |
-| **Encadré**           | `module.callout`        | 4 colour variants (info, success, warning, danger). Rich text + optional CTA.                                     |
-| **Cartes**            | `module.card-list`      | Card grid (default 3 columns) with hairline dividers. Each card: title + content + optional image + optional CTA. |
-| **Galerie d'images**  | `module.gallery`        | Swipeable carousel + thumbnails + click-to-zoom. See [gallery.md](/modules/web/blog/gallery).                     |
-| **Citations**         | `module.quote-list`     | Pull-quote stack referencing `quote` docs.                                                                        |
-| **HTML personnalisé** | `module.custom-html`    | Escape hatch — raw HTML via `dangerouslySetInnerHTML`. Trust the source.                                          |
-| **Infolettre**        | `module.newsletter`     | Email capture — card / inline / banner. Posts to `/api/newsletter`; see [newsletter](../newsletter/).             |
-| **Personnes**         | `module.person-list`    | Centered avatar grid referencing `person` docs.                                                                   |
-| **Statistiques**      | `module.stat-list`      | Key-number grid with hairline separators.                                                                         |
-| **Étapes**            | `module.step-list`      | Vertical numbered timeline — each step title + content.                                                           |
+| Studio label              | Schema `_type`          | What it does                                                                                                      |
+| ------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Accordéon**             | `module.accordion-list` | Expandable FAQ — `items[{title, content}]`. Each item's editor is the same block-content canvas.                  |
+| **Encadré**               | `module.callout`        | 4 colour variants (info, success, warning, danger). Rich text + optional CTA.                                     |
+| **Cartes**                | `module.card-list`      | Card grid (default 3 columns) with hairline dividers. Each card: title + content + optional image + optional CTA. |
+| **Galerie d'images**      | `module.gallery`        | Swipeable carousel + thumbnails + click-to-zoom. See [gallery.md](/modules/web/blog/gallery).                     |
+| **Citations**             | `module.quote-list`     | Pull-quote stack referencing `quote` docs.                                                                        |
+| **HTML personnalisé**     | `module.custom-html`    | Escape hatch — raw HTML via `dangerouslySetInnerHTML`. Trust the source.                                          |
+| **Infolettre**            | `module.newsletter`     | Email capture — card / inline / banner. Posts to `/api/newsletter`; see [newsletter](/modules/web/newsletter/).   |
+| **Aimant à prospects**    | `module.lead-magnet`    | A download offered in exchange for a newsletter sign-up. Posts to `/api/newsletter`.                              |
+| **Liste d'attente**       | `module.waitlist`       | Waitlist sign-up form. Posts to `/api/waitlist`; see [waitlist](/modules/web/waitlist/).                          |
+| **Formulaire de contact** | `module.contact`        | Contact form. Posts to `/api/contact`; see [contact](/modules/web/contact/).                                      |
+| **Personnes**             | `module.person-list`    | Centered avatar grid referencing `person` docs.                                                                   |
+| **Statistiques**          | `module.stat-list`      | Key-number grid with hairline separators.                                                                         |
+| **Étapes**                | `module.step-list`      | Vertical numbered timeline — each step title + content.                                                           |
 
-**Not in the inline picker** (they only appear inside the blog singleton's `postModules` layout slot — page chrome, not body content):
+**Not in the inline picker** (they are sections of a page, the home page, or the blog singleton's layout slots — page chrome, not body content):
 
-- `module.blog-index` — blog-index hero
-- `module.blog-post-content` — active-post slot (embedding it in a body would recurse)
-- `module.blog-post-list` — post grid (featured/category filter, limit)
+- `module.hero`, `module.feature-grid`, `module.pricing` — page chrome
 - `module.prose` — wraps a `blockContent` field; nesting prose inside prose adds nothing
+- every blog block (`module.blog-*`) — `blog-post-content` would render the post body inside itself
+
+**Hidden blocks.** A block with **Masqué** on renders nothing, inline in a body too.
+
+**Nested content.** A callout, card, accordion item, step or prose block holds its own rich text. Images, galleries and references inside that rich text resolve like top-level ones. One level deep only: a block inside a block inside a block is not resolved.
 
 ---
 

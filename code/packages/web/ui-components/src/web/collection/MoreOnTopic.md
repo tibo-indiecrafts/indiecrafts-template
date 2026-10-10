@@ -1,6 +1,6 @@
-> `code/packages/ui-components/src/web/collection/MoreOnTopic.tsx`
+> `code/packages/web/ui-components/src/web/collection/MoreOnTopic.tsx`
 
-**Use when** you want a compact "more on this topic" list in a sidebar — a heading over a few related links, optionally with a "see all" footer link. Built for the blog post TOC sidebar, but generic: any resolved `{ title, href }` items work.
+**Use when** you want a compact list of links for a sidebar card — a heading over a few links, optionally with a "see all" footer link. The blog uses it for its `blog-related` card and for the sidebar form of its post blocks (`PostLinks`). Generic: any resolved `{ title, href }` items work.
 
 ## Props
 
@@ -9,10 +9,10 @@
 | `title`     | `string`                        | The heading (e.g. "More on Engineering").        |
 | `items[]`   | `{ title, href, meta?, _key? }` | The links. `meta` is an optional secondary line. |
 | `footer`    | `{ label, href }`               | Optional "see all" link under the list.          |
-| `className` | `string`                        | Optional; extra classes on the card.             |
+| `className` | `string`                        | Optional; extra classes on the section.          |
 
 ## Notes
 
 - Renders `null` when `items` is empty.
 - Plain `<a href>` (resolved hrefs), matching the other renderers — the host localizes the hrefs.
-- Token-styled card (`bg-card` + hairline ring); sized for a narrow column.
+- Bare: `SidebarCard` draws the card frame around it.

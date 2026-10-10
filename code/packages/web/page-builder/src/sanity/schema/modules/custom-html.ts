@@ -3,12 +3,16 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/custom-html.md
  */
+import { CodeIcon } from "@sanity/icons/Code";
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.custom-html",
   title: "HTML personnalisé",
+  icon: CodeIcon,
+  description:
+    "Du HTML brut pour un widget tiers. Réservé aux éditeurs de confiance.",
   fields: [
     defineField({
       name: "html",

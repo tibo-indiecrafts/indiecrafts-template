@@ -5,20 +5,16 @@
  *
  * @see docs/reference/modules/web/blog/src/user-interface/post/components/Toc.md
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Heading } from "@indiecrafts/modules-web-blog/sanity/types";
 import { slugify } from "@indiecrafts/packages-shared-utils/slugify";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 /**
- * Sidebar Table of Contents — anchors to h2/h3/h4 in the post body.
- *
- * Client component so it can run a scroll-spy: the heading nearest the
- * top of the viewport gets `aria-current="location"`. Sticks to the top
- * on `md:` and above; hidden below that breakpoint (the article body
- * shows the same headings inline so mobile doesn't need duplication).
- *
- * Pattern matches sanitypress's article sidebar TOC.
+ * The post's table of contents, for the `blog-toc` sidebar card — anchors to the h2/h3/h4
+ * of the body. A client component for its scroll-spy: the heading nearest the top of the
+ * viewport gets `aria-current="location"`. The sidebar shows the card from `lg`; below,
+ * `MobileToc` opens the same list above the article.
  */
 export function Toc({
   headings,
@@ -27,7 +23,11 @@ export function Toc({
   headings: Heading[];
   title: string;
 }) {
-  const items = headings.map((h) => ({ ...h, id: slugify(h.text) }));
+  // Memoised: a new array each render would re-run the observer effect on every scroll.
+  const items = useMemo(
+    () => headings.map((h) => ({ ...h, id: slugify(h.text) })),
+    [headings],
+  );
   const [active, setActive] = useState<string | null>(items[0]?.id ?? null);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export function Toc({
   if (items.length === 0) return null;
 
   return (
-    <nav aria-label={title} className="hidden text-sm md:block">
+    <nav aria-label={title} className="text-sm">
       <p className="text-muted-foreground mb-3 text-xs font-medium tracking-wider uppercase">
         {title}
       </p>

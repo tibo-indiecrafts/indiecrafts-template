@@ -6,6 +6,7 @@
 import { defineField, defineType } from "sanity";
 import { BlockContentIcon } from "@sanity/icons/BlockContent";
 import { MODULE_TYPES } from "@indiecrafts/packages-web-page-builder/sanity/schema/modules";
+import { blockInsertMenu } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/insert-menu";
 import { BLOG_MODULE_TYPES } from "../modules";
 import { seoTranslationsField } from "@indiecrafts/packages-web-schema";
 
@@ -16,10 +17,10 @@ const INDEX_PAGES = [
   { name: "tag", title: "Page « Tags »" },
 ];
 
-// The per-post layout can compose the generic blocks + the blog's own blocks.
-const moduleFieldRefs = [...MODULE_TYPES, ...BLOG_MODULE_TYPES].map((type) => ({
-  type,
-}));
+// The per-post layout and the frontpage compose the generic blocks + the blog's own blocks.
+const moduleTypes = [...MODULE_TYPES, ...BLOG_MODULE_TYPES];
+const moduleFieldRefs = moduleTypes.map((type) => ({ type }));
+const insertMenu = blockInsertMenu(moduleTypes);
 
 /**
  * A display toggle — a boolean that defaults to ON, so an editor never
@@ -45,10 +46,10 @@ const toggle = (name: string, title: string, description?: string) =>
  * back to the default layout (hero card grid + ExploreCategories +
  * ExploreTags + TopAuthors).
  *
- * `postModules` composes the chrome around EVERY `/blog/[slug]` — drop
- * a `Fil d'ariane`, then `Contenu de l'article (article actif)`, then
- * `Liste d'articles` for related posts. When the array is empty, the
- * route falls back to `DefaultPostLayout`.
+ * `postModules` composes the chrome around EVERY `/blog/[slug]` — e.g. a
+ * `Contenu de l'article (article actif)`, then a `Liste d'articles` for related
+ * posts. When the array is empty, the route falls back to `DefaultPostLayout`.
+ * The sidebar beside the article body is set in « Barre latérale », not here.
  *
  * Editors only ever have ONE of these. Studio singleton wiring lives in
  * `src/sanity/structure.ts`.
@@ -71,6 +72,7 @@ export default defineType({
         "Compose la mise en page de chaque /blog/[slug]. Vide = mise en page article par défaut. Incluez un module « Contenu de l'article (article actif) » pour afficher le corps de l'article.",
       type: "array",
       of: moduleFieldRefs,
+      options: { insertMenu },
     }),
     defineField({
       name: "frontpageModules",
@@ -79,6 +81,7 @@ export default defineType({
         "Compose la page /blog en empilant des sections (grande une, à la une, articles, pleins feux, carrousel, sujets, explorer, newsletter…). Vide = mise en page par défaut.",
       type: "array",
       of: moduleFieldRefs,
+      options: { insertMenu },
     }),
     defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),
     seoTranslationsField(),
@@ -136,7 +139,6 @@ export default defineType({
           fields: [
             toggle("date", "Date de publication"),
             toggle("readingTime", "Temps de lecture"),
-            toggle("tableOfContents", "Sommaire (table des matières)"),
             toggle("relatedPosts", "« À lire ensuite » (articles liés)"),
             toggle(
               "readingProgress",

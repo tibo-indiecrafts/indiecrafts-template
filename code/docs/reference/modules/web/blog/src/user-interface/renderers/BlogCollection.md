@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-`BlogCollection` renders the frontpage "Collection" block. It is pinned-only (no automatic or flag source, unlike the featured block): it fetches the referenced posts (`blogCollectionQuery`), restores the editor's manual order with `reorderByIds`, shapes each into a `PostCardItem`, and renders them in a `Carousel`. It returns `null` when no post matches.
+`BlogCollection` renders the frontpage "Collection" block. It is pinned-only (no automatic or flag source, unlike the featured block): it fetches the referenced posts (`blogCollectionQuery`), restores the editor's manual order with `reorderByIds`, maps each with `toPostCard`, and renders them in a `Carousel`. With `compact` (in a sidebar), it renders a `PostLinks` list instead. It returns `null` when no post matches.
 
 ## Exports
 
-- `BlogCollection` — async server component; takes `module` (`BlogCollectionModule`) and `locale` (`Locale`).
+- `BlogCollection` — async server component; takes `module` (`BlogCollectionModule`), `locale` (`Locale`), and optional `compact` (boolean).
 
 ## Usage
 

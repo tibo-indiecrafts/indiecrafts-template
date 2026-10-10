@@ -101,21 +101,19 @@ screens; calling everything "responsive" without naming reflow vs swap.
 ## Mobile-first defaults
 
 Base utilities target the smallest screen; breakpoint prefixes layer on larger-screen overrides.
-From `src/user-interface/homepage/sections/Features.tsx`:
+From `FeatureGrid.tsx` (`@indiecrafts/packages-web-ui-components`, `src/web/collection/`):
 
 ```html
-<section class="bg-muted/40 border-b py-16 md:py-32">
-  <div class="@container mx-auto max-w-5xl px-(--gutter)">
-    <ul
-      class="grid max-w-sm gap-6 md:mt-16 @4xl:max-w-full @4xl:grid-cols-3"
-    ></ul>
-  </div>
+<section class="@container mx-auto max-w-6xl px-(--gutter) py-8 md:py-12">
+  <ul
+    class="mx-auto mt-8 grid max-w-sm gap-6 @2xl:mt-12 @4xl:max-w-full @4xl:grid-cols-3"
+  ></ul>
 </section>
 ```
 
-- Vertical rhythm scales up at breakpoints (`py-16 md:py-32`).
+- Vertical rhythm scales up at breakpoints (`py-8 md:py-12`, from `ModuleSection`).
 - Grids start single-column and add columns higher up.
-- Some sections use Tailwind v4 **container queries** (`@container` on the wrapper, `@4xl:*` on children) so a block responds to its own width, not the viewport.
+- Page-builder blocks use Tailwind v4 **container queries** (`@container` on the wrapper, `@4xl:*` on children), so a block responds to its own width, not the viewport.
 
 ## The container variables
 
@@ -146,14 +144,14 @@ follow. Never hard-code page margins.
 ## Responsive imagery
 
 Blog and article images use `next/image` with explicit `sizes` so the browser downloads the right
-resolution per breakpoint. From `FeaturedArticles.tsx`:
+resolution per breakpoint. From `PostCard.tsx` (`@indiecrafts/packages-web-ui-components`):
 
 ```tsx
 <Image
-  src={image}
-  alt={alt}
+  src={post.image}
+  alt={post.title}
   fill
-  sizes="(min-width: 1024px) 56vw, (min-width: 768px) 92vw, 100vw"
+  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
   className="object-cover"
 />
 ```
@@ -180,9 +178,9 @@ Two layers honor `prefers-reduced-motion: reduce`:
   }
   ```
 
-- **Per-element.** Interactive hover effects add `motion-reduce:*` utilities to cancel the transform/transition (e.g. `group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100` in `FeaturedArticles.tsx`).
+- **Per-element.** Interactive hover effects add `motion-reduce:*` utilities to cancel the transform/transition (e.g. `group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100` in `FeaturedPosts.tsx`).
 
-When you copy a section that animates, keep both — the global rule is a safety net; the per-element
+When you build a block that animates, keep both — the global rule is a safety net; the per-element
 utilities keep the reduced-motion state visually correct.
 
 ## Other environment adaptation

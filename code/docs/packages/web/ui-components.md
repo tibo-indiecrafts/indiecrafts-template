@@ -17,21 +17,28 @@ resolved Sanity data.
 | **Exports**   | `./web/registry` — `BLOCK_RENDERERS` (the composable `_type`→component map, 17 generic `module.*`) + `renderBlock(module, components)`; `./web/portable-text-components` — the shared portable-text map; `./web/content/CodeBlock` — Shiki code renderer for the body `codeBlock`; `./web/RichTitle` — shared title primitive with `[[word]]` brand highlight (+ `./shared/rich-title` parser); `./web/<domain>/*` — individual renderers (`content`·`media`·`collection`·`layout`·`form`); `./shared/types` — `BlockModule` union + per-block types, incl. `PostCardItem` (platform-agnostic) |
 | **Layout**    | **Platform → domain (`src/<platform>/<domain>/`).** `src/web/<domain>/` (`content`·`media`·`collection`·`layout`·`form`) holds the web renderers; `src/web/` holds the registry + portable-text map; `src/shared/types.ts` is the platform-agnostic contract.                                                                                                                                                                                                                                                                                                                                  |
 | **Deps**      | `@indiecrafts/packages-shared-config`, `@indiecrafts/packages-web-ui`, `@indiecrafts/packages-shared-utils`, `@portabletext/react ^6`, `embla-carousel-react ^8`, `lucide-react ^1`, `next-intl ^4`, `shiki ^3` (server-side code highlighting). **Peer:** `next 16.3.1`, `react 19.2.8`                                                                                                                                                                                                                                                                                                       |
-| **Consumers** | app + blog                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| **Consumers** | website + blog                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
-- **Composable registry.** Each page type spreads the shared base + its own modules — the
-  blog's `ModuleRenderer` = `{ ...BLOCK_RENDERERS, ...10 blog-specific dispatchers }` (`blog-index`,
-  `blog-post-content`, `blog-post-list`, plus the seven frontpage blocks below).
+- **One registry, one dispatcher.** `BLOCK_RENDERERS` maps the 17 generic `_type`s; `renderBlock`
+  paints one (a `hidden` block renders nothing). The blog's `Modules` dispatcher paints any block
+  list that can hold blog blocks — the blog's layouts, site pages, the home page and the sidebar:
+  its 12 blog blocks first, then `renderBlock` for the rest.
+- **Sidebar.** `web/layout/WithSidebar` lays out content + a labelled `<aside>` of cards (18rem
+  from `lg`, after the content below it); `web/layout/SidebarCard` frames one block as a card unless
+  the block draws its own. Blocks in a card render `inline` and size with `@container`. Model and
+  resolution order → [page-builder § Sidebar](/packages/web/page-builder#sidebar).
 - **Renderers here, schemas in `@indiecrafts/packages-web-page-builder`.** The 17 generic block renderers +
   types + `BLOCK_RENDERERS` registry live here; the matching `module.*` **schemas** (plus
   `blockContent`/`link`/`cta` and the `quote`/`person` entities `person-list`/`quote-list` reference)
   live in `@indiecrafts/packages-web-page-builder`. Both are consumed as source — the renderer takes resolved data,
   the schema owns the refs.
 - **Blog frontpage primitives.** Six presentational primitives back the blog's composable `/blog`
-  frontpage blocks (each renderer maps resolved post/category data onto one of these — see
+  frontpage blocks — and, since those blocks also go on any page, the site's blog promotions (each
+  renderer maps resolved post/category data onto one of these — see
   [modules/web/blog](/modules/web/blog/blog-architecture)): `web/layout/PostHero` (a full-width lead-post
   hero — image/video, category chip, author/date; `blog-hero`), `web/collection/FeaturedPosts` (a
-  lead card + grid of featured/pinned posts; `blog-featured`), `web/collection/SpotlightRow` (a
+  header + a lead card over a grid, or beside a short list via `FeaturedEditorial` — `blog-featured`,
+  on any page), `web/collection/SpotlightRow` (a
   curated post-picks row + "view all" link; `blog-category-spotlight`, reused by `blog-trending`),
   `web/collection/Carousel` (client, an embla-driven scroller of pinned posts; `blog-collection`),
   `web/layout/TopicCards` (one to three large clickable category/tag cards; `blog-topic-cards`), and

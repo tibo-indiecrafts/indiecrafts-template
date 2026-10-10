@@ -23,7 +23,7 @@ import { CodeBlock } from "./content/CodeBlock";
  *     the Table of Contents can anchor-link. `scroll-mt-24` clears the
  *     fixed nav when scrolled to via hash.
  *   - The `link` mark promotes `http(s)://` URLs to `target="_blank"`.
- *   - Twelve inline-module `_type`s map to the same React components
+ *   - Thirteen inline-module `_type`s map to the same React components
  *     `ModuleRenderer` uses for `postModules`, so a Callout inline in a
  *     body and a Callout in the layout slot render identically.
  */
@@ -46,19 +46,22 @@ const m =
   ({ value }: { value: unknown }) =>
     // Pass `components` in so a module rendered inline can recurse into nested
     // modules without importing this map (which would form an import cycle).
-    Cmp({
-      ...(value as Record<string, unknown>),
-      inline: true,
-      components: portableComponents,
-    } as P);
+    // A block the editor hid renders nothing.
+    (value as { hidden?: boolean }).hidden
+      ? null
+      : Cmp({
+          ...(value as Record<string, unknown>),
+          inline: true,
+          components: portableComponents,
+        } as P);
 
 /**
  * Inline-embeddable module types — must stay in lockstep with
- * `INLINE_MODULES` in `@indiecrafts/packages-web-page-builder` (`sanity/schema/blockContent.ts`). The 12 types
+ * `INLINE_MODULES` in `@indiecrafts/packages-web-page-builder` (`sanity/schema/blockContent.ts`). The 13 types
  * listed here are the subset of the full module catalogue that editors
  * can drop directly into a post body (the others are layout-slot only).
  */
-const INLINE_TYPES = [
+export const INLINE_TYPES = [
   "module.callout",
   "module.card-list",
   "module.gallery",

@@ -31,16 +31,16 @@ Six mechanisms, all in `code/projects/web/surfaces/website/`:
 
 ## Guides
 
-| Guide                                                    | For        | Covers                                                                              |
-| -------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------- |
-| [Sanity setup](/modules/web/blog/sanity-setup)           | developer  | project/dataset bring-up, schemas, routes, feature flag, QA matrix, troubleshooting |
-| [Sanity tokens](/modules/web/blog/sanity-tokens)         | developer  | issuing/storing/rotating Viewer + Editor tokens, CORS, roles, security              |
-| [Editor guide](/modules/web/blog/editor-guide)           | editor     | writing a post in the Studio — the form, draft preview, publishing                  |
-| [Body editor](/modules/web/blog/body-editor)             | editor     | the Portable Text body — inline modules and how they render                         |
-| [Image gallery](/modules/web/blog/gallery)               | editor/dev | the `module.gallery` page-builder block (Embla carousel)                            |
-| [Blog architecture](/modules/web/blog/blog-architecture) | developer  | routes, GROQ queries, renderer registry, component layout, the module system        |
+| Guide                                                    | For        | Covers                                                                                    |
+| -------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------- |
+| [Sanity setup](/modules/web/blog/sanity-setup)           | developer  | project/dataset bring-up, schemas, routes, feature flag, QA matrix, troubleshooting       |
+| [Sanity tokens](/modules/web/blog/sanity-tokens)         | developer  | issuing/storing/rotating Viewer + Editor tokens, CORS, roles, security                    |
+| [Editor guide](/modules/web/blog/editor-guide)           | editor     | writing a post in the Studio — the form, draft preview, publishing, the sidebar           |
+| [Body editor](/modules/web/blog/body-editor)             | editor     | the Portable Text body — inline modules and how they render                               |
+| [Image gallery](/modules/web/blog/gallery)               | editor/dev | the `module.gallery` page-builder block (Embla carousel)                                  |
+| [Blog architecture](/modules/web/blog/blog-architecture) | developer  | routes, GROQ queries, renderer registry, component layout, the module system, the sidebar |
 
 ## Where the code lives
 
 - **Feature source** → `code/modules/web/blog/src/` — `sanity/` (schema + queries + structure), `user-interface/` (renderers + per-surface sections), `lib/` (`route-gate.ts`, `llms.ts`). Start with the module's own `CLAUDE.md`.
-- **App integration** → `code/projects/web/surfaces/website/src/app/[locale]/{blog,author}/**` routes (including `blog/rss.xml`, `blog/atom.xml`, `blog/[slug]/md`), the home `FeaturedArticles`, `sitemap.ts`, `llms*.txt`, and `sanity.config.ts`.
+- **App integration** → `code/projects/web/surfaces/website/src/app/[locale]/{blog,author}/**` routes (including `blog/rss.xml`, `blog/atom.xml`, `blog/[slug]/md`), `sitemap.ts`, `llms*.txt`, and `sanity.config.ts`. The home page and every `page` can hold the blog blocks that promote the blog (`BLOG_SECTION_TYPES`); the home's « Articles à la une » strip is a `module.blog-featured` block. Every page type can show blog cards in its sidebar (`BLOG_SIDEBAR_TYPES`).

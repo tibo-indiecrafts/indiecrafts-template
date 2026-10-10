@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-A side sheet on the users page. "Current state" lists the latest decision per consent type with its date and a Granted / Refused badge; "History" is the timeline (date, type, decision, surface, source, country, policy version), newest first. Types and sources show as labels in the admin's locale (`admin.consent.types` / `sources`; an email category reads "Emails: <key>"; an unknown code shows as is). A `null` history is a load error, distinct from a user with no decision. Closing the sheet returns to the list, keeping the search.
+A side sheet on the users page. "Current state" lists the latest decision per consent type with its date and a Granted / Refused badge; "History" is the timeline (date, type, decision, surface, source, country, policy version), newest first. Types and sources show as labels in the admin's locale (`admin.consent.types` / `sources`; an email category reads "Emails: `<key>`"; an unknown code shows as is). A `null` history is a load error, distinct from a user with no decision. Closing the sheet returns to the list, keeping the search.
 
 ## Exports
 

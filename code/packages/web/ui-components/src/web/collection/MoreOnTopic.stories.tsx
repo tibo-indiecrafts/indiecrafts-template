@@ -1,12 +1,23 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { MoreOnTopic } from "./MoreOnTopic";
 import docs from "./MoreOnTopic.md?raw";
+import { SidebarCard } from "../layout/SidebarCard";
 
 const meta = {
   title: "UI Components/MoreOnTopic",
   component: MoreOnTopic,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },
+  // Shown as it appears in a sidebar: inside a SidebarCard, 18rem wide.
+  decorators: [
+    (Story) => (
+      <div className="w-72">
+        <SidebarCard type="module.blog-related">
+          <Story />
+        </SidebarCard>
+      </div>
+    ),
+  ],
   args: {
     title: "More on Engineering",
     items: [

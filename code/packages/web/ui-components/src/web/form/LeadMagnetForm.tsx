@@ -70,7 +70,7 @@ export function LeadMagnetForm({
         errorText={text.error}
         banner={banner}
       >
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex flex-col gap-2 @md:flex-row">
           <FormInput
             id={`${guard.uid}-email`}
             label={text.email}

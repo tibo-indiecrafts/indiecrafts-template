@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders a `module.stat-list` block: a hairline-divided card grid of statistics. Each cell shows a label on top and a value below in tabular numerals. It renders nothing with no stats.
+Renders a `module.stat-list` block: a hairline-divided card grid of statistics. Each cell shows a label on top and a value below in tabular numerals. Columns and padding key off the container width, not the viewport. It renders nothing with no stats.
 
 ## Exports
 

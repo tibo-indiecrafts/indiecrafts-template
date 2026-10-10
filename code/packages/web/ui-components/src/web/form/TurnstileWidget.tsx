@@ -106,6 +106,6 @@ export function TurnstileWidget({
 
   if (!siteKey) return null;
   return (
-    <div ref={ref} className="mt-1 flex justify-center sm:justify-start" />
+    <div ref={ref} className="mt-1 flex justify-center @md:justify-start" />
   );
 }

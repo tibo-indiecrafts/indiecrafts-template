@@ -19,6 +19,7 @@
     "sanity": "*"
   },
   "devDependencies": {
+    "groq-js": "^1.30.3",
     "sanity": "^6.16.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"

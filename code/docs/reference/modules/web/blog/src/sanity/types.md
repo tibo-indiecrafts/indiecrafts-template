@@ -18,10 +18,11 @@ Central type declarations for the blog. It re-exports the generic block and pres
 - `SeoMeta` — slug-less SEO and visibility override (`noIndex`, `hideFromDiscovery`, `unpublished`).
 - `AuthorRef`, `Author`, `AuthorSocial` — author fragment, full author document, and one profile link.
 - `CategoryRef`, `Category`, `TagRef`, `Tag`, `Series`, `SeriesRef` — taxonomy and series references and full documents.
-- `PostMetadata`, `PostListItem`, `Post`, `Heading`, `PostSlug`, `RssPost` — post shapes for cards, the post page, the RSS feed, and the table of contents.
-- `BlogIndexModule`, `BlogPostContentModule`, `BlogPostListModule`, `BlogHeroModule`, `BlogFeaturedModule`, `BlogExploreModule`, `BlogCategorySpotlightModule`, `BlogCollectionModule`, `BlogTrendingModule`, `BlogTopicCardsModule` — the blog's page-builder modules.
+- `PostMetadata`, `PostListItem`, `Post`, `Heading`, `PostSlug`, `RssPost` — post shapes for cards, the post page, the RSS feed, and the table of contents. `Post.sidebar` holds the post's own sidebar choice.
+- `SidebarField` — a projected `sidebar` field: its `mode` (`inherit`, `custom`, `none`) and its visible `blocks`.
+- `BlogIndexModule`, `BlogPostContentModule`, `BlogPostListModule`, `BlogHeroModule`, `BlogFeaturedModule`, `BlogExploreModule`, `BlogCategorySpotlightModule`, `BlogCollectionModule`, `BlogTrendingModule`, `BlogTopicCardsModule`, `BlogTocModule`, `BlogRelatedModule` — the blog's page-builder modules. `BlogFeaturedModule` has a `layout` (`grid` or `editorial`), `eyebrow`, `intro` and `viewAll`. `BlogTocModule` and `BlogRelatedModule` are sidebar cards for posts only.
 - `AnyModule` — union of every module a blog page can hold.
-- `BlogSingleton`, `BlogDisplayRaw`, `BlogDisplay` — the singleton shape and the raw vs. resolved display toggles.
+- `BlogSingleton`, `BlogDisplayRaw`, `BlogDisplay` — the singleton shape and the raw vs. resolved display toggles. `BlogDisplay.post` has no `tableOfContents` toggle: the `blog-toc` sidebar card replaces it.
 - `Comment`, `LocaleString`, `CommentsCopy` — a public comment, a per-locale value, and the editable comment-section copy.
 
 ## Source

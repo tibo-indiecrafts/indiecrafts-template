@@ -7,6 +7,7 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { CalloutModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { ModuleCta } from "../layout/Cta";
+import { ModuleSection } from "../layout/ModuleSection";
 
 const VARIANT_STYLES: Record<NonNullable<CalloutModule["variant"]>, string> = {
   info: "bg-muted text-foreground ring-border",
@@ -20,29 +21,31 @@ const VARIANT_STYLES: Record<NonNullable<CalloutModule["variant"]>, string> = {
     "bg-destructive/10 text-destructive ring-destructive/30 dark:bg-destructive/15 dark:ring-destructive/40",
 };
 
-export function Callout(
-  props: CalloutModule & { components: PortableTextComponents },
-) {
+export function Callout({
+  inline,
+  ...props
+}: CalloutModule & { inline?: boolean; components: PortableTextComponents }) {
   if (!props.content) return null;
   const variant = props.variant ?? "info";
   return (
-    <aside
-      id={props.anchor}
-      // Static editorial content: `note`, never `alert` (an alert interrupts the reader on load).
-      role="note"
-      className={cn(
-        "mx-auto my-4 max-w-3xl rounded-lg px-5 py-3 ring-1 md:my-6",
-        VARIANT_STYLES[variant],
-      )}
-    >
-      <div className="prose prose-neutral dark:prose-invert max-w-none [&_p]:my-0 [&_p]:leading-relaxed">
-        <PortableText value={props.content} components={props.components} />
-      </div>
-      {props.cta ? (
-        <div className="mt-4">
-          <ModuleCta cta={props.cta} />
+    <ModuleSection anchor={props.anchor} inline={inline}>
+      <aside
+        // Static editorial content: `note`, never `alert` (an alert interrupts the reader on load).
+        role="note"
+        className={cn(
+          "mx-auto max-w-3xl rounded-lg px-5 py-3 ring-1",
+          VARIANT_STYLES[variant],
+        )}
+      >
+        <div className="prose prose-neutral dark:prose-invert max-w-none [&_p]:my-0 [&_p]:leading-relaxed">
+          <PortableText value={props.content} components={props.components} />
         </div>
-      ) : null}
-    </aside>
+        {props.cta ? (
+          <div className="mt-4">
+            <ModuleCta cta={props.cta} />
+          </div>
+        ) : null}
+      </aside>
+    </ModuleSection>
   );
 }

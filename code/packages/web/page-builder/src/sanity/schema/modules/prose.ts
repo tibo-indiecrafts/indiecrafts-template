@@ -3,12 +3,15 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/prose.md
  */
+import { TextIcon } from "@sanity/icons/Text";
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.prose",
   title: "Prose",
+  icon: TextIcon,
+  description: "Un bloc de texte riche, en colonne étroite ou large.",
   fields: [
     defineField({
       name: "content",

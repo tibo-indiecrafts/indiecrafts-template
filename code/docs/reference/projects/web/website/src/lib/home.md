@@ -10,19 +10,19 @@ status: stable
 
 ## Purpose
 
-Reads the page-builder blocks from the `page` document that has `isHome` on, for a given locale. Wrapped in React `cache()`; returns an empty block list on error so a Sanity hiccup renders an empty page instead of throwing. Hidden blocks are dropped in GROQ.
+Reads the page-builder blocks from the `page` document that has `isHome` on, for a given locale. Wrapped in React `cache()`; returns an empty block list on error so a Sanity hiccup renders an empty page instead of throwing. Hidden blocks are dropped in GROQ. `siteBlocks` drops the blog blocks when the blog is off. It also returns the page's own `sidebar` choice.
 
 ## Exports
 
-- `HomePage` — type: `{ pageModules: BlockModule[] }`.
-- `getHomePage(locale)` — cached fetcher returning the homepage's `pageModules`.
+- `HomePage` — type: `{ pageModules: AnyModule[]; sidebar: SidebarField }`.
+- `getHomePage(locale)` — cached fetcher returning the homepage's `pageModules` and `sidebar`.
 
 ## Usage
 
 ```ts
 import { getHomePage } from "@/lib/home";
 
-const { pageModules } = await getHomePage("en");
+const { pageModules, sidebar } = await getHomePage("en");
 ```
 
 ## Source

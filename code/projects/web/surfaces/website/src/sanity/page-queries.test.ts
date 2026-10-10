@@ -88,3 +88,22 @@ describe("form blocks carry their feature's Studio switch", () => {
     expect(result.sections[1].cards[0]?.content[0]?.enabled).toBe(true);
   });
 });
+
+describe("pageBySlugQuery", () => {
+  const find = async (seo?: Record<string, unknown>) =>
+    (await (
+      await evaluate(parse(pageBySlugQuery), {
+        dataset: [{ ...page, seo }],
+        params: { slug: "p", locale: "en" },
+      })
+    ).get()) as unknown;
+
+  it("finds a published page", async () => {
+    expect(await find()).not.toBeNull();
+    expect(await find({ noIndex: true })).not.toBeNull();
+  });
+
+  it("finds no page marked unpublished, so the route 404s", async () => {
+    expect(await find({ unpublished: true })).toBeNull();
+  });
+});

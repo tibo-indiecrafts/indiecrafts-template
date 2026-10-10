@@ -15,10 +15,11 @@ import { cn } from "@indiecrafts/packages-shared-utils/cn";
  * `<PageSchemas>` (`buildBreadcrumbSchema`), so the crumbs live in two
  * places on purpose: the visual trail here, the machine trail in the head.
  *
- * Link + current-page styling uses opacity + font-weight rather than
- * hard-coded colours, so passing `className="text-white/85"` (or similar)
+ * Link + current-page styling uses an underline on hover + font-weight rather
+ * than hard-coded colours, so passing `className="text-white/85"` (or similar)
  * cascades through the whole component — useful when the trail sits on a
- * dark hero background.
+ * dark hero background. No opacity on the links: it dropped the muted text
+ * below the 4.5:1 contrast ratio.
  */
 export type Crumb = { label: string; href?: string };
 
@@ -48,7 +49,7 @@ export function Breadcrumbs({
               {item.href && !isLast ? (
                 <Link
                   href={item.href}
-                  className="focus-visible:ring-ring rounded opacity-80 transition hover:opacity-100 focus-visible:ring-2 focus-visible:outline-none"
+                  className="focus-visible:ring-ring rounded underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:outline-none"
                 >
                   {item.label}
                 </Link>

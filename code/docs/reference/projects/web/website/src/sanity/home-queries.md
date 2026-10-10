@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-The home page is the `page` document with `isHome` on for the current locale. Its `sections[]` blocks resolve through the shared page-builder `MODULES_FRAGMENT` (images to CDN URLs, CTA links, quote and person refs), aliased to `pageModules`. Consumed by `getHomePage` (`src/lib/home.ts`) and the `(home)` route.
+The home page is the `page` document with `isHome` on for the current locale. Its `sections[]` blocks resolve through the blog's `MODULES_FRAGMENT` (the generic blocks and the blog blocks: images to CDN URLs, CTA links, refs), aliased to `pageModules`. Its `sidebar` choice resolves through `sidebarProjection` with the same fragment. Consumed by `getHomePage` (`src/lib/home.ts`) and the `(home)` route.
 
 ## Exports
 
-- `homePageQuery` — GROQ for the home `page` doc with resolved `pageModules`.
+- `homePageQuery` — GROQ for the home `page` doc with resolved `pageModules` and `sidebar`.
 
 ## Usage
 

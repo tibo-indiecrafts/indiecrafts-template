@@ -9,21 +9,17 @@ import { defineArrayMember, defineType } from "sanity";
  * Reusable rich-text field. Referenced as `type: "blockContent"` from
  * post bodies, author bios, accordion items, callout content, etc.
  *
- * Editors can drop any of the 12 INLINE-EMBEDDABLE modules into a block
+ * Editors can drop any of the 13 INLINE-EMBEDDABLE modules (`INLINE_MODULES`) into a block
  * content array directly from the Studio "+" picker, mixed with normal
  * paragraphs and headings. The runtime PortableText renderer
- * (`@indiecrafts/packages-web-ui-components/web/portable-text-components`) maps each module
- * `_type` to its React component.
+ * (`@indiecrafts/packages-web-ui-components/web/portable-text-components`, `INLINE_TYPES`) maps
+ * each module `_type` to its React component; a test keeps the two lists equal.
  *
- * Modules deliberately excluded from inline embedding:
- *   - `blog-index`, `blog-post-list`, `prose` — page chrome, not content
- *   - `blog-post-content` — would render the post body recursively
- *   - `prose` — body content is already prose, embedding it inside
- *     itself adds nothing
- * Those six are still available via the blog singleton's `postModules`
- * layout slot.
+ * Not insertable inline (section-only): `hero`, `feature-grid`, `pricing` (page chrome),
+ * `prose` (the body is already prose) and every `blog-*` block (`blog-post-content` would
+ * render the post body inside itself).
  */
-const INLINE_MODULES = [
+export const INLINE_MODULES = [
   "module.callout",
   "module.card-list",
   "module.gallery",

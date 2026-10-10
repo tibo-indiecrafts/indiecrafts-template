@@ -42,33 +42,14 @@ const FORM_SWITCH = `
   }
 `;
 
-/** The rich-text field of a container module: its inline blocks get their form switch too. */
-const NESTED = `content[]{ ..., ${FORM_SWITCH} }`;
-
 /**
- * Generic modules fragment — expands every referenced field per generic module
- * type. `quote-list` dereferences its quotes; `person-list` its people. The blog
- * appends `module.blog-post-list` to this in its own `MODULES_FRAGMENT`.
- *
- * The form blocks carry `enabled` (`FORM_SWITCH`), at the top level and inside a container's
- * rich text (prose, callout, card, accordion item, step).
- * ponytail: GROQ cannot recurse — a form inside a container inside a container gets no
- * switch and stays visible; project one more level here if editors ever nest that deep.
+ * What every block that can sit in rich text needs resolved: images, refs, ctas and the
+ * form switch. Applied at the top level AND inside a container's rich text (`NESTED`).
  */
-export const MODULES_FRAGMENT = `
-  ...,
+const LEAF = `
   _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },
-  _type == "module.hero" => { cta { ${CTA_FRAGMENT} } },
-  _type == "module.pricing" => {
-    tiers[] { ..., cta { ${CTA_FRAGMENT} } }
-  },
-  _type == "module.prose" => { ${NESTED} },
-  _type == "module.callout" => { cta { ${CTA_FRAGMENT} }, ${NESTED} },
-  _type == "module.card-list" => {
-    cards[] { ..., cta { ${CTA_FRAGMENT} }, ${NESTED} }
-  },
-  _type == "module.accordion-list" => { items[] { ..., ${NESTED} } },
-  _type == "module.step-list" => { steps[] { ..., ${NESTED} } },
+  _type == "module.callout" => { cta { ${CTA_FRAGMENT} } },
+  _type == "module.card-list" => { cards[] { ..., cta { ${CTA_FRAGMENT} } } },
   _type == "module.gallery" => {
     images[]{
       _key,
@@ -95,4 +76,31 @@ export const MODULES_FRAGMENT = `
   },
   _type == "module.lead-magnet" => { magnet->{ "id": _id } },
   ${FORM_SWITCH}
+`;
+
+/** The rich-text field of a container module: its inline blocks resolve like top-level ones. */
+const NESTED = `content[]{ ..., ${LEAF} }`;
+
+/**
+ * Generic modules fragment — expands every referenced field per generic module
+ * type. The blog appends its own blocks to this in its own `MODULES_FRAGMENT`.
+ *
+ * Containers (prose, callout, card, accordion item, step) resolve their rich text with `LEAF`.
+ * ponytail: GROQ cannot recurse — a block inside a container inside a container is not
+ * resolved (no image url, no form switch); project one more level here if editors nest that deep.
+ */
+export const MODULES_FRAGMENT = `
+  ...,
+  ${LEAF},
+  _type == "module.hero" => { cta { ${CTA_FRAGMENT} } },
+  _type == "module.pricing" => {
+    tiers[] { ..., cta { ${CTA_FRAGMENT} } }
+  },
+  _type == "module.prose" => { ${NESTED} },
+  _type == "module.callout" => { ${NESTED} },
+  _type == "module.card-list" => {
+    cards[] { ..., cta { ${CTA_FRAGMENT} }, ${NESTED} }
+  },
+  _type == "module.accordion-list" => { items[] { ..., ${NESTED} } },
+  _type == "module.step-list" => { steps[] { ..., ${NESTED} } }
 `;

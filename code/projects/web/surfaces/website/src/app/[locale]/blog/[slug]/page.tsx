@@ -22,6 +22,8 @@ import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { DefaultPostLayout } from "@indiecrafts/modules-web-blog/user-interface/post/layout/DefaultPostLayout";
 import { Modules } from "@indiecrafts/modules-web-blog/user-interface/renderers/ModuleRenderer";
+import { postSidebar } from "@indiecrafts/modules-web-blog/user-interface/post/layout/post-sidebar";
+import { getSidebar } from "@/lib/sidebar";
 import { Comments } from "@indiecrafts/modules-web-blog/user-interface/post/sections/Comments";
 import { PostViewBeacon } from "@indiecrafts/modules-web-blog/user-interface/post/components/PostViewBeacon";
 import { isCommentsEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
@@ -147,9 +149,16 @@ export default async function BlogPostPage({ params }: Props) {
     modules.length === 0
       ? await sanityFetchLive<PostListItem[]>({
           query: relatedPostsQuery,
-          params: { locale, id: post._id, categoryIds },
+          params: { locale, id: post._id, categoryIds, limit: 3 },
         })
       : [];
+
+  // The sidebar cards beside the body: the post's own choice, else Site web → Barre latérale.
+  const sidebar = postSidebar(
+    await getSidebar(locale, "post", post.sidebar),
+    post,
+    locale,
+  );
 
   const path = localizedPathname(`/blog/${slug}`, locale);
   // Evaluate once (not inline in JSX): a bare `new Date()` reached from the
@@ -198,7 +207,7 @@ export default async function BlogPostPage({ params }: Props) {
         pathname={path}
       />
       {modules.length > 0 ? (
-        <Modules modules={modules} context={{ locale, post }} />
+        <Modules modules={modules} context={{ locale, post, postSidebar: sidebar }} />
       ) : (
         <DefaultPostLayout
           post={post}
@@ -207,6 +216,8 @@ export default async function BlogPostPage({ params }: Props) {
           title={title}
           description={description}
           related={related}
+          aside={sidebar.aside}
+          mobileToc={sidebar.mobileToc}
           share={settings.share}
         />
       )}

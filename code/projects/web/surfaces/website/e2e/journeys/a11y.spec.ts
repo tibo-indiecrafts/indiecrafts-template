@@ -16,7 +16,8 @@ test("skip link moves focus to main content", async ({ page }) => {
   await expect(page.locator("#main")).toBeFocused();
 });
 
-for (const path of ["/", "/blog"]) {
+// The seeded showcase post carries the sidebar (TOC + related cards) and every inline block.
+for (const path of ["/", "/blog", "/blog/fast-prototyping-with-nextjs"]) {
   test(`no serious/critical axe violations on ${path}`, async ({ page }) => {
     await page.goto(path);
     const { violations } = await new AxeBuilder({ page })

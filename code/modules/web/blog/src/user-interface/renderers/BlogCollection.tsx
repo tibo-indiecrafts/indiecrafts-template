@@ -5,9 +5,7 @@
  */
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@indiecrafts/packages-shared-config";
-import { localizedPathname } from "@indiecrafts/packages-web-i18n";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
-import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
 import { Carousel } from "@indiecrafts/packages-web-ui-components/web/collection/Carousel";
 import type { PostCardItem } from "@indiecrafts/packages-web-ui-components/shared/types";
 import type {
@@ -16,7 +14,9 @@ import type {
 } from "@indiecrafts/modules-web-blog/sanity/types";
 import { blogCollectionQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
+import { toPostCard } from "@indiecrafts/modules-web-blog/lib/post-card";
 import { reorderByIds } from "@indiecrafts/modules-web-blog/lib/pin-order";
+import { PostLinks } from "./PostLinks";
 
 /**
  * Frontpage "Collection" block — a pinned, ordered selection of posts shown
@@ -26,9 +26,11 @@ import { reorderByIds } from "@indiecrafts/modules-web-blog/lib/pin-order";
 export async function BlogCollection({
   module: m,
   locale,
+  compact,
 }: {
   module: BlogCollectionModuleType;
   locale: Locale;
+  compact?: boolean;
 }) {
   const ids = (m.posts ?? []).flatMap((p) => (p?._ref ? [p._ref] : []));
 
@@ -44,21 +46,20 @@ export async function BlogCollection({
   // GROQ only filters by `_id in $ids` — respect the editor's manual order here.
   const ordered = reorderByIds(posts, ids);
 
-  const items: PostCardItem[] = ordered.map((post) => ({
-    _key: post._id,
-    href: localizedPathname(`/blog/${post.slug ?? ""}`, locale),
-    title: post.metadata?.title ?? post.title ?? "",
-    image: post.metadata?.image?.asset?.url,
-    lqip: post.metadata?.image?.asset?.metadata?.lqip,
-    category: display.taxonomy.categories
-      ? post.categories?.[0]?.title
-      : undefined,
-    author: display.taxonomy.authors ? post.authors?.[0]?.name : undefined,
-    date: formatDate(locale, post.publishedAt) ?? undefined,
-  }));
+  const items: PostCardItem[] = ordered.map((post) =>
+    toPostCard(post, locale, display),
+  );
 
   if (!items.length) return null;
 
+  if (compact) {
+    return (
+      <PostLinks
+        title={m.title ?? t("frontpage.collection.heading")}
+        items={items}
+      />
+    );
+  }
   return (
     <Carousel
       heading={m.title}

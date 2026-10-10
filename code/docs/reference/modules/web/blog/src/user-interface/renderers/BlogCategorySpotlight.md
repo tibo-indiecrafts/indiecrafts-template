@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`BlogCategorySpotlight` renders the frontpage "Category Spotlight" block. It fetches the editor's pinned posts plus the latest posts from one category (`blogCategorySpotlightQuery`), respects the manual pin order with `reorderByIds`, shapes each into a `PostCardItem`, and hands them to `SpotlightRow`. The heading defaults to the category title, and a "view all" link points at the category page. It returns `null` when the category is missing or no post matches.
+`BlogCategorySpotlight` renders the frontpage "Category Spotlight" block. It fetches the editor's pinned posts plus the latest posts from one category (`blogCategorySpotlightQuery`), respects the manual pin order with `reorderByIds`, maps each with `toPostCard`, and hands them to `SpotlightRow`. The heading defaults to the category title, and a "view all" link points at the category page. It returns `null` when the category is missing or no post matches.
 
 ## Exports
 

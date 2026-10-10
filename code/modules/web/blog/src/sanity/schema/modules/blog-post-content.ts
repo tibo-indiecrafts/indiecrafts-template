@@ -15,6 +15,8 @@ import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/sche
 export default defineModule({
   name: "module.blog-post-content",
   title: "Contenu d'article",
+  description:
+    "Le contenu de l'article. Seulement dans la mise en page des articles.",
   icon: DocumentTextIcon,
   fields: [],
   preview: { prepare: () => ({ title: "Contenu d'article (article actif)" }) },

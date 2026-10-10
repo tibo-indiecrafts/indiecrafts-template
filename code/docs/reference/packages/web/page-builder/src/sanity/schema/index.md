@@ -1,30 +1,31 @@
 ---
 title: "Schema barrel"
-description: "Collects every Sanity schema the page-builder contributes to the Studio."
+description: "Collects the fixed Sanity schemas the page-builder contributes to the Studio."
 status: stable
 ---
 
 # Schema barrel
 
-> One array of every document, object, and module schema the page-builder ships.
+> One array of the fixed document, object, and module schemas the page-builder ships.
 
 ## Purpose
 
-Aggregates the page-builder schemas — the `page` document, the `quote` and `person` documents, the reusable `blockContent` / `link` / `cta` objects, and the generic `module.*` schemas — into a single `schemaTypes` array for the Studio config.
+Collects the fixed page-builder schemas into a single `schemaTypes` array: the `quote` and `person` documents, the reusable `blockContent`, `link` and `cta` objects, and the 17 generic `module.*` schemas. It does not hold the `page` document or the sidebar types. `pageBuilderSanity` builds those from the app's options (`definePage`, `sidebarSchemas`) and adds them.
 
 ## Exports
 
-- `schemaTypes` — a `SchemaTypeDefinition[]` with every schema the page-builder registers.
+- `schemaTypes` — a `SchemaTypeDefinition[]` with every fixed schema the page-builder registers.
 
 ## Usage
 
 ```ts
 import { schemaTypes } from "@indiecrafts/packages-web-page-builder/sanity/schema";
-import { defineConfig } from "sanity";
 
-defineConfig({
-  schema: { types: schemaTypes },
-});
+const types = [
+  definePage({ sectionTypes }),
+  ...sidebarSchemas(cards, pages),
+  ...schemaTypes,
+];
 ```
 
 ## Source

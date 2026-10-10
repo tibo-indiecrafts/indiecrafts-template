@@ -17,6 +17,7 @@ import { translationAlternates } from "@/lib/seo/translations";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
+import { PageSidebar } from "@/user-interface/shared/layout/PageSidebar";
 import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { AuthorDetail } from "@indiecrafts/modules-web-blog/user-interface/author/sections/AuthorDetail";
 import { client } from "@indiecrafts/packages-web-sanity/client";
@@ -116,57 +117,59 @@ export default async function AuthorDetailPage({ params, searchParams }: Props) 
 
   return (
     <DefaultLayout subnav={subnav}>
-      <PageSchemas
-        page={{
-          ...pages.author,
-          seo: {
-            structuredData: [
-              {
-                "@type": "Person",
-                name: author.name,
-                description: author.bio,
-                image: author.image?.asset?.url,
-                jobTitle: author.position,
-                url: `${site.url}${path}`,
-              },
-              buildBreadcrumbSchema(breadcrumbItems),
-            ],
-          },
-        }}
-        locale={locale}
-        pathname={path}
-      />
-      <AuthorDetail
-        author={author}
-        posts={posts}
-        total={total}
-        locale={locale}
-        breadcrumbs={[
-          { label: nav("blog"), href: "/blog" },
-          { label: nav("author"), href: "/author" },
-          { label: author.name ?? slug },
-        ]}
-        breadcrumbsLabel={t("breadcrumbs")}
-        postsLabel={(count) => t("posts", { count })}
-        noPostsLabel={t("noPosts")}
-        socialLabels={{
-          x: t("social.x"),
-          linkedin: t("social.linkedin"),
-          github: t("social.github"),
-          instagram: t("social.instagram"),
-          mastodon: t("social.mastodon"),
-          website: t("social.website"),
-        }}
-        page={page}
-        pageCount={pageCount(total)}
-        basePath={`/author/${slug}`}
-        pagerLabels={{
-          label: pagerT("label"),
-          previous: pagerT("previous"),
-          next: pagerT("next"),
-          status: pagerT.raw("status") as string,
-        }}
-      />
+      <PageSidebar locale={locale} page="blogListing">
+        <PageSchemas
+          page={{
+            ...pages.author,
+            seo: {
+              structuredData: [
+                {
+                  "@type": "Person",
+                  name: author.name,
+                  description: author.bio,
+                  image: author.image?.asset?.url,
+                  jobTitle: author.position,
+                  url: `${site.url}${path}`,
+                },
+                buildBreadcrumbSchema(breadcrumbItems),
+              ],
+            },
+          }}
+          locale={locale}
+          pathname={path}
+        />
+        <AuthorDetail
+          author={author}
+          posts={posts}
+          total={total}
+          locale={locale}
+          breadcrumbs={[
+            { label: nav("blog"), href: "/blog" },
+            { label: nav("author"), href: "/author" },
+            { label: author.name ?? slug },
+          ]}
+          breadcrumbsLabel={t("breadcrumbs")}
+          postsLabel={(count) => t("posts", { count })}
+          noPostsLabel={t("noPosts")}
+          socialLabels={{
+            x: t("social.x"),
+            linkedin: t("social.linkedin"),
+            github: t("social.github"),
+            instagram: t("social.instagram"),
+            mastodon: t("social.mastodon"),
+            website: t("social.website"),
+          }}
+          page={page}
+          pageCount={pageCount(total)}
+          basePath={`/author/${slug}`}
+          pagerLabels={{
+            label: pagerT("label"),
+            previous: pagerT("previous"),
+            next: pagerT("next"),
+            status: pagerT.raw("status") as string,
+          }}
+        />
+      </PageSidebar>
     </DefaultLayout>
   );
 }

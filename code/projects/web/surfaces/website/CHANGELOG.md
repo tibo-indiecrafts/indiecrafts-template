@@ -17,6 +17,28 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **A sidebar on every page type.** Studio → Site web → Barre latérale (one document per locale)
+  sets the default cards and the cards per page type (Accueil · Pages · Accueil du blog · Articles ·
+  Listes du blog); a page or post can override it. `PageSidebar` wraps the home, site pages, the blog
+  index and every blog listing; posts get theirs beside the body. The seed gives articles the TOC +
+  related posts (as before); `scripts/sidebar-migrate.mjs` does the same for an existing dataset.
+- **Blog blocks on pages.** Site pages and the home page accept the blog's blocks (featured, trending,
+  latest posts…); their queries use the blog's fragment and render through its `Modules`. Without
+  the blog (`features.blog`), blog blocks are dropped (`siteBlocks`).
+
+### Changed
+
+- **The home's "featured articles" strip is a block.** The hard-coded `FeaturedArticles` is gone; the
+  home `page` ends with an editable `blog-featured` block (`editorial` layout), seeded in both
+  locales. Its copy moved from `messages` (`pages.home.blocks.featured`, removed) to Sanity.
+- `schema.json` re-extracted from the Studio config.
+
+### Fixed
+
+- **A page marked « Dépublier » returns 404.** `pageBySlugQuery` skips it (it rendered before).
+
 ### Security
 
 - **Personal data is hidden from anonymous reads of the Sanity dataset.** On Sanity's free plan

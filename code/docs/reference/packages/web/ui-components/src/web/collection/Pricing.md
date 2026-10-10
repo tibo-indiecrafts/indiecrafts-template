@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders a `module.pricing` block: a title and intro over a row of plan cards. A highlighted tier gets the brand ring and a badge. Each tier lists its features with a check and a full-width CTA.
+Renders a `module.pricing` block: a title and intro over a row of plan cards. A highlighted tier gets the brand ring and a badge. Each tier lists its features with a check and a full-width CTA. The cards sit in three columns from a `@3xl` container, so the block fits a narrow column.
 
 ## Exports
 

@@ -10,14 +10,15 @@ status: stable
 
 ## Purpose
 
-Renders the `module.gallery` page-builder block. It owns the block's spacing and
+Renders the `module.gallery` page-builder block. It owns the block's spacing (through `ModuleSection`) and
 the optional title and intro, then hands the filtered images to the client
 `GalleryCarousel` (embla cannot run on the server). It renders nothing when every
-image is empty.
+image is empty. With `inline` set, it renders bare (`not-prose`, no gutters)
+for a rich-text body or a sidebar card. The title size keys off the container width.
 
 ## Exports
 
-- `Gallery` — the component; takes a `GalleryModule` (`title`, `intro`, `ratio`, `images`, `anchor`).
+- `Gallery` — the component; takes a `GalleryModule` (`title`, `intro`, `ratio`, `images`, `anchor`) and an optional `inline`.
 
 ## Usage
 

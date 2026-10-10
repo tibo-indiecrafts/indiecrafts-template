@@ -12,7 +12,358 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **page-builder: a configurable sidebar of block cards.** `sidebar` (a mode — inherit · custom ·
+  none — and up to 6 cards), `sidebarBlocks`, and `sidebarSettings` (one document per locale: default
+  cards + one sidebar per page type). `resolveSidebar` picks the document's choice, else its page
+  type's, else the default; `sidebarSettingsQuery` and `sidebarProjection` read them.
+  `pageBuilderSanity` is now a factory — `({ sectionTypes, sidebarTypes, sidebarPages })` — so the app
+  adds its own blocks to pages and cards, and lists its page types. **Why:** the blog wanted cards
+  beside its content, configured the same way on every page type.
+- **page-builder: grouped Studio picker.** `blockInsertMenu` groups every block array (Mise en page ·
+  Contenu · Médias · Formulaires · Blog · Autres, list view); every generic block has an icon and a
+  description. **Why:** a flat list of up to 27 blocks was hard to scan.
+- **ui-components: `WithSidebar` + `SidebarCard`.** Content beside a labelled `<aside>` of cards
+  (18rem from `lg`; below it the cards follow the content, DOM order = reading order), and a card
+  frame around one block unless the block draws its own.
+- **ui-components: `FeaturedPosts` header + `editorial` layout** (`FeaturedEditorial`: a lead card,
+  video included, beside a short list), with `eyebrow`, `intro`, `viewAll` and `anchor`.
+  `PostCardItem` gains `excerpt` and `video`; `PostCard.tsx` exports `PostMeta`.
+
+### Changed
+
+- **ui-components: blocks fit any width.** CardList, QuoteList, Callout, Gallery and Prose honour
+  `inline` through `ModuleSection` (the callout and gallery now get page gutters as a section);
+  Pricing, StatList, the form frame and the form rows size with `@container`, not the viewport.
+  `MoreOnTopic` is bare (the sidebar card draws its frame). **Why:** the same block renders in a full
+  section, the 768px blog column and an 18rem sidebar card.
+
 ### Fixed
+
+- **page-builder: blocks inside rich text resolve.** `NESTED` now applies the same `LEAF` projection
+  as the top level, so images, galleries, quote/person refs, lead-magnet and card CTAs inside a
+  prose / callout / card / accordion / step body render (they were blank).
+- **ui-components: a hidden block renders nothing everywhere.** `renderBlock` and the inline map skip
+  `hidden`; before, a hidden block inside rich text still showed. A test keeps `INLINE_TYPES` equal
+  to the Studio's `INLINE_MODULES`.
+
+### Security
+
+- **`@indiecrafts/packages-web-sanity/private-id`** — `privateId(type)` returns
+  `private.<type>.<uuid>`. **Why:** Sanity's free plan has public datasets only, and an anonymous
+  read skips documents with a dot in the id; every runtime write of personal data takes its id
+  from here. The **email** brick's E-mails singleton moved to `private.emailStrings` for the same
+  reason (it holds the alert recipients and the BCC list).
+
+### Added
+
+- **compliance: the email-override contract** (`./shared`: `OVERRIDE_REASONS`,
+  `isOverrideReason`, `VISITOR_CONSENT_TYPE`) — shared by the admin app and the api, so the
+  reason codes and the consent mapping can't drift.
+
+- **`@indiecrafts/packages-web-quality-config`** — the shared ESLint (`webEslintConfig`: Next + TS,
+  every jsx-a11y rule an error, routing only via `@/i18n/routing`), Prettier (90 cols, Tailwind sort)
+  and lint-staged config of every Next web surface. **Why:** only the website was linted, formatted
+  and checked at commit; admin and app had no lint at all.
+
+- **email: "Copie cachée à l'adresse de support", a checkbox per email.** `confirmationGroup({
+copySupport: true })` offers it; senders spread `supportCopy(cfg, supportEmail)` into `bcc`. Off
+  by default, and never offered on an email with a one-time code or link. **Why:** an editor
+  chooses which emails the support inbox sees, without typing an address.
+- **email: `addGeneralContact` (`@indiecrafts/packages-web-email/contacts`)** — a waitlist or
+  contact-form person as a Resend contact through `POST /v1/contacts/general`. Best-effort, never
+  throws. **Why:** two modules need it.
+- **email: a `general` category in Préférences e-mail**, never granted at account sign-up. **Why:**
+  the waitlist's Resend topic, which the preference centre lets a person turn off.
+
+- **security: `CspHosts.frameAncestors`.** Lists who may frame the page (default `'none'`);
+  when set, `X-Frame-Options` becomes `SAMEORIGIN`. **Why:** the website's Studio preview frames
+  the site from the same origin.
+
+### Fixed
+
+- **email: the support-copy checkbox sat on the sign-in code emails, not the notices.** It is now on
+  the Clerk notices and welcome only; a schema test pins the list. The worker's fixed list had
+  stopped any copy of a code.
+- **email: `addGeneralContact` sends the visitor's IP and waits at most 4 s.** **Why:** without
+  `x-client-ip` every join shared the website's rate-limit bucket (20 a minute), and a slow Resend
+  held the visitor's submit for up to 20 s.
+
+- **page-builder / ui-components: a form's Studio switch hides its blocks too.** `MODULES_FRAGMENT`
+  adds `enabled` to the contact, waitlist, newsletter and lead-magnet blocks, and their renderers
+  hide when it is `false`. **Why:** turning a form off hid its page only; a block on another page
+  stayed, and every submit failed.
+- **ui-components: `WaitlistForm` takes `headingAs`**, like `ContactForm`. **Why:** the
+  `/waitlist` page had no `h1`.
+
+- **Email: every email carries the support line, in the recipient's language.** The shared footer
+  was hard-coded French ("Envoyé par… Besoin d'aide ?") whatever the email's language, and the
+  plain-text body had no support line. The footer now follows `lang`, and the new `renderEmail`
+  returns the HTML and the text with the support line in both; every template returns through it,
+  and the bare shell (`renderEmailLayout`) is no longer exported. The support address stays the
+  on/off switch (`emailStrings.supportEmail`).
+- **Config: `toSiteLocale(value)` and `localeCopy(table, locale)`.** `toSiteLocale` turns a
+  client-sent language into a site locale (else the default); five senders had their own copy of
+  that rule. `localeCopy` picks built-in copy: the locale's own, else the default locale's, else
+  English — the order `pickLocale` uses for Studio copy. **Why:** on a site with a locale that
+  has no built-in copy (a `de` page on an fr/de site), an email mixed default-locale Studio text
+  with an English button and footer.
+- **Email (Studio): an owner alert's subject names its language.** The plain subject is one
+  language, the site's default; the field hint now says which. **Why:** the seed wrote French
+  subjects on an English site, so the alerts mixed a French subject with an English body.
+- **ui-tokens: bottom overlays clear a fixed bottom bar.** With a `data-bottom-bar` element on
+  the page, `bottom-safe-4` adds `--bottom-bar` (3.5rem) and the body gets matching padding.
+  **Why:** the website's draft-preview bar covered the cookie and legal banners on phones.
+- **security: the Studio CSP allows Sanity's own assets.** `studioCspRule` adds
+  `core.sanity-cdn.com` (script) and `design-system-static.sanity.io` (font). **Why:** the Studio
+  logged three CSP errors on load (its bridge script and Inter font were blocked).
+- **schema · page-builder: plainer Studio labels.** The "noindex" help text, the share-image
+  help and the body link ("URL" → "Lien" / "Adresse du lien") now read in plain French.
+  **Why:** the legends are the whole UI for a non-technical editor.
+
+### Removed
+
+- **`packages-shared-compliance` — `MarketingEmailToggle` is gone.** The account's "Privacy & consent"
+  page no longer has an all-in-one "Commercial emails" switch; the Emails page has one switch per
+  category, and that is the only place to manage emails. **Why:** the single switch sat next to the
+  cookie "Marketing" switch, silently changed four switches on another page (hidden behind the menu
+  on mobile), and hid a mixed state. `packages-web-auth`: `AccountModalProps.copy.marketingLabel` is
+  removed.
+
+- **`packages-web-email` — the unread `emailPreferences` fields.** `centreHeading`, `centreIntro`
+  and `noticesHeading` are gone from the Studio singleton. **Why:** nothing read them (the preference
+  centre takes its heading and intro from `messages/`), so an editor's text changed nothing.
+
+### Changed
+
+- **email: "Envoyer un test" picks a group and a language.** Site emails · service emails (erasure,
+  data request) · account emails (Clerk + welcome), in one language or all; also on the "E-mails
+  Clerk" page, account preselected. **Why:** every email can now be checked without flooding the
+  inbox, and the worker's emails were not covered.
+
+- **ui-components: one frame for every public form.** `useGuardedSubmit`, `FormFrame`,
+  `GuardedFields` (+ `FormInput`, `SubmitButton`) and the server-side `formBlock` hold what the
+  contact, waitlist, newsletter and lead-magnet forms repeated: the guarded POST, the card, the
+  honeypot, consent, Turnstile and the gates. Each form now keeps only its fields (≈ 90 lines
+  instead of ≈ 270). **Why:** a new form, multistep included, should not copy 250 lines; the
+  recipe is in Storybook → UI Components/FormFrame.
+- **ui-components: `/contact` and `/waitlist` always have an `h1`.** When the form is the page and
+  the Studio heading is empty in that language, it shows `forms.contact.heading` /
+  `forms.waitlist.heading`.
+
+- **announcement: the dismiss and copy-code controls use the shadcn `Button`** (`ghost`,
+  `icon-xs` / `xs`) instead of raw `<button>`s with their own focus ring. Ported from the
+  `feat/profile-locale` branch.
+- **`packages-web-email` — the `emailPreferences` seed grants every category at sign-up.** `news`,
+  `offers`, `partners` and `tips` all start with `includeAtSignup` on. **Why:** the sign-up box now
+  asks for "emails from us and our partners", so a yes covers all four.
+
+- **`packages-web-email` — the `emailPreferences` singleton seeds two notices** ("Sign-in and
+  security", "Your account and data", English and French). **Why:** the read-only "Account &
+  security" section stayed hidden until an editor wrote notices by hand.
+- **`packages-shared-compliance` — stories and tests for the email consent UI.** `EmailPreferences`,
+  `MarketingNudge` and `MarketingEmailToggle` have stories; the nudge and the switch have unit tests.
+
+### Added
+
+- **`packages-web-auth/testing/clerk-user` — a throwaway Clerk test user for e2e.** `throwawayClerkUser(name)`
+  creates a `+clerk_test` user through the Clerk Backend API and removes it after the run. The website,
+  admin and app sign-in journeys use it. **Why:** Clerk signs in existing users only, and the fixed
+  `e2e+clerk_test@example.com` identity never existed, so every signed-in journey failed once Clerk keys
+  were set.
+
+- **`packages-web-auth` — `useClerkActive()` (`./clerk-active`).** True under `AppClerkProvider`.
+  A client component checks it before using Clerk UI, since Clerk's hooks throw without the
+  provider. **Why:** the website now loads Clerk only when needed.
+- **`packages-web-ui-components` — `SkipLink` (`web/layout/SkipLink`).** The one skip-to-content
+  link: website, admin and app pass their own label. **Why:** three surfaces each had a copy.
+- **`packages-web-ui-icons` — the `shield-check` glyph** in `GLYPHS` and the `Icon` map, for the
+  website nav (it replaces the Reicon `ShieldCheck`).
+- **`packages-web-schema` — `seoTranslationsField()`.** Per-locale SEO text for a document every locale
+  shares: one entry per non-default locale with the text fields of `seoMeta`; visibility, canonical and
+  images stay on the base. The brick gets its first tests (`pnpm test`).
+- **`packages-web-page-builder` — a heading-order warning on `blockContent`.** `headingSkip` names the
+  first heading that skips a level (H2 → H4); the Studio shows it as a warning, so a publish is not
+  blocked. Screen readers and search engines read headings as the page outline.
+- **A "Language" tab in account management** (`packages-web-auth/account`, `AccountLanguageTab`), on the
+  website and the app (and so the mobile shell), after "Emails". One option per locale by native name.
+  Picking one saves it to the Clerk profile (the email language), then switches the page, like the
+  header switcher. A single-choice toggle group: arrow keys only move focus, so browsing the options
+  switches nothing. From the header modal it closes Clerk's modal first (left open, it lost the custom
+  pages). The website also silences its "available in …" strip (`onLocaleChange`). Copy:
+  `account.tabs.language` + `languageIntro`, en/fr. `account-modal.tsx` is split into `icons.tsx` +
+  `pages.tsx` (under 200 lines).
+- **A same-page locale switch keeps the URL hash** (`useLocaleSwitch`, `packages-web-i18n`): switching
+  language on `/account#/language` lands on `/fr/account#/language`, not the Profile tab. The brick
+  gets its first tests.
+- **`<GoogleAnalytics>`** (`packages-web-compliance/consent/GoogleAnalytics`) — GA in **basic** consent
+  mode: with consent required, nothing from Google loads (no script, no ping) until the stored record
+  for the current version grants `analytics_storage`; then gtag.js loads with the choice restored.
+  **Why:** advanced mode still sent cookieless pings — with the visitor's IP — before and after a refusal.
+- **`consentRestoreScript`** (`packages-web-compliance/consent/consent-restore`) — the inline snippet that
+  restores a returning visitor's stored consent before GA's first hit.
+- **One consent-proof path for the website and the app.** `reportConsent` / `consentEvents` moved
+  from `packages-web-compliance` to `@indiecrafts/packages-shared-compliance/web`, and the server-only
+  `logConsent` to `@indiecrafts/packages-shared-compliance/server/consent-log`. **Why:** the app logged
+  no cookie decision at all; it now uses the same two pieces as the website.
+- **The account Privacy tab hands its save to the surface.** `AccountConsentTab`'s `onSaved` now
+  receives `(choices, version)`, and `packages-web-auth`'s `AccountModalProps` gains
+  `onConsentSaved` to pass it on — so each surface logs and applies a Privacy-tab change.
+- **The account widget has an Emails page.** `packages-web-auth`'s `AccountButton` / `AccountPage`
+  gain an "Emails" page (`#/emails`) with the email preference centre, so the website **and** the
+  app (and the mobile shell) show it inside Clerk's account UI. `EmailPreferences` moved from the
+  website into `@indiecrafts/packages-shared-compliance/web`, with the signed-in transport
+  `emailPreferencesIo` (reads in the page `locale`). `AccountModalProps` gains `locale`;
+  `AccountCopy` gains the Emails copy. **Why:** a shared package can't import a website
+  component, so the centre lived only on the website's `/account`, below the widget.
+
+### Changed
+
+- **`packages-web-page-builder` — newsletter + lead-magnet default success copy.** A new block's
+  success message now asks the visitor to confirm from their inbox: nothing is subscribed or sent
+  before that click. **Why:** the newsletter is a strict double opt-in in Resend.
+- **`packages-web-compliance` — the consent banner can render on the server.** `consentStore.save`
+  mirrors the decided version (never the choices) into `<site.prefix>.consent-v`
+  (`consent/consent-cookie`), and `CookieBanner` takes `decided` (server-read) as its server snapshot:
+  an undecided visitor gets the banner in the first HTML. A stored decision older than the cookie is
+  copied into it on the next visit. **`packages-web-ui-components`:** `useOverlayTurn` lets the head
+  of the queue (consent) render without waiting, so it can show from the server; `FeaturedMedia`'s
+  `priority` now means `loading="eager"` + `fetchPriority="high"` (Next 16's `priority` only
+  preloads); `GalleryCarousel`'s first slide loads eagerly. **Why:** the banner, painted after
+  hydration, was the home page's largest paint.
+- **`packages-web-auth` — `usePersistLocale()` is now `persistLocale(locale)`.** It reads the loaded
+  `window.Clerk` instead of a Clerk hook, so the locale switchers (website, app, admin, the account
+  Language tab) carry no Clerk code and work with no provider. **Why:** a hook throws without
+  `ClerkProvider` and pulls Clerk into every page that renders the switcher.
+- **`packages-shared-compliance` — `CHURN_REASON_CODES` is the one list of churn reason codes.** The api
+  (`normalizeReason`) and the admin churn page now import it from `./shared`, so the api's own
+  `CHURN_REASONS` and the admin's `REASON_CODES` copies are gone. **Why:** three hand-kept copies could
+  drift, and a new code would then read as "unknown" on the dashboard or be dropped by the api.
+
+### Removed
+
+- **`packages-web-ui-icons` — `ReiconIcon` and the `reicon-react` dependency.** It resolved a name
+  with `import * as ReiconReact`, so any client that rendered it — or imported the `./web` barrel —
+  shipped all 2,670 Reicon icons (~2 MB gzipped). Name lookups now go through the curated `GLYPHS`.
+- **`packages-web-page-builder` / `packages-web-ui-components` — the `alreadyMessage` field.** The
+  newsletter, waitlist and lead-magnet blocks lose the hidden schema field and the `alreadyMessage?`
+  prop. **Why:** since the membership oracle closed, new and existing sign-ups both answer `201`, so no
+  form shows an "already" state. Documents that still hold the value show an "unknown field" warning in
+  Studio; the page-builder docs have the one-off cleanup.
+
+### Fixed
+
+- **`packages-shared-compliance` — the "Commercial emails" switch shows what was saved.** It re-read
+  the stored value whenever its `getToken` prop changed, and the account page passes a new one each
+  render. A read racing a save put the old state back on screen (seen in the Android shell: saved
+  "off", shown "on"). It now reads once per api origin (`useEffectEvent`).
+
+- **The CI coverage step no longer times out tests.** That step runs every package at once with v8
+  coverage, and tests that take about 1 s alone passed the 5 s default: `web-compliance`
+  (`submit.test.ts`, `CookiePreferences`) and `web-sanity` (`client.test.ts`). The shared base
+  (`vitest.shared.ts`) now sets `testTimeout: 20_000`, so `web-auth` drops its own copy. `submit.test.ts`
+  also stops resetting modules between tests: each test re-imported the whole email brick.
+
+- **`packages-web-compliance` — the data-request owner alert was French-only.** Its default
+  heading, intro, subject and labels were French for every site. `renderDataRequestNotificationEmail`
+  takes a `locale` (the site's `defaultLocale`) and uses English or French copy, English for any other
+  locale. `<html lang>` follows it. The request type uses `requestTypeLabel(type, locale)`; the
+  Studio keeps its French labels. **Why:** the owner reads the site's default language.
+- **`packages-web-ui-components` — form copy and consent.** `ContactForm`, `NewsletterForm`,
+  `WaitlistForm` and `LeadMagnetForm` fell back to French when an editor left a label empty; they now
+  read the host app's `forms.*` messages (page language). The consent checkbox always shows: without
+  a Studio label, the contact form's submit could never be enabled. **Why:** QA cards 13 and 31.
+- **`packages-web-auth` — no social sign-in in the Capacitor shell.** `authAppearance` hides
+  `socialButtonsRoot` and its divider under `html[data-native-shell]` (set by the app's `NativeBridge`).
+  In the shell, a social button opened the system browser and the session landed there. The website keeps them.
+- **`packages-web-auth` — a sign-up from the header modal keeps its language.** Clerk's sign-in modal
+  signs up in place, without `unsafeMetadata`, so a French visitor got no stored locale and an English
+  welcome email (seen on the deployed dev website). New `SignInModalButton` opens the modal with
+  `{ locale }`; `AppClerkProvider` takes `signUpPath`, so Clerk's "Sign up" links open the app's own
+  localized page without the `NEXT_PUBLIC_CLERK_SIGN_UP_URL` env var (which never reached a CI deploy).
+- **`packages-web-sanity` — the shared client reads published documents only.** It carries a read
+  token, and before API version 2025-02-19 a token read defaults to the `raw` perspective, which
+  includes drafts. The sitemap, `generateStaticParams` and the blog settings read through it, so a
+  draft's slug or a draft `blog` singleton could go live. `perspective: "published"` is now pinned;
+  draft preview keeps its own perspective through `sanityFetchLive`.
+- **`packages-web-ui-components` — `configureBlocks` reaches the routes.** Same flaw as the blog
+  config: the newsletter, waitlist and contact gates lived in a module variable that
+  `instrumentation.ts` set on its own copy. They now live on `globalThis`.
+
+- **Version-prompt docs match the code** (`packages-web-version`). The dev placeholder id is `"dev"`, not
+  `"unknown"`. The app's banner copy comes from `messages` (`version.*`); only the website reads it from Sanity.
+- **`ContactForm` takes `headingAs`** (`h1`/`h2`/`h3`, default `h3`), so a full-page form can own the
+  page heading. Blocks keep `h3`.
+- **A language choice now survives a restart.** `localeCookie` (`packages-shared-config/web`) gives the
+  namespaced `<prefix>_NEXT_LOCALE` cookie a one-year life. next-intl v4 defaults to a session
+  cookie, so closing the browser or the mobile shell dropped the choice and the browser language
+  won again. Every routing (website, app, admin, `packages-web-i18n`) uses it. The cookie policy
+  already declared "1 year"; the code now matches it.
+- **Consent UI polish.** In the cookie-preferences dialog "Reject all" is an outline button, like
+  "Accept all" — the two choices weigh the same (a ghost reject read as the lesser option). And
+  toasts are 28rem wide from `sm` up (`ui-tokens/globals.css`): sonner's 356px squeezed the consent
+  "saved" toast and its "Manage cookie preferences" action into four lines. sonner sets `--width`
+  inline, so the override needs `!important`. Phones keep the full-width toast.
+- **One way to delete an account.** Clerk's own "Delete account" (account widget → Security) skipped
+  our step-up re-check and exit survey. `authAppearance().elements.profileSection__danger` hides it;
+  "Your data" is the delete path. A Clerk-side deletion would still be erased in full by the webhook.
+- **Consent UI in Storybook.** Stories for `ConsentBanner`, `AccountConsentTab` (shared) and
+  `CookiePreferences` (web), each with an interaction test; the `DeleteAccountSection` story opens the
+  new fold. `packages-web-compliance` exports `./package.json` so Storybook can locate its stories.
+- **Google Analytics now follows the visitor's choice.** Measured live: after "Accept all" no `_ga`
+  cookie was set and no hit was sent — `applyConsent` pushed the update as a plain array, which
+  gtag.js ignores; it now calls `gtag()` (an `arguments` object). And the stored choice was never
+  restored, so a visitor who accepted was "denied" on every later page; the layout now runs
+  `consentRestoreScript` before `gtag('config')`. After the fix: accept → `_ga` set, hits `gcs=G111`.
+- **In an opt-in (EU) region the banner always shows.** With GPC/DNT (on by default in Brave)
+  `CookieBanner` recorded a silent reject and never showed — the visitor had no visible way to opt
+  in. Nothing non-essential runs before a choice anyway; GPC is still honoured in opt-out/none regions.
+- **Vimeo embeds play with do-not-track** (`dnt=1`); YouTube already uses `youtube-nocookie.com`.
+- **The app's cookie banner links the cookie policy and records every refusal.** `ConsentBanner`
+  had no link to the policy (the website's has "Learn more"); its copy gains an optional
+  `learnMore: { label, href }`, which the app points at the website's cookie policy. Its "Save"
+  stored only the touched categories; it now saves each optional one, untouched ones as `false`.
+- **"Save choices" records every optional category.** The website's `CookiePreferences` stored only
+  the categories the visitor touched (`{"analytics":true}`), so the record and the consent log had
+  no explicit refusal for the others. It now saves each one, untouched ones as `false`.
+- **`AccountPage` fits its container.** Clerk caps its card at the viewport width, so next to the
+  app sidebar it overflowed the screen. The card is now capped at its container.
+- **Every account page has a title of the same size.** Clerk's titles were 17 px bold, "Emails"
+  18 px semibold, "Privacy & consent" had only a 14 px section label and "Your data" none.
+  `authAppearance().elements.headerTitle` sets Clerk's to `--text-lg` semibold, and the three
+  custom pages open with a shared `PageTitle` at the same size.
+- **"Delete your account" is folded.** `DeleteAccountSection` is a `<details>`: the heading is the
+  summary; the warning, survey and confirm form open on click. An irreversible action no longer
+  fills the "Your data" page.
+- **Clerk badges are readable.** "Primary" / "This device" were #dedede on white (contrast 1.3,
+  Lighthouse color-contrast). `authAppearance().elements.badge` uses `--muted-foreground`.
+- **`ui-tokens` scans `packages/web/auth`.** Its Tailwind classes were never generated unless
+  another source used them too.
+
+- **`classifyFailedLogins` reports each crossing once.** It returned an incident for every count
+  at or past the threshold, so the api stored a row (and paged the owner) per attempt. It now
+  returns `high` at the threshold, `critical` at 4×, and `null` for every other count.
+- **`security-events` exports its taxonomy as values.** `SECURITY_EVENT_TYPES` · `SEVERITIES`
+  and the `isSecurityEventType` · `isSeverity` guards. **Why:** the api rejects an unknown
+  type or severity, and the admin feed picks a translated label — both from one list.
+- **compliance — a lost legal-acceptance write is re-sent.** Accepting the policies wrote to the
+  api once, fire-and-forget. If that write was lost (a reload, offline, a failed token refresh —
+  seen in the Android shell), only that device knew, and every other surface kept asking. New
+  `syncLegalConsent` reconciles on every signed-in load: accepted here but missing on the server →
+  sent again. It never accepts on the user's behalf. `LegalNotice` takes `acceptedHere`.
+- **ui-tokens · compliance · version · announcement — bottom overlays clear the iPhone home
+  indicator.** New `bottom-safe-4` utility: `max(1rem, env(safe-area-inset-bottom))`. The cookie,
+  consent, legal, marketing-nudge, update and announcement overlays use it. Outside the iOS shell
+  the inset is 0, so nothing moves.
+- **announcement — the announcement card no longer covers the banner.** From 640px up the card sat
+  top-right, over the announcement bar and its × button (and over the confirmation toasts on a
+  tablet). It now uses the bottom overlay slot at every width, like every other queued overlay
+  (DESIGN.md "Overlays take turns").
+- **announcement — unsafe links are dropped.** The link address is editor free text. The shared
+  resolver (`SAFE_HREF`) now keeps only a site path or an http(s) / mailto / tel URL, so a
+  `javascript:` or `//host` value never reaches the website, the app or the api. The Studio
+  shows the same rule as a validation error.
 
 - **security — `CSP_MODE=report-only` no longer floods the CSP board.** Next takes its script
   nonce from the enforced header; the permissive rollback policy had none, so Next nonced 4 of 39
@@ -120,6 +471,12 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **system-pages — `brand` slot.** `NotFoundContent` and `ErrorContent` take an optional `brand`
+  node above the copy, so a host can show its configured logo (the app's 404 / error screens).
+- **announcement — the card sits under the top chrome on wider screens.** On a phone it stays a
+  bottom sheet. From `sm` up it hangs top-right from a zero-height sticky anchor: mounted after the
+  navbar and any message strip, it sits under all of them and stays pinned 80px down on scroll —
+  clear of the top-center confirmation toasts. Pure CSS; DESIGN.md records the exception.
 - **Web-only bricks moved to `web/`** — the rule is now `shared/` = the api or workers use it too:
   | Before                                      | After                                                         |
   | ------------------------------------------- | ------------------------------------------------------------- |

@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders a single blog post. It fetches the post and the blog singleton, then renders either the editor-composed `postModules` (through `Modules`) or the `DefaultPostLayout` with related posts. `PostViewBeacon` counts one anonymous view for the Trending block. Comments render when enabled, inside `<Suspense>`: the article streams first and the thread (its own read) follows. It advertises Markdown, RSS and Atom alternates, and emits Article plus BreadcrumbList JSON-LD (the category crumb appears only when categories are enabled).
+Renders a single blog post. It fetches the post and the blog singleton, then renders either the editor-composed `postModules` (through `Modules`) or the `DefaultPostLayout` with three related posts. `getSidebar` returns the post's sidebar cards: the post's own `sidebar` choice, else the `post` entry in Site web → Barre latérale. `postSidebar` builds the aside and the mobile table of contents from these cards. `DefaultPostLayout` takes them as `aside` and `mobileToc`. `Modules` gets them as `postSidebar` in its context. `PostViewBeacon` counts one anonymous view for the Trending block. Comments render when enabled, inside `<Suspense>`: the article streams first and the thread (its own read) follows. It advertises Markdown, RSS and Atom alternates, and emits Article plus BreadcrumbList JSON-LD (the category crumb appears only when categories are enabled).
 
 ## Exports
 

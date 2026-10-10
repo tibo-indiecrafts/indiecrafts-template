@@ -3,6 +3,7 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/waitlist.md
  */
+import { ClipboardIcon } from "@sanity/icons/Clipboard";
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
@@ -15,6 +16,8 @@ import { defineModule } from "../objects/define-module";
 export default defineModule({
   name: "module.waitlist",
   title: "Liste d'attente",
+  icon: ClipboardIcon,
+  description: "Le formulaire d'inscription à la liste d'attente.",
   fields: [
     defineField({
       name: "heading",

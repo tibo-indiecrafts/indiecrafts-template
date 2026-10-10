@@ -9,14 +9,14 @@ Auto-loads under `code/packages/web/ui-components/**`. Generic block renderers +
 - **Nested platform → domain (`src/<platform>/<domain>/`).** Web renderers live in `src/web/<domain>/` —
   `content/` (callout, prose, custom-html, code-block) · `media/` (gallery, gallery-carousel,
   featured-media) · `collection/` (card-list, stat-list, step-list, accordion-list, person-list,
-  quote-list, feature-grid, pricing, more-on-topic — a "more on this topic" sidebar list of
-  `{title, href}` links · author-bio — an end-of-article "Written by" card · **PostCard** — the shared
+  quote-list, feature-grid, pricing, more-on-topic — a bare list of
+  `{title, href}` links for a sidebar card · author-bio — an end-of-article "Written by" card · **PostCard** — the shared
   post-card primitive (renders one `PostCardItem`), extracted for `FeaturedPosts`/`SpotlightRow`/`Carousel`
-  to share · **FeaturedPosts** — lead card + grid of featured/pinned posts (the blog's `blog-featured`) ·
+  to share · **FeaturedPosts** — a header + lead card over a grid or beside a list (`FeaturedEditorial`); `blog-featured`, any page ·
   **SpotlightRow** — a curated post picks row + "view all" link (`blog-category-spotlight`,
   `blog-trending`) · **Carousel** — client, an embla-driven scroller of pinned posts (`blog-collection`))
   · `layout/`
-  (module-section, cta, hero, category-nav — a top-level category bar with sub-category dropdowns
+  (module-section, cta, hero, **WithSidebar** + **SidebarCard** (the sidebar of cards) · category-nav — a top-level category bar with sub-category dropdowns
   over resolved `{title, href}` items · share-buttons — X/LinkedIn/Facebook + copy-link row over
   an optional `url` (omitted → resolves the current page URL client-side, for client-only surfaces
   like the app) + `title` + an optional `networks` filter (editor-driven, from the

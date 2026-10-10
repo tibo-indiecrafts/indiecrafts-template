@@ -17,7 +17,344 @@ the repo-wide roll-up → root `CHANGELOG.md`.
 
 ## [Unreleased]
 
+### Added
+
+- **A sidebar on every page type.** Studio → Site web → Barre latérale (one document per locale)
+  sets the default cards and the cards per page type (Accueil · Pages · Accueil du blog · Articles ·
+  Listes du blog); a page or post can override it. `PageSidebar` wraps the home, site pages, the blog
+  index and every blog listing; posts get theirs beside the body. The seed gives articles the TOC +
+  related posts (as before); `scripts/sidebar-migrate.mjs` does the same for an existing dataset.
+- **Blog blocks on pages.** Site pages and the home page accept the blog's blocks (featured, trending,
+  latest posts…); their queries use the blog's fragment and render through its `Modules`. Without
+  the blog (`features.blog`), blog blocks are dropped (`siteBlocks`).
+
+### Changed
+
+- **The home's "featured articles" strip is a block.** The hard-coded `FeaturedArticles` is gone; the
+  home `page` ends with an editable `blog-featured` block (`editorial` layout), seeded in both
+  locales. Its copy moved from `messages` (`pages.home.blocks.featured`, removed) to Sanity.
+- `schema.json` re-extracted from the Studio config.
+
 ### Fixed
+
+- **A page marked « Dépublier » returns 404.** `pageBySlugQuery` skips it (it rendered before).
+
+### Security
+
+- **Personal data is hidden from anonymous reads of the Sanity dataset.** On Sanity's free plan
+  every dataset is public: anyone can read a document without a token unless its id contains a
+  dot. Contact messages, waitlist entries and comments were created with random ids, so the first
+  real submission (email, message, a comment's moderation token) would have been readable by anyone.
+  The forms now create `private.<type>.<uuid>` ids, the E-mails singleton (alert recipients, BCC)
+  moved to `private.emailStrings`, and the Studio cannot create or duplicate the personal types
+  (a Studio copy would get a public id). New `pnpm sanity:privatize` moves existing documents
+  (dry run by default). **Why:** an anonymous count showed none leaked yet; `emailStrings` was public.
+- **CI holds no Sanity write token for the browser tests.** A Sanity token works on every dataset
+  of the project (one-dataset tokens are Enterprise only), so the e2e token could write
+  `production`. The journeys already stub every form POST; CI now reads the seeded test dataset
+  with only the read-only Viewer token (`E2E_SKIP_SEED=1`), and `pnpm seed:e2e` re-seeds it from a
+  developer's machine. The read token is required: seeded ids are dotted (`post.en.…`,
+  `siteMeta.en`), so an anonymous read sees no posts — the old e2e job had only the write token,
+  which the site never reads with. The test
+  dataset is renamed `e2e` → `tests-e2e`, and the e2e setup accepts only a `tests-…` name, since it
+  seeds with `--force`.
+
+### Added
+
+- **`pnpm sanity:setup`** — one-time Sanity project setup: creates the content and `tests-e2e`
+  datasets (warns past the free plan's 2), adds every website origin to the CORS list with
+  credentials, and checks the api worker reads the same project. **Why:** a new client's bring-up
+  had six manual Sanity steps; four are now one re-runnable command. The website origins come from
+  one module (`scripts/lib/site-origins.mjs`), shared with the Studio preview.
+- **The new-client runbook explains the free plan** (2 public datasets, what "public" means,
+  why there is no staging dataset) and the new order: setup → tokens → seed → hosted Studio.
+  It also fixes a wrong claim: `SANITY_API_WRITE_TOKEN` is a runtime secret, not seed-only.
+
+- **Draft preview from the Studio: the "Aperçu" tab.** The Studio now has Sanity's Presentation
+  tool: it shows the site with unpublished changes, and a click on a text opens its field. An
+  article's "Utilisé sur" panel links to its page. **Why:** the draft-mode routes existed, but
+  nothing in the Studio could open them, so editors had no way to preview a draft.
+- **An "exit preview" bar.** When draft mode is on outside the Studio, a bar at the bottom says so
+  and links to `/api/draft-mode/disable` (`common.preview` / `common.exitPreview`, en/fr).
+  **Why:** the preview cookie outlives the Studio tab, so an editor could read drafts on the
+  public site as if they were live.
+
+### Fixed
+
+- **Newsletter: the Studio switch gates sign-up and confirmation.** With
+  `newsletterSettings.enabled` off, `/api/newsletter`, `/api/newsletter/confirm` and the confirm page
+  answer 404. **Why:** contact and waitlist had a live switch; the newsletter's did nothing. The seed
+  fills the new contact and waitlist fields (email placeholder, error message) in both languages.
+
+- **The footer credit's preview card has an accessible name** (the same localized label as its
+  button). Screen readers announced an unnamed dialog; the new `MadeByCredit` story's axe check
+  found it.
+- **Studio "Envoyer un test" sends the emails as visitors get them.** Each visitor email goes out
+  once per site locale (`contactConfirm · fr`), each owner alert once in the default locale, all
+  with the support line. The samples go out one at a time (under Resend's 2 requests/s), and the
+  Studio dialog names any sample that failed. **Why:** the samples had no support line, used
+  hard-coded French fallback copy, and could not show the French versions; sent all at once, the
+  extra ones would fail with a 429 that the dialog did not show.
+- **The seed writes no owner-alert subject.** The template's subject, in the site's default
+  locale, applies. **Why:** the seeded French subjects gave an English site mixed-language alerts;
+  the three seeded subjects were also removed from `production`.
+- **e2e: the web server gets 10 minutes to build** (was 300 s). The build took 259 s on a dev
+  machine; a shared CI runner is slower.
+- **A document request no longer reads as a newsletter sign-up.** A lead-magnet request got the
+  newsletter's confirmation ("Thanks for subscribing! … start receiving the newsletter"), yet
+  confirming does not subscribe anyone — the email misstated what the person agreed to. It now gets
+  its own copy ("Confirm your request … This does not subscribe you to the newsletter."), editable
+  in Studio → E-mails (`leadMagnetConfirm`); "Envoyer un test" samples it.
+- **The lead-magnet link really expires.** `/api/download` redirected to the file's permanent
+  CDN URL, so anyone who opened the "expires in 7 days" link kept a URL that never expired and
+  could share it. It now streams the file (`cache-control: private, no-store`, the original file
+  name), fetches only from `cdn.sanity.io`, and answers `502` on a CDN failure. On the free plan the
+  file stays listable from the public dataset — the docs and the Studio field now say so.
+- **The hosted Studio no longer crashes on load.** `sanity build` passes only `SANITY_STUDIO_*`
+  to the browser, so the shared config's `NEXT_PUBLIC_SANITY_PROJECT_ID` was empty and the
+  Studio threw "Missing NEXT_PUBLIC_SANITY_PROJECT_ID". `sanity.cli.ts` now inlines every
+  `NEXT_PUBLIC_*` (public by definition). **Why:** on Cloudflare, `/studio` redirects to that
+  hosted Studio — it is the one editors use.
+- **The hosted Studio's Aperçu tab previews the deployed sites.** `sanity.cli.ts` passes each
+  env's site URL (prod first, then local dev); each site lets `NEXT_PUBLIC_SANITY_STUDIO_URL`
+  frame it, plus `https://www.sanity.io` for a `*.sanity.studio` Studio (Sanity's dashboard
+  wraps it, and `frame-ancestors` checks every ancestor). **Why:** a relative preview URL pointed at `*.sanity.studio`, and the sites
+  refused to be framed by it.
+- **A published post now goes live; a deleted one goes offline.** New signed route
+  `POST /api/revalidate` (Sanity webhook, `SANITY_REVALIDATE_SECRET`) purges every cached page.
+  **Why:** `<SanityLive>` refreshes pages only while a visitor has the site open, and never
+  clears a cached "not found" — a new post stayed 404, a deleted one stayed online. Setup: one
+  webhook per site URL (launch checklist §3).
+
+### Changed
+
+- **ESLint, Prettier and lint-staged configs come from `@indiecrafts/packages-web-quality-config`.**
+  Same rules, now shared with admin and app. **Why:** one source of the quality bar for every
+  surface.
+
+- **`/api/emails/test` takes a group and languages.** `{ to, scope?, locales? }`; the service and
+  account groups come from the api (`POST /v1/emails/test`). The website samples moved to
+  `samples.ts`. **Why:** the Studio test now covers every email, one group at a time.
+
+- **`pnpm seed` writes a baseline by default and refuses a dataset with content.** The seed
+  (`scripts/seed-demo.mjs` → `scripts/seed.mjs`) now writes only what a new site needs (settings,
+  SEO, legal pages, consent, navigation, form and email settings); `--demo` adds the demo posts,
+  people, announcements, comments and waitlist entries. It refuses a dataset that already has a
+  `siteSettings` document unless `--force`, and `--dry-run` prints the documents with no network.
+  The dead `cleanupLegacy()` is gone (no dataset holds legacy blocks). **Why:** a re-seed replaced
+  about 25 documents an editor owns, and a new client's site either had no legal pages (no seed) or
+  demo content in production (the seed). `scripts/seed.test.mjs` checks the split, the references
+  and the private ids.
+- **The hosted Studio's app id is keyed by Sanity project** (`STUDIO_APP_IDS` in `sanity.cli.ts`).
+  **Why:** the id was hard-coded, so a fork's first `studio:deploy` targeted this project's Studio.
+
+- **The site may frame itself.** With `features.studio` on, `frame-ancestors` is `'self'` and
+  `X-Frame-Options` is `SAMEORIGIN` (was `'none'` / `DENY`); other sites still cannot frame it.
+  **Why:** the Aperçu tab shows the site in a same-origin iframe.
+
+- **One place for email choices: the account's Emails page.** The "Commercial emails" switch is
+  gone from "Privacy & consent" (and the `account.marketing.label` copy, en/fr); each email category
+  has its own switch on the Emails page. **Why:** one switch for all categories next to the cookie
+  switches was confusing, worst on mobile.
+- **The commercial-email opt-in copy covers every category.** The sign-up box and the sign-in
+  nudge now read "occasional emails from us and our partners" (en/fr). **Why:** a yes grants
+  every email category, partners included, and consent to partner emails must name them.
+
+### Added
+
+- **A signed-in account journey (`account-data`).** It exports the data (a single-use link to a bundle
+  that holds the user's email), then deletes the account: a wrong email is refused, the right one
+  erases the Clerk user and signs out. Each run creates its own `+clerk_test` user and removes it.
+  It skips without Clerk keys or an api origin. **Why:** the export and delete paths had no browser
+  check; only the signed-out redirect did.
+- **`forms.*` messages (en · fr).** The fallback copy of the contact, newsletter, waitlist and
+  lead-magnet forms when a Studio label is empty. The seed now fills the contact consent label.
+  **Why:** the forms fell back to French in every language.
+- **Tests for every API route, and wider e2e journeys.** Each `/api/**` handler now has a colocated
+  `route.test.ts` (15 new files). The tests check the feature gate, the `withGuard` boundary
+  (403 · 413 · 400), the Clerk sign-in check and that no secret reaches a response. The `api-guard`
+  journey now covers all seven public `withGuard` routes, not three, and the allowlisted routes assert
+  their own rejection. New journeys: `contact`, `data-request`, `erasure` (request + confirm) and
+  `account` (signed out). Each one stubs its api call, so nothing is written. **Why:** only 4 of 18
+  routes had tests, and the GDPR forms had no browser check.
+- **Post views for the Trending block.** A post page sends one anonymous view to `/api/views`
+  (`PostViewBeacon`), which forwards it to the shared api's per-post daily counter (EU D1). No cookie,
+  nothing stored on the device, no identity; the IP only rate-limits (`security.views`). Link
+  prefetches and crawlers without JavaScript don't count. **Why:** Trending showed the latest posts —
+  there was no read count behind it.
+- **A root error page (`app/global-error.tsx`).** An error in the `[locale]` layout itself (Clerk, the
+  Sanity settings reads) now shows the branded 500 page in the visitor's language, with Retry.
+  **Why:** `[locale]/error.tsx` can't catch its own layout, so those errors fell through to Next's bare
+  screen. The copy is the same `pages.error` block, loaded on demand: this module ships with every page.
+
+### Changed
+
+- **Newsletter: Resend is the only list.** `/api/newsletter` stores nothing and answers `503` when the
+  newsletter's setup is missing; `/api/newsletter/confirm` answers `502 { status: "error" }` when the
+  subscriber could not be stored (its body cap is now 4000 bytes for the signed token); it forwards
+  the visitor's IP so the api rate-limits per visitor, not per site. The confirm
+  page reads the token from the URL fragment, drops it from the address bar, and shows an error state
+  with a retry (`pages.newsletterConfirm.errorHeading` / `errorBody`). The forms' success copy now says
+  to confirm from the inbox. New secret `NEWSLETTER_SECRET` replaces `LEAD_MAGNET_SECRET`. The seed no
+  longer creates demo subscribers. **Why:** one list in Resend, with each subscriber's language.
+- **First-load performance, from a Lighthouse pass.** (1) The cookie banner renders in the first HTML
+  for an undecided visitor: the layout reads the new `consent-v` cookie and passes `decided` to
+  `CookieBanner`. It used to appear only after hydration and was the home page's largest paint; now
+  largest paint = first paint (observed gap 216–630 ms → 0). (2) Hero images (post, blog mosaic's first
+  card, author photo) use `loading="eager"` + `fetchPriority="high"` instead of Next 16's deprecated
+  `priority`; only one per page. (3) Geist Mono isn't preloaded (code blocks only). (4) The header logo
+  loads eagerly at normal priority; the hidden dark logo stays lazy. Lighthouse mobile (dev cookie
+  set, median of 3): home 81 → 86, TBT 115 → 61 ms. **Content step:** declare the `consent-v` cookie
+  in the cookie inventory (the demo seed now does). **Why:** a late banner and a crowded first load
+  slowed every first visit.
+- **Clerk loads only for a signed-in visitor or on the sign-in / sign-up pages.** Everyone else's
+  pages carry no Clerk code: the header's "Sign in" is a plain link to `/sign-in?redirect_url=…`
+  (a full page load). The layout decides with `shouldLoadClerk` (`auth()` + the path) and renders the
+  Clerk pieces through `LazyClerk` (`next/dynamic`); `RequireClerk` reloads once when a client-side
+  navigation reaches an auth page without Clerk. Landing first-load JS 367 → 292 kB, plus ~300 KiB of
+  ClerkJS no longer fetched; Lighthouse mobile home 57 → 72, `/blog` 71 → 78, a post 63 → 74, best
+  practices 75 → 96. The bundle budget drops to 335 kB. **Why:** Clerk was the largest cost left on
+  every page, and most visitors never sign in.
+- **The page chrome's Sanity reads start with the page's own.** The locale layout calls
+  `preloadChrome` (navigation, announcement bar + toast, locale suggestion); `DefaultLayout` reuses the
+  same `cache()`d promises. The home page fetches its blocks, featured posts and labels in one
+  `Promise.all`, and a post's comment thread streams in `<Suspense>` after the article. Warm local
+  TTFB: home ~240 → ~95 ms, `/blog` ~200 → ~135 ms, a post ~270 → ~210 ms. **Why:** the chrome waited
+  for the page's data, one extra Sanity round trip (~65 ms) per page view.
+- **The skip link is the shared `SkipLink`** from `@indiecrafts/packages-web-ui-components` (admin and
+  app use it too); the app-local copy is gone.
+
+### Removed
+
+- **The three template showcases on the home page** (`IconShowcase`, `MorphiconsShowcase`,
+  `BlocksShowcase`), their `pages.home.blocks.{icons,morphicons,blocks}` copy and the `lucide` and
+  `morphicons` dependencies. **Why:** demo content a client deletes on day one; the icon and block
+  galleries live in Storybook.
+- **The demo seed no longer writes `alreadyMessage`.** The newsletter block in `seed-demo.mjs` and its
+  `newsletterAlready` copy (en + fr) are gone, and `schema.json` drops the field on the three sign-up
+  blocks. **Why:** the field left the page-builder schema; no form shows an "already" state.
+
+### Fixed
+
+- **An unknown page path answered 500, not 404.** The page-builder catch-all (`[locale]/[...slug]`)
+  had `generateStaticParams`, so Next rendered an unknown slug as a static page; the layout reads the
+  per-request CSP nonce, and `notFound()` then failed with `DYNAMIC_SERVER_USAGE`. The route is now
+  dynamic like every other one (`getAllPageParams` and `allPageParamsQuery` are gone with it).
+  **Why:** a broken link showed the error page and told crawlers the site was down.
+- **The e2e journeys pass again (72/72).** `sign-in` started from `/`, where Clerk never loads; it now
+  starts on `/sign-in` and creates its own `+clerk_test` user (Clerk signs in existing users only).
+  `theme` checked a `dark` class; the site sets `data-theme`. `csp-nonce` waited for `networkidle`,
+  which `<SanityLive>` never reaches; it waits for `load`. `comment` ticks consent until the form is
+  hydrated, then types. The suite allows 15 s per assertion and 60 s per test (a production build
+  that reads Sanity on every request, under parallel workers), and the e2e server keeps sockets alive
+  for 70 s (Node's 5 s default caused "socket hang up"). **Why:** 7 journeys were red locally, so the
+  suite proved nothing.
+
+- **Dev email links pointed at `example.com`.** The dev Worker runs on `*.workers.dev`, which is not
+  in the domain registry, so its build baked the placeholder site URL: every link in a dev email
+  (newsletter confirm, lead-magnet download, comment moderation) and the canonical URLs pointed
+  nowhere. `[env.dev.vars]` now sets `NEXT_PUBLIC_SITE_URL` to the dev Worker's own origin; a
+  `wrangler-parity` test keeps it set. Found by the live lead-magnet check.
+- **The erasure, account and email-preference forms failed outside dev.** They call the shared api
+  from the browser, but the production CSP `connect-src` allowed only `'self'`, so the browser
+  blocked the request and the form showed "Something went wrong". `websiteCspHosts.connectSrc` now
+  lists the `NEXT_PUBLIC_API_URL` origin, as the app already does. The `erasure` journey caught it.
+- **Every page shipped ~2.4 MB of gzipped JavaScript; now ~370 kB.** `NavIcon` resolved editor-typed
+  Reicon names at runtime (`import * as ReiconReact`), which bundles all 2,670 icons, and the header
+  renders on every page. Nav icons now use the curated `GLYPHS` set (`Icon`, lucide), picked from a
+  dropdown in Studio. Lighthouse (mobile, production build): `/blog` 45 → 71, a post 53 → 63.
+  **Why:** the main cause of the low performance scores. **Content step:** the navigation doc still
+  holds `Rocket` / `ShieldCheck`; re-pick them (`rocket`, `shield-check`) or the two icons stay hidden.
+- **Published Sanity edits stayed hidden on Cloudflare until the next deploy.** OpenNext had no tag
+  cache, so the `revalidateTag` calls from `<SanityLive>` did nothing and the R2-cached
+  `sanityFetchLive` reads (blog list, posts, featured) never refreshed. `open-next.config.ts` now sets
+  the Durable Object tag cache; `wrangler.toml` binds `NEXT_TAG_CACHE_DO_SHARDED` in every env, and
+  the `v1` migration creates the class on deploy (nothing to provision).
+- **Sign-in and sign-up were indexable and untitled.** Both now set `noindex, nofollow` and a
+  localized title (`auth.signInTitle` / `auth.signUpTitle`).
+- **The bundle-size budget never measured anything.** It read `app-build-manifest.json`, which Next 16
+  no longer writes, and skipped every run. It now reads `build-manifest.json` + the route's
+  client-reference manifest (what Next itself uses to pick the scripts), and CI runs it `--enforce`d
+  at 425 kB (measured 367 kB). A build it can't read fails the gate instead of skipping it.
+- **The visual regression job could never start.** Its web server served the old
+  `packages/storybook` path. It now serves `web/tools/storybook` (`e2e/storybook-static.ts`), runs
+  one test per story, and uploads the linux baselines it writes as the `visual-baselines-linux`
+  artifact — commit them, then drop `continue-on-error` (`setup/testing.md`).
+
+- **A sign-up from the header keeps the visitor's language.** The header's sign-in modal signed up in
+  place with no locale, so French visitors got the English welcome email. The header now uses
+  `SignInModalButton`, and the layout passes `signUpPath="/sign-up"`; `NEXT_PUBLIC_CLERK_SIGN_UP_URL`
+  is gone from `.env.example`.
+- **French pages get French SEO on shared documents.** `/fr/blog`, `/fr/author`, `/fr/blog/category`,
+  `/fr/blog/tag`, `/fr/contact` and `/fr/waitlist` showed the English title and description: their SEO
+  lives on singletons that serve every locale. The SEO queries now read the locale's `seoTranslations`
+  entry first, and the seed fills the French ones (plus the missing contact SEO). A language with no
+  entry keeps the default-language SEO, as before.
+- **The cookie banner link says where it goes.** "Learn more" → "Read the cookie policy" (fr: "Lire la
+  politique cookies"). Lighthouse flagged the vague link text.
+- **Screen readers say the site name once.** The header and footer logo image had `alt` = the site
+  name, right next to the same name as text. The image is now decorative (`alt=""`).
+- **The comment moderation page follows the default locale.** Its copy was hard-coded French while
+  the email that links to it uses the default locale; it now comes from the bundled
+  `messages.moderation`, read without a Sanity call so a rate-limited request stays cheap.
+- **The demo post's headings follow the outline.** The seeded showcase post jumped H2 → H4 and H2 → H5;
+  those headings are now H3 and H4.
+
+- **A shared English blog link opens in French for a French visitor.** The locale cookie redirects
+  `/blog/<en-slug>` to `/fr/blog/<en-slug>`, which no French doc has, so every English post, category,
+  tag and series link was a 404 for anyone who had picked French. The detail pages now redirect to the
+  translation (`redirectToTranslation`); a document with no translation still 404s. The demo seed
+  also links the EN↔FR series (it was the one translated type left unlinked), so the series gets the
+  locale switcher, hreflang and this redirect.
+- **`/blog/atom.xml` works on the default locale.** The proxy matcher listed `/blog/rss.xml` but not
+  the Atom feed, so `/blog/atom.xml` was a 404 while every post advertised it. Added; `src/proxy.test.ts`
+  now fails when a dotted route under `[locale]/` (`.xml`, `.txt`) is missing from the matcher.
+- **Post counts say "1 post", not "1 posts".** The category, tag and author counts and the series
+  "parts" are ICU plurals (`{count, plural, one {# post} other {# posts}}`) formatted by next-intl;
+  the blog components take a `(count) => string` instead of a `{count}` template. The live Sanity
+  `uiMessages` still hold the old strings until they are updated.
+- **A page past the end 404s.** `?page=9` on a category, tag, author or series page rendered "3 posts"
+  above "No posts yet" as an indexable 200. It is now a 404.
+- **The pager label no longer throws.** The four detail pages formatted `Page {page} of {total}` with
+  no values, which logged a `FORMATTING_ERROR` on every request; they pass the raw template the
+  `Pager` fills in.
+- **The Markdown export's canonical matches the page.** `/blog/<slug>/md` said
+  `https://…/en/blog/<slug>`; the default locale has no prefix, so it is now `https://…/blog/<slug>`.
+
+- **The cookie table names the real cookies.** The seed declared `NEXT_LOCALE` and `legal-ack`; the
+  browser stores `<prefix>_NEXT_LOCALE` and `<prefix>.legal-ack`. The seed now uses `site.prefix` and
+  adds the three undeclared necessary cookies (`.locale-suggest`, `.announcement-ack`,
+  `.announcement-toast-ack`). The live dataset was patched the same way.
+- **The seed creates `contactSettings`** (heading, intro, message/button/success labels, en + fr).
+  Without it `/contact` showed no heading and French labels on the English page.
+- **The language strip no longer argues with the visitor.** A French browser that switched the site to
+  English saw "Ce site est aussi disponible en Français" on every page. The header `LocaleSwitcher`
+  now records the choice (`dismissLocaleSuggest`), like the strip's own buttons. The `i18n` e2e
+  journey covers it: a French browser lands on `/fr`, picks English, and stays there.
+- **No request to Google before consent.** GA now loads through `<GoogleAnalytics>` (basic consent
+  mode) at the end of the body instead of always in `<head>`: before a choice and after "Reject" the
+  browser contacts Google not at all (measured: 0 requests); after "Accept", GA loads and measures.
+- **Analytics respects consent, and the banner shows in Brave.** A visitor who accepted was never
+  measured (the consent update was ignored and not restored on later pages), and in the EU a browser
+  privacy signal (Brave's GPC) hid the banner behind a silent reject. Both fixed in
+  `packages-web-compliance`; the layout restores the stored choice before GA's first hit.
+- **A cookie change in the account widget now takes effect and is logged.** The Privacy tab saved
+  through its own store: the page's consent gates did not see it until a reload, no Consent-Mode
+  update was pushed, nothing reached `consent_events`, and it used the default categories + version
+  `"1"` instead of the banner's Sanity ones (a first save there made the banner ask again). The tab
+  now gets the banner's categories + version (`CookieConsentConfig`) and saves through `applyConsent`.
+- **Email preferences live in the account widget, centred.** `/account` showed the preference
+  centre as a separate block under Clerk's card, and the card sat to the left. The centre is now
+  the widget's **Emails** tab (also in the header avatar modal), the card is centred, and the
+  category copy follows the page language (it used the profile's). `EmailPreferencesMount` is
+  gone; `EmailPreferences` moved to `packages-shared-compliance`.
+- **Legal acceptance reaches your other surfaces even if the first write was lost.** Signed-in
+  builds now mount the legal notice even after a local accept (hidden, `acceptedHere`), so a lost
+  server write is re-sent on the next load.
+- **The announcement banner has an accessible name.** It is a `region` landmark with no label, so
+  screen readers listed an unnamed region. It now reads "Announcement" / "Annonce"
+  (`common.announcement`). The overlays e2e journey now also checks that every fixed overlay sits
+  in the bottom slot, and that a dismissed banner stays dismissed after a reload.
 
 - **Server calls reach the api on deployed envs.** A fetch from one Worker to another on the
   same zone (every `*.workers.dev` Worker of the account) fails with Cloudflare error 1042, so
@@ -56,8 +393,19 @@ the repo-wide roll-up → root `CHANGELOG.md`.
   and new domains block training crawlers on ad pages by default since 2026-09-15. A test keeps
   the four stacks in step.
 
+### Added
+
+- **`audit-dataset` flags posts with no slug.** The Studio requires one, so these come in through the
+  API and no page, feed or sitemap can reach them. Five such probe posts sit in the dataset today.
+
 ### Changed
 
+- **The announcement card mounts after every top strip** (bar, language suggestion, sub-nav), so on
+  a wide screen it sits under all of them; on a phone it stays at the bottom. The overlays e2e
+  checks both.
+- **Cloudflare observability is fully on.** Traces (10% sampled) and Issues (grouped production
+  errors) join the Workers Logs in the top-level `wrangler.toml` `[observability]` block, which every
+  env inherits. Wrangler is pinned to 4.143.0 (Issues needs ≥ 4.134). A test fails if a part is off.
 - **The data-request success message mentions the receipt email** (en/fr).
 
 - **The registry deploys the cron before the api** (`order: 5`): the api's new `CRON` service binding

@@ -34,6 +34,11 @@ import {
 } from "@indiecrafts/packages-web-email/sanity";
 import { pageBuilderSanity } from "@indiecrafts/packages-web-page-builder/sanity";
 import { blogSanity } from "@indiecrafts/modules-web-blog/sanity";
+import {
+  BLOG_SECTION_TYPES,
+  BLOG_SIDEBAR_TYPES,
+} from "@indiecrafts/modules-web-blog/sanity/schema/modules";
+import { SIDEBAR_PAGES } from "./src/sanity/sidebar-pages";
 import { newsletterSanity } from "@indiecrafts/modules-web-newsletter/sanity";
 import { waitlistSanity } from "@indiecrafts/modules-web-waitlist/sanity";
 import { contactSanity } from "@indiecrafts/modules-web-contact/sanity";
@@ -58,7 +63,13 @@ const previewOrigins = (process.env.SANITY_STUDIO_PREVIEW_ORIGINS ?? "")
   .filter(Boolean);
 
 const appModules = [
-  pageBuilderSanity,
+  // Pages hold the generic blocks + the blog blocks that promote the blog; the sidebar
+  // cards the same, per page type of this site.
+  pageBuilderSanity({
+    sectionTypes: BLOG_SECTION_TYPES,
+    sidebarTypes: BLOG_SIDEBAR_TYPES,
+    sidebarPages: SIDEBAR_PAGES,
+  }),
   blogSanity,
   newsletterSanity(features.newsletter),
   waitlistSanity(features.waitlist),
@@ -125,7 +136,11 @@ export default defineConfig({
         return prev.filter((a) => a.action !== "duplicate");
       return prev;
     },
-    newDocumentOptions: (prev) => prev.filter((t) => !personalTypes.has(t.templateId)),
+    // Nor a second sidebar settings document: it is one pinned doc per locale.
+    newDocumentOptions: (prev) =>
+      prev.filter(
+        (t) => !personalTypes.has(t.templateId) && t.templateId !== "sidebarSettings",
+      ),
   },
   plugins: [
     structureTool({ structure: sanity.structure }),

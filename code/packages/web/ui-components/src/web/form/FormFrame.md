@@ -31,3 +31,7 @@ steps inside `FormFrame` with your own "Next" buttons, and `GuardedFields` (hone
 Turnstile, submit) on the last step only; its `onSubmit` sends every step's values in one
 `submit()`. `startedAt` is set when the form first renders, so a slow multistep visitor still
 passes the timing check.
+
+## Sizes
+
+Every size keys off the frame's own width (`@container` on the section): padding, heading size, the `inline` variant's row and the email + button row (`@md`). So one form block fits a sidebar card, the ~768px blog column and a full-width section.

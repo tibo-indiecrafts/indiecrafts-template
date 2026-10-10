@@ -19,7 +19,7 @@ a missing or drifting `_type` is a compile error.
 ## Exports
 
 - `BLOCK_RENDERERS` — the `_type` to component map for the generic blocks.
-- `renderBlock(module, components)` — renders one block by `_type`, warning and skipping an unknown type instead of throwing.
+- `renderBlock(module, components)` — renders one block by `_type`. A block with `hidden` on renders nothing. An unknown type logs a warning and renders nothing instead of throwing.
 
 ## Usage
 

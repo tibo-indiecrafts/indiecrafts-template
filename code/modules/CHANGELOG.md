@@ -13,6 +13,31 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **blog: blog blocks on any page.** `BLOG_SECTION_TYPES` (featured, trending, latest posts,
+  collection, category spotlight, topic cards, hero, explore) go in a site page's or the home's
+  sections to promote the blog. `blog-featured` gains `layout` (`grid` · `editorial`), `eyebrow`,
+  `intro` and `viewAll`.
+- **blog: sidebar cards.** `blog-toc` (the post's table of contents) and `blog-related` (posts on the
+  same topic) are sidebar-only cards; trending, featured, latest posts and collection render as a
+  compact link list in a card (`PostLinks`). `BLOG_SIDEBAR_TYPES` lists them; a post has its own
+  `sidebar` field. `postSidebar` builds a post's sidebar for both post layouts; `Modules` renders a
+  list as cards with `context.sidebar`.
+- **blog: `toPostCard`** (`lib/post-card.ts`) — one mapping from a post to a card for every block.
+
+### Changed
+
+- **blog: the post sidebar is configured, not hard-coded.** `DefaultPostLayout` and
+  `blog-post-content` show the resolved cards beside the body; the TOC card shows from `lg` and
+  `MobileToc` covers phones. `relatedPostsQuery` takes `$limit`. `blog-post-list` sizes with
+  `@container`.
+
+### Removed
+
+- **blog: the `display.post.tableOfContents` toggle** — the TOC is the `blog-toc` card now.
+  `display.post.relatedPosts` stays: it drives the "Keep reading" grid only.
+
 ### Changed
 
 - **Newsletter: a lead-magnet request has its own confirmation copy** (`leadMagnetConfirm` group,

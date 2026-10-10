@@ -3,12 +3,15 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/person-list.md
  */
+import { UsersIcon } from "@sanity/icons/Users";
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.person-list",
   title: "Personnes",
+  icon: UsersIcon,
+  description: "Des membres de l'équipe choisis.",
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),

@@ -3,12 +3,15 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/quote-list.md
  */
+import { BlockquoteIcon } from "@sanity/icons/Blockquote";
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.quote-list",
   title: "Citations",
+  icon: BlockquoteIcon,
+  description: "Des témoignages choisis.",
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({

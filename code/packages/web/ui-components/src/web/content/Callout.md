@@ -1,4 +1,4 @@
-> `module.callout` · `code/packages/ui-components/src/renderers/Callout.tsx`
+> `module.callout` · `code/packages/web/ui-components/src/web/content/Callout.tsx`
 
 **Use when** you need a highlighted aside inside a page or post body — a tip, a status note, a warning, or a small call-to-action set apart from the surrounding prose.
 
@@ -16,3 +16,4 @@
 - Server component. Renders an `<aside>`; pass `components={portableComponents}` so the PortableText body resolves.
 - Accessibility: every variant is `role="note"` — a callout is static editorial content, and `role="alert"` would interrupt screen-reader users on page load.
 - The CTA renders only when its `link` has both `href` and `label`.
+- `inline` (in rich text or a sidebar card) drops the section chrome via `ModuleSection`; as a page section it gets the page gutters, so it never touches the screen edge.

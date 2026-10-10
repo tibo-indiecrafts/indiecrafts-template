@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-Renders a `module.callout` block: a variant-styled aside (info, success, warning, or danger) around portable-text content, with an optional CTA. Every variant uses the `note` ARIA role (static content; `alert` would interrupt on load).
+Renders a `module.callout` block: a variant-styled aside (info, success, warning, or danger) around portable-text content, with an optional CTA. Every variant uses the `note` ARIA role (static content; `alert` would interrupt on load). With `inline` set, `ModuleSection` renders it bare (`not-prose`, no gutters) for a rich-text body or a sidebar card. Without it, the block is a full-width section.
 
 ## Exports
 
-- `Callout` — a variant-styled callout aside with an optional CTA.
+- `Callout` — a variant-styled callout aside with an optional CTA; takes an optional `inline`.
 
 ## Usage
 

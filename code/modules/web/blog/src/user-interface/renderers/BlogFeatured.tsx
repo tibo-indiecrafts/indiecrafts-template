@@ -3,10 +3,12 @@
  *
  * @see docs/reference/modules/web/blog/src/user-interface/renderers/BlogFeatured.md
  */
-import type { Locale } from "@indiecrafts/packages-shared-config";
-import { localizedPathname } from "@indiecrafts/packages-web-i18n";
+import { getTranslations } from "next-intl/server";
+import {
+  localizedPathname,
+  type Locale,
+} from "@indiecrafts/packages-shared-config";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
-import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
 import { FeaturedPosts } from "@indiecrafts/packages-web-ui-components/web/collection/FeaturedPosts";
 import type { PostCardItem } from "@indiecrafts/packages-web-ui-components/shared/types";
 import type {
@@ -15,27 +17,31 @@ import type {
 } from "@indiecrafts/modules-web-blog/sanity/types";
 import { blogFeaturedQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
+import { toPostCard } from "@indiecrafts/modules-web-blog/lib/post-card";
 import { reorderByIds } from "@indiecrafts/modules-web-blog/lib/pin-order";
+import { PostLinks } from "./PostLinks";
 
 /**
- * Frontpage "Featured" block — curated (`source === "pinned"`, the editor's
- * picks in order) or automatic (`source === "flag"`, the latest posts marked
- * `featured`). Maps onto the generic `FeaturedPosts` primitive. Renders
- * nothing when there's no matching post.
+ * The "Featured" block, on any page — curated (`source === "pinned"`, the editor's picks
+ * in order) or automatic (`source === "flag"`, the latest posts marked `featured`). Maps
+ * onto `FeaturedPosts` (`grid` or `editorial`), or a compact `PostLinks` list in a sidebar.
+ * Renders nothing when there's no matching post.
  */
 export async function BlogFeatured({
   module: m,
   locale,
+  compact,
 }: {
   module: BlogFeaturedModuleType;
   locale: Locale;
+  compact?: boolean;
 }) {
   const pinnedIds =
     m.source === "pinned"
       ? (m.pinned ?? []).flatMap((p) => (p?._ref ? [p._ref] : []))
       : [];
 
-  const [posts, display] = await Promise.all([
+  const [posts, display, t] = await Promise.all([
     sanityFetchLive<PostListItem[]>({
       query: blogFeaturedQuery,
       params: {
@@ -46,29 +52,45 @@ export async function BlogFeatured({
       },
     }),
     getBlogSettings(),
+    getTranslations({ locale, namespace: "pages.blog" }),
   ]);
 
   // GROQ only sorts pinned-vs-not (see blogFeaturedQuery) — respect the
   // editor's manual pin order here.
   const ordered = reorderByIds(posts, pinnedIds);
 
-  const cards: PostCardItem[] = ordered.map((post) => ({
-    _key: post._id,
-    href: localizedPathname(`/blog/${post.slug ?? ""}`, locale),
-    title: post.metadata?.title ?? post.title ?? "",
-    image: post.metadata?.image?.asset?.url,
-    lqip: post.metadata?.image?.asset?.metadata?.lqip,
-    category: display.taxonomy.categories
-      ? post.categories?.[0]?.title
-      : undefined,
-    author: display.taxonomy.authors ? post.authors?.[0]?.name : undefined,
-    date: formatDate(locale, post.publishedAt) ?? undefined,
-  }));
+  const cards: PostCardItem[] = ordered.map((post) =>
+    toPostCard(post, locale, display),
+  );
 
   if (!cards.length) return null;
 
-  const lead = m.leadCard ? cards[0] : undefined;
-  const rest = m.leadCard ? cards.slice(1) : cards;
+  const viewAll = m.viewAll
+    ? { label: m.viewAll, href: localizedPathname("/blog", locale) }
+    : undefined;
+  if (compact) {
+    return (
+      <PostLinks
+        title={m.title ?? t("frontpage.featured.heading")}
+        items={cards}
+        footer={viewAll}
+      />
+    );
+  }
 
-  return <FeaturedPosts heading={m.title} lead={lead} items={rest} />;
+  // The editorial layout always leads with its first post.
+  const leadFirst = m.layout === "editorial" || !!m.leadCard;
+  return (
+    <FeaturedPosts
+      anchor={m.anchor}
+      layout={m.layout ?? "grid"}
+      eyebrow={m.eyebrow}
+      heading={m.title}
+      intro={m.intro}
+      viewAll={viewAll}
+      lead={leadFirst ? cards[0] : undefined}
+      items={leadFirst ? cards.slice(1) : cards}
+      playLabel={t("playVideo")}
+    />
+  );
 }

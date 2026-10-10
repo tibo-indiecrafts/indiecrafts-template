@@ -1,126 +1,81 @@
 ---
 title: "Marketing sections"
-description: "Sections are the reusable marketing blocks a home (or landing) page is built from: Features, Pricing, Testimonials, Cta, Faq, FeaturedArticles."
+description: "The home page and every other page are page-builder pages: an ordered list of module.* blocks, edited in Sanity and rendered by @indiecrafts/packages-web-ui-components."
 status: stable
 ---
 
 # Marketing sections
 
-Sections are the reusable marketing blocks a home (or landing) page is built from:
-`Features`, `Pricing`, `Testimonials`, `Cta`, `Faq`, `FeaturedArticles`. They live in
-`src/user-interface/homepage/sections/` and import via the
-`@/user-interface/homepage/sections/*` alias. UI primitives come from the
-`@indiecrafts/packages-web-ui` package (e.g. `@indiecrafts/packages-web-ui/web/card`).
+A section of the home page (or any landing page) is a page-builder **block**. The home is a
+`page` document in Sanity, with an ordered `sections[]` of `module.*` blocks. The app holds no
+hand-copied section components: the old `src/user-interface/homepage/sections/` folder
+(`Features`, `Pricing`, `Testimonials`, `Cta`, `Faq`, `FeaturedArticles`) is gone.
+
+The page-builder blocks replace them. The home's featured strip, for example, is now a
+`module.blog-featured` block — see [Featured posts](/projects/web/website/design/featured-articles).
 
 ## Where sections come from
 
-The app has **zero runtime imports** from the sibling Storybook library (the
-the component-library repo). That repo is a browse-only catalogue. To add a section:
+Two packages own the blocks:
 
-1. Open Storybook in the library (`pnpm storybook` in the sibling repo).
-2. Copy the variant's component into `src/user-interface/homepage/sections/<Name>.tsx`. If upstream ships a multi-file folder (`schema.ts` + `config.ts` + `en.json`), **flatten it into one `.tsx`** — `Features.tsx` is the target shape.
-3. Drop the section's copy into `messages/<locale>.json` under `pages.<id>.blocks.<name>` (drop any `-NN` variant suffix from the upstream key).
-4. Mount it in the route's `page.tsx`.
+- **Schema + GROQ** — [`@indiecrafts/packages-web-page-builder`](/packages/web/page-builder): the
+  17 generic `module.*` blocks, the `page` document and `MODULES_FRAGMENT`.
+- **Renderers** — [`@indiecrafts/packages-web-ui-components`](/packages/web/ui-components):
+  one component per block, listed in `BLOCK_RENDERERS` (`src/web/registry.tsx`).
 
-::: warning
-Never add the library as a dependency, workspace, or symlink. The decoupling is the
-design — you re-copy a file by hand when the library improves it, then re-run
-`pnpm verify:quick`.
-:::
+The blog adds its own blocks (`module.blog-*`). A page can hold the ones that promote the blog
+(`BLOG_SECTION_TYPES`), for example « Articles à la une ».
+
+To add a section type, add a block: follow
+[page builder § Adding a block](/packages/web/page-builder#adding-a-block). To add a section to
+a page, an editor inserts the block in the Studio. No code changes.
 
 ## Anatomy of a section
 
-`Features.tsx` is the canonical shape. Two things define it.
+A block has two halves:
 
-**A typed props contract** describing the block and its items — no copy, just
-structure and an i18n `namespace`:
+- **A schema** (`defineModule`) — its own fields plus `anchor` (« Ancre », an in-page link id)
+  and `hidden` (« Masqué »). A hidden block renders nothing.
+- **A renderer** — a server component that takes the block's resolved data as props. It reads
+  no `messages`; the copy comes from Sanity.
 
-```ts
-export type FeaturesBlock = {
-  type: "features";
-  id: string;
-  /** i18n namespace, e.g. "pages.home.blocks.features". */
-  namespace: string;
-  items: readonly FeatureItem[];
-};
-```
-
-**A `useTranslations(namespace)` read** — the component pulls every visible string
-relative to the namespace it was handed. It never inlines copy:
-
-```tsx
-const t = useTranslations(props.namespace);
-// t("title"), t("body"), t(`items.${item.id}.title`), …
-```
-
-So a section carries **structure** (how many cards, which icon, in what order) as
-props, and **content** (the actual words) in `messages`. Structure is decided at the
-mount site; content is edited per locale.
+So a section carries **structure** and **content** in the same Sanity document. Structure is
+the block's order and its items. Content is the text the editor types, per locale.
 
 ## Wiring content
 
-Content lives under `pages.<id>.blocks.<name>` in each `messages/<locale>.json`. For
-the home Features block:
+The copy lives in Sanity, one `page` document per locale. The home page is
+`page-home-en` / `page-home-fr`, edited in **Studio → Accueil**. Other pages live in
+**Studio → Pages**. A block's copy never goes into `messages/<locale>.json`.
 
-```jsonc
-"pages": {
-  "home": {
-    "blocks": {
-      "features": {
-        "title": "Built to cover your needs",
-        "body": "Extensive customization, full control…",
-        "items": {
-          "customizable": { "title": "Customizable", "body": "…" },
-          "fullControl":  { "title": "You have full control", "body": "…" },
-          "poweredByAi":  { "title": "Powered by AI", "body": "…" }
-        }
-      }
-    }
-  }
-}
-```
-
-The item **keys** (`customizable`, `fullControl`, …) must match the `id`s passed at
-the mount site. Add the same block under every locale file — the same section on two
-pages is just duplicated copy under each page id (cheap, and each page stays
-independent).
+`pnpm seed` writes the reference home page (`buildHomePage()` in `scripts/seed.mjs`). See
+[Homepage](/projects/web/website/features/homepage).
 
 ## Mounting in a route
 
-`src/app/[locale]/(home)/page.tsx` is the live pattern. Most sections take a single
-`namespace` prop plus structural props:
+`src/app/[locale]/(home)/page.tsx` is the live pattern:
 
-```tsx
-import { Features } from "@/user-interface/homepage/sections/Features";
+1. `getHomePage(locale)` reads the home `page` and its sidebar choice.
+2. The blog's `Modules` component paints the blocks: the blog blocks first, then the generic
+   ones through `renderBlock`.
+3. `PageSidebar` wraps the blocks and adds the sidebar cards, if any.
 
-<Features
-  type="features"
-  id="home-features"
-  namespace="pages.home.blocks.features"
-  items={[
-    { id: "customizable", iconKey: "zap" },
-    { id: "fullControl", iconKey: "settings" },
-    { id: "poweredByAi", iconKey: "sparkles" },
-  ]}
-/>;
-```
-
-- `id` seeds the section's DOM ids (`home-features-title`) — keep it unique per page.
-- `namespace` points at the `messages` subtree. (A few sections resolve copy differently: `Faq` takes `pageId="home"`, and `FeaturedArticles` takes already-resolved string props from the route — see [Featured articles](/projects/web/website/design/featured-articles).)
-- Remaining props (`items`, `tiers`, `quotes`, …) are the structure. Icons are chosen by key from a small in-component `ICONS` map, so a client never wires an icon component through config.
-
-Don't need a section on a given page? Delete its mount from `page.tsx` — the import
-and its message keys can both go.
+The `/[locale]/[...slug]` catch-all renders every other `page` the same way.
 
 ## Section conventions
 
-Every section follows the same accessibility and layout rules, so copied blocks stay
-consistent:
+Every renderer follows the same accessibility and layout rules:
 
-- **Landmark + label.** The outer element is `<section aria-labelledby="{id}-title">`, and the heading carries the matching `id={`${id}-title`}` — giving each block an accessible name from its own heading.
-- **Heading level.** Sections open at `<h2>` (card titles inside step down to `<h3>`). The page's single `<h1>` is the route's own — on the home page it's visually hidden (`sr-only`).
-- **Gutter + width.** Horizontal padding is `px-(--gutter)` (the `--gutter` CSS var, injected from `theme.container.gutter`), with an inner `max-w-*` wrapper. Never hard-code page margins.
+- **Chrome.** Wrap the block in `ModuleSection` (`src/web/layout/ModuleSection.tsx`). As a
+  section it is a `<section id={anchor}>` with `mx-auto max-w-6xl px-(--gutter)` and vertical
+  rhythm. Inline in rich text it drops the gutter and adds `not-prose my-8`.
+- **Heading level.** Sections open at `<h2>`; card titles inside step down to `<h3>`. On a
+  page-builder page, the hero block (`module.hero`) renders the single `<h1>`.
+- **Container queries.** Size the block with `@container`, never viewport breakpoints. The
+  same block renders full width, inline in an article and beside a sidebar.
+- **Gutter + width.** Horizontal padding is `px-(--gutter)`, from `theme.container.gutter`.
+  Never hard-code page margins.
 - **Decorative icons** are `aria-hidden="true"` unless the icon is the only label.
-- **Motion** respects `prefers-reduced-motion` via `motion-reduce:*` utilities.
+- **Motion** respects `prefers-reduced-motion` through `motion-reduce:*` utilities.
 
-See also: [Typography](/projects/web/website/design/typography), [Icons](/projects/web/website/design/icons), [Featured articles](/projects/web/website/design/featured-articles).
+See also: [Typography](/projects/web/website/design/typography), [Icons](/projects/web/website/design/icons), [Featured posts](/projects/web/website/design/featured-articles).

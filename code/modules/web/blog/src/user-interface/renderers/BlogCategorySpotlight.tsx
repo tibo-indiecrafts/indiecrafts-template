@@ -4,10 +4,11 @@
  * @see docs/reference/modules/web/blog/src/user-interface/renderers/BlogCategorySpotlight.md
  */
 import { getTranslations } from "next-intl/server";
-import type { Locale } from "@indiecrafts/packages-shared-config";
-import { localizedPathname } from "@indiecrafts/packages-web-i18n";
+import {
+  localizedPathname,
+  type Locale,
+} from "@indiecrafts/packages-shared-config";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
-import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
 import { SpotlightRow } from "@indiecrafts/packages-web-ui-components/web/collection/SpotlightRow";
 import type { PostCardItem } from "@indiecrafts/packages-web-ui-components/shared/types";
 import type {
@@ -17,6 +18,7 @@ import type {
 } from "@indiecrafts/modules-web-blog/sanity/types";
 import { blogCategorySpotlightQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
+import { toPostCard } from "@indiecrafts/modules-web-blog/lib/post-card";
 import { reorderByIds } from "@indiecrafts/modules-web-blog/lib/pin-order";
 
 /**
@@ -54,18 +56,9 @@ export async function BlogCategorySpotlight({
   // the editor's manual pin order here.
   const ordered = reorderByIds(posts, pinnedIds);
 
-  const items: PostCardItem[] = ordered.map((post) => ({
-    _key: post._id,
-    href: localizedPathname(`/blog/${post.slug ?? ""}`, locale),
-    title: post.metadata?.title ?? post.title ?? "",
-    image: post.metadata?.image?.asset?.url,
-    lqip: post.metadata?.image?.asset?.metadata?.lqip,
-    category: display.taxonomy.categories
-      ? post.categories?.[0]?.title
-      : undefined,
-    author: display.taxonomy.authors ? post.authors?.[0]?.name : undefined,
-    date: formatDate(locale, post.publishedAt) ?? undefined,
-  }));
+  const items: PostCardItem[] = ordered.map((post) =>
+    toPostCard(post, locale, display),
+  );
 
   if (!items.length) return null;
 

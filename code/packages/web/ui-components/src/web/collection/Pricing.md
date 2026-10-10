@@ -29,3 +29,4 @@
 - Server component. Renders `null` when `tiers` is empty.
 - The badge appears only when both `highlighted` is `true` and `badge` is set.
 - Each CTA is a full-width `ModuleCta` (resolved page-builder link).
+- The cards go three across from a `@3xl` container (the block's own width), so the row also fits beside a sidebar.

@@ -1,6 +1,6 @@
 ---
 title: "Sanity private id"
-description: "Builds the dotted private.<type>.<uuid> id for a document that holds personal or operator data."
+description: "Builds the dotted private.`<type>`.`<uuid>` id for a document that holds personal or operator data."
 status: stable
 ---
 

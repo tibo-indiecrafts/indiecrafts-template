@@ -10,6 +10,7 @@ import { requireTaxonomyRoute } from "@indiecrafts/modules-web-blog/lib/route-ga
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
+import { PageSidebar } from "@/user-interface/shared/layout/PageSidebar";
 import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { AuthorListing } from "@indiecrafts/modules-web-blog/user-interface/author/sections/AuthorListing";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
@@ -40,16 +41,18 @@ export default async function AuthorIndexPage({ params }: Props) {
 
   return (
     <DefaultLayout subnav={subnav}>
-      <PageSchemas page={pages.author} locale={locale} />
-      <AuthorListing
-        authors={authors}
-        breadcrumbs={[{ label: nav("blog"), href: "/blog" }, { label: nav("author") }]}
-        breadcrumbsLabel={t("breadcrumbs")}
-        heading={c?.heading ?? ""}
-        subheading={c?.subheading ?? ""}
-        emptyLabel={c?.empty ?? ""}
-        postsLabel={(count) => t("posts", { count })}
-      />
+      <PageSidebar locale={locale} page="blogListing">
+        <PageSchemas page={pages.author} locale={locale} />
+        <AuthorListing
+          authors={authors}
+          breadcrumbs={[{ label: nav("blog"), href: "/blog" }, { label: nav("author") }]}
+          breadcrumbsLabel={t("breadcrumbs")}
+          heading={c?.heading ?? ""}
+          subheading={c?.subheading ?? ""}
+          emptyLabel={c?.empty ?? ""}
+          postsLabel={(count) => t("posts", { count })}
+        />
+      </PageSidebar>
     </DefaultLayout>
   );
 }

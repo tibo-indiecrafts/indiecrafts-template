@@ -13,12 +13,14 @@ status: stable
 Builds the shared PortableText render map for module bodies. Base block, list,
 and mark styling comes from the Tailwind typography plugin; this map overrides
 only what markup cannot infer: headings get a slugified `id` for anchor links,
-the `link` mark promotes external URLs to a new tab, and twelve inline module
-types map to the same React components the layout renderer uses.
+the `link` mark promotes external URLs to a new tab, and thirteen inline module
+types map to the same React components the layout renderer uses. An inline
+block with `hidden` on renders nothing.
 
 ## Exports
 
 - `portableComponents` — the `PortableTextComponents` map passed to `PortableText`.
+- `INLINE_TYPES` — the 13 inline module types. A test keeps it equal to `INLINE_MODULES` in the page-builder's `blockContent` schema.
 
 ## Usage
 

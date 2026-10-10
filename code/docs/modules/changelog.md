@@ -13,8 +13,103 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **blog: blog blocks on any page.** `BLOG_SECTION_TYPES` (featured, trending, latest posts,
+  collection, category spotlight, topic cards, hero, explore) go in a site page's or the home's
+  sections to promote the blog. `blog-featured` gains `layout` (`grid` · `editorial`), `eyebrow`,
+  `intro` and `viewAll`.
+- **blog: sidebar cards.** `blog-toc` (the post's table of contents) and `blog-related` (posts on the
+  same topic) are sidebar-only cards; trending, featured, latest posts and collection render as a
+  compact link list in a card (`PostLinks`). `BLOG_SIDEBAR_TYPES` lists them; a post has its own
+  `sidebar` field. `postSidebar` builds a post's sidebar for both post layouts; `Modules` renders a
+  list as cards with `context.sidebar`.
+- **blog: `toPostCard`** (`lib/post-card.ts`) — one mapping from a post to a card for every block.
+
+### Changed
+
+- **blog: the post sidebar is configured, not hard-coded.** `DefaultPostLayout` and
+  `blog-post-content` show the resolved cards beside the body; the TOC card shows from `lg` and
+  `MobileToc` covers phones. `relatedPostsQuery` takes `$limit`. `blog-post-list` sizes with
+  `@container`.
+
+### Removed
+
+- **blog: the `display.post.tableOfContents` toggle** — the TOC is the `blog-toc` card now.
+  `display.post.relatedPosts` stays: it drives the "Keep reading" grid only.
+
+### Changed
+
+- **Newsletter: a lead-magnet request has its own confirmation copy** (`leadMagnetConfirm` group,
+  `confirmEmailDefaults(locale, "lead-magnet")`). **Why:** it reused the newsletter's "start
+  receiving the newsletter" text, though confirming a document request subscribes no one.
+- **Newsletter: the lead-magnet file field warns the editor** that the file stays public for anyone
+  who finds its address. **Why:** on Sanity's free plan anyone can list a public dataset's files.
+
+### Security
+
+- **Contact messages, waitlist entries and comments get private ids** (`privateId` from
+  `@indiecrafts/packages-web-sanity/private-id`). **Why:** a random id from `writeClient.create()`
+  is readable without a token on a public (free-plan) dataset — the visitor's email, message and a
+  comment's moderation token. The waitlist desk no longer offers "create" by hand (the website's
+  Studio config removes create and duplicate for the three types).
+
 ### Fixed
 
+- **Newsletter: the Studio switch "Activer l'infolettre" works.** `newsletterSettings` now holds
+  only `enabled`; its five copy fields are gone. **Why:** nothing read the singleton, so turning
+  the newsletter off changed nothing. The form copy lives on each newsletter and lead-magnet block.
+- **Contact and waitlist pages: the email placeholder and the error message are editable in
+  Studio** (`emailPlaceholder`, `errorMessage` on `contactSettings` and `waitlistSettings`).
+  **Why:** the blocks had both fields, the two pages only had the code's fallback text.
+- **Contact and waitlist pages show the page language only.** An empty Studio field now falls
+  back to the form's own text in that language. **Why:** a French page with an empty field showed
+  the English Studio copy. The `/waitlist` heading is now the page's `h1`.
+
+- **Contact · waitlist · newsletter: a visitor's email is in their language from top to bottom.**
+  The four visitor templates (`contact-confirm`, `waitlist-confirm`, `newsletter-confirm`,
+  `lead-magnet`) now take a required `locale`, which sets `<html lang>` and the footer. A page
+  language the site does not have now gives the default locale (it mixed default-locale Studio
+  copy with English fallbacks). The lead-magnet fallback copy moved next to its template as
+  `leadMagnetDefaults(locale, title)`, like `contactConfirmDefaults` and `waitlistConfirmDefaults`.
+- **blog: "Slug" fields read "Adresse web".** Post, author, category, series and tag explain the
+  field in plain French with an example; the "Mis en avant" and tag help no longer name code.
+  **Why:** a non-technical editor could not tell what "Slug" or `featuredPostsQuery` meant.
+- **`modules-web-blog` — a Big Hero block on "latest" broke its page (500).** `BlogHeroModule` sent
+  `pinnedId: undefined`; the request drops an undefined param, and the query's `$pinnedId` then fails
+  to parse. It now sends `null` (`defined(null)` is false). `BlogHeroModule.test.tsx` covers latest,
+  pinned with no pick, and pinned. **Why:** `/blog` answered 500 on the seeded e2e content.
+
+- **contact / waitlist / blog / newsletter — owner alerts were French-only.** The default heading,
+  intro, subject and field labels of the four owner alerts were French for every site.
+  `renderContactNotificationEmail`, `renderWaitlistNotificationEmail`, `renderCommentNotificationEmail`
+  and `renderNewsletterNotificationEmail` take a `locale` (the site's `defaultLocale`) and use English
+  or French copy, English for any other locale. `<html lang>` follows it. A post with no title reads
+  "a post" / "un article". **Why:** the owner reads the site's default language, not always French.
+- **`modules-web-contact` / `modules-web-waitlist` — confirmation emails fell back to French.** An
+  empty Studio field sent French copy to every visitor. `contactConfirmDefaults(locale)` and
+  `waitlistConfirmDefaults(locale, name)` now give English or French, and English for any other
+  locale. **Why:** a missing string must fall back to English (QA card 31).
+- **blog / contact / waitlist — SEO per language on the shared settings.** `blog` (its `seo` and the
+  `indexSeo` pages), `contactSettings` and `waitlistSettings` gain `seoTranslations`
+  (`seoTranslationsField`, `@indiecrafts/packages-web-schema`, now a dependency of the three modules), so
+  a French title and description can exist next to the default one.
+
+- **blog — the feature flags apply.** `configureBlog` stored the app's flags in a module variable,
+  but Next bundles `instrumentation.ts` apart from the routes, so the routes kept the defaults:
+  `rss`, `blogComments`, `blogSearch`, `blogSeries` and `blogTaxonomy` could not be switched off, and
+  `blog: false` left the feeds, search, series, Markdown export and `llms.txt` entries on. The config
+  now lives on `globalThis` (`Symbol.for("indiecrafts.blog.config")`); a test loads two copies of the
+  module.
+- **blog — hidden and scheduled posts stay out of the series nav and taxonomy counts.** The on-post
+  "Part N of M" list skipped the `hideFromDiscovery` check, and the category, tag and author indexes
+  counted hidden and scheduled posts (a category could show "1 post" and list none). These nested
+  reads now share the listings' filter (`LISTED_POST`).
+- **blog — count labels are plural-aware.** `CategoryCard`, `TagCard`, `AuthorCard` and the four
+  detail sections take `postsLabel` / `partsLabel` as `(count) => string`.
+
+- **`/contact` has a page heading.** `ContactLanding` renders the `contactSettings` heading as the
+  page's `<h1>` (`ContactForm` `headingAs`); it was an `<h3>`, so the page had no `<h1>`.
 - **blog — the `llms.txt` section headings follow the locale.** `## Blog` / `## Categories` /
   `## Tags` / `## Authors` were English in every locale; they now come from the app's
   `messages.<locale>.llms` (`/fr/llms.txt` → `## Catégories`, `## Auteurs`).
@@ -28,6 +123,29 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`modules-web-newsletter` — Resend is the only subscriber list.** The Sanity `subscriber` doc, its
+  Abonnés desk and the re-arm logic are gone. `subscribe()` stores nothing: it signs the sign-up
+  (address, language, purpose, tags, policy version) with `NEWSLETTER_SECRET` and emails the confirm
+  link. The token rides in the URL fragment (`#t=`), so the address never reaches a request log.
+  `confirmSubscription()` verifies it and calls the api, which records the consent proof in D1 (at
+  the tap — a later tap is a new consent with its own row) and upserts the Resend contact with the
+  `locale` property and the `newsletter-<locale>` segment, so each issue goes to the right language.
+  The visitor's IP is forwarded, so the api rate-limits per visitor. The owner alert fires on a
+  confirmed newsletter sign-up only. A lead-magnet request never subscribes anyone. A missing setup
+  answers `unavailable`, and a failed save `error`, instead of dropping the sign-up.
+  `LEAD_MAGNET_SECRET` became `NEWSLETTER_SECRET` (one key for both links). **Upgrade:** export any
+  real subscribers from the old Studio desk first, then delete the `subscriber` docs (the erasure
+  engine no longer reads them). **Why:** two lists drifted apart, and Resend had no language to
+  send by.
+- **`modules-web-blog` — LCP images fetch first.** The blog mosaic's first card, the post-content
+  cover and the author photo use `loading="eager"` + `fetchPriority="high"` instead of Next 16's
+  deprecated `priority` (preload only); the mosaic's second large card loads eagerly at normal
+  priority. **Why:** one high-priority image per page gets the hero ahead of scripts and fonts.
+- **`modules-web-blog` — Trending shows the most-viewed posts.** `getPopularPostIds` reads the shared
+  api's anonymous counter (`GET /v1/views/top`, last 30 days, uncached, 1.5 s timeout) and the
+  latest posts fill any gap (`popularThenLatest`); any failure falls back to the latest posts.
+  `recordPostView` + `PostViewBeacon` count a view (via the host app's `/api/views`). Closes the
+  `@debt MIGRATION` on the popularity seam. **Why:** the block promised "trending" but had no signal.
 - **blog — locale reads go through the shared `pickLocale`; a drift tripwire pins the GROQ default.**
   `lib/localize.ts` is now a thin adapter over `@indiecrafts/packages-shared-config` `pickLocale` (no
   behavior change), and a `queries.test.ts` test asserts the `coalesce(language, "en")` legacy-untagged-doc
@@ -36,6 +154,13 @@ Changed · Deprecated · Removed · Fixed**.
   single locale-resolution home + guard the one hardcoded default.
 
 ### Added
+
+- **Waitlist and contact: every saved submission is also a Resend contact.** A waitlist join opts
+  into the General topic; a contact message is stored with no topic. **Why:** Resend is the mailing
+  tool. The Sanity entry stays the record, so a Resend failure only logs.
+- **Contact and waitlist confirmations can copy the support address** (Studio checkbox per email).
+  The lead-magnet email never does (it carries a signed download link); it now honours its own
+  group's BCC and Reply-To, which it ignored.
 
 - **blog — GROQ public-filter test coverage, via `groq-js`.** `sanity/queries.test.ts` evaluates the
   real exported query strings (not a mock) against an in-memory fixture dataset, so a regression that

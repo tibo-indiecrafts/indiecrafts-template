@@ -18,11 +18,11 @@ the seed) on Sanity schemas, module writes and `scripts/`.
   `routes.ts` aggregates the `pages` map → `ROUTES` + `PATHNAMES`.
 - `src/config/` — app-owned config (`theme` · `fonts` · `features` · `consent` · `pages`); `index.ts` re-exports
   `@indiecrafts/packages-shared-config` primitives. Import both via `@/config`.
-- `src/user-interface/` — app UI by page, then category (`homepage/sections/` · `legal/` · `shared/`).
+- `src/user-interface/` — app UI by page, then category (`account/` · `legal/` · `shared/` — incl. `layout/PageSidebar`).
   Primitives → `@indiecrafts/packages-web-ui`; status pages → `@indiecrafts/packages-web-system-pages`.
 - `src/lib/` — app services (metadata · navigation · cookies · `seo/` · `islands`). `src/i18n/` — typed routing.
 - `src/sanity/` — app queries + schema (own brief). The blog is `@indiecrafts/modules-web-blog` (own brief).
-- `messages/<locale>.json` — chrome + `pages.<id>.{title, description, blocks.<block>}`.
+- `messages/<locale>.json` — chrome + `pages.<id>.*` UI copy (page-builder copy lives in Sanity).
 
 Rationale + full tree → `code/docs/projects/web/website/config/project-organization.md`.
 
@@ -30,8 +30,13 @@ Rationale + full tree → `code/docs/projects/web/website/config/project-organiz
 
 - **SEO copy is Sanity-only:** a page's title/description/keywords/`llms*` come from its rendering doc's
   `.seo`, resolved by `getPageSeo(page.id, locale)` (`@/lib/seo/site-seo`) — no messages fallback; a doc-less
-  page gets the layout default. Page UI copy is `messages.<locale>.pages.<id>.*` (block keys drop the library
-  `-NN` suffix: `features-01` → `pages.home.blocks.features`). New locale → `locales` + `messages/<code>.json`.
+  page gets the layout default. Page UI copy is `messages.<locale>.pages.<id>.*`. New locale → `locales` +
+  `messages/<code>.json`.
+- **Pages are page-builder documents:** the home and `[...slug]` render a `page`'s `sections[]` (generic + blog
+  blocks, the blog's `MODULES_FRAGMENT` → its `Modules`; `siteBlocks` drops blog blocks with the blog off).
+  Every page type wraps its content in `PageSidebar` (posts: `postSidebar`); the cards come from Studio → Barre
+  latérale (`getSidebar`, `src/lib/sidebar.ts`; page types in `src/sanity/sidebar-pages.ts`). →
+  `code/docs/packages/web/page-builder.md`.
 - **Add a page:** `src/app/[locale]/<seg>/page.tsx` → an entry in the `pages` map (`src/config/pages.ts`;
   `StaticAppPathname` derives from it); for its own SEO, point `getPageSeo` at the Sanity doc with the `.seo`.
   Sitemap, routing, canonical/hreflang and `llms.txt` follow; a signed-in page sets `seo: { noindex: true }`.
@@ -45,8 +50,8 @@ Rationale + full tree → `code/docs/projects/web/website/config/project-organiz
   header renders — a static import puts Clerk back on every page. Client code checks `useClerkActive()`.
 - **Flags:** `features.blog` (every blog route 404s and leaves sitemap, `llms.txt`, nav when off; gate in
   `@indiecrafts/modules-web-blog/lib/route-gate`) and `features.studio` (`/studio` + its Aperçu preview tab + draft mode + `frame-ancestors 'self'`) are independent.
-- **Library sections:** copy, then adapt — strings → `messages/`, colors/nav → `@/config`, links →
-  `@/i18n/routing`. Target shape: `src/user-interface/homepage/sections/Features.tsx`. Never add the
+- **Library sections:** a new section is a page-builder block (page-builder § Adding a block): copy, then
+  adapt — editor copy → Sanity, chrome strings → `messages/`, colors/nav → `@/config`. Never add the
   component library as a dependency, workspace, or symlink. → `design/sections.md`.
 - **Reuse before create:** existing part → backward-compatible variant → composed primitives → new shared part
   → page-specific. Authority: `@indiecrafts/packages-web-ui` + tokens → the library → screenshots.

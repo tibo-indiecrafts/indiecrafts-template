@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-GROQ for the generic `page` documents, excluding the home page. One query renders a page by slug and locale with its `sections[]` resolved through the page-builder `MODULES_FRAGMENT`; the other lists the pages for the sitemap.
+GROQ for the generic `page` documents, excluding the home page. One query renders a page by slug and locale. Its `sections[]` and `sidebar` resolve through the blog's `MODULES_FRAGMENT` (the generic blocks and the blog blocks). An unpublished page (`seo.unpublished`) matches nothing, so the route returns 404. The other query lists the pages for the sitemap.
 
 ## Exports
 
-- `pageBySlugQuery` — a `page` by slug and locale, with resolved sections.
+- `pageBySlugQuery` — a published `page` by slug and locale, with resolved `sections` and `sidebar`.
 - `sitemapPagesQuery` — indexable published pages (slug, language) for the sitemap, dropping unpublished, noindex, and hidden pages.
 
 ## Usage

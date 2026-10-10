@@ -79,3 +79,27 @@ export const NoLead: Story = {
 export const TwoItems: Story = {
   args: { items: items.slice(0, 2) },
 };
+
+export const Editorial: Story = {
+  args: {
+    layout: "editorial",
+    eyebrow: "Featured",
+    heading: "Notes from the studio",
+    intro:
+      "Guides, teardowns, and field notes on shipping client sites faster.",
+    viewAll: { label: "All articles", href: "/blog" },
+    lead: { ...lead, excerpt: "One schema, three layouts, zero code changes." },
+  },
+};
+
+/** The same block in a narrow column (a page with a sidebar, the blog column). */
+export const EditorialNarrow: Story = {
+  ...Editorial,
+  decorators: [
+    (Story) => (
+      <div className="max-w-xl">
+        <Story />
+      </div>
+    ),
+  ],
+};

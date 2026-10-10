@@ -1,6 +1,6 @@
 ---
 title: "Per-locale site SEO schema"
-description: "Sanity document schema for the per-locale site-wide SEO singleton (siteMeta.<lang>)."
+description: "Sanity document schema for the per-locale site-wide SEO singleton (siteMeta.`<lang>`)."
 status: stable
 ---
 

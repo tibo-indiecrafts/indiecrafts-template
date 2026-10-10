@@ -5,13 +5,14 @@
  */
 import type { GalleryModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { RichTitle } from "../RichTitle";
+import { ModuleSection } from "../layout/ModuleSection";
 import { GalleryCarousel } from "./GalleryCarousel";
 
 /**
  * `module.gallery` renderer — the server half. Owns the block's spacing and the
  * optional title/intro, then hands the images to the client `<GalleryCarousel>`
- * (embla can't run on the server). `not-prose` so the block escapes the article
- * column's typography styles. Renders nothing when every image is empty.
+ * (embla can't run on the server). `ModuleSection` gives it page gutters as a section and
+ * `not-prose` inline. Renders nothing when every image is empty.
  */
 export function Gallery({
   title,
@@ -19,18 +20,19 @@ export function Gallery({
   ratio,
   images,
   anchor,
-}: GalleryModule) {
+  inline,
+}: GalleryModule & { inline?: boolean }) {
   const imgs = (images ?? []).filter((im) => im.url);
   if (imgs.length === 0) return null;
 
   return (
-    <section id={anchor} className="not-prose my-5 md:my-10">
+    <ModuleSection anchor={anchor} inline={inline} className="@container">
       {title || intro ? (
         <header className="mb-4">
           {title ? (
             <RichTitle
               as="h3"
-              className="text-foreground font-sans text-xl font-semibold text-balance md:text-2xl"
+              className="text-foreground font-sans text-xl font-semibold text-balance @2xl:text-2xl"
             >
               {title}
             </RichTitle>
@@ -41,6 +43,6 @@ export function Gallery({
         </header>
       ) : null}
       <GalleryCarousel images={imgs} ratio={ratio} />
-    </section>
+    </ModuleSection>
   );
 }

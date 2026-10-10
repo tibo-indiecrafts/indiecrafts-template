@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Collects the blog's document schemas (`blog`, `post`, `author`, `category`, `tag`, `series`, `comment`), the post-specific `postMedia` object, and the ten blog module schemas (spread from `./modules`) into a single `schemaTypes` array. The generic page-builder blocks and shared objects live in `@indiecrafts/packages-web-page-builder` and are registered separately.
+Collects the blog's document schemas (`blog`, `post`, `author`, `category`, `tag`, `series`, `comment`), the post-specific `postMedia` object, and the twelve blog module schemas (spread from `./modules`) into a single `schemaTypes` array. The generic page-builder blocks and shared objects live in `@indiecrafts/packages-web-page-builder` and are registered separately.
 
 ## Exports
 

@@ -3,12 +3,15 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/card-list.md
  */
+import { ThLargeIcon } from "@sanity/icons/ThLarge";
 import { defineArrayMember, defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.card-list",
   title: "Cartes",
+  icon: ThLargeIcon,
+  description: "Une grille de cartes avec image, texte et bouton.",
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),

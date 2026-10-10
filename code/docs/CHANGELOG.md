@@ -17,6 +17,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **Page builder, sidebar and blog blocks on pages.** `packages/web/page-builder` rewritten (17 / 13
+  inline / 12 blog blocks, the sidebar model, the picker, "Adding a block" as one list); blog
+  editor guide §7 and architecture §12 explain the sidebar; the home's featured strip is now
+  documented as the `blog-featured` editorial layout (`design/featured-articles`, `design/sections`,
+  `features/homepage`). Counts fixed across the blog docs and the website README; 18 new reference
+  pages.
+- **The docs build compiles again.** Six reference pages held a bare `<placeholder>` that Vue
+  could not compile (one already in `main`); each is now in backticks.
 - **Launch checklist: arm the defenses that run open until configured** — the edge stack on the
   real domain, the per-env GDPR salt, the worker secrets, and a check that each is live. Ported
   from `feat/harden-security-p1` and corrected: the salt is one value per env, and the admin gate

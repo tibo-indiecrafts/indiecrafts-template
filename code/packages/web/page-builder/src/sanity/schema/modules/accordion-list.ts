@@ -3,12 +3,15 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/accordion-list.md
  */
+import { ThListIcon } from "@sanity/icons/ThList";
 import { defineArrayMember, defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.accordion-list",
   title: "Accordéon",
+  icon: ThListIcon,
+  description: "Des questions-réponses dépliables (FAQ).",
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),

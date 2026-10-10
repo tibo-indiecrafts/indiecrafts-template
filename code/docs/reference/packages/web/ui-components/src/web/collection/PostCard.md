@@ -15,6 +15,7 @@ Renders one compact post card with image, category chip, title, and author and d
 ## Exports
 
 - `PostCard` — one compact post card from a resolved `PostCardItem`.
+- `PostMeta` — the "author · date" line of a post; takes `post` and an optional `className`. Renders nothing when both are unset. `FeaturedPosts` and `FeaturedEditorial` reuse it.
 
 ## Usage
 

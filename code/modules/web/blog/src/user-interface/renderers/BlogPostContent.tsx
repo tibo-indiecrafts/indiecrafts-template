@@ -16,26 +16,31 @@ import { formatList } from "@indiecrafts/packages-shared-format/list";
 import { Link } from "@indiecrafts/packages-web-i18n";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
+import { WithSidebar } from "@indiecrafts/packages-web-ui-components/web/layout/WithSidebar";
+import { MobileToc } from "@indiecrafts/modules-web-blog/user-interface/post/components/MobileToc";
+import type { PostSidebar } from "@indiecrafts/modules-web-blog/user-interface/post/layout/post-sidebar";
 
 /**
  * Renders the active post's header + body. The module schema itself has
  * no fields — content comes from the post passed via render context.
  *
- * When the surrounding `postModules` array is empty, the /blog/[slug]
- * route uses this same layout as its fallback. Editors only need a
- * `module.blog-post-content` instance when they're composing extra
- * modules above or below the body.
+ * Only in a composed `postModules` layout: with no `postModules`, the
+ * /blog/[slug] route renders `DefaultPostLayout` instead. The post's
+ * `sidebar` cards sit beside this block.
  */
 export async function BlogPostContent({
   module: m,
   post,
   locale,
+  sidebar,
 }: {
   module: BlogPostContentModule;
   post: Post;
   locale: Locale;
+  sidebar?: PostSidebar;
 }) {
-  const [t, display] = await Promise.all([
+  const [tCommon, t, display] = await Promise.all([
+    getTranslations({ locale, namespace: "common" }),
     getTranslations({ locale, namespace: "pages.blog" }),
     getBlogSettings(),
   ]);
@@ -63,93 +68,101 @@ export async function BlogPostContent({
   } = display.taxonomy;
 
   return (
-    <article
-      id={m.anchor}
-      className="mx-auto max-w-3xl px-(--gutter) py-16 md:py-24"
-    >
-      <header className="flex flex-col gap-4">
-        {categoryRef?.title && showCategories ? (
-          categoryRef.slug ? (
-            <Link
-              href={`/blog/category/${categoryRef.slug}`}
-              className="bg-muted text-muted-foreground hover:bg-foreground hover:text-background focus-visible:ring-ring w-fit rounded-md px-2 py-1 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
-            >
-              {categoryRef.title}
-            </Link>
-          ) : (
-            <span className="bg-muted text-muted-foreground w-fit rounded-md px-2 py-1 text-xs font-medium">
-              {categoryRef.title}
-            </span>
-          )
-        ) : null}
-        <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">
-          {title}
-        </h1>
-        {description ? (
-          <p className="text-muted-foreground text-balance">{description}</p>
-        ) : null}
-        <div className="text-muted-foreground flex items-center gap-3 text-sm">
-          {authorsLabel && showAuthors ? (
-            singleAuthorHref ? (
+    <WithSidebar aside={sidebar?.aside} label={tCommon("sidebarLabel")}>
+      <article
+        id={m.anchor}
+        className="mx-auto max-w-3xl px-(--gutter) py-16 md:py-24"
+      >
+        <header className="flex flex-col gap-4">
+          {categoryRef?.title && showCategories ? (
+            categoryRef.slug ? (
               <Link
-                href={singleAuthorHref}
-                className="hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
+                href={`/blog/category/${categoryRef.slug}`}
+                className="bg-muted text-muted-foreground hover:bg-foreground hover:text-background focus-visible:ring-ring w-fit rounded-md px-2 py-1 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
-                {t("by", { name: authorsLabel })}
+                {categoryRef.title}
               </Link>
             ) : (
-              <span>{t("by", { name: authorsLabel })}</span>
+              <span className="bg-muted text-muted-foreground w-fit rounded-md px-2 py-1 text-xs font-medium">
+                {categoryRef.title}
+              </span>
             )
           ) : null}
-          {authorsLabel && showAuthors && date ? (
-            <span aria-hidden="true">·</span>
+          <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">
+            {title}
+          </h1>
+          {description ? (
+            <p className="text-muted-foreground text-balance">{description}</p>
           ) : null}
-          {date ? <time dateTime={post.publishedAt}>{date}</time> : null}
-        </div>
-      </header>
+          <div className="text-muted-foreground flex items-center gap-3 text-sm">
+            {authorsLabel && showAuthors ? (
+              singleAuthorHref ? (
+                <Link
+                  href={singleAuthorHref}
+                  className="hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
+                >
+                  {t("by", { name: authorsLabel })}
+                </Link>
+              ) : (
+                <span>{t("by", { name: authorsLabel })}</span>
+              )
+            ) : null}
+            {authorsLabel && showAuthors && date ? (
+              <span aria-hidden="true">·</span>
+            ) : null}
+            {date ? <time dateTime={post.publishedAt}>{date}</time> : null}
+          </div>
+        </header>
 
-      {image ? (
-        <div className="relative mt-10 aspect-[16/9] overflow-hidden rounded-xl">
-          <Image
-            src={image}
-            alt={post.metadata?.image?.alt ?? title}
-            fill
-            sizes="(min-width: 768px) 768px, 100vw"
-            loading="eager"
-            fetchPriority="high"
-            className="object-cover"
-          />
-        </div>
-      ) : null}
+        {image ? (
+          <div className="relative mt-10 aspect-[16/9] overflow-hidden rounded-xl">
+            <Image
+              src={image}
+              alt={post.metadata?.image?.alt ?? title}
+              fill
+              sizes="(min-width: 768px) 768px, 100vw"
+              loading="eager"
+              fetchPriority="high"
+              className="object-cover"
+            />
+          </div>
+        ) : null}
 
-      {post.body ? (
-        <div className="prose prose-neutral dark:prose-invert mt-12 max-w-none">
-          <PortableText value={post.body} components={portableComponents} />
-        </div>
-      ) : null}
+        {sidebar?.mobileToc ? (
+          <div className="mt-10">
+            <MobileToc headings={post.headings!} title={t("onThisPage")} />
+          </div>
+        ) : null}
 
-      {post.tags && post.tags.length > 0 && showTags ? (
-        <div className="border-border/60 mt-10 flex flex-wrap items-center gap-2 border-t pt-6">
-          {post.tags.map((tag) =>
-            tag.slug ? (
-              <Link
-                key={tag._id}
-                href={`/blog/tag/${tag.slug}`}
-                className="bg-muted text-muted-foreground hover:bg-foreground hover:text-background focus-visible:ring-ring rounded-md px-2 py-1 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
-              >
-                #{tag.title}
-              </Link>
-            ) : (
-              <span
-                key={tag._id}
-                className="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs font-medium"
-              >
-                #{tag.title}
-              </span>
-            ),
-          )}
-        </div>
-      ) : null}
-    </article>
+        {post.body ? (
+          <div className="prose prose-neutral dark:prose-invert mt-12 max-w-none">
+            <PortableText value={post.body} components={portableComponents} />
+          </div>
+        ) : null}
+
+        {post.tags && post.tags.length > 0 && showTags ? (
+          <div className="border-border/60 mt-10 flex flex-wrap items-center gap-2 border-t pt-6">
+            {post.tags.map((tag) =>
+              tag.slug ? (
+                <Link
+                  key={tag._id}
+                  href={`/blog/tag/${tag.slug}`}
+                  className="bg-muted text-muted-foreground hover:bg-foreground hover:text-background focus-visible:ring-ring rounded-md px-2 py-1 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                >
+                  #{tag.title}
+                </Link>
+              ) : (
+                <span
+                  key={tag._id}
+                  className="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs font-medium"
+                >
+                  #{tag.title}
+                </span>
+              ),
+            )}
+          </div>
+        ) : null}
+      </article>
+    </WithSidebar>
   );
 }

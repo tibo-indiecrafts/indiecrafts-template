@@ -3,6 +3,7 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/lead-magnet.md
  */
+import { DownloadIcon } from "@sanity/icons/Download";
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
@@ -17,6 +18,9 @@ import { defineModule } from "../objects/define-module";
 export default defineModule({
   name: "module.lead-magnet",
   title: "Aimant à prospects",
+  icon: DownloadIcon,
+  description:
+    "Un contenu à télécharger contre une inscription à la newsletter.",
   fields: [
     defineField({
       name: "magnet",

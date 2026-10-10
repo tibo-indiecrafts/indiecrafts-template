@@ -15,6 +15,7 @@ import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
+import { PageSidebar } from "@/user-interface/shared/layout/PageSidebar";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { DefaultBlogFrontpage } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/DefaultBlogFrontpage";
@@ -105,21 +106,23 @@ export default async function BlogPage({ params }: Props) {
   return (
     <DefaultLayout subnav={subnav}>
       <PageSchemas page={pages.blog} locale={locale} />
-      {pickFrontpage(frontpageModules) === "modules" ? (
-        <Modules modules={frontpageModules} context={{ locale }} />
-      ) : (
-        <DefaultBlogFrontpage
-          posts={posts}
-          locale={locale}
-          display={display}
-          categories={categories}
-          tags={tags}
-          authors={authors}
-          t={t}
-          searchAction={localizedPathname("/blog/search", locale)}
-          searchEnabled={isSearchEnabled()}
-        />
-      )}
+      <PageSidebar locale={locale} page="blogIndex">
+        {pickFrontpage(frontpageModules) === "modules" ? (
+          <Modules modules={frontpageModules} context={{ locale }} />
+        ) : (
+          <DefaultBlogFrontpage
+            posts={posts}
+            locale={locale}
+            display={display}
+            categories={categories}
+            tags={tags}
+            authors={authors}
+            t={t}
+            searchAction={localizedPathname("/blog/search", locale)}
+            searchEnabled={isSearchEnabled()}
+          />
+        )}
+      </PageSidebar>
     </DefaultLayout>
   );
 }

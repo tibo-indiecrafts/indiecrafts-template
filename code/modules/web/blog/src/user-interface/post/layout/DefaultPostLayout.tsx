@@ -21,14 +21,13 @@ import { ReadingProgress } from "@indiecrafts/modules-web-blog/user-interface/po
 import { SeriesNav } from "@indiecrafts/modules-web-blog/user-interface/post/components/SeriesNav";
 import { AuthorBio } from "@indiecrafts/packages-web-ui-components/web/collection/AuthorBio";
 import { FeaturedMedia } from "@indiecrafts/packages-web-ui-components/web/media/FeaturedMedia";
-import { MoreOnTopic } from "@indiecrafts/packages-web-ui-components/web/collection/MoreOnTopic";
 import {
   Breadcrumbs,
   type Crumb,
 } from "@indiecrafts/modules-web-blog/user-interface/shared/components/Breadcrumbs";
-import { Toc } from "@indiecrafts/modules-web-blog/user-interface/post/components/Toc";
 import { MobileToc } from "@indiecrafts/modules-web-blog/user-interface/post/components/MobileToc";
 import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
+import { WithSidebar } from "@indiecrafts/packages-web-ui-components/web/layout/WithSidebar";
 import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
 
 /**
@@ -39,8 +38,8 @@ import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
  *   - Breadcrumb trail at top
  *   - Title + lead in a max-w-2xl block above the columns
  *   - Main column: cover image → body → "About the author" quote block
- *   - Sticky right sidebar: TOC + meta (published / read time / author /
- *     category / tags)
+ *   - The sidebar cards (`sidebar`, resolved by the route from Site web → Barre
+ *     latérale and the post's own choice) beside the body; below it on a phone
  *   - Footer back-link
  *   - "Keep reading" related-posts grid below everything
  */
@@ -51,6 +50,8 @@ export async function DefaultPostLayout({
   title,
   description,
   related,
+  aside,
+  mobileToc,
   share,
 }: {
   post: Post;
@@ -59,6 +60,10 @@ export async function DefaultPostLayout({
   title: string;
   description?: string;
   related: PostListItem[];
+  /** The sidebar cards (`postSidebar`); none = a full-width body. */
+  aside?: React.ReactNode;
+  /** Show the TOC above the article below `lg` (the sidebar holds a TOC card). */
+  mobileToc: boolean;
   /** Site-wide share config (the app's `siteSettings.share`) — share is a shared
    *  setting, not blog-owned. Absent ⇒ share hidden. Copy comes from `common.share`. */
   share?: {
@@ -108,31 +113,7 @@ export async function DefaultPostLayout({
     { label: title },
   ];
 
-  const hasToc =
-    display.post.tableOfContents && (post.headings?.length ?? 0) > 0;
   const shareUrl = `${site.url}${localizedPathname(`/blog/${post.slug ?? ""}`, locale)}`;
-
-  // Sidebar "More on {topic}" — reuse the related posts (same categories) as a
-  // compact list under the TOC. Generic heading when the post has no category.
-  const moreOnTopic = display.post.relatedPosts
-    ? related.slice(0, 4).map((p) => ({
-        _key: p._id,
-        title: p.title ?? "",
-        href: localizedPathname(`/blog/${p.slug ?? ""}`, locale),
-      }))
-    : [];
-  const moreTitle =
-    categoryRef?.title && showCategories
-      ? t("moreOnTopic", { topic: categoryRef.title })
-      : t("moreReading");
-  const moreFooter =
-    categoryRef?.slug && showCategories
-      ? {
-          label: t("allInCategory", { category: categoryRef.title ?? "" }),
-          href: localizedPathname(`/blog/category/${categoryRef.slug}`, locale),
-        }
-      : undefined;
-  const showSidebar = hasToc || moreOnTopic.length > 0;
 
   // Map the post's authors to the generic AuthorBio item shape (resolved
   // href + image url); the component drops entries without a name.
@@ -296,32 +277,19 @@ export async function DefaultPostLayout({
             </div>
           ) : null}
 
-          {hasToc ? (
+          {mobileToc ? (
             <MobileToc headings={post.headings!} title={t("onThisPage")} />
           ) : null}
 
-          <div className="flex gap-8 lg:gap-12">
-            {showSidebar ? (
-              <aside className="order-last hidden w-64 shrink-0 lg:block">
-                <div className="sticky top-24 flex max-h-[calc(100vh-7rem)] flex-col gap-8 overflow-y-auto">
-                  {hasToc ? (
-                    <Toc headings={post.headings!} title={t("onThisPage")} />
-                  ) : null}
-                  {moreOnTopic.length > 0 ? (
-                    <MoreOnTopic
-                      title={moreTitle}
-                      items={moreOnTopic}
-                      footer={moreFooter}
-                    />
-                  ) : null}
-                </div>
-              </aside>
-            ) : null}
-
+          <WithSidebar
+            contained={false}
+            label={tCommon("sidebarLabel")}
+            aside={aside}
+          >
             {/* Body panel — full available width with internal padding so the
               card visual matches the hero. Reading line stays at max-w-3xl
               left-aligned inside the panel. */}
-            <div className="bg-card min-w-0 flex-1 rounded-3xl px-6 pt-4 pb-10 sm:px-10 sm:pt-6 sm:pb-14 md:px-14 md:pt-8 md:pb-16 lg:px-16 lg:pt-10 lg:pb-20">
+            <div className="bg-card min-w-0 rounded-3xl px-6 pt-4 pb-10 sm:px-10 sm:pt-6 sm:pb-14 md:px-14 md:pt-8 md:pb-16 lg:px-16 lg:pt-10 lg:pb-20">
               {post.body ? (
                 <div className="prose prose-neutral dark:prose-invert max-w-3xl">
                   <PortableText
@@ -331,7 +299,7 @@ export async function DefaultPostLayout({
                 </div>
               ) : null}
             </div>
-          </div>
+          </WithSidebar>
 
           {showAuthors && authors.length > 0 ? (
             <AuthorBio authors={authorBioItems} label={t("writtenBy")} />

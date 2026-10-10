@@ -303,7 +303,7 @@ export default withMermaid(
               link: "/projects/web/website/design/icons",
             },
             {
-              text: "Featured articles",
+              text: "Featured posts (editorial)",
               link: "/projects/web/website/design/featured-articles",
             },
             {

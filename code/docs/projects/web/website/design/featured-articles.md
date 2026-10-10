@@ -1,94 +1,89 @@
 ---
-title: "Featured articles"
-description: 'FeaturedArticles is the home page''s "editor''s desk" — a curated strip of blog posts laid out as one lead pick beside a compact list of runners-up.'
+title: "Featured posts (editorial layout)"
+description: "The editorial layout of the blog-featured block: one lead post beside a short list of runners-up. The home page's « Articles à la une » strip uses it."
 status: stable
 ---
 
-# Featured articles
+# Featured posts (editorial layout)
 
-`FeaturedArticles` is the home page's "editor's desk" — a curated strip of blog
-posts laid out as one lead pick beside a compact list of runners-up. The asymmetry
-is deliberate: it reads differently from the uniform `/blog` grid because the lead
-genuinely outranks the rest. Component:
-`src/user-interface/homepage/sections/FeaturedArticles.tsx`.
+The `editorial` layout of the `module.blog-featured` block shows one lead post beside a
+short list of runners-up. The lead outranks the rest, so the strip reads differently from
+the uniform `/blog` grid. The home page's « Articles à la une » strip is this block.
 
-## Pure display, fed by the route
+## Where it comes from
 
-The section is presentational — it takes already-fetched posts and pre-resolved
-labels as props. The **fetch, gating, and copy resolution happen in the route**,
-`src/app/[locale]/(home)/page.tsx`:
+The home page has no hard-coded featured strip. The strip is a `module.blog-featured` block
+at the end of the home `page`'s `sections[]`:
 
-```tsx
-import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
-import { featuredPostsQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
+| Field     | Seeded value                                                   |
+| --------- | -------------------------------------------------------------- |
+| `layout`  | `editorial`                                                    |
+| `source`  | `flag` (the posts marked « Mis en avant »)                     |
+| `limit`   | `4`                                                            |
+| `anchor`  | `home-featured`                                                |
+| `eyebrow` | « Featured » / « À la une »                                    |
+| `title`   | « Notes from the studio » / « Notes de l'atelier »             |
+| `intro`   | One sentence under the title.                                  |
+| `viewAll` | « All articles » / « Tous les articles » (the link to `/blog`) |
 
-const tf = await getTranslations("pages.home.blocks.featured");
-const featured: PostListItem[] = features.blog
-  ? (
-      await sanityFetchLive<PostListItem[]>({
-        query: featuredPostsQuery,
-        params: { locale },
-      })
-    ).slice(0, 4)
-  : [];
+The seed writes it in both locales (`homeFeaturedBlock` in `scripts/lib/blocks-sidebar.mjs`).
+An editor changes it in **Studio → Accueil**. Its copy lives in Sanity, not in
+`messages/<locale>.json`. For an existing dataset, `scripts/sidebar-migrate.mjs` adds the
+block to each home page that has none.
 
-{
-  featured.length > 0 ? (
-    <FeaturedArticles
-      id="home-featured"
-      posts={featured}
-      locale={locale}
-      eyebrow={tf("eyebrow")}
-      title={tf("title")}
-      body={tf("body")}
-      viewAllLabel={tf("viewAll")}
-    />
-  ) : null;
-}
-```
+Any `page` can hold the same block: `page.sections[]` accepts the blog blocks
+(`BLOG_SECTION_TYPES`). With `features.blog` off, the website drops every blog block.
 
-Three gates decide whether it renders:
+## The block's fields
 
-1. **`features.blog`** — when the blog feature is off, `featured` is `[]` and nothing fetches.
-2. **`featuredPostsQuery`** (`code/modules/web/blog/src/sanity/queries.ts`) returns only posts an editor marked featured; up to 4 are kept (`.slice(0, 4)`).
-3. **At least one post** — the mount is wrapped in `featured.length > 0`, and the component itself returns `null` when handed no lead post.
+| Studio label                   | Field      | Effect                                                                             |
+| ------------------------------ | ---------- | ---------------------------------------------------------------------------------- |
+| **Présentation**               | `layout`   | `grid` (default): a lead card over a grid. `editorial`: a lead card beside a list. |
+| **Surtitre**                   | `eyebrow`  | Small text above the title. Empty = hidden.                                        |
+| **Titre**                      | `title`    | The section heading (`<h2>`).                                                      |
+| **Introduction**               | `intro`    | One sentence under the title. Empty = hidden.                                      |
+| **Lien « Tous les articles »** | `viewAll`  | The text of the link to the blog. Empty = no link.                                 |
+| **Articles affichés**          | `source`   | `flag`: the latest posts marked « Mis en avant ». `pinned`: a fixed list.          |
+| **Articles choisis**           | `pinned`   | The pinned posts, in display order. Shown only with `pinned`.                      |
+| **Limite**                     | `limit`    | The most posts shown (1–20, default 4).                                            |
+| **Premier article en grand**   | `leadCard` | `grid` only. The `editorial` layout always leads with its first post.              |
 
-::: warning Live fetch, dynamic render
-The fetch uses `sanityFetchLive` (from `@indiecrafts/packages-web-sanity/live`), not the static
-client, so the strip live-updates through the `<SanityLive>` mount when an editor
-publishes. That opts the home page into **dynamic rendering** — the deliberate
-trade for content freshness. If you need the home page prerendered, swap in the
-static client and drop the live behavior.
-:::
+## Render path
 
-## Props
+1. The blog's `Modules` dispatcher sends the block to `BlogFeatured`
+   (`code/modules/web/blog/src/user-interface/renderers/BlogFeatured.tsx`).
+2. `BlogFeatured` fetches the posts with `blogFeaturedQuery` (`sanityFetchLive`). It keeps the
+   editor's pin order and maps each post to a `PostCardItem`.
+3. It renders `FeaturedPosts` (`@indiecrafts/packages-web-ui-components`,
+   `src/web/collection/FeaturedPosts.tsx`) with `layout`, the header copy and the cards.
+4. With `layout: "editorial"`, `FeaturedPosts` renders `FeaturedEditorial`
+   (`src/web/collection/FeaturedEditorial.tsx`) under its header.
 
-```tsx
-FeaturedArticles({
-  id: string;              // seeds the section's DOM ids (aria-labelledby)
-  posts: PostListItem[];   // lead = posts[0], secondary = next 3
-  locale: Locale;          // for Intl date formatting
-  eyebrow: string;         // pre-resolved copy…
-  title: string;
-  body: string;
-  viewAllLabel: string;    // label on the "→ /blog" link
-});
-```
+The block renders nothing when no post matches. In a sidebar card, `BlogFeatured` renders a
+compact list of links (`PostLinks`) instead.
 
-`PostListItem` comes from `@indiecrafts/modules-web-blog/sanity/types`. Copy is passed in
-already-translated (the route resolves `pages.home.blocks.featured.*`) — the
-component reads no `useTranslations` of its own, it just places strings. Add the
-block to every `messages/<locale>.json` under `pages.home.blocks.featured`
-(`eyebrow`, `title`, `body`, `viewAll`).
+`BlogFeatured` reads through `sanityFetchLive`, so the strip updates live through
+`<SanityLive>` when an editor publishes, and shows drafts in draft preview.
 
 ## Layout
 
-- `posts[0]` renders as the large **`LeadCard`** (cover image, category chip, title, description, author · date). It spans all 12 columns when there are no runners-up, otherwise **7 of 12**.
-- The next up to 3 posts render as compact **`SecondaryRow`** items in a divided list (**5 of 12** columns).
-- Each card links via the locale-aware `Link` from `@/i18n/routing`. Images use `next/image` with per-breakpoint `sizes` and a `motion-reduce`-safe hover zoom.
-- If a post has a video (`metadata.videoUrl` parses via `parseVideoEmbed` from `@indiecrafts/packages-shared-utils`), a `<PlayBadge>` (from `@indiecrafts/modules-web-blog/user-interface/shared/components/PlayBadge`) overlays its thumbnail. See [Video embeds](/projects/web/website/design/video-embeds).
-- Dates go through `formatPostDate` (`@indiecrafts/packages-shared-utils`).
+`FeaturedEditorial` is container-query driven. It sizes itself from the width of its
+container, not the viewport, so it fits a full-width section, a narrow column and a page with
+a sidebar.
 
-The section follows the standard [section conventions](/projects/web/website/design/sections):
-`<section aria-labelledby="{id}-title">`, `px-(--gutter)`, `<h2>` heading. It mirrors
-`BlogListing` — same data shape, a different and deliberately asymmetric presentation.
+- **From a `@4xl` container:** a 12-column grid. The lead card takes 7 columns and the list
+  takes 5. With no runners-up, the lead card takes all 12.
+- **Below `@4xl`:** the lead card and the list stack.
+- **Lead card:** the post's image, or its video, which plays in place (`FeaturedMedia`). Then
+  the category chip, the title, the excerpt and the meta line.
+- **List:** the next 3 posts at most, each a thumbnail, a title and the meta line.
+- The lead title is a stretched link (`after:absolute after:inset-0`), so a click anywhere on
+  the card opens the post. The video play button sits above it. See
+  [Video embeds](/projects/web/website/design/video-embeds). Each list row is one link.
+
+`FeaturedPosts` owns the header: the eyebrow, the `<h2>` (id `<anchor>-title`), the intro and
+the "view all" link. It wraps everything in `ModuleSection`, which applies the page gutter
+and the vertical rhythm. See [section conventions](/projects/web/website/design/sections).
+
+`FeaturedPosts` and `FeaturedEditorial` stay pure: they take resolved `href`s, formatted dates
+and a `playLabel`. They read no translations and no routing.

@@ -191,6 +191,8 @@ export type Post = PostListItem & {
   updatedAt?: string;
   /** Series membership + ordered parts — drives the "Part N of M" nav. */
   series?: SeriesRef;
+  /** The post's own sidebar choice (`inherit` when unset). */
+  sidebar?: SidebarField;
 };
 
 export type PostSlug = { slug?: string; language?: string };
@@ -237,10 +239,17 @@ export type BlogHeroModule = ModuleBase & {
   showMeta?: boolean;
 };
 
-/** The frontpage "Featured" block — a big lead card + a grid of picks. */
+/**
+ * The "Featured" block — a big lead card + a grid of picks (`grid`), or a lead card beside
+ * a short list (`editorial`, the home page's strip). Usable on any page.
+ */
 export type BlogFeaturedModule = ModuleBase & {
   _type: "module.blog-featured";
+  layout?: "grid" | "editorial";
+  eyebrow?: string;
   title?: string;
+  intro?: string;
+  viewAll?: string;
   source?: "flag" | "pinned";
   pinned?: { _ref: string }[];
   limit?: number;
@@ -304,6 +313,25 @@ export type BlogTopicCardsModule = ModuleBase & {
   }[];
 };
 
+/** The post's table of contents — a sidebar card, posts only. */
+export type BlogTocModule = ModuleBase & {
+  _type: "module.blog-toc";
+  title?: string;
+};
+
+/** Other posts on the post's topic — a sidebar card, posts only. */
+export type BlogRelatedModule = ModuleBase & {
+  _type: "module.blog-related";
+  title?: string;
+  limit?: number;
+};
+
+/** A `sidebar` field as projected (`sidebarProjection`): its mode and visible cards. */
+export type SidebarField = {
+  mode?: "inherit" | "custom" | "none" | null;
+  blocks?: AnyModule[] | null;
+} | null;
+
 /** Every module a blog page can hold — the shared blocks plus the blog's own. */
 export type AnyModule =
   | BlockModule
@@ -315,6 +343,8 @@ export type AnyModule =
   | BlogIndexModule
   | BlogPostContentModule
   | BlogPostListModule
+  | BlogRelatedModule
+  | BlogTocModule
   | BlogTopicCardsModule
   | BlogTrendingModule;
 
@@ -340,7 +370,6 @@ export type BlogDisplayRaw = {
   post?: {
     date?: boolean;
     readingTime?: boolean;
-    tableOfContents?: boolean;
     relatedPosts?: boolean;
     readingProgress?: boolean;
   };
@@ -363,7 +392,6 @@ export type BlogDisplay = {
   post: {
     date: boolean;
     readingTime: boolean;
-    tableOfContents: boolean;
     relatedPosts: boolean;
     readingProgress: boolean;
   };

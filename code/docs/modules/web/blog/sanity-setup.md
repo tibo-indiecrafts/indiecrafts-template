@@ -110,7 +110,7 @@ code/modules/web/blog/src/sanity/types.ts                   # TypeScript shapes 
 
 ## 3. Schemas
 
-Blog schemas register via `code/modules/web/blog/src/sanity/schema/index.ts` (exported as `schemaTypes`), merged in `sanity.config.ts` as `schema.types: [...coreSchemaTypes, ...schemaTypes]`. The **17 generic** `module.*` blocks register via **`@indiecrafts/packages-web-page-builder`** (`sanity/schema/modules/index.ts` → `MODULE_TYPES` + `moduleSchemas`); the blog's own `code/modules/web/blog/src/sanity/schema/modules/index.ts` exports `BLOG_MODULE_TYPES` + `blogModuleSchemas` — the **10** blog-specific blocks. Paths below are relative to `code/modules/web/blog/src/sanity/schema/`.
+Blog schemas register via `code/modules/web/blog/src/sanity/schema/index.ts` (exported as `schemaTypes`), merged in `sanity.config.ts` as `schema.types: [...coreSchemaTypes, ...schemaTypes]`. The **17 generic** `module.*` blocks register via **`@indiecrafts/packages-web-page-builder`** (`sanity/schema/modules/index.ts` → `MODULE_TYPES` + `moduleSchemas`); the blog's own `code/modules/web/blog/src/sanity/schema/modules/index.ts` exports `BLOG_MODULE_TYPES` + `blogModuleSchemas` — the **12** blog-specific blocks (10 layout blocks + 2 sidebar-only cards). Paths below are relative to `code/modules/web/blog/src/sanity/schema/`.
 
 ### Documents
 
@@ -134,32 +134,38 @@ The blog's translated content types (`post`, `author`, `category`, `tag`) are re
 | `link`         | `@indiecrafts/packages-web-page-builder` | inside `cta`. Internal refs target a `page` **or** a `post`. |
 | `cta`          | `@indiecrafts/packages-web-page-builder` | callout, card-list, etc.                                     |
 
-### Modules — 27 `module.*` types (17 generic + 10 blog-specific)
+### Modules — 29 `module.*` types (17 generic + 12 blog-specific)
 
-Embedded inside `blog.postModules` **and** `blog.frontpageModules` (same `of` list feeds both), and — for the inline set — directly in a post body. The **17 generic** blocks live in **`@indiecrafts/packages-web-page-builder`** (`sanity/schema/modules/` → `moduleSchemas` + `MODULE_TYPES`); their renderers are in `@indiecrafts/packages-web-ui-components`. The blog's `schema/modules/` holds only the **10 blog-specific** blocks. `defineModule` (`@indiecrafts/packages-web-page-builder`) auto-injects an `anchor` + `hidden` field on every one.
+Embedded inside `blog.postModules` **and** `blog.frontpageModules` (same `of` list feeds both: the 17 generic + the 10 layout blog blocks), in `page.sections[]` and the home page (the generic blocks + `BLOG_SECTION_TYPES`), in sidebar cards (`GENERIC_SIDEBAR_TYPES` + `BLOG_SIDEBAR_TYPES`), and — for the inline set — directly in rich text. The **17 generic** blocks live in **`@indiecrafts/packages-web-page-builder`** (`sanity/schema/modules/` → `moduleSchemas` + `MODULE_TYPES`); their renderers are in `@indiecrafts/packages-web-ui-components`. The blog's `schema/modules/` holds only the **12 blog-specific** blocks. `defineModule` (`@indiecrafts/packages-web-page-builder`) auto-injects an `anchor` + `hidden` field on every one.
 
 **Generic (`@indiecrafts/packages-web-page-builder`)** — `hero`, `feature-grid`, `pricing`, `accordion-list`, `callout`, `card-list`, `gallery`, `person-list`, `prose`, `stat-list`, `step-list`, `quote-list`, `custom-html`, `newsletter`, `waitlist`, `lead-magnet`, `contact`.
 
 **Blog-specific (`code/modules/web/blog/src/sanity/schema/modules/`):**
 
-| Module                           | File                                 | Notes                                                                                |
-| -------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------ |
-| `module.blog-index`              | `modules/blog-index.ts`              | title + intro band                                                                   |
-| `module.blog-post-content`       | `modules/blog-post-content.ts`       | renders the active post (slot)                                                       |
-| `module.blog-post-list`          | `modules/blog-post-list.ts`          | filtered post grid (limit, categories, featuredOnly) — also `/blog`'s "Latest" block |
-| `module.blog-hero`               | `modules/blog-hero.ts`               | `/blog` — one lead post, latest or pinned                                            |
-| `module.blog-featured`           | `modules/blog-featured.ts`           | `/blog` — lead + grid, flagged or pinned                                             |
-| `module.blog-explore`            | `modules/blog-explore.ts`            | `/blog` — categories/tags/authors variant                                            |
-| `module.blog-category-spotlight` | `modules/blog-category-spotlight.ts` | `/blog` — one category's picks + "view all"                                          |
-| `module.blog-collection`         | `modules/blog-collection.ts`         | `/blog` — a pinned-only carousel                                                     |
-| `module.blog-topic-cards`        | `modules/blog-topic-cards.ts`        | `/blog` — 1-3 clickable category/tag cards                                           |
-| `module.blog-trending`           | `modules/blog-trending.ts`           | `/blog` — popularity (seam) or most-recent fallback                                  |
+| Module                           | File                                 | Notes                                                                                                                                                                                 |
+| -------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `module.blog-index`              | `modules/blog-index.ts`              | title + intro band                                                                                                                                                                    |
+| `module.blog-post-content`       | `modules/blog-post-content.ts`       | renders the active post (slot)                                                                                                                                                        |
+| `module.blog-post-list`          | `modules/blog-post-list.ts`          | filtered post grid (limit, categories, featuredOnly) — also `/blog`'s "Latest" block                                                                                                  |
+| `module.blog-hero`               | `modules/blog-hero.ts`               | `/blog` — one lead post, latest or pinned                                                                                                                                             |
+| `module.blog-featured`           | `modules/blog-featured.ts`           | any page — `layout`: `grid` (lead + grid) or `editorial` (lead beside a short list); eyebrow, title, intro, `viewAll` link; flagged or pinned. The home's « Articles à la une » strip |
+| `module.blog-explore`            | `modules/blog-explore.ts`            | `/blog` — categories/tags/authors variant                                                                                                                                             |
+| `module.blog-category-spotlight` | `modules/blog-category-spotlight.ts` | `/blog` — one category's picks + "view all"                                                                                                                                           |
+| `module.blog-collection`         | `modules/blog-collection.ts`         | `/blog` — a pinned-only carousel                                                                                                                                                      |
+| `module.blog-topic-cards`        | `modules/blog-topic-cards.ts`        | `/blog` — 1-3 clickable category/tag cards                                                                                                                                            |
+| `module.blog-trending`           | `modules/blog-trending.ts`           | `/blog` — popularity (seam) or most-recent fallback                                                                                                                                   |
+| `module.blog-toc`                | `modules/blog-toc.ts`                | sidebar only — « Sommaire de l'article », the headings of the post being read                                                                                                         |
+| `module.blog-related`            | `modules/blog-related.ts`            | sidebar only — « Articles sur le même sujet », same-category posts                                                                                                                    |
 
-**12 generic blocks are inline-embeddable** in a post body (`INLINE_MODULES` in `@indiecrafts/packages-web-page-builder`'s `blockContent.ts`): accordion-list, callout, card-list, custom-html, gallery, lead-magnet, newsletter, person-list, quote-list, stat-list, step-list, waitlist. Everything else — `prose`, the page-level generics (`hero`, `feature-grid`, `pricing`, `contact`), and the 10 blog-specific blocks — is `postModules`/`frontpageModules`-only.
+**13 generic blocks are inline-embeddable** in rich text (`INLINE_MODULES` in `@indiecrafts/packages-web-page-builder`'s `blockContent.ts`): accordion-list, callout, card-list, contact, custom-html, gallery, lead-magnet, newsletter, person-list, quote-list, stat-list, step-list, waitlist. Not inline: `hero`, `feature-grid`, `pricing`, `prose`, and every blog block.
+
+**Blog blocks on any page.** `page.sections[]` and the home page also accept `BLOG_SECTION_TYPES` — `blog-featured`, `blog-trending`, `blog-post-list`, `blog-collection`, `blog-category-spotlight`, `blog-topic-cards`, `blog-hero`, `blog-explore` — to promote the blog site-wide. With `features.blog` off, the website drops every blog block.
+
+**Sidebar.** Any page type can show up to 6 cards beside its content, set in Studio → Site web → Barre latérale (`sidebarSettings-<locale>`) and per document (`page.sidebar`, `post.sidebar`). See [Editor guide § Sidebar](/modules/web/blog/editor-guide#_7-sidebar-barre-laterale) and [Blog architecture § Sidebar](/modules/web/blog/blog-architecture#_12-sidebar).
 
 ### Renderer
 
-`@indiecrafts/packages-web-ui-components/web/registry.tsx` holds the `BLOCK_RENDERERS` map (`_type` → component) for the 17 generic blocks, constrained with `satisfies` so a missing entry is a **compile error** — that's where TS exhaustiveness lives. The blog's `user-interface/renderers/ModuleRenderer.tsx` (`<Modules>` + `ModuleSwitch`) composes `BLOCK_RENDERERS` with its 10 blog-specific dispatchers, special-casing the context-aware blog modules; it drives both `postModules` and `frontpageModules`.
+`@indiecrafts/packages-web-ui-components/web/registry.tsx` holds the `BLOCK_RENDERERS` map (`_type` → component) for the 17 generic blocks, constrained with `satisfies` so a missing entry is a **compile error** — that's where TS exhaustiveness lives. The blog's `user-interface/renderers/ModuleRenderer.tsx` (`<Modules>` + `ModuleSwitch`) composes `BLOCK_RENDERERS` with its 12 blog-specific dispatchers, special-casing the context-aware blog modules; it drives `postModules`, `frontpageModules`, site pages, the home page and the sidebar. It skips hidden blocks.
 
 ### Studio sidebar (`code/modules/web/blog/src/sanity/structure.ts`)
 
@@ -188,7 +194,7 @@ Each localized type expands to `English` / `Français` leaves plus a `Toutes les
 
 | Route                                  | Type    | Gated                                       | Reads from                                         |
 | -------------------------------------- | ------- | ------------------------------------------- | -------------------------------------------------- |
-| `/<locale>`                            | static  | —                                           | `messages/<locale>.json`                           |
+| `/<locale>`                            | static  | —                                           | the home `page` (`getHomePage`) + sidebar settings |
 | `/<locale>/blog`                       | SSG     | `features.blog`                             | `blogSingletonQuery` + `allPostsQuery` (fallback)  |
 | `/<locale>/blog/<slug>`                | SSG     | `features.blog`                             | `postBySlugQuery` + `blogSingletonQuery`           |
 | `/<locale>/blog/<slug>/md`             | dynamic | `features.blog`                             | `postBySlugQuery`                                  |
@@ -241,6 +247,8 @@ pnpm dev
 - **5 posts / locale**, each with a `metadata.image`, including a long-form "fast prototyping with Next.js" showcase per locale (see below)
 - **2 quotes / locale** (testimonials, real Unsplash portraits)
 - **3 people / locale** for the Person List module
+- **`sidebarSettings-<locale>`** — **Articles** shows `blog-toc` + `blog-related` (the sidebar posts had before); the other page types inherit an empty default
+- **The home `page` per locale** ends with an « Articles à la une » block (`blog-featured`, `layout: "editorial"`, `source: "flag"`, `limit: 4`, anchor `home-featured`)
 - **1 `blog` singleton** — `postModules` empty (posts fall back to `DefaultPostLayout`); `frontpageModules` composed with `blog-hero` → `blog-featured` → `blog-category-spotlight` → `blog-collection` → `blog-post-list` → `blog-explore`, so `/blog` showcases the composable frontpage out of the box
 - Plus the baseline the app needs: `siteMeta.<locale>` (per-language SEO), `siteSettings`, `legalPage`s, `navigation`, `cookieConsent`
 
@@ -248,7 +256,7 @@ Without `--demo`, the `blog` singleton drops the two blocks that pin demo docume
 
 The script prints the exact document total (`allDocs.length`) at commit time — it grows if you add content, so trust the console, not a fixed number.
 
-The "fast prototyping" showcase post exercises **every body-editor primitive** (H1–H6, numbered + bulleted lists, code / strong / em / strike-through marks, inline image, link, blockquote) plus **12 inline module instances across 9 module types** (callout ×4 variants, stat-list, card-list, step-list, accordion-list, quote-list, person-list, custom-html, newsletter). The gallery, prose, and `blog-*` modules are excluded — gallery needs uploaded images; the rest are `postModules`-only.
+The "fast prototyping" showcase post (`showcaseBody` in `seed.mjs`) exercises the body-editor primitives (H2–H4 headings, numbered + bulleted lists, code / strong / em / strike-through marks, inline image, link, blockquote) plus **12 inline module instances across 9 module types** (callout ×4 variants, stat-list, card-list, step-list, accordion-list, quote-list, person-list, custom-html, newsletter). Four inline types are not seeded: gallery (it needs uploaded images), lead-magnet, waitlist and contact. Prose and the `blog-*` blocks are not inline.
 
 ### Run
 
@@ -274,11 +282,9 @@ Committing <total> documents…
 ✓ Committed transaction <uuid>
 
 What you should see:
-  /blog                                  → composed frontpage (hero → featured → spotlight → collection → latest → explore)
-  /fr/blog                               → same frontpage, EN-only pins hidden
-  /blog/fast-prototyping-with-nextjs    → all 12 inline modules
-  /blog/prototypage-rapide-avec-nextjs  → all 12 inline modules (FR)
-  any other post                         → default article layout
+  /           → the home page; /contact, /waitlist, legal pages, cookie banner
+  /blog       → composed frontpage (hero → featured → spotlight → collection → latest → explore)
+  /blog/fast-prototyping-with-nextjs → every inline module (FR: /fr/blog/prototypage-rapide-avec-nextjs)
 ```
 
 ---
@@ -345,7 +351,8 @@ Open <http://localhost:3000/studio> and log in with an account that owns the pro
 - **Sidebar**: Blog (Mise en page + Articles/Auteurs/Catégories/Tags, each EN/FR) · Références (Citations/Personnes, EN/FR) · the core SEO & métadonnées / Navigation / Cookies / Pages légales sections.
 - **Content** (after seeding): Articles list = 10 docs (5 EN, 5 FR); each preview shows `EN · <date>` or `FR · <date>`.
 - Open Mise en page (singleton): a `Modules par article` array (empty by default → posts fall back to `DefaultPostLayout`) and a `Sections de l'accueil du blog` array (`frontpageModules`, composed by the seed → `/blog` renders it; empty → `DefaultBlogFrontpage`).
-- Add a module from the picker — all 27 catalog types are selectable (17 generic + 10 blog-specific), in either array.
+- Add a module from the picker — 27 types are selectable in either array (17 generic + the 10 layout blog blocks). The picker groups them (Mise en page · Contenu · Médias · Formulaires · Blog · Autres), each with an icon and a description. `blog-toc` and `blog-related` are sidebar cards only.
+- Open **Site web → Barre latérale** → a language: **Cartes par défaut** + **Par type de page** (Accueil, Pages, Accueil du blog, Articles, Listes du blog). After seeding, **Articles** = « Cartes personnalisées » with Sommaire de l'article + Articles sur le même sujet.
 
 ### 7.4 Draft preview
 
@@ -363,7 +370,7 @@ Without the token, `/enable` returns 503: `Draft preview unavailable — set SAN
 
 ### 7.5 Seeded inline modules
 
-Visit `/en/blog/fast-prototyping-with-nextjs`, scroll top to bottom, verify each inline module renders (8 module types, 11 instances — Callout appears 4× with different variants; gallery/prose/`blog-*` are not seeded):
+Visit `/en/blog/fast-prototyping-with-nextjs`, scroll top to bottom, verify each inline module renders (9 module types, 12 instances — Callout appears 4× with different variants; gallery, lead-magnet, waitlist and contact are not seeded):
 
 1. **Callout (info)** — muted background, after the intro
 2. **Stat list** — 4 stats (48h / 17 / 2 / AA) in a hairline grid
@@ -376,12 +383,13 @@ Visit `/en/blog/fast-prototyping-with-nextjs`, scroll top to bottom, verify each
 9. **Callout (success)** — emerald
 10. **Callout (danger)** — destructive red
 11. **Custom HTML** — centered "raw HTML the editor controls" block
+12. **Newsletter** — email capture form
 
-Also verify the default `blockContent` primitives in the same post: heading hierarchy (H2–H6), numbered + bulleted lists, inline marks (`pnpm dev` as code, strong, strike-through), inline image, and the closing indiecrafts.dev link.
+Also verify the default `blockContent` primitives in the same post: heading hierarchy (H2–H4), numbered + bulleted lists, inline marks (`pnpm dev` as code, strong, strike-through), inline image, and the closing indiecrafts.dev link.
 
 ### 7.6 Per-post layout
 
-With `postModules` empty, every `/blog/<slug>` renders via `DefaultPostLayout` (`code/modules/web/blog/src/user-interface/post/layout/DefaultPostLayout.tsx`): full-width hero card, breadcrumbs in a backdrop-blur pill, a sticky TOC sidebar (`top-24`, mounted only when the body has an h2/h3/h4), a rounded body panel, and a "Keep reading" grid. To swap in a module-driven shell for all posts, populate `postModules` from the Studio (e.g. `blog-post-content` → `quote-list` → `blog-post-list`). The fallback fires only when the array is empty.
+With `postModules` empty, every `/blog/<slug>` renders via `DefaultPostLayout` (`code/modules/web/blog/src/user-interface/post/layout/DefaultPostLayout.tsx`): breadcrumbs, the hero, a rounded body panel with the sidebar cards beside it, the author bio, the share row, and a "Keep reading" grid. After seeding, the sidebar holds the table of contents and "More on {category}": from `lg` in an 18rem column that sticks below the header; below `lg` after the body, with the TOC opening from « Sur cette page » above the article. To swap in a module-driven shell for all posts, populate `postModules` from the Studio (e.g. `blog-post-content` → `quote-list` → `blog-post-list`). The fallback fires only when the array is empty.
 
 ### 7.7 Feature flag OFF (regression check)
 
@@ -433,6 +441,17 @@ node --env-file=.env.local code/projects/web/surfaces/website/scripts/unset-lega
 
 Edit the `TARGETS` array at the top (`[GROQ returning _ids, field-path to unset]`), run once, done. Idempotent — no matches reports `nothing to unset`. It currently ships pointing at `post.modules` (a field removed in an earlier release); adapt before running against a fresh dataset. **Never re-add `blog.frontpageModules`** — that name is live again (the composable blog frontpage, §6), and this script would delete it.
 
+### Existing dataset: no sidebar, no featured strip on the home
+
+A dataset seeded before the sidebar has no `sidebarSettings-<locale>`, and its home page has no « Articles à la une » block. Run the one-time migration from `code/projects/web/surfaces/website/`:
+
+```bash
+node --env-file=.env.local scripts/sidebar-migrate.mjs           # dry run: prints the plan
+node --env-file=.env.local scripts/sidebar-migrate.mjs --apply   # writes it
+```
+
+It creates `sidebarSettings-<locale>` (Articles: `blog-toc` + `blog-related`), adds the featured block to each home page that has none, and unsets the removed `blog.display.post.tableOfContents`. It skips what is already done, so a re-run is safe.
+
 ### CSP blocks Studio API calls
 
 Already allowed via `getCSPConnectSources()` in `code/packages/shared/config/src/types.ts`. If you customized it, keep `https://*.sanity.io` + `wss://*.api.sanity.io`.
@@ -456,7 +475,7 @@ Follow [`packages/web/page-builder`](/packages/web/page-builder) § "Adding a bl
 - A **generic** block → **`@indiecrafts/packages-web-page-builder`**: schema in `sanity/schema/modules/<name>.ts` via `defineModule`, added to `moduleSchemas` + `MODULE_TYPES` in that package's `schema/modules/index.ts`; renderer in `@indiecrafts/packages-web-ui-components`; GROQ branch (only if it has refs) in the package's `MODULES_FRAGMENT`.
 - A **blog-specific** block → the **blog**: schema in `sanity/schema/modules/<name>.ts`, added to `blogModuleSchemas` + `BLOG_MODULE_TYPES` in the blog's `schema/modules/index.ts`; renderer in `renderers/` + special-cased in `ModuleRenderer.tsx`.
 
-Both add a `<Name>Module` discriminant to the `AnyModule` union in their own `sanity/types.ts`.
+A generic block adds a `<Name>Module` discriminant to the `BlockModule` union (`@indiecrafts/packages-web-ui-components` `src/shared/types.ts`); a blog block adds one to `AnyModule` (the blog's `sanity/types.ts`).
 
 ### Rename `/blog`
 
@@ -468,7 +487,7 @@ Edit `locales` in `code/packages/shared/config/src/index.ts`, then drop `message
 
 ### Disable a module without deleting it
 
-Every module has a `hidden` boolean (auto-injected by `defineModule`). Toggle it in the Studio — the renderer skips hidden modules.
+Every module has a `hidden` boolean (« Masqué », auto-injected by `defineModule`). Toggle it in the Studio — a hidden block renders nothing, at the top level and inline in rich text.
 
 ---
 
@@ -500,10 +519,10 @@ code/modules/web/blog/src/                             THE BLOG MODULE (gated by
 │       ├── post.ts, author.ts, category.ts, tag.ts, series.ts
 │       ├── documents/           blog (singleton), comment
 │       ├── objects/             metadata
-│       └── modules/             10 blog-specific schemas + index.ts (blogModuleSchemas, BLOG_MODULE_TYPES)
+│       └── modules/             12 blog-specific schemas + index.ts (blogModuleSchemas, BLOG_MODULE_TYPES, BLOG_SECTION_TYPES, BLOG_SIDEBAR_TYPES)
 └── user-interface/
     ├── blog/  post/  author/  category/  tag/  shared/   route-grouped UI
-    └── renderers/               ModuleRenderer.tsx (composes BLOCK_RENDERERS) + 10 blog dispatchers
+    └── renderers/               ModuleRenderer.tsx (composes BLOCK_RENDERERS) + 12 blog dispatchers
                                  (generic registry.tsx + renderers → @indiecrafts/packages-web-ui-components)
 
 code/projects/web/surfaces/website/src/app/

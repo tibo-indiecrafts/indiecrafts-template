@@ -10,8 +10,9 @@ A full Sanity-backed editorial blog is wired in — feature-flagged so you can s
 
 - **Turn it on** — set `features.blog: true` in `src/config/index.ts`, drop `NEXT_PUBLIC_SANITY_PROJECT_ID` + dataset into `.env.local`, run `pnpm dev`. Editor lives at <http://localhost:3000/studio>.
 - **What you get** — `/blog`, `/blog/[slug]`, `/blog/category/[slug]`, `/blog/tag/[slug]`, `/author/[slug]`, RSS + Atom feeds (per locale), Markdown export, draft preview, live content subscriptions, locale-filtered (EN + FR by default), embedded Sanity Studio at `/studio`.
-- **Page-builder** — 13 modules (9 inline-embeddable inside post bodies, 4 layout-slot only). Editors compose post chrome from the `blog` singleton's `postModules` array; the body editor exposes H1-H6, lists, marks (incl. code / underline / strike), inline images, links, and 9 fancy module types.
-- **Seed demo content** — `pnpm seed` populates 47 docs incl. a showcase article that exercises every editor primitive.
+- **Page-builder** — 17 generic blocks (13 inline-embeddable in rich text) from `@indiecrafts/packages-web-page-builder`, plus the blog's 12 blocks (10 layout blocks + 2 sidebar-only cards). The home page and every page compose their sections from these blocks, including the blog blocks that promote the blog (« Articles à la une » on the home). Editors compose post chrome from the `blog` singleton's `postModules` array; the body editor exposes H1-H6, lists, marks (incl. code / underline / strike), inline images, links, and the 13 inline blocks.
+- **Sidebar** — any page type can show up to 6 cards beside its content: Studio → Site web → Barre latérale (per locale, per page type) and each page's or post's own « Barre latérale » field. Existing datasets: `node --env-file=.env.local scripts/sidebar-migrate.mjs` (dry run), then `--apply`.
+- **Seed demo content** — `pnpm seed -- --demo` populates the demo content, incl. a showcase article with 12 inline block instances across 9 types. The console prints the document total.
 
 When `features.blog: false`, every route above 404s, sitemap drops the entry, the header link disappears, and `/studio` is the only Sanity surface that stays.
 
@@ -26,8 +27,8 @@ src/
 │   └── routes.ts          Auto-aggregates the `pages` map → ROUTES + PATHNAMES
 ├── config/                PURE DATA (index.ts) + types/helpers (types.ts)
 ├── features/blog/         Self-contained blog feature (user-interface/ sanity/ lib/)
-├── user-interface/        Shared UI — ui/ (shadcn, READ-ONLY), homepage/sections/,
-│                          error/ maintenance/ not-found/, shared/{layout,components}
+├── user-interface/        Shared UI — shared/{layout,components} (incl. PageSidebar),
+│                          account/ erasure/ legal/ email-preferences/
 ├── lib/                   metadata.ts, fonts.ts, seo/{jsonld,jsonld-factories,page-markdown}
 ├── sanity/                Core Sanity infra (client, live, env, token, image, Studio)
 └── hooks/ i18n/ types/ assets/fonts/
@@ -44,12 +45,9 @@ Everything else propagates — sitemap, routing, llms.txt, SEO metadata, JSON-LD
 
 ## Adding a section
 
-1. Browse the sibling **[component-library](../../../component-library)** (`pnpm storybook`) and find a section variant.
-2. Copy its `Component.tsx` into `src/user-interface/homepage/sections/<Name>.tsx`. If it ships a multi-file folder, flatten schema + config into one file as you copy. See `src/user-interface/homepage/sections/Features.tsx` for the target shape.
-3. Drop its sample copy (`en.json`) into `messages/<locale>.pages.<id>.blocks.<simpleName>`. Drop the `-NN` variant suffix — production keys are clean.
-4. Mount it in the route's `page.tsx` with a `namespace`/`pageId` prop. See `src/app/[locale]/(home)/page.tsx` for the live pattern.
+The home page is a page-builder `page` in Sanity (Studio → Accueil); other pages live in Studio → Pages. A section is a `module.*` block: an editor adds, reorders or hides it in the Studio, with no code change. Its copy lives in Sanity, not in `messages/`.
 
-The library is **never imported at runtime** — it's a Storybook-only browse surface. The app ships only the section files you've copied in.
+A new **kind** of section is a new block: follow [page builder § Adding a block](../../../../docs/packages/web/page-builder.md#adding-a-block). The schema goes in `@indiecrafts/packages-web-page-builder`, the renderer in `@indiecrafts/packages-web-ui-components`.
 
 ## i18n
 

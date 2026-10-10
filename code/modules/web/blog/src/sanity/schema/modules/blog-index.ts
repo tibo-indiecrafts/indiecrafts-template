@@ -10,6 +10,8 @@ import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/sche
 export default defineModule({
   name: "module.blog-index",
   title: "Hero du blog",
+  description:
+    "L'en-tête de la page du blog : surtitre, titre et introduction.",
   icon: HomeIcon,
   fields: [
     defineField({ name: "eyebrow", title: "Sur-titre", type: "string" }),

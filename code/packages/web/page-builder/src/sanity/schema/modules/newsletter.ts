@@ -3,6 +3,7 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/newsletter.md
  */
+import { BellIcon } from "@sanity/icons/Bell";
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
@@ -14,6 +15,8 @@ import { defineModule } from "../objects/define-module";
 export default defineModule({
   name: "module.newsletter",
   title: "Infolettre",
+  icon: BellIcon,
+  description: "Le formulaire d'inscription à la newsletter.",
   fields: [
     defineField({
       name: "heading",

@@ -8,6 +8,7 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { CardListModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { ModuleCta } from "../layout/Cta";
+import { ModuleSection } from "../layout/ModuleSection";
 
 /**
  * Card list — design ported from `sections-features/features-04`: a
@@ -25,54 +26,53 @@ const COLS: Record<number, string> = {
   4: "@2xl:grid-cols-2 @4xl:grid-cols-4",
 };
 
-export function CardList(
-  props: CardListModule & { components: PortableTextComponents },
-) {
+export function CardList({
+  inline,
+  ...props
+}: CardListModule & { inline?: boolean; components: PortableTextComponents }) {
   if (!props.cards?.length) return null;
   const cols = COLS[props.columns ?? 3] ?? COLS[3];
 
   return (
-    <section id={props.anchor} className="py-8 md:py-12">
-      <div className="@container mx-auto max-w-5xl px-(--gutter)">
-        <ul
-          className={cn(
-            "bg-border mx-auto grid max-w-4xl grid-cols-1 gap-px overflow-hidden rounded-xl",
-            cols,
-          )}
-        >
-          {props.cards.map((card) => (
-            <li key={card._key} className="bg-card space-y-3 p-6 sm:p-8">
-              {card.image?.asset?.url ? (
-                <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-md">
-                  <Image
-                    src={card.image.asset.url}
-                    alt={card.image.alt ?? card.title ?? ""}
-                    fill
-                    sizes="(min-width: 1024px) 33vw, 100vw"
-                    className="object-cover"
-                  />
-                </div>
-              ) : null}
-              {card.title ? (
-                <h3 className="text-base font-semibold">{card.title}</h3>
-              ) : null}
-              {card.content ? (
-                <div className="prose prose-neutral dark:prose-invert prose-sm [&_p]:text-muted-foreground max-w-none [&_p]:text-sm">
-                  <PortableText
-                    value={card.content}
-                    components={props.components}
-                  />
-                </div>
-              ) : null}
-              {card.cta ? (
-                <div className="pt-2">
-                  <ModuleCta cta={card.cta} />
-                </div>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
+    <ModuleSection anchor={props.anchor} inline={inline} className="@container">
+      <ul
+        className={cn(
+          "bg-border mx-auto grid max-w-4xl grid-cols-1 gap-px overflow-hidden rounded-xl",
+          cols,
+        )}
+      >
+        {props.cards.map((card) => (
+          <li key={card._key} className="bg-card space-y-3 p-6 @2xl:p-8">
+            {card.image?.asset?.url ? (
+              <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-md">
+                <Image
+                  src={card.image.asset.url}
+                  alt={card.image.alt ?? card.title ?? ""}
+                  fill
+                  sizes="(min-width: 1024px) 33vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            ) : null}
+            {card.title ? (
+              <h3 className="text-base font-semibold">{card.title}</h3>
+            ) : null}
+            {card.content ? (
+              <div className="prose prose-neutral dark:prose-invert prose-sm [&_p]:text-muted-foreground max-w-none [&_p]:text-sm">
+                <PortableText
+                  value={card.content}
+                  components={props.components}
+                />
+              </div>
+            ) : null}
+            {card.cta ? (
+              <div className="pt-2">
+                <ModuleCta cta={card.cta} />
+              </div>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    </ModuleSection>
   );
 }

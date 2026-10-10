@@ -111,7 +111,7 @@ export function DataRequestForm({
 
   if (status === "success") {
     return (
-      <section className="not-prose my-8 md:my-12">
+      <section className="not-prose @container my-8 md:my-12">
         <p
           role="status"
           aria-live="polite"
@@ -124,7 +124,7 @@ export function DataRequestForm({
   }
 
   return (
-    <section className="not-prose my-8 md:my-12">
+    <section className="not-prose @container my-8 md:my-12">
       <div className="bg-card mx-auto max-w-xl rounded-2xl border p-8 md:p-10">
         {heading ? (
           <h1 className="text-foreground font-sans text-xl font-semibold text-balance md:text-2xl">

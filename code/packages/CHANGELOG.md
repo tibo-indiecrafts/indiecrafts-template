@@ -12,6 +12,42 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **page-builder: a configurable sidebar of block cards.** `sidebar` (a mode — inherit · custom ·
+  none — and up to 6 cards), `sidebarBlocks`, and `sidebarSettings` (one document per locale: default
+  cards + one sidebar per page type). `resolveSidebar` picks the document's choice, else its page
+  type's, else the default; `sidebarSettingsQuery` and `sidebarProjection` read them.
+  `pageBuilderSanity` is now a factory — `({ sectionTypes, sidebarTypes, sidebarPages })` — so the app
+  adds its own blocks to pages and cards, and lists its page types. **Why:** the blog wanted cards
+  beside its content, configured the same way on every page type.
+- **page-builder: grouped Studio picker.** `blockInsertMenu` groups every block array (Mise en page ·
+  Contenu · Médias · Formulaires · Blog · Autres, list view); every generic block has an icon and a
+  description. **Why:** a flat list of up to 27 blocks was hard to scan.
+- **ui-components: `WithSidebar` + `SidebarCard`.** Content beside a labelled `<aside>` of cards
+  (18rem from `lg`; below it the cards follow the content, DOM order = reading order), and a card
+  frame around one block unless the block draws its own.
+- **ui-components: `FeaturedPosts` header + `editorial` layout** (`FeaturedEditorial`: a lead card,
+  video included, beside a short list), with `eyebrow`, `intro`, `viewAll` and `anchor`.
+  `PostCardItem` gains `excerpt` and `video`; `PostCard.tsx` exports `PostMeta`.
+
+### Changed
+
+- **ui-components: blocks fit any width.** CardList, QuoteList, Callout, Gallery and Prose honour
+  `inline` through `ModuleSection` (the callout and gallery now get page gutters as a section);
+  Pricing, StatList, the form frame and the form rows size with `@container`, not the viewport.
+  `MoreOnTopic` is bare (the sidebar card draws its frame). **Why:** the same block renders in a full
+  section, the 768px blog column and an 18rem sidebar card.
+
+### Fixed
+
+- **page-builder: blocks inside rich text resolve.** `NESTED` now applies the same `LEAF` projection
+  as the top level, so images, galleries, quote/person refs, lead-magnet and card CTAs inside a
+  prose / callout / card / accordion / step body render (they were blank).
+- **ui-components: a hidden block renders nothing everywhere.** `renderBlock` and the inline map skip
+  `hidden`; before, a hidden block inside rich text still showed. A test keeps `INLINE_TYPES` equal
+  to the Studio's `INLINE_MODULES`.
+
 ### Security
 
 - **`@indiecrafts/packages-web-sanity/private-id`** — `privateId(type)` returns

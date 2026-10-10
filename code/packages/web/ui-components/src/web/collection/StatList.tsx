@@ -32,7 +32,7 @@ export function StatList({
         {stats.map((stat) => (
           <div
             key={stat._key}
-            className="bg-card flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 p-4 sm:p-6"
+            className="bg-card flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 p-4 @2xl:p-6"
           >
             {stat.label ? (
               <dt className="text-muted-foreground text-sm font-medium">

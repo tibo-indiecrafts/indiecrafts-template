@@ -194,6 +194,14 @@ export default defineType({
       group: "content",
     }),
     defineField({
+      name: "sidebar",
+      title: "Barre latérale",
+      type: "sidebar",
+      description:
+        "Vide = le réglage « Articles » de Site web → Barre latérale. Choisissez des cartes propres à cet article, ou aucune.",
+      group: "content",
+    }),
+    defineField({
       name: "media",
       title: "Adresse + visuel",
       type: "postMedia",

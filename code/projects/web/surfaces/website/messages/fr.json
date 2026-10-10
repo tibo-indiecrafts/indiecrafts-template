@@ -161,6 +161,7 @@
     "follow": "Nous suivre"
   },
   "common": {
+    "sidebarLabel": "Liens complémentaires",
     "skipToContent": "Aller au contenu principal",
     "changeLanguage": "Changer de langue",
     "switchTheme": "Changer de thème",
@@ -317,6 +318,9 @@
       "heroLabel": "Derniers articles",
       "noPostsModule": "Aucun article pour le moment.",
       "frontpage": {
+        "featured": { "heading": "À la une" },
+        "latest": { "heading": "Derniers articles" },
+        "collection": { "heading": "Sélection" },
         "carousel": {
           "prev": "Précédent",
           "next": "Suivant",
@@ -426,15 +430,7 @@
     "home": {
       "title": "Indiecrafts — template Next.js rapide et modulaire",
       "description": "Un template Next.js 16 piloté par la configuration, avec sections, layouts et page-templates prêts à forker pour chaque client.",
-      "keywords": "modèle next.js, indiecrafts, config-first, site modulaire",
-      "blocks": {
-        "featured": {
-          "eyebrow": "À la une",
-          "title": "Notes de l'atelier",
-          "body": "Guides, analyses et retours de terrain pour livrer des sites clients plus vite.",
-          "viewAll": "Tous les articles"
-        }
-      }
+      "keywords": "modèle next.js, indiecrafts, config-first, site modulaire"
     }
   },
   "consent": {

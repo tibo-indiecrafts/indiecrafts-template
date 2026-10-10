@@ -1,6 +1,6 @@
 ---
 title: "Post Markdown export"
-description: "Serves a clean Markdown version of a blog post at /<locale>/blog/<slug>/md for AI agents."
+description: "Serves a clean Markdown version of a blog post at /`<locale>`/blog/`<slug>`/md for AI agents."
 status: stable
 ---
 

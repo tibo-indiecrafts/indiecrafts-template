@@ -3,12 +3,15 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/stat-list.md
  */
+import { BarChartIcon } from "@sanity/icons/BarChart";
 import { defineArrayMember, defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.stat-list",
   title: "Statistiques",
+  icon: BarChartIcon,
+  description: "Des chiffres clés avec leur libellé.",
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),

@@ -5,8 +5,7 @@
  */
 import type { SchemaTypeDefinition } from "sanity";
 
-// Documents
-import page from "./page";
+// Documents (the `page` document is built by `definePage`, see `../index.ts`)
 import quote from "./documents/quote";
 import person from "./documents/person";
 
@@ -15,13 +14,12 @@ import blockContent from "./blockContent";
 import cta from "./objects/cta";
 import link from "./objects/link";
 
-// The 16 generic page-builder modules
+// The 17 generic page-builder modules
 import { moduleSchemas } from "./modules";
 
-/** Every schema the page-builder contributes to the Studio. */
+/** Every fixed schema the page-builder contributes (all but `page` and the sidebar types). */
 export const schemaTypes: SchemaTypeDefinition[] = [
   // Documents
-  page,
   quote,
   person,
   // Reusable objects

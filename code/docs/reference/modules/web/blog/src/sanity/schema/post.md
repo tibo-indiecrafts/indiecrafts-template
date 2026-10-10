@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Defines the `post` document type. It holds the title, excerpt, publish date, `authors`/`categories`/`tags` references, a `featured` flag, a `priority` ranking slider (via the `PrioritySlider` input), optional `series` and `seriesOrder`, the PortableText `body`, the `media` object (slug + cover), and shared `seo`. The Studio splits fields into "Contenu" and "Métadonnées" tabs. There is intentionally no per-post layout override — layout comes from `blog.postModules` or `DefaultPostLayout`. Reference pickers are filtered to the post's language, and orderings support priority-then-date, newest, and A→Z.
+Defines the `post` document type. It holds the title, excerpt, publish date, `authors`/`categories`/`tags` references, a `featured` flag, a `priority` ranking slider (via the `PrioritySlider` input), optional `series` and `seriesOrder`, the PortableText `body`, a `sidebar` field (the post's own sidebar cards; empty uses the « Articles » setting of Site web → Barre latérale), the `media` object (slug + cover), and shared `seo`. The Studio splits fields into "Contenu" and "Métadonnées" tabs. There is intentionally no per-post layout override — layout comes from `blog.postModules` or `DefaultPostLayout`. Only the sidebar is per post. Reference pickers are filtered to the post's language, and orderings support priority-then-date, newest, and A→Z.
 
 ## Exports
 

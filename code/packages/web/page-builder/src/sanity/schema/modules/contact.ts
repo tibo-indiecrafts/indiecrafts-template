@@ -3,6 +3,7 @@
  *
  * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/contact.md
  */
+import { EnvelopeIcon } from "@sanity/icons/Envelope";
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
@@ -14,6 +15,8 @@ import { defineModule } from "../objects/define-module";
 export default defineModule({
   name: "module.contact",
   title: "Formulaire de contact",
+  icon: EnvelopeIcon,
+  description: "Le formulaire de contact.",
   fields: [
     defineField({
       name: "heading",

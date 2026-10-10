@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The blog frontpage. It fetches the blog singleton, posts and taxonomies (authors, categories and tags, each behind its own feature flag), then renders either the editor's `frontpageModules` through `Modules`, or the `DefaultBlogFrontpage` sections — the choice made by `pickFrontpage`. It advertises RSS and Atom alternates and honors the singleton's `noIndex` and `unpublished` flags.
+The blog frontpage. It fetches the blog singleton, posts and taxonomies (authors, categories and tags, each behind its own feature flag), then renders either the editor's `frontpageModules` through `Modules`, or the `DefaultBlogFrontpage` sections — the choice made by `pickFrontpage`. `PageSidebar` puts the frontpage beside the cards set for page type `blogIndex` in Site web → Barre latérale. It advertises RSS and Atom alternates and honors the singleton's `noIndex` and `unpublished` flags.
 
 ## Exports
 

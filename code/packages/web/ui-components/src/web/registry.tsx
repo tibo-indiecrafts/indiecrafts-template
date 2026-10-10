@@ -68,11 +68,15 @@ export const BLOCK_RENDERERS = {
   "module.contact": Contact,
 } satisfies { [K in BlockModule["_type"]]: BlockRenderer<K> };
 
-/** Render one block by `_type`; `components` is the map for its nested content. */
+/**
+ * Render one block by `_type`; `components` is the map for its nested content.
+ * A block the editor hid renders nothing, wherever it sits.
+ */
 export function renderBlock<M extends BlockModule>(
   module: M,
   components: PortableTextComponents,
 ): React.ReactNode {
+  if (module.hidden) return null;
   const Component = BLOCK_RENDERERS[module._type] as
     BlockRenderer<typeof module._type> | undefined;
   // A removed/renamed `module.*` still referenced by a post `body[]` or `postModules[]`

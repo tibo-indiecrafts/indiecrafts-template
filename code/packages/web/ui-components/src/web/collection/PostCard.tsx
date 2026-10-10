@@ -4,6 +4,7 @@
  * @see docs/reference/packages/web/ui-components/src/web/collection/PostCard.md
  */
 import Image from "next/image";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import type { PostCardItem } from "@indiecrafts/packages-web-ui-components/shared/types";
 
 /**
@@ -55,5 +56,28 @@ export function PostCard({ post }: { post: PostCardItem }) {
         ) : null}
       </div>
     </article>
+  );
+}
+
+/** "Author · date", when either is set. */
+export function PostMeta({
+  post,
+  className,
+}: {
+  post: PostCardItem;
+  className?: string;
+}) {
+  if (!post.author && !post.date) return null;
+  return (
+    <p
+      className={cn(
+        "flex flex-wrap items-center gap-x-2 gap-y-1 text-xs",
+        className,
+      )}
+    >
+      {post.author ? <span className="font-medium">{post.author}</span> : null}
+      {post.author && post.date ? <span aria-hidden="true">·</span> : null}
+      {post.date ? <span>{post.date}</span> : null}
+    </p>
   );
 }

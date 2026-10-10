@@ -13,14 +13,15 @@ import { buildWebPageSchema } from "@/lib/seo/jsonld-core";
 import { JsonLdScript } from "@/lib/seo/jsonld";
 import { getPage } from "@/lib/page";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { renderBlock } from "@indiecrafts/packages-web-ui-components/web/registry";
-import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
-import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared/types";
+import { PageSidebar } from "@/user-interface/shared/layout/PageSidebar";
+import { siteBlocks } from "@/lib/sidebar";
+import { Modules } from "@indiecrafts/modules-web-blog/user-interface/renderers/ModuleRenderer";
+import type { AnyModule, SidebarField } from "@indiecrafts/modules-web-blog/sanity/types";
 
 /**
  * Generic editor-driven pages — the `/[locale]/<slug>` catch-all. Resolves a
  * `page` document (`@indiecrafts/packages-web-page-builder`) by slug + locale and paints its
- * `sections[]` through the shared `renderBlock` registry. A required catch-all
+ * `sections[]` (generic + blog blocks) through the blog's `Modules`, beside its sidebar. A required catch-all
  * (`[...slug]`, not `[[...slug]]`) so it never shadows the `(home)` index; the 11
  * static route folders resolve first, this is the fallback (unknown path → 404).
  * No `generateStaticParams`: the locale layout reads the per-request CSP nonce, so the
@@ -74,7 +75,7 @@ export default async function BuilderPage({ params }: Props) {
   const page = await getPage(slug.join("/"), locale);
   if (!page) notFound();
 
-  const sections = (page.sections ?? []) as BlockModule[];
+  const sections = siteBlocks((page.sections ?? []) as AnyModule[]);
 
   // WebPage JSON-LD — built from the page's own SEO (not the static `pageSeo` map),
   // gated on the structured-data feature + the page's noindex.
@@ -94,9 +95,9 @@ export default async function BuilderPage({ params }: Props) {
   return (
     <DefaultLayout>
       {webPage ? <JsonLdScript data={webPage} /> : null}
-      {sections.map((block) => (
-        <div key={block._key}>{renderBlock(block, portableComponents)}</div>
-      ))}
+      <PageSidebar locale={locale} page="page" choice={page.sidebar as SidebarField}>
+        <Modules modules={sections} context={{ locale }} />
+      </PageSidebar>
     </DefaultLayout>
   );
 }

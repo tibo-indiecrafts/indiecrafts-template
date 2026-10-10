@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders a compact "More on this topic" sidebar block: a heading over a list of related links, with an optional footer link. It is sized for a narrow column but width-agnostic via `@container`, and renders nothing with no items.
+Renders a compact "More on this topic" list: a heading over related links, with an optional footer link. It draws no frame: a `SidebarCard` around it draws the card. It renders nothing with no items.
 
 ## Exports
 
@@ -22,11 +22,13 @@ Renders a compact "More on this topic" sidebar block: a heading over a list of r
 ```tsx
 import { MoreOnTopic } from "@indiecrafts/packages-web-ui-components/web/collection/MoreOnTopic";
 
-<MoreOnTopic
-  title="More on Engineering"
-  items={[{ title: "Scaling Postgres", href: "/blog/scaling-postgres" }]}
-  footer={{ label: "See all", href: "/blog/engineering" }}
-/>;
+<SidebarCard type="module.blog-related">
+  <MoreOnTopic
+    title="More on Engineering"
+    items={[{ title: "Scaling Postgres", href: "/blog/scaling-postgres" }]}
+    footer={{ label: "See all", href: "/blog/engineering" }}
+  />
+</SidebarCard>;
 ```
 
 ## Source

@@ -3,7 +3,6 @@
  *
  * @see docs/reference/packages/web/ui-components/src/web/collection/MoreOnTopic.md
  */
-import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 /** One link in a "More on this topic" list — a resolved title + href (+ optional meta). */
 export type MoreOnTopicItem = {
@@ -16,11 +15,10 @@ export type MoreOnTopicItem = {
 };
 
 /**
- * "More on this topic" — a compact, configurable sidebar block: a heading over a
- * list of related links. Data-driven (resolved `title`/`href` items, plain
+ * "More on this topic" — a compact list for a sidebar card (`SidebarCard` draws the frame):
+ * a heading over a list of related links. Data-driven (resolved `title`/`href` items, plain
  * `<a>` like the other renderers), so the host owns the content and this owns
- * the layout. Renders nothing when there are no items. Sized for a narrow
- * column (the post TOC sidebar) but width-agnostic via `@container`.
+ * the layout. Renders nothing when there are no items.
  *
  * `title` — the heading (e.g. "More on Engineering"). `items` — the links.
  * `footer` — an optional "see all" link under the list.
@@ -38,13 +36,7 @@ export function MoreOnTopic({
 }) {
   if (!items?.length) return null;
   return (
-    <section
-      aria-label={title}
-      className={cn(
-        "border-border/60 bg-card rounded-xl border-0 p-5 ring-1 ring-inset",
-        className,
-      )}
-    >
+    <section aria-label={title} className={className}>
       <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
         {title}
       </h2>

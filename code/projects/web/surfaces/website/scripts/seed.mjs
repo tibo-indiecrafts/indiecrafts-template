@@ -51,6 +51,11 @@ import { createClient } from "@sanity/client";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  HOME_FEATURED_COPY,
+  homeFeaturedBlock,
+  sidebarSettingsDoc,
+} from "./lib/blocks-sidebar.mjs";
 
 /** Local seed media — checked-in assets uploaded to Sanity (vs the Unsplash URLs). */
 const MEDIA_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "seed-media");
@@ -1317,8 +1322,8 @@ const inline = {
 
 // ─── Homepage (page-builder) ──────────────────────────────────
 // Per-locale home `page` docs (`isHome`, fixed id `page-home-<locale>`): an ordered
-// `sections[]` of the same `module.*` blocks every page uses, rendered by the (home)
-// route via `renderBlock`. This copy used to live in `messages/pages.home.*`; it now
+// `sections[]` of the same `module.*` blocks every page uses (the blog blocks too),
+// rendered by the (home) route via the blog's `Modules`. This copy used to live in `messages/pages.home.*`; it now
 // lives here (Sanity is the source, editable in Studio → Accueil).
 
 const extCta = (label, url, variant = "primary") => ({
@@ -1618,10 +1623,18 @@ const buildHomePage = () => {
         anchor: "get-started",
       },
       inline.accordionList(c.faq.title, c.faq.subtitle, c.faq.items),
+      // Promotes the blog: the posts marked « Mis en avant ». Empty without one.
+      homeFeaturedBlock(lang, key("m")),
     ],
   });
   return [doc("en", EN_HOME), doc("fr", FR_HOME)];
 };
+
+// ─── Sidebar (Site web → Barre latérale) ──────────────────────
+// One `sidebarSettings-<locale>` per locale. Articles get the post's table of contents
+// and its related posts; every other page type inherits the empty default (no sidebar).
+const buildSidebarSettings = () =>
+  Object.keys(HOME_FEATURED_COPY).map((lang) => sidebarSettingsDoc(lang, () => key("m")));
 
 // `blog.postModules` is shared across locales — anything hardcoded here
 // (breadcrumb labels, "Keep reading" titles, etc.) would leak the same
@@ -1631,8 +1644,8 @@ const buildHomePage = () => {
 //
 // Rich content INSIDE an article (callouts, card lists, stat lists, …)
 // belongs in the post's `body` PortableText via the "+" insert menu —
-// the 11 inline-embeddable modules live there. The post document itself
-// no longer exposes a per-post layout override; chrome stays uniform.
+// the 13 inline-embeddable modules live there. A post can still choose its
+// own sidebar cards (`sidebar`); the rest of its chrome stays uniform.
 
 // ─── Showcase body — modules INSIDE the PortableText body ──────
 // Builds an array of mixed text blocks + inline modules, in the order
@@ -1775,7 +1788,7 @@ const showcaseCopyEn = {
   calloutInfoStrong:
     "everything you read past this point was authored in the Sanity Studio",
   calloutInfoTail:
-    ". The eight inline modules, the headings, the lists, the images — same picker that ships with every Indie Crafts site.",
+    ". The inline blocks, the headings, the lists, the images — same picker that ships with every Indie Crafts site.",
   dayOneHeading: "Day one: scaffold and deploy",
   dayOneIntroLead:
     "Start with a template that already handles the boring decisions. The first deploy should happen before lunch — ",
@@ -1924,7 +1937,7 @@ const showcaseCopyFr = {
   calloutInfoStrong:
     "tout ce que vous lisez à partir d'ici a été rédigé dans le Sanity Studio",
   calloutInfoTail:
-    ". Les huit modules inline, les titres, les listes, les images — le même menu que chaque site Indie Crafts embarque.",
+    ". Les blocs intégrés, les titres, les listes, les images — le même menu que chaque site Indie Crafts embarque.",
   dayOneHeading: "Jour un : poser les fondations et déployer",
   dayOneIntroLead:
     "Démarrez avec un template qui gère déjà les décisions ennuyeuses. Le premier déploiement doit tomber avant le déjeuner — ",
@@ -2438,7 +2451,6 @@ const buildBlog = () => ({
     post: {
       date: true,
       readingTime: true,
-      tableOfContents: true,
       relatedPosts: true,
       readingProgress: true,
     },
@@ -3269,6 +3281,7 @@ const buildDocs = () => [
   ...buildSiteMeta(),
   buildSiteSettings(),
   ...buildHomePage(),
+  ...buildSidebarSettings(),
   ...buildUiMessages(),
   ...buildLegalPages(),
   ...buildLegalTranslationMeta(),

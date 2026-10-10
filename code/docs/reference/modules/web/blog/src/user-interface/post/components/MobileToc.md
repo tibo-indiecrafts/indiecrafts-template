@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-`MobileToc` renders the article's headings as a tap-to-jump index on small screens, where the sticky sidebar `Toc` is hidden (`lg:hidden`). It uses a native `<details>` element, so it needs no JavaScript and does no scroll-spy. Anchors are `slugify`-derived heading ids that match the post body's rendered headings.
+`MobileToc` renders the article's headings as a tap-to-jump index on small screens, where the sidebar's `blog-toc` card is hidden (`lg:hidden`). The post layouts mount it only when the sidebar holds that card. It uses a native `<details>` element, so it needs no JavaScript and does no scroll-spy. Anchors are `slugify`-derived heading ids that match the post body's rendered headings.
 
 ## Exports
 

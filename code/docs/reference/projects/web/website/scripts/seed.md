@@ -12,7 +12,7 @@ status: stable
 
 Seeds a Sanity dataset in one transaction. Every content document has an EN and an FR version, linked by a `translation.metadata` doc.
 
-- **Baseline** (always): the per-locale `siteMeta` SEO singletons, `siteSettings`, the home `page`, the `uiMessages` dictionaries, the five legal pages, navigation, consent, language suggestion, contact/newsletter/waitlist settings, the `blog` singleton, and the E-mails singleton (`private.emailStrings`, every email off).
+- **Baseline** (always): the per-locale `siteMeta` SEO singletons, `siteSettings`, the home `page` (with the "Articles à la une" `module.blog-featured` block), the per-locale `sidebarSettings` (articles: table of contents and related posts), the `uiMessages` dictionaries, the five legal pages, navigation, consent, language suggestion, contact/newsletter/waitlist settings, the `blog` singleton, and the E-mails singleton (`private.emailStrings`, every email off).
 - **Demo** (`--demo`): authors, categories, tags, a series, posts, quotes, and people with Unsplash images, the home testimonials, the `/blog` frontpage pins, the announcement bar and pop-up, and sample comments and waitlist entries.
 
 **Guard:** the script refuses a dataset that already has a `siteSettings` document. A re-seed replaces every seeded document by `_id` (`createOrReplace`), so on a live site it erases the editors' work. `--force` skips the guard; `pnpm seed:e2e` and the e2e setup use it on the throwaway `tests-e2e` dataset.

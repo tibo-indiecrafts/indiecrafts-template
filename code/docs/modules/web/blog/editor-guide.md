@@ -67,11 +67,12 @@ The post document has a hidden `language` field (set by the language leaf you en
 | **Auteur·rice·s**          | A list — add **one or several** authors (drag to reorder; the first leads on cards). Language-filtered picker: an EN post only lists EN authors. A co-written post shows on every author's page.                                                                                                                                                              |
 | **Catégories**             | Reference array, language-filtered. A post can sit in several.                                                                                                                                                                                                                                                                                                |
 | **Tags**                   | Reference array, language-filtered. Each tag gets `/blog/tag/<slug>`.                                                                                                                                                                                                                                                                                         |
-| **Mis en avant**           | Boolean. When true the post is eligible for the featured hero grid on `/blog` (`featuredPostsQuery`).                                                                                                                                                                                                                                                         |
+| **Mis en avant**           | Boolean. When true the post is eligible for the featured hero grid on `/blog` (`featuredPostsQuery`) and for every **Articles à la une** block set to « Articles marqués » — including the home page's strip.                                                                                                                                                 |
 | **Priorité de classement** | A slider (0–10). Ranks the post **above the date order** in every listing — search, category, tag, author, related, RSS, and the `blog-post-list` module. `0` = ranked by date (the default); higher pins it toward the top. Distinct from **Mis en avant**: featured picks _which_ posts show in the hero block; priority sets _the order_ within a listing. |
 | **Série**                  | Optional. Attach the post to a series (a multi-part guide). Create series under **Blog → Séries**. Empty = standalone post.                                                                                                                                                                                                                                   |
 | **Ordre dans la série**    | The post's position in the series (1, 2, 3…). Shown only when a **Série** is set. Empty = ordered by date.                                                                                                                                                                                                                                                    |
-| **Corps**                  | The rich-text body — see [§4](#4-the-body-editor).                                                                                                                                                                                                                                                                                                            |
+| **Corps**                  | The rich-text body — see [§4](#_4-the-body-editor).                                                                                                                                                                                                                                                                                                           |
+| **Barre latérale**         | The cards beside this post. Empty = the « Articles » setting of **Site web → Barre latérale**. See [§7](#_7-sidebar-barre-laterale).                                                                                                                                                                                                                          |     |
 
 ### 3.3 Métadonnées fields
 
@@ -97,7 +98,7 @@ Per-post SEO + visibility overrides (the reusable `metadata` object):
 Bottom-right: **Publish** (or a dropdown when a draft is pending).
 
 - **Publish** — saves and goes live. With `<SanityLive />` mounted, published pages revalidate live; the dev server hot-reloads instantly.
-- **Save as draft** — persists in the dataset as a draft. The public site keeps serving the last published version; drafts show only in the Studio (and via draft preview — [§5](#5-draft-preview)).
+- **Save as draft** — persists in the dataset as a draft. The public site keeps serving the last published version; drafts show only in the Studio (and via draft preview — [§5](#_5-draft-preview)).
 - **Discard changes** — reverts to the last published state.
 
 ### 3.5 See it live
@@ -115,11 +116,13 @@ The **Corps** field is Sanity Portable Text (`blockContent`). Hit the **+** at t
 - **Marks** — Gras, Italique, Code, Souligné, Barré, and URL links
 - **Inline image** — hotspot-enabled
 - **Bloc de code** — syntax-highlighted code (set the language, e.g. `tsx`; optional filename). Colours adapt to light/dark automatically (Shiki)
-- **Inline modules** — 9 blocks droppable anywhere in the flow: Encadré (callout), Cartes (card list), Galerie d'images, Personnes (person list), Statistiques (stat list), Étapes (step list), Citations (quote list), Accordéon, HTML personnalisé
+- **Inline modules** — 13 blocks droppable anywhere in the flow: Encadré (callout), Cartes (card list), Galerie d'images, Personnes (person list), Statistiques (stat list), Étapes (step list), Citations (quote list), Accordéon, HTML personnalisé, Infolettre, Aimant à prospects, Liste d'attente, Formulaire de contact
 
-The four page-chrome modules — Prose, Hero du blog, Contenu d'article, Articles — are **not** in the body picker. They live in the `blog` singleton's `Modules par article` (`postModules`) layout slot ([§6](#6-post-layout-the-singleton)).
+Prose, the page blocks (En-tête (hero), Grille de fonctionnalités, Tarifs) and every blog block (Hero du blog, Contenu d'article, Articles…) are **not** in the body picker. They are sections of a page, or of the `blog` singleton's `Modules par article` (`postModules`) layout slot ([§6](#_6-post-layout-the-singleton)).
 
-Each inline module has a small form on insert (title, items, etc.) — no code.
+The picker groups the blocks (Mise en page · Contenu · Médias · Formulaires · Blog · Autres) in a list view. Each block shows an icon and a one-line description.
+
+Each inline module has a small form on insert (title, items, etc.) — no code. Turn on **Masqué** to hide a block without deleting it: it renders nothing on the site.
 
 ---
 
@@ -152,6 +155,8 @@ The `/blog` frontpage composes the same way, from **Sections de l'accueil du blo
 
 The same **Blog → Mise en page** document holds an **Affichage du blog** group. Each toggle shows or hides a blog element without a code deploy. Every toggle is ON by default; an empty toggle also reads as shown (the legend says "Vide = affiché").
 
+The table of contents is no longer a toggle here. It is the **Sommaire de l'article** card of the sidebar — see [§7](#_7-sidebar-barre-laterale).
+
 | Group                               | Toggle                            | Turning it off                                                                                             |
 | ----------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | **Catégories, tags, auteur·rice·s** | Catégories                        | Hides category chips **and** the `/blog/category` pages (dropped from the sitemap + AI files).             |
@@ -160,8 +165,7 @@ The same **Blog → Mise en page** document holds an **Affichage du blog** group
 |                                     | Barre de navigation par catégorie | Hides the category nav bar (top-level categories + sub-category dropdowns) under the header on blog pages. |
 | **Page article**                    | Date de publication               | Hides the published date on a post.                                                                        |
 |                                     | Temps de lecture                  | Hides the "N min" reading estimate.                                                                        |
-|                                     | Sommaire                          | Hides the table of contents.                                                                               |
-|                                     | À lire ensuite                    | Hides the related-posts grid.                                                                              |
+|                                     | À lire ensuite                    | Hides the "Keep reading" grid under the article.                                                           |
 |                                     | Barre de progression de lecture   | Hides the thin scroll-progress bar at the top of a post.                                                   |
 | **Accueil du blog**                 | Grille « à la une »               | Swaps the featured mosaic for a simple grid.                                                               |
 | **Cartes d'article**                | Extrait                           | Hides the teaser under each card title.                                                                    |
@@ -174,20 +178,22 @@ The same **Blog → Mise en page** document holds an **Affichage du blog** group
 
 The same **Blog → Mise en page** document also holds **Sections de l'accueil du blog** (`frontpageModules`) — an array just like **Modules par article**, but it composes **`/blog`** itself instead of a post. Stack any of the blocks below, in any order. **Leave it empty and `/blog` falls back to the built-in default layout** (hero mosaic → explore → newsletter signup).
 
-| Block (Studio name)                                            | What it shows                                                                         | Auto or picks                                                                          |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| **Grande une** (`blog-hero`)                                   | One large lead post, full width.                                                      | Auto = the latest published post, or pin one specific article.                         |
-| **Articles à la une** (`blog-featured`)                        | A lead card plus a grid of more posts.                                                | Auto = posts marked **Mis en avant**, or pin an ordered list.                          |
-| **Articles** (`blog-post-list`) — this is the **Latest** block | A plain grid of posts, optionally filtered to one category.                           | Always auto.                                                                           |
-| **Coup de projecteur catégorie** (`blog-category-spotlight`)   | A curated row from one category, with a "Tout voir" link.                             | Pick the category; optionally pin posts to lead — the category's latest fill the rest. |
-| **Carrousel d'articles** (`blog-collection`)                   | A hand-picked, ordered carousel.                                                      | Always a pick — no auto source; choose one or more posts.                              |
-| **Cartes de sujets** (`blog-topic-cards`)                      | One to three large clickable cards, each linking to a category or tag.                | Always a pick — choose the category/tag (plus an optional image) per card.             |
-| **Articles tendance** (`blog-trending`)                        | The most-read posts, falling back to the most recent while no popularity data exists. | Auto = popularity (or recency) — or pin posts to lead.                                 |
-| **Explorer** (`blog-explore`)                                  | Category chips, tag pills, or top authors — pick which with **Contenu affiché**.      | Always auto.                                                                           |
+| Block (Studio name)                                            | What it shows                                                                                                                                                            | Auto or picks                                                                          |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| **Grande une** (`blog-hero`)                                   | One large lead post, full width.                                                                                                                                         | Auto = the latest published post, or pin one specific article.                         |
+| **Articles à la une** (`blog-featured`)                        | A lead card plus a grid, or (**Présentation**: « Grande carte + liste ») a lead card beside a short list. Optional eyebrow, title, intro and « Tous les articles » link. | Auto = posts marked **Mis en avant**, or pin an ordered list.                          |
+| **Articles** (`blog-post-list`) — this is the **Latest** block | A plain grid of posts, optionally filtered to one category.                                                                                                              | Always auto.                                                                           |
+| **Coup de projecteur catégorie** (`blog-category-spotlight`)   | A curated row from one category, with a "Tout voir" link.                                                                                                                | Pick the category; optionally pin posts to lead — the category's latest fill the rest. |
+| **Carrousel d'articles** (`blog-collection`)                   | A hand-picked, ordered carousel.                                                                                                                                         | Always a pick — no auto source; choose one or more posts.                              |
+| **Cartes de sujets** (`blog-topic-cards`)                      | One to three large clickable cards, each linking to a category or tag.                                                                                                   | Always a pick — choose the category/tag (plus an optional image) per card.             |
+| **Articles tendance** (`blog-trending`)                        | The most-read posts, falling back to the most recent while no popularity data exists.                                                                                    | Auto = popularity (or recency) — or pin posts to lead.                                 |
+| **Explorer** (`blog-explore`)                                  | Category chips, tag pills, or top authors — pick which with **Contenu affiché**.                                                                                         | Always auto.                                                                           |
 
 **Auto + pin.** Every block above except **Cartes de sujets** and **Explorer** shares one pattern: a **Nombre d'articles** (or **Limite**) field caps how many posts show, and an optional **Articles à mettre en avant en premier** (pinned) list lets you hand-pick posts that always appear first, in the order you set. The block's automatic rule (latest / featured / category / trending) fills any remaining slots up to that cap. **Carrousel d'articles** is the one exception — it has no automatic rule, so every post in it is a manual pick.
 
 Every generic block (Infolettre, and the rest of the page-builder catalog) is also selectable here, alongside the blog-specific ones above — so a newsletter signup or a stat list can sit right in the middle of the frontpage.
+
+**Blog blocks on any page.** The blocks in this table also work outside the blog: in **Site web → Accueil** and in any page of **Site web → Pages**. Use them to promote the blog across the site. The home page's « Articles à la une » strip is an **Articles à la une** block (« Grande carte + liste »).
 
 ### 6.3 Category navigation & sub-categories
 
@@ -198,11 +204,51 @@ The **Barre de navigation par catégorie** toggle (above) shows a horizontal bar
 
 Rules: the parent must be in the **same language**; a category can't be its own parent; nesting is one level (a sub-category's children are not shown). The bar needs **Catégories** on, and each category page stays the existing `/blog/category/<slug>`.
 
-The **post page sidebar** also carries a "More on {category}" block (the post's related articles) beneath the table of contents, and a "Written by" author card follows the article body — both follow the **Catégories** / **Auteur·rice·s** / **À lire ensuite** toggles.
+The **post page sidebar** shows the cards of [§7](#_7-sidebar-barre-laterale). The seed gives every post the table of contents and an **Articles sur le même sujet** card ("More on {category}"). A "Written by" author card follows the article body; it follows the **Auteur·rice·s** toggle.
 
 ---
 
-## 7. Reuse content across posts (References)
+## 7. Sidebar (Barre latérale)
+
+Any page type can show a column of **cards** beside its content: the home page, pages, the blog home, posts, and the blog lists. You set the cards in two places. The most specific choice wins.
+
+**Set the default and each page type:**
+
+1. Open **Site web → Barre latérale**, then the language (one document per language, `sidebarSettings-<locale>`).
+2. Under **Cartes par défaut**, add the cards that most pages show. Leave it empty for no default sidebar.
+3. Under **Par type de page**, open a type: **Accueil**, **Pages**, **Accueil du blog (/blog)**, **Articles**, or **Listes du blog**.
+4. Pick a mode:
+   - « Hériter du réglage général » — show the default cards.
+   - « Cartes personnalisées » — show the cards you add here instead.
+   - « Pas de barre latérale » — show no sidebar on this type.
+5. Publish.
+
+**Override one page or post:**
+
+1. Open the page (Site web → Accueil or Pages) or the post (Blog → Articles).
+2. Open its **Barre latérale** field. Empty = inherit the page-type setting.
+3. Pick a mode, as above. « Pas de barre latérale » hides the sidebar on this document only.
+4. Publish.
+
+« Pas de barre latérale » at any level stops there: no sidebar, whatever the default says.
+
+**Cards.** A sidebar holds at most **6** cards. The picker offers:
+
+| Group   | Cards                                                                                                                   |
+| ------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Generic | Encadré, Cartes, Prose, Citations, Statistiques, HTML personnalisé, Infolettre, Aimant à prospects, Liste d'attente     |
+| Blog    | Sommaire de l'article, Articles sur le même sujet, Articles tendance, Articles à la une, Articles, Carrousel d'articles |
+
+- **Sommaire de l'article** and **Articles sur le même sujet** show only on a post: the headings and the same-category posts of the post being read.
+- The post-list cards (Articles tendance, Articles à la une, Articles, Carrousel d'articles) show a compact list of links in a card.
+
+**Layout.** From the `lg` breakpoint (a laptop screen), the cards sit in a narrow column beside the content and stay in view below the header as you scroll. On a smaller screen, the cards follow the content. The table of contents card shows from `lg`; on a phone the same list opens from « Sur cette page » above the article.
+
+**What the seed sets.** **Articles** gets « Cartes personnalisées » with Sommaire de l'article + Articles sur le même sujet (the sidebar posts had before). The other types inherit an empty default, so they show no sidebar.
+
+---
+
+## 8. Reuse content across posts (References)
 
 Two top-level sections hold docs you pick from inside modules:
 
@@ -213,7 +259,7 @@ Create via **Témoignages** / **Équipe → + Create**. Both are language-split 
 
 ---
 
-## 8. Locales
+## 9. Locales
 
 The same template serves `/blog/<slug>` (default locale, unprefixed) and `/fr/blog/<slug>`. A post's plugin-managed `language` decides which locale routes it surfaces on — an EN post at `/blog/<slug>` returns 404 at `/fr/blog/<slug>`.
 
@@ -223,22 +269,22 @@ Wrong-language post? There's no editable `Langue` field (hidden by the plugin) �
 
 ---
 
-## 9. Common gotchas
+## 10. Common gotchas
 
-| Symptom                                                          | Cause                                                                                                     | Fix                                                                                                                         |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Post saved but missing from `/blog`                              | `metadata.noIndex`, `hideFromDiscovery`, or `unpublished` is on — or the language doesn't match the route | Untick the visibility flag; confirm the locale badge in **Translations** matches the URL                                    |
-| Post saved but missing from listings, feed still shows old count | **Publié le** is a **future** date (scheduled)                                                            | Set **Publié le** to now (or past) to publish immediately; it appears automatically once the date passes                    |
-| Post 404s at its own URL                                         | `metadata.unpublished` is on                                                                              | Untick **Dépublier**                                                                                                        |
-| Cover image cropped oddly                                        | Hotspot is centered but the subject isn't                                                                 | Click the image → drag the round dot onto the subject                                                                       |
-| Post renders without a hero image                                | `metadata.image` is empty                                                                                 | Set **Image sociale** on the Métadonnées tab                                                                                |
-| "Reference broken" red box                                       | The quote/person doc was deleted or is the wrong language                                                 | Open the picker, swap to a valid same-language doc, publish                                                                 |
-| Body picker shows fewer options than expected                    | You're in a post body — only the 9 inline modules appear                                                  | The chrome modules (Prose, Hero du blog, Contenu d'article, Articles) live in **Blog → Mise en page → Modules par article** |
-| Draft preview returns 503                                        | `SANITY_API_READ_TOKEN` not set at server start                                                           | See [`sanity-tokens.md`](/modules/web/blog/sanity-tokens), restart dev                                                      |
+| Symptom                                                          | Cause                                                                                                     | Fix                                                                                                                   |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Post saved but missing from `/blog`                              | `metadata.noIndex`, `hideFromDiscovery`, or `unpublished` is on — or the language doesn't match the route | Untick the visibility flag; confirm the locale badge in **Translations** matches the URL                              |
+| Post saved but missing from listings, feed still shows old count | **Publié le** is a **future** date (scheduled)                                                            | Set **Publié le** to now (or past) to publish immediately; it appears automatically once the date passes              |
+| Post 404s at its own URL                                         | `metadata.unpublished` is on                                                                              | Untick **Dépublier**                                                                                                  |
+| Cover image cropped oddly                                        | Hotspot is centered but the subject isn't                                                                 | Click the image → drag the round dot onto the subject                                                                 |
+| Post renders without a hero image                                | `metadata.image` is empty                                                                                 | Set **Image sociale** on the Métadonnées tab                                                                          |
+| "Reference broken" red box                                       | The quote/person doc was deleted or is the wrong language                                                 | Open the picker, swap to a valid same-language doc, publish                                                           |
+| Body picker shows fewer options than expected                    | You're in a post body — only the 13 inline modules appear                                                 | Prose, the page blocks and the blog blocks are sections: use **Blog → Mise en page → Modules par article**, or a page |
+| Draft preview returns 503                                        | `SANITY_API_READ_TOKEN` not set at server start                                                           | See [`sanity-tokens.md`](/modules/web/blog/sanity-tokens), restart dev                                                |
 
 ---
 
-## 10. Where to go next
+## 11. Where to go next
 
 - Body editor reference → [`body-editor.md`](/modules/web/blog/body-editor)
 - Image gallery module → [`gallery.md`](/modules/web/blog/gallery)
