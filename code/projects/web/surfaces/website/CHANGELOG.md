@@ -19,6 +19,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **The no-flash theme script crashed on Cloudflare** ("`__name` is not defined" on every page).
+  Wrangler's default `keep_names` adds esbuild `__name(...)` calls; next-themes injects its script
+  with `Function.toString()`, so the call landed in the page with no helper. `wrangler.toml` now sets
+  `keep_names = false`; a parity test (`wrangler-parity.test.mjs`) keeps it on every Next surface.
+
+### Fixed
+
 - **Sidebar review fixes.** `pageSidebar` drops the post's own cards (TOC, related) on every other
   page type, so no empty sidebar column; the post route reads its sidebar settings in the first
   round trip and fetches related posts once. `scripts/sidebar-migrate.mjs` keeps a card the editor had

@@ -12,6 +12,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **The no-flash theme script crashed on Cloudflare** ("`__name` is not defined" on every page).
+  Wrangler's default `keep_names` adds esbuild `__name(...)` calls; next-themes injects its script
+  with `Function.toString()`, so the call landed in the page with no helper. `wrangler.toml` now sets
+  `keep_names = false`; a parity test (`wrangler-parity.test.mjs`) keeps it on every Next surface.
+
 ### Changed
 
 - **One place for email choices: the account's Emails page.** The "Commercial emails" switch is

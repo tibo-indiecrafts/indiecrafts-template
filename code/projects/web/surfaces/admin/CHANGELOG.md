@@ -14,6 +14,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The no-flash theme script crashed on Cloudflare** ("`__name` is not defined" on every page).
+  Wrangler's default `keep_names` adds esbuild `__name(...)` calls; next-themes injects its script
+  with `Function.toString()`, so the call landed in the page with no helper. `wrangler.toml` now sets
+  `keep_names = false`; a parity test (`wrangler-parity.test.mjs`) keeps it on every Next surface.
+
+### Fixed
+
 - **Sign-in email change, after review.** Audited (with its reason) the moment Clerk accepts the
   new address; sessions are revoked and counted before the old address is removed; anything short
   of complete answers "partial" so the operator finishes in the Clerk Dashboard. `adminId` /

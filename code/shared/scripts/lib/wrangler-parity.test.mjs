@@ -208,3 +208,21 @@ test("website dev: the build gets a real origin (email links), not the placehold
   assert.match(url ?? "", /^https:\/\/[^/]+$/);
   assert.doesNotMatch(url, /example\.com/);
 });
+
+test("every Next surface bundles without esbuild `__name` helpers (next-themes' inline script)", () => {
+  for (const app of APPS.filter((a) => a.class === "next-cf")) {
+    const toml = readFileSync(
+      fileURLToPath(
+        new URL(`../../../../${app.dir}/wrangler.toml`, import.meta.url),
+      ),
+      "utf8",
+    );
+    // Top level only: before the first [section].
+    const top = toml.split(/^\[/m)[0];
+    assert.match(
+      top,
+      /^keep_names\s*=\s*false\s*$/m,
+      `${app.dir}/wrangler.toml`,
+    );
+  }
+});

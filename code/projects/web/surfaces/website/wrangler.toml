@@ -19,6 +19,10 @@ compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 # Keep dashboard-set vars/secrets on deploy (don't wipe `wrangler secret put`).
 keep_vars = true
+# No esbuild `__name(...)` helper calls in the bundle: next-themes injects its no-flash theme
+# script with `Function.toString()`, and a helper call inside it throws in the browser
+# ("__name is not defined") before the script sets the theme.
+keep_names = false
 
 [assets]
 directory = ".open-next/assets"
