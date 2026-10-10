@@ -9,6 +9,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { isAdmin, type Roles } from "@indiecrafts/packages-shared-auth";
 import { audit } from "@/lib/audit";
+import { revokeActiveSessions, SESSION_LIMIT } from "@/lib/clerk-sessions";
 import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
 
 /**
@@ -22,30 +23,6 @@ type Result =
   | { ok: false; error: "forbidden" | "invalid_user" | "invalid_session" | "failed" };
 
 const USER_ID = /^user_[A-Za-z0-9]+$/;
-
-type Clerk = Awaited<ReturnType<typeof clerkClient>>;
-
-// Clerk pages session lists at 10 by default; 500 is its max.
-// ponytail: one page — a user with > 500 live sessions keeps the rest; page with `offset` if that ever happens.
-const SESSION_LIMIT = 500;
-
-/** Revoke every active session of a user. Tries them all, even when one fails, and
- *  counts the revoked ones, so the caller audits only a real change. */
-async function revokeActiveSessions(
-  client: Clerk,
-  userId: string,
-): Promise<{ revoked: number; total: number }> {
-  const { data } = await client.sessions.getSessionList({
-    userId,
-    status: "active",
-    limit: SESSION_LIMIT,
-  });
-  const results = await Promise.allSettled(
-    data.map((s) => client.sessions.revokeSession(s.id)),
-  );
-  const revoked = results.filter((r) => r.status === "fulfilled").length;
-  return { revoked, total: data.length };
-}
 
 /** The caller must be a signed-in admin (checked on the server, never trusted from the client). */
 async function requireAdmin(): Promise<string> {

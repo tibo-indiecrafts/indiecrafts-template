@@ -14,6 +14,7 @@ Serves the per-category email-preference routes. There are two ways in: authenti
 
 ## Exports
 
+- `readState(opts)` — the categories merged with the user's stored choices (and the waitlist General fallback); also read by the admin overrides, so an admin sees what the person sees.
 - `EmailPreferencesDeps` — injectable dependencies for tests: `authenticate`, `fetchCategories`, `sync`.
 - `handleEmailPreferences(request, env, ctx?, deps?)` — the authenticated GET/POST route.
 - `handleTokenPreferences(request, env, ctx?, deps?)` — the no-login GET/POST route, keyed by a signed pref-token.

@@ -79,8 +79,9 @@ function parseUpdates(
   return updates;
 }
 
-/** The GET response body: Studio categories merged with the user's stored `granted` state. */
-async function readState(opts: {
+/** The GET response body: Studio categories merged with the user's stored `granted` state.
+ *  Also read by the admin overrides, so an admin sees what the person sees. */
+export async function readState(opts: {
   env: Env;
   db: D1Database;
   fetchCategories: NonNullable<EmailPreferencesDeps["fetchCategories"]>;

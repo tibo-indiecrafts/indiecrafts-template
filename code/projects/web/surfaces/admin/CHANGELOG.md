@@ -21,6 +21,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Email preferences, with off-only overrides.** Users → a row's "Emails" sheet shows the person's
+  categories (their own choice + the Resend topic) and the Resend global state; `/contacts` looks
+  anyone up by email, with or without an account. An admin can turn a category off, or stop all
+  email, at the person's request — with a reason code (email, phone, complaint, bounce, other) —
+  never turn one on. **Why:** support acts on unsubscribe and complaint requests without breaking
+  the consent proof; turning email on stays the person's own act.
+- **Change a sign-in email** (Users → Emails), for a person who lost access to their address: typed
+  twice, a reason code, never an admin's account; the old address is removed and every session
+  revoked; the Resend contact follows. **Why:** a support case Clerk's Dashboard alone left to
+  hand edits, with no audit and no Resend move.
+
 - **Access allow-list by email (`access_emails`).** The Zero Trust Access policy took only an email
   domain; it now also takes a list of addresses. Staging and prod list the operator and drop the
   `your-company.com` placeholder. An attached host with no email and no domain fails the plan, so

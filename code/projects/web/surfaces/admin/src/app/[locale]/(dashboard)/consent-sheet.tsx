@@ -42,6 +42,8 @@ const SOURCES = new Set([
   "signup",
   "settings",
   "unsubscribe",
+  "account",
+  "admin",
 ]);
 
 /** Opened by `?consent=<userId>` on the users page; closing it drops the query.

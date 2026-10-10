@@ -3,9 +3,13 @@
  *
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/users/page.md
  */
-import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  getFormatter,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
 import { requireAdminPage } from "@/lib/require-admin";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import {
   Table,
@@ -18,92 +22,55 @@ import {
 import { Input } from "@indiecrafts/packages-web-ui/web/input";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
-import { primaryEmail } from "@/lib/clerk-users";
 import { fetchConsentHistory } from "@/lib/consent-history";
+import { fetchMarketingConsent, fetchUsers } from "@/lib/users";
 import { Link } from "@/i18n/routing";
 import { ConsentSheet } from "../consent-sheet";
-
-type UserRow = {
-  id: string;
-  email: string;
-  role: string;
-  created: number;
-  lastSignIn: number | null;
-};
-
-/** Browse/search Clerk users (the admin app holds the secret). Read-only. */
-async function fetchUsers(query: string): Promise<UserRow[]> {
-  try {
-    const client = await clerkClient();
-    const { data } = await client.users.getUserList({
-      limit: 50,
-      query: query || undefined,
-      orderBy: "-created_at",
-    });
-    return data.map((u) => ({
-      id: u.id,
-      email: primaryEmail(u) ?? "—",
-      role: typeof u.publicMetadata?.role === "string" ? u.publicMetadata.role : "—",
-      created: u.createdAt,
-      lastSignIn: u.lastSignInAt,
-    }));
-  } catch {
-    return [];
-  }
-}
-
-/** The marketing-email opt-in per user id, from the api (bearer-gated). Fail-open: on any
- *  error every id resolves to null ("not asked"), so the list never breaks. */
-async function fetchMarketingConsent(
-  userIds: string[],
-): Promise<Record<string, number | null>> {
-  const url = process.env.API_URL;
-  const token = process.env.APP_API_TOKEN;
-  if (!url || !token || userIds.length === 0) return {};
-  try {
-    const res = await fetch(`${url}/v1/profiles/consent`, {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({ userIds }),
-      cache: "no-store",
-    });
-    if (!res.ok) return {};
-    return (await res.json()) as Record<string, number | null>;
-  } catch {
-    return {};
-  }
-}
+import { EmailPrefsSheet } from "../email-prefs-sheet";
+import { fetchEmailPreferences } from "@/lib/email-preferences";
 
 export default async function UsersPage({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ q?: string; consent?: string }>;
+  searchParams: Promise<{ q?: string; consent?: string; emails?: string }>;
 }) {
   const { locale } = await params;
   await requireAdminPage(locale);
   setRequestLocale(locale);
-  const { q, consent: consentFor } = await searchParams;
+  const { q, consent: consentFor, emails: emailsFor } = await searchParams;
   const query = typeof q === "string" ? q : "";
   const t = await getTranslations("admin.users");
   const tc = await getTranslations("admin.consent");
+  const te = await getTranslations("admin.emails");
   const format = await getFormatter();
-  const day = (ms: number) => format.dateTime(new Date(ms), { dateStyle: "medium" });
+  const day = (ms: number) =>
+    format.dateTime(new Date(ms), { dateStyle: "medium" });
   const users = await fetchUsers(query);
   const consent = await fetchMarketingConsent(users.map((u) => u.id));
   // `?consent=<userId>` opens that user's consent sheet; the read is audited.
   const listHref = query ? `/users?q=${encodeURIComponent(query)}` : "/users";
   const consentHref = (id: string) =>
     `${listHref}${query ? "&" : "?"}consent=${encodeURIComponent(id)}`;
+  // `?emails=<userId>` opens that user's email sheet; the read is audited by the api.
+  const emailsHref = (id: string) =>
+    `${listHref}${query ? "&" : "?"}emails=${encodeURIComponent(id)}`;
   const { userId: actor } = await auth();
   const sheetUser =
-    typeof consentFor === "string" ? users.find((u) => u.id === consentFor) : undefined;
+    typeof consentFor === "string"
+      ? users.find((u) => u.id === consentFor)
+      : undefined;
   const history =
     sheetUser && actor ? await fetchConsentHistory(sheetUser.id, actor) : null;
+  const emailsUser =
+    typeof emailsFor === "string"
+      ? users.find((u) => u.id === emailsFor)
+      : undefined;
+  const emailState =
+    emailsUser && actor
+      ? await fetchEmailPreferences({ userId: emailsUser.id }, actor)
+      : null;
   const emailsLabel = (v: number | null | undefined) =>
     v === 1 ? t("emailsYes") : v === 0 ? t("emailsNo") : t("emailsUnknown");
 
@@ -124,19 +91,26 @@ export default async function UsersPage({
             <Button type="submit">{t("go")}</Button>
           </form>
           {users.length === 0 ? (
-            <p className="text-muted-foreground py-10 text-center">{t("empty")}</p>
+            <p className="text-muted-foreground py-10 text-center">
+              {t("empty")}
+            </p>
           ) : (
             <div className="mt-6">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t("email")}</TableHead>
-                    <TableHead>{t("role")}</TableHead>
-                    <TableHead>{t("emails")}</TableHead>
-                    <TableHead>{t("created")}</TableHead>
-                    <TableHead>{t("lastSignIn")}</TableHead>
-                    <TableHead>{t("id")}</TableHead>
-                    <TableHead>{tc("column")}</TableHead>
+                    {[
+                      t("email"),
+                      t("role"),
+                      t("emails"),
+                      t("created"),
+                      t("lastSignIn"),
+                      t("id"),
+                      tc("column"),
+                      te("column"),
+                    ].map((head) => (
+                      <TableHead key={head}>{head}</TableHead>
+                    ))}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -151,15 +125,22 @@ export default async function UsersPage({
                       <TableCell className="tabular-nums">
                         {u.lastSignIn ? day(u.lastSignIn) : "—"}
                       </TableCell>
-                      <TableCell className="font-mono text-xs">{u.id}</TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {u.id}
+                      </TableCell>
                       <TableCell>
-                        <Link
+                        <RowLink
                           href={consentHref(u.id)}
-                          className="text-primary underline underline-offset-4"
-                          aria-label={`${tc("column")} — ${u.email}`}
-                        >
-                          {tc("open")}
-                        </Link>
+                          label={tc("open")}
+                          aria={`${tc("column")} — ${u.email}`}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <RowLink
+                          href={emailsHref(u.id)}
+                          label={te("open")}
+                          aria={`${te("column")} — ${u.email}`}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -170,8 +151,41 @@ export default async function UsersPage({
         </CardContent>
       </Card>
       {sheetUser ? (
-        <ConsentSheet email={sheetUser.email} history={history} closeHref={listHref} />
+        <ConsentSheet
+          email={sheetUser.email}
+          history={history}
+          closeHref={listHref}
+        />
+      ) : null}
+      {emailsUser ? (
+        <EmailPrefsSheet
+          userId={emailsUser.id}
+          email={emailsUser.email}
+          state={emailState}
+          closeHref={listHref}
+        />
       ) : null}
     </div>
+  );
+}
+
+/** A row's link that opens one of its side sheets. */
+function RowLink({
+  href,
+  label,
+  aria,
+}: {
+  href: string;
+  label: string;
+  aria: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="text-primary underline underline-offset-4"
+      aria-label={aria}
+    >
+      {label}
+    </Link>
   );
 }

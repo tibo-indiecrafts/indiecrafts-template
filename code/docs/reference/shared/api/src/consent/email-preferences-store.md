@@ -16,7 +16,7 @@ Pure read/write layer for per-category marketing opt-ins. State lives in `email_
 
 - `readPreferences(db, userId)` — returns `{ [category_key]: granted }` for a user.
 - `recomputeMarketingEmail(db, userId, marketingKeys)` — sets `marketing_email` to 1 if any marketing key is granted.
-- `writePreferences(db, opts)` — upserts each preference, appends its proof row, then recomputes the cache.
+- `writePreferences(db, opts)` — upserts each preference, appends its proof row, then recomputes the cache. `opts.source` is `account` (the person, default) or `admin` (an admin override on the person's request); it is stored on the proof row.
 
 ## Usage
 

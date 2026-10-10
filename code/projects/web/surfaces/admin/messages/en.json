@@ -29,7 +29,8 @@
       "settings": "Settings",
       "security": "Security",
       "cron": "Scheduled jobs",
-      "erasure": "Erasure requests"
+      "erasure": "Erasure requests",
+      "contacts": "Email contacts"
     },
     "locale": {
       "label": "Change language"
@@ -458,8 +459,85 @@
         "auto": "Automatic (region)",
         "signup": "Sign-up",
         "settings": "Account settings",
-        "unsubscribe": "Unsubscribe link"
+        "unsubscribe": "Unsubscribe link",
+        "admin": "Admin, on request",
+        "account": "Emails page"
       }
+    },
+    "emails": {
+      "column": "Emails",
+      "open": "Manage",
+      "title": "Emails",
+      "description": "Email preferences for {email}. You can only turn email off, at the person's request.",
+      "loadError": "Could not load the email preferences — the api is unreachable.",
+      "category": "Category",
+      "choice": "Their choice",
+      "topic": "Resend",
+      "action": "Action",
+      "on": "On",
+      "off": "Off",
+      "unknown": "—",
+      "subscribed": "Subscribed",
+      "unsubscribed": "Not subscribed",
+      "contact": {
+        "none": "Not in Resend.",
+        "active": "In Resend — receiving email.",
+        "stopped": "In Resend — every email stopped.",
+        "unknown": "Resend could not be read."
+      },
+      "noAccount": "No account — newsletter, waitlist or contact form only.",
+      "openAccount": "Open the account",
+      "turnOff": "Turn off",
+      "stopAll": "Stop all email",
+      "confirmOff": "Turn off “{name}” for this person?",
+      "confirmStop": "Stop every email to this person?",
+      "onlyOff": "Turning a category back on is the person's own choice (their Emails page or a new sign-up).",
+      "reason": "Reason",
+      "reasons": {
+        "request_email": "They asked by email",
+        "request_phone": "They asked by phone",
+        "complaint": "Complaint",
+        "bounce": "Address bounces",
+        "other": "Other"
+      },
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "done": "Done — the change is recorded and audited.",
+      "resendFailed": "Saved — Resend did not answer; it will need a retry.",
+      "errors": {
+        "forbidden": "Admins only.",
+        "invalid": "Check the request and try again.",
+        "unreachable": "The api is unreachable.",
+        "failed": "The change failed."
+      },
+      "signIn": {
+        "title": "Sign-in email",
+        "description": "For a person who lost access to their address. They are signed out everywhere, and Clerk tells them.",
+        "current": "Current: {email}",
+        "new": "New address",
+        "again": "Type it again",
+        "submit": "Change the sign-in email",
+        "done": "Sign-in email changed; every session revoked.",
+        "resendNotMoved": "Changed — the Resend contact could not be moved; check it in Resend.",
+        "errors": {
+          "forbidden": "Admins only.",
+          "invalid": "Check the address and the reason.",
+          "mismatch": "The two addresses differ.",
+          "same": "That is already the sign-in email.",
+          "admin_target": "An admin's email changes in the Clerk Dashboard, not here.",
+          "taken": "Another account already uses this address.",
+          "unreachable": "The api is unreachable.",
+          "failed": "Clerk refused the change."
+        }
+      }
+    },
+    "contacts": {
+      "title": "Email contacts",
+      "description": "Find a person by email — with or without an account — and turn their emails off on request.",
+      "search": "Email address",
+      "go": "Look up",
+      "prompt": "Enter an email address to see its email preferences.",
+      "invalid": "Enter a valid email address."
     }
   }
 }

@@ -58,10 +58,13 @@ export async function writePreferences(
     surface: string;
     country: string | null;
     marketingKeys: string[];
+    /** Who decided: the person (`account`, default) or an admin on their request (`admin`). */
+    source?: "account" | "admin";
   },
 ): Promise<void> {
   const { userId, fingerprint, updates, surface, country, marketingKeys } =
     opts;
+  const source = opts.source ?? "account";
   const now = new Date().toISOString();
   if (updates.length > 0) {
     // Batched: each pref row and its proof row must commit together, and one failed
@@ -77,7 +80,7 @@ export async function writePreferences(
       db
         .prepare(
           "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, country, ip_hash, idempotency_key) " +
-            "VALUES (?, 'user', ?, ?, ?, ?, '1', ?, 'account', ?, NULL, ?)",
+            "VALUES (?, 'user', ?, ?, ?, ?, '1', ?, ?, ?, NULL, ?)",
         )
         .bind(
           now,
@@ -86,8 +89,9 @@ export async function writePreferences(
           `email_pref:${key}`,
           granted ? 1 : 0,
           surface,
+          source,
           country,
-          `account:${userId}:${now}:${key}`,
+          `${source}:${userId}:${now}:${key}`,
         ),
     ]);
     await db.batch(statements);

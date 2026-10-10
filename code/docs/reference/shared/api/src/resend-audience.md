@@ -22,6 +22,9 @@ Mirrors each marketing-email consent decision to Resend's global Contacts. Resen
 - `getContactTopics` — the contact's topic subscriptions (`GET /contacts/{email}/topics`); null when unknown or on error. The DSAR export reads it.
 - `suppressResendContact` — suppress a departed contact: global unsubscribe, opt out of every marketing topic, opt into the churned topic, and stamp the churn reason.
 - `deleteResendContact` — remove the contact (the erasure pure-delete); a 404 counts as success.
+- `getResendContact` — the contact's global state (`{ exists, unsubscribed }`; `exists: false` for an unknown address, `null` on error). The admin email panel reads it.
+- `turnOffContact` — an admin override: opt out of the given topics, and with `stopAll` the global unsubscribe. Never opts anything in.
+- `moveResendContact` — after a sign-in email change: the new address gets the old contact's topics, segments, global unsubscribe and `locale`; the old contact is removed.
 
 ## Usage
 

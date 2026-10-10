@@ -23,6 +23,10 @@ reads yet (`packages-web-sanity` is wired, unused); operator copy lives in `mess
   reads data (Next skips a layout on client navigation; `page-gate.test.ts` enforces it); every server
   action re-checks with `requireAdmin` and audits via `src/lib/audit.ts`.
   Staging/prod sit behind Cloudflare Access: the allow-list is `access_emails` in `infra/cloudflare/env/<env>.tfvars`.
+- **Email overrides are off-only:** an admin turns a person's emails off (or stops all) on request,
+  with a reason code (`src/lib/override-reasons.ts`), never on; the sign-in email change is a login
+  path (typed twice, never an admin's account, sessions revoked). Actions → `email-actions.ts`,
+  api → `/v1/admin/email-preferences`.
 - **Dates:** next-intl `getFormatter`/`useFormatter` only (UTC, set in `src/i18n/request.ts`) — never
   `toLocaleString`, which breaks hydration in client tables.
 - **Deploy:** `pnpm deploy:web:admin:<dev|staging|prod>` → the shared `shared/scripts/deploy/next.mjs`; or

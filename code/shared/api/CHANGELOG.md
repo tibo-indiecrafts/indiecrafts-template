@@ -45,6 +45,15 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **Admin email overrides** — `GET/POST /v1/admin/email-preferences` and `POST …/move`
+  (`consent/admin-overrides.ts`). Off only: a category, or every email (+ the Resend global
+  unsubscribe); a consent row with source `admin`; an `admin_audit` row with a reason code
+  (migration `audit/0007` adds the `reason` column — a fixed code, never free text, as
+  `admin_audit` outlives an erasure). Viewing is audited (`admin.view_email_prefs`), by email
+  fingerprint for a person without an account. The move carries a Resend contact's topics,
+  segments and global state to a new sign-in address. **Why:** the admin acts on a person's
+  request with a full trail.
+
 - **`POST /v1/emails/test` — the Studio test now covers the worker's emails.** It sends a sample of
   the erasure and data-request emails (`service`) or the 12 Clerk templates + welcome (`account`),
   per chosen language, to the editor's address only, never copied. `sendAuthTemplate` (out of

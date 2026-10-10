@@ -98,6 +98,11 @@ import {
 } from "./contacts/general";
 import { upsertGeneralContact } from "./resend-audience";
 import { isTestScope, sendTestEmails } from "./email-test/send";
+import {
+  applyOverride,
+  moveContact,
+  readOverrideState,
+} from "./consent/admin-overrides";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -1003,6 +1008,33 @@ async function route(
       return json({ error: "resend" }, 502, cors);
     }
     return new Response(null, { status: 204, headers: cors });
+  }
+
+  // ── Admin email overrides — GET/POST /v1/admin/email-preferences + POST …/move ──
+  // (bearer-gated; the admin server action re-checks the role). Off only: a category or every
+  // email, on the person's request, with a reason code. ./consent/admin-overrides.ts.
+  if (
+    url.pathname === "/v1/admin/email-preferences" ||
+    url.pathname === "/v1/admin/email-preferences/move"
+  ) {
+    if (request.method === "OPTIONS")
+      return new Response(null, { status: 204, headers: cors });
+    const move = url.pathname.endsWith("/move");
+    if (request.method !== "POST" && (move || request.method !== "GET"))
+      return json({ error: "method_not_allowed" }, 405, cors);
+    const denied =
+      requireAdminBearer(request, env, cors) ??
+      (await rateLimit(request, env, cors));
+    if (denied) return denied;
+    if (
+      request.method === "POST" &&
+      Number(request.headers.get("content-length") ?? 0) > BODY_MAX
+    )
+      return json({ error: "too_large" }, 413, cors);
+    if (move) return moveContact(request, env);
+    return request.method === "GET"
+      ? readOverrideState(request, env)
+      : applyOverride(request, env);
   }
 
   // ── Studio test — POST /v1/emails/test (bearer-gated) ──

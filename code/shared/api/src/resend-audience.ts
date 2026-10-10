@@ -303,6 +303,100 @@ export async function getContactTopics(
   }
 }
 
+/** The contact's global state (`GET /contacts/{email}`): `{ exists: false }` for an unknown
+ *  address, `null` when Resend is unconfigured or the call fails. */
+export async function getResendContact(
+  env: ResendAudienceEnv,
+  { email }: { email: string },
+  doFetch: typeof fetch = fetch,
+): Promise<{ exists: boolean; unsubscribed: boolean } | null> {
+  if (!env.RESEND_API_KEY || !email) return null;
+  try {
+    const res = await doFetch(`${RESEND_API}/contacts/${email}`, {
+      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` },
+    });
+    if (res.status === 404) return { exists: false, unsubscribed: false };
+    if (!res.ok) return null;
+    const body = (await res.json()) as { unsubscribed?: boolean };
+    return { exists: true, unsubscribed: body.unsubscribed === true };
+  } catch {
+    return null;
+  }
+}
+
+/** An admin turned email off on the person's request: opt out of `topicIds`, and with
+ *  `stopAll` also the global unsubscribe. Never opts anything in. Throws on a Resend error. */
+export async function turnOffContact(
+  env: ResendAudienceEnv,
+  {
+    email,
+    topicIds,
+    stopAll,
+  }: { email: string; topicIds: string[]; stopAll: boolean },
+  doFetch: typeof fetch = fetch,
+): Promise<void> {
+  if (!env.RESEND_API_KEY || !email) return;
+  const topics = topicIds.map((id): TopicSub => ({
+    id,
+    subscription: "opt_out",
+  }));
+  if (!topics.length && !stopAll) return;
+  await upsertContact(
+    env,
+    email,
+    stopAll ? { unsubscribed: true } : {},
+    topics,
+    retrying(doFetch),
+  );
+}
+
+/** A sign-in email change: the new address gets the old contact's topics, segments (the
+ *  newsletter language), global unsubscribe and `locale`, and the old contact is removed — so
+ *  the person's choices follow them and nothing more goes to the old address. No old contact →
+ *  nothing to move. Throws on a Resend error. */
+export async function moveResendContact(
+  env: ResendAudienceEnv,
+  { from, to, locale }: { from: string; to: string; locale: string },
+  doFetch: typeof fetch = fetch,
+): Promise<"moved" | "none"> {
+  if (!env.RESEND_API_KEY || !from || !to) return "none";
+  const f = retrying(doFetch);
+  const old = await getResendContact(env, { email: from }, f);
+  if (!old) throw new Error("resend unavailable");
+  if (!old.exists) return "none";
+  const topics = (await getContactTopics(env, { email: from }, f)) ?? [];
+  const headers = { Authorization: `Bearer ${env.RESEND_API_KEY}` };
+  const segRes = await f(`${RESEND_API}/contacts/${from}/segments?limit=100`, {
+    headers,
+  });
+  if (!segRes.ok && segRes.status !== 404)
+    throw new Error(`resend ${segRes.status}`);
+  const segments = segRes.ok
+    ? (((await segRes.json()) as { data?: Segment[] }).data ?? [])
+    : [];
+  const created = await upsertContact(
+    env,
+    to,
+    { unsubscribed: old.unsubscribed, properties: { locale } },
+    topics.map((t) => ({ id: t.id, subscription: t.subscription })),
+    f,
+    segments.map((seg) => seg.id),
+  );
+  // An existing contact at the new address gets the segments one by one (a new one got them
+  // on create). A segment it is already in answers 2xx or 409 — both fine.
+  if (created === "updated")
+    for (const seg of segments) {
+      const add = await f(`${RESEND_API}/contacts/${to}/segments/${seg.id}`, {
+        method: "POST",
+        headers,
+      });
+      if (!add.ok && add.status !== 409)
+        throw new Error(`resend ${add.status}`);
+    }
+  await deleteResendContact(env, { email: from }, f);
+  return "moved";
+}
+
 /** Suppress a departed contact instead of deleting: global unsubscribe, opt OUT of every
  *  marketing topic, opt INTO the churned topic (cohort tag), and stamp the churn reason as a
  *  contact property. Best-effort. */
